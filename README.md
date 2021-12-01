@@ -1,7 +1,8 @@
 # STEMMUS_SCOPE
 Integrated code of SCOPE and STEMMUS 
 
-How to run STEMMUS_SCOPE v1.0.0 on CRIB:
+(1) How to run STEMMUS_SCOPE v1.0.0 on CRIB:
+
     1. Log in CRIB. Open https://crib.utwente.nl/, then click login (with your username and pasword). 
     2. Find the 'Remote Desktop' in the Launcher and click it.
     3. Find the 'Applications'and click it, you will find the 'MATLAB' software in the 'Research'.
@@ -9,7 +10,8 @@ How to run STEMMUS_SCOPE v1.0.0 on CRIB:
     5. The STEMMUS_SCOPE v1.0.0 was saved at the folder '/data/shared/EcoExtreML/STEMMUS_SCOPE v1.0.0/src/STEMMUS_SCOPE.m'
     6. Open the 'STEMMUS_SCOPE.m' file and run it.
 
-The dataflow of the STEMMUS_SCOPE v1.0.0
+(2) The dataflow of the STEMMUS_SCOPE v1.0.0:
+
     1. The driving data provided by PLUMBER2 were saved at the folder named '../Plumber2 data'. 
        The soil texture data and soil hydraulic parameters data were saved at the folder named '../SoilProperty'.
        The results of the model will be saved at the folder named '../output'.

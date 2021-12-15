@@ -1,5 +1,5 @@
 # STEMMUS_SCOPE
-Integrated code of SCOPE and STEMMUS 
+Integrated code of SCOPE and STEMMUS.
 
 (1) How to run STEMMUS_SCOPE v1.0.0 on CRIB:
 
@@ -27,5 +27,6 @@ Integrated code of SCOPE and STEMMUS
        (4) The model will run step by step until the whole simulation period completed.
        (5) The results were be saved as 'binary files' temporarily and the 'binary files' will be transfer to '.csv' files at the end.
 
+Reference:
 
-
+https://gmd.copernicus.org/articles/14/1379/2021/

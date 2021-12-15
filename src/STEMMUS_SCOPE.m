@@ -1,6 +1,7 @@
-%% SCOPE.m (script)
+%% STEMMUS-SCOPE.m (script)
 
-%     SCOPE is a coupled radiative transfer and energy balance model
+%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence, 
+%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum (STEMMUS–SCOPE v1.0.0)
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
 %
 %     This program is free software: you can redistribute it and/or modify
@@ -16,9 +17,6 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%
-% try   % for Compiler .exe
-% clc
-% clear all
 
 %% 0. globals
 global constants
@@ -41,21 +39,18 @@ Rn=Mdata(:,14);    % net rediation
 LAI=Mdata(:,26);   % leaf area index
 h_v=Mdata(:,27);   % canopy height
 rl_min=Mdata(:,28);   % minimum soil resistance
-%Precip=Precipi./18000;
 G=ones(17568,1);
 G=nanmean(G1')';
 Tsss=Mdata(:,29);
 HR_a=HR;
 Ta=Ta1;
 Ts=Ts1;
-%P_Va(KT)=0.611*exp(17.27*Ta(KT)/(Ta(KT)+237.3))*HR_a(KT);
 %% 1. define constants
 [constants] = io.define_constants();
 
 %% 2. simulation options
 path_of_code                = cd;
 run ../set_parameter_filenames; 
-% parameter_file = {'input_data.xlsx'};  % for Compiler .exe
 
 if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
 
@@ -106,7 +101,6 @@ for i = 1:length(F)
     k = find(strcmp(F(i).FileID,strtok(X(:,1))));
     if ~isempty(k)
         F(i).FileName = strtok(X(k,2));
-        %if i==4, F(i).FileName = strtok(X(k,2:end)); end
     end
 end
 
@@ -341,7 +335,6 @@ for k = 1:telmax
     Processing=TIME/TEND
     %%i%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if Precip(KT)>0.0005
-    %7-13 9-10 p=52mm
         NBChh=1;  
     else
         NBChh=2;
@@ -351,11 +344,6 @@ for k = 1:telmax
             hOLD(MN)=h(MN);
             h(MN)=hh(MN);
             hhh(MN,KT)=hh(MN);
-%              KL_h(MN,KT)=KL_h(MN,2);
-%            Chh(MN,KT)=Chh(MN,2);
-%             ChT(MN,KT)=ChT(MN,2);
-%             Khh(MN,KT)=Khh(MN,2);
-%             KhT(MN,KT)=KhT(MN,2);
             
             if Thmrlefc==1
                 TOLD(MN)=T(MN);
@@ -518,20 +506,13 @@ for k = 1:telmax
     Ac=fluxes.Actot;
     lEstot =fluxes.lEstot;
     lEctot =fluxes.lEctot;
-   % if KT>=1933 && KT<=1991
-     %   Taa=20;
-      %  Tss=20;
-   % else
+
     Tss=thermal.Tsave;
     Tcc=thermal.Ts(1);
     Taa=thermal.Ta;   
-   % end
-   
-    %if KT<2880
+
     [Rl]=Root_properties(Rl,Ac,rroot,frac,bbx,KT);
-   % else
-    %Rl=Rl;
-    %end
+
     Ts(KT)=Ta1(KT);
     if Delt_t~=Delt_t0
         for MN=1:NN
@@ -564,8 +545,7 @@ for k = 1:telmax
             hSAVE=hN;
         end
     end
-    % run Forcing_PARM
-%Ts(KT)=Ts1(KT);
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT=1:NIT   % Start the iteration procedure in a time step.
         [hh,COR,J,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,IS,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,CKTN,POR,J);
@@ -610,10 +590,10 @@ for k = 1:telmax
         end
         hSAVE=hh(NN);
         TSAVE=TT(NN);
-        %max(CHK)
+
     end
     TIMEOLD=KT;
-    %sum(sum(CHK))
+
     KIT
     KIT=0;
     [hh,COR,J,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,IS,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,CKTN,POR,J);
@@ -665,7 +645,7 @@ for k = 1:telmax
     sfactortot(KT)=sfactor;
    
 end
-% run PlotResults
+
 %%%%%%%%%%%%%%%%%%%% postprocessing part %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% plot the figures of simulation output soil moisture/temperature, 
 %%%% soil evaporation, plant transpiration simulated with two different 

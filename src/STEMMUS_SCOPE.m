@@ -611,7 +611,7 @@ for k = 1:telmax
                 end
             end
  
-       %SMC =  Theta_LL(:,1); 
+      
             run ObservationPoints
         end
         if (TEND-TIME)<1E-3

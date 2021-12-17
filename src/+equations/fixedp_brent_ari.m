@@ -328,7 +328,7 @@ while any( err_outside_tol )
     %fprintf('Laggards: %d\n', sum(err_outside_tol));
     counter = counter + 1;
     if (counter > iter_limit)
-        error('iteration limit exceeded');
+        return%error('iteration limit exceeded');
     end
     %-----------------
     %  Now reorganize a, b, c so b is in best

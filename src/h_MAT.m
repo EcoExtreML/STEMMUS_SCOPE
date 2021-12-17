@@ -46,7 +46,7 @@ for ML=1:NL
     C7(ML)=C7(ML)-C7ARG;
     C7(ML+1)=C7(ML+1)+C7ARG;
    
-     %Srt, root water uptake; 
+    % Srt, root water uptake; 
     C9ARG1=(2*Srt(ML,1)+Srt(ML,2))*DeltZ(ML)/6;%sqrt(Chg(ML,1)*Chg(ML,2));%  
     C9ARG2=(Srt(ML,1)+2*Srt(ML,2))*DeltZ(ML)/6;
     C9(ML)=C9(ML)+C9ARG1;

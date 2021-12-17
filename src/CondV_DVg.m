@@ -1,7 +1,8 @@
-function [D_Vg,V_A,Beta_g,DPgDZ,Beta_gBAR,Alpha_LgBAR]=CondV_DVg(P_gg,Theta_g,Sa,V_A,k_g,MU_a,DeltZ,Alpha_Lg,KaT_Switch,Theta_s,Se,NL,J,DPgDZ,Beta_gBAR,Alpha_LgBAR,Beta_g)
+function [D_Vg,V_A,Beta_g,DPgDZ,Beta_gBAR,Alpha_LgBAR]=CondV_DVg(P_gg,Theta_g,Sa,V_A,k_g,MU_a,DeltZ,Alpha_Lg,KaT_Switch,Theta_s,Se,NL,DPgDZ,Beta_gBAR,Alpha_LgBAR,Beta_g)
 
 MN=0;
-for ML=1:NL   
+for ML=1:NL  
+    J=ML;
     for ND=1:2
         MN=ML+ND-1;
         Sa(ML,ND)=1-Se(ML,ND);

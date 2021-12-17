@@ -1,8 +1,4 @@
 function biochem_out = biochemical_MD12(biochem_in)
-global sfactor
-if isnan(sfactor)
-    sfactor=1;
-end
 %[A,Ci,eta] = biochemical_VCM(Cs,Q,T,eb,O,p,Vcmo,m,Type,Rdparam,stress,Tyear,beta,qLs,NPQs)
 % Date:     21 Sep 2012
 % Update:   28 Jun 2013 Adaptation for use of Farquhar model of C3 photosynthesis (Farquhar et al 1980)
@@ -61,7 +57,7 @@ Tyear=biochem_in.Tyear;
 beta=biochem_in.beta;
 qLs=biochem_in.qLs;
 NPQs=biochem_in.NPQs;
-stress=sfactor;
+stress=biochem_in.stressfactor;
 Cs=biochem_in.Cs;
 Q=biochem_in.Q;
 T=biochem_in.T;
@@ -301,7 +297,6 @@ Ci          = Ci*1e6 ./ p .* 1E5;
 
 %%
 biochem_out.A = A;
-biochem_out.Ag = Ag;
 biochem_out.Ci = Ci;
 biochem_out.ps = ps;
 biochem_out.eta = eta;

@@ -8,16 +8,18 @@
 
 %             Sim_Theta(KT,1:5)=Theta_LLL(Moni_Depth_SM,1,KT);
 %             Sim_Temp(KT,1:7)=TTT(Moni_Depth,KT);
-            
-            
-            Moni_Depth=45:-1:1;
-            Moni_Depth_SM=45:-1:1;
-            Moni_Depth_RT=45:-1:1;
+
+            NL=54;
+            Moni_Depth=NL:-1:1;
+            Moni_Depth_SM=NL:-1:1;
+            Moni_Depth_RT=NL:-1:1;
 
 
             Sim_Theta(KT,1:length(Moni_Depth_SM))=Theta_LLL(Moni_Depth_SM,1,KT);
+            Sim_Theta_I(KT,1:length(Moni_Depth_SM))=Theta_III(Moni_Depth_SM,1,KT);
+            Sim_Theta_U(KT,1:length(Moni_Depth_SM))=Theta_UUU(Moni_Depth_SM,1,KT);
             Sim_Temp(KT,1:length(Moni_Depth))=TTT(Moni_Depth,KT);
             if rwuef==1
                 Sim_SRT(KT,1:length(Moni_Depth))=SRT(Moni_Depth,KT);
             end
-           
+ 

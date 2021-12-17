@@ -1,6 +1,6 @@
 function [V,xyt,canopy]  = load_timeseries(V,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options)
 
-Dataset_dir         = ['dataset ' char(F(5).FileName)];
+Dataset_dir         = '';
 t_file              = char(F(6).FileName);
 year_file           = char(F(7).FileName);
 Rin_file            = char(F(8).FileName);
@@ -78,7 +78,7 @@ else
 end
 if  ~isempty(LAI_file)
     LAItable        = load([path_input,Dataset_dir,'/',LAI_file]);
-    V(22).Val         = interp1(LAItable(:,1),LAItable(:,2),t_);
+    V(22).Val       = LAItable(:,2);
 else
     V(22).Val          = canopy.LAI*ones(size(time_));
 end

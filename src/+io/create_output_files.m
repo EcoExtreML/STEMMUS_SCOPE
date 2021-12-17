@@ -33,7 +33,7 @@ end
 
 %% Log File
 for i = 1:length(parameter_file)  
-    copyfile(['../' parameter_file{i}],[Output_dir,'Parameters/', parameter_file{i}],'f')
+    copyfile(['../input/' parameter_file{i}],[Output_dir,'Parameters/', parameter_file{i}],'f')
 end
 fidpath          = fopen([Output_dir,'Parameters/SCOPEversion.txt'],'w');      % complete path of the SCOPE code
 fprintf(fidpath,'%s', path_of_code);

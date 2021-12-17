@@ -7,7 +7,8 @@ global EX ML NL ND Theta_L XOLD IS J Theta_LL XWRE IH Theta_s XK
 
 for ML=1:NL
     % Soil type index;
-    J=IS(ML);  
+    J=ML;  
+%     J=IS(ML);  
     % The average moisture content of an element;
     EX=0.5*(Theta_L(ML,1)+Theta_L(ML,2));    
 % Has average trend of wetting in the element changed? If the trend is 

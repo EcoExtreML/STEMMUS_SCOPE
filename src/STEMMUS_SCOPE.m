@@ -1,7 +1,12 @@
  %% STEMMUS-SCOPE.m (script)
 
-%     SCOPE is a coupled radiative transfer and energy balance model
-%     Copyright (C) 2015  Yunfei Wang, Lianyu Yu, Bob Su, Yijian Zeng, Christiaan van der Tol (this needs to be modified for STEMMUS-SCOPEv1.0.01)
+%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence, 
+%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum 
+%
+%     Version: 1.0.1
+%
+%     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
+%     Contact: y.zeng@utwente.nl
 %
 %     This program is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
@@ -16,9 +21,6 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%
-% try   % for Compiler .exe
-% clc
-% clear all
 
 %% 0. globals
 run filesread %prepare input files
@@ -53,14 +55,13 @@ global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB
 global constants
 global RWU EVAP
 global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin TT
-%P_Va(KT)=0.611*exp(17.27*Ta(KT)/(Ta(KT)+237.3))*HR_a(KT);
+
 %% 1. define constants
 [constants] = io.define_constants();
 [Rl] = Initial_root_biomass(RTB,DeltZ_R,rroot,ML);
 %% 2. simulation options
 path_of_code                = cd;
 run set_parameter_filenames; 
-% parameter_file = {'input_data.xlsx'};  % for Compiler .exe
 
 if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
 
@@ -111,7 +112,6 @@ for i = 1:length(F)
     k = find(strcmp(F(i).FileID,strtok(X(:,1))));
     if ~isempty(k)
         F(i).FileName = strtok(X(k,2));
-        %if i==4, F(i).FileName = strtok(X(k,2:end)); end
     end
 end
 
@@ -198,8 +198,6 @@ V(29).Val=reference_height;
 V(23).Val=canopy_height;
 V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
-%IGBP_veg_long(1:17)==['Closed Shrublands'] || IGBP_veg_long==['Croplands'] || IGBP_veg_long==['Deciduous Broadleaf'] || IGBP_veg_long==['Evergreen Broadleaf'] || IGBP_veg_long==['Evergreen Needleleaf']||...
-   %IGBP_veg_long(1:17)==['Grasslands'] || IGBP_veg_long(1:17)==['Mixed Forests'] || IGBP_veg_long(1:17)==['Open Shrublands'] ||IGBP_veg_long(1:17)==['Permanent Wetlands '] ||IGBP_veg_long(1:17)==['Savannas'] || IGBP_veg_long(1:17)==['Woody Savannas']
 if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
    V(14).Val= [0.2 0.3 288 313 328];
 elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
@@ -270,25 +268,8 @@ iter.maxEBer         = 5;                            %[W m-2]            maximum
 iter.Wc              = 1;                         %                   Weight coefficient for iterative calculation of Tc
 
 %% 7. Load spectral data for leaf and soil
-%opticoef    = xlsread([path_input,'fluspect_parameters/',char(F(3).FileName)]);  % file with leaf spectral parameters
-%xlsread([path_input,'fluspect_parameters/',char(F(3).FileName)]);  % file with leaf spectral parameters
 load([path_input,'fluspect_parameters/',char(F(3).FileName)]);
 rsfile      = load([path_input,'soil_spectrum/',char(F(2).FileName)]);        % file with soil reflectance spectra
-% Optical coefficient data used by fluspect
-% optipar.nr    = opticoef(:,2);
-% optipar.Kab   = opticoef(:,3);
-% optipar.Kca   = opticoef(:,4);
-% optipar.Ks    = opticoef(:,5);
-% optipar.Kw    = opticoef(:,6);
-% optipar.Kdm   = opticoef(:,7);
-% optipar.nw   = opticoef(:,8);
-% optipar.phiI  = opticoef(:,9);
-% optipar.phiII = opticoef(:,10);
-% optipar.GSV1  = opticoef(:,11); 
-% optipar.GSV2  = opticoef(:,12);
-% optipar.GSV3  = opticoef(:,13);
-% optipar.KcaV   = opticoef(:,14);
-% optipar.KcaZ   = opticoef(:,15);
 
 %% 8. Load directional data from a file
 directional = struct;
@@ -371,7 +352,6 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
 %% 13. create output files
-%Output_dir = io.create_output_files(parameter_file, F, path_of_code, options, V, vmax, spectral);
 [Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, spectral, options);
 run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
 
@@ -462,14 +442,7 @@ for i = 1:1:Dur_tot-1
         fprintf('simulation %i ', k );
         fprintf('of %i \n', telmax);
     else
-        %calculate = 0;
-        %if k>=I_tmin && k<=I_tmax
-         %   quality_is_ok   = ~isnan(meteo.p*meteo.Ta*meteo.ea*meteo.u.*meteo.Rin.*meteo.Rli);
-          %  fprintf('time = %4.2f \n', xyt.t(k));
-          %  if quality_is_ok
-                calculate = 1;
-           % end
-        %end
+        calculate = 1;
     end
     
     if calculate
@@ -587,9 +560,7 @@ for i = 1:1:Dur_tot-1
             else
                 rad.Femtot = 1E3*leafbio.fqe* optipar.phi(spectral.IwlF) * fluxes.aPAR_Cab_eta;
             end
-        end    
-       
-        %io.output_data(Output_dir, options, k, iter, xyt, fluxes, rad, thermal, gap, meteo, spectral, V, vi, vmax, profiles, directional, angles)
+        end           
     end
     if options.simulation==2 && telmax>1, vi  = helpers.count(nvars,vi,vmax,1); end
      if KT==1 
@@ -597,14 +568,12 @@ for i = 1:1:Dur_tot-1
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           %[Rl]=Root_properties(Rl,Acc,rroot,frac,bbx,KT);
            Tsss=Tss;
            Tss=thermal.Tsave; 
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           %[Rl]=Root_properties(Rl,Acc,rroot,frac,bbx,KT);
            Tsss=Tss;
            Tss=Ta_msr(KT); 
         end
@@ -613,20 +582,17 @@ for i = 1:1:Dur_tot-1
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           %[Rl]=Root_properties(Rl,Acc,rroot,frac,bbx,KT);
            Tsss=Tss;
            Tss=thermal.Tsave; 
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           %[Rl]=Root_properties(Rl,Acc,rroot,frac,bbx,KT);
            Tsss=Tss;
            Tss=Ta_msr(KT); 
         end
     end
-    %Tss=thermal.Tsh;
-    %Taa=thermal.Ta;  
+ 
     sfactortot(KT)=sfactor;
     
       for ML=1:NL
@@ -635,7 +601,6 @@ for i = 1:1:Dur_tot-1
             DDEhBAR(ML,KT)=DEhBAR(ML);
             DDRHOVhDz(ML,KT)=DRHOVhDz(ML);
             DDhDZ(ML,KT)=DhDZ(ML);
-            %             DDEhBAR(ML,KT)=DEhBAR(ML);
             EEtaBAR(ML,KT)=EtaBAR(ML);
             DD_Vg(ML,KT)=D_Vg(ML);
             DDRHOVTDz(ML,KT)=DRHOVTDz(ML);
@@ -730,8 +695,6 @@ for i = 1:1:Dur_tot-1
             AVAIL=AVAIL0-Evap(KT);
             EXCESS=(AVAIL+QMT(KT))*Delt_t;
             if abs(EXCESS/Delt_t)<=1e-10,EXCESS=0;end
-            %             DSTOR=0;
-            %             RS=0;
             DSTOR=min(EXCESS,DSTMAX);
             RS(KT)=(EXCESS-DSTOR)/Delt_t;
         end
@@ -755,9 +718,7 @@ for i = 1:1:Dur_tot-1
     KIT=0;
     [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin);
     [hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
-    %if  k >15
-    %[KT,TIME,Delt_t,tS,NBChh,IRPT1,IRPT2]=TimestepCHK(NBCh,BCh,NBChh,DSTOR,DSTOR0,EXCESS,QMT,Precip,Evap,hh,IRPT1,NN,SAVEhh,TT_CRIT,T0,TT,T,EPCT,h,T_CRIT,xERR,hERR,TERR,Theta_LL,Theta_L,Theta_UU,Theta_U,KT,TIME,Delt_t,NL,Thmrlefc,NBChB,NBCT,NBCTB,tS,uERR);
-    %end
+
     SAVEtS=tS;
     if IRPT1==0 && IRPT2==0
         if KT        % In case last time step is not convergent and needs to be repeated.
@@ -824,10 +785,4 @@ io.bin_to_csv(fnames, V, vmax, n_col, k, options,Ztot)
 if options.makeplots
     plot.plots(Output_dir)
 end
-%% for Compiler
-% catch ME
-%     disp(['ERROR: ' ME.message])
-% end
-% fprintf('\nThe run is finished. Press any key to close the window')
-% fprintf('\nIf no error message was produced navigate to ./SCOPE_v1.70/output to see the results')
-% pause
+

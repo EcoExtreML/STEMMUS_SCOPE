@@ -1,7 +1,8 @@
 function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...  
          = ebal(iter,options,spectral,rad,gap,leafopt,  ...
-                angles,meteo,soil,canopy,leafbio,xyt,k,profiles,LR)
- global Rl DeltZ Ztot Ks Theta_s Theta_r Theta_LL Theta_o bbx NL KT sfactor wfrac  PSItot 
+                angles,meteo,soil,canopy,leafbio,xyt,k,profiles,Delt_t)
+ global Rl DeltZ Ztot Ks Theta_s Theta_r Theta_LL Theta_o bbx NL KT sfactor wfrac  PSItot sfactortot Theta_f
+ global  m n Alpha TT
 % function ebal.m calculates the energy balance of a vegetated surface
 %
 % authors:      Christiaan van der Tol (tol@itc.nl)
@@ -106,9 +107,9 @@ Ts              = soil.Ts;
 p               = meteo.p;
 if options.soil_heat_method < 2 && options.simulation ==1
     if k>1
-        Deltat          = (t-xyt.t(k-1))*86400;           %           Duration of the time interval (s)
+        Deltat          = Delt_t;           %           Duration of the time interval (s)
     else
-        Deltat          = 1/48*86400;
+        Deltat          = Delt_t;
     end
     x 		= [1:12;1:12]'*Deltat;
     Tsold = soil.Tsold;
@@ -163,10 +164,10 @@ end
 LAI = canopy.LAI;
 PSI=0;
 %[bbx]=Max_Rootdepth(bbx,TIME,NL,KT);
-[bbx]=Max_Rootdepth(bbx,NL,KT,Ta);
-[PSIs,rsss,rrr,rxx] = calc_rsoil(Rl,DeltZ,Ztot,Ks,Theta_s,Theta_r,Theta_LL,Theta_o,bbx);
-[sfactor] = calc_sfactor(Rl,Theta_s,Theta_r,Theta_LL,bbx,wfrac);
-PSIss=PSIs(45,1);
+[bbx]=Max_Rootdepth(bbx,NL,KT,TT);
+[PSIs,rsss,rrr,rxx] = calc_rsoil(Rl,DeltZ,Ks,Theta_s,Theta_r,Theta_LL,bbx,m,n,Alpha);
+[sfactor] = calc_sfactor(Rl,Theta_s,Theta_r,Theta_LL,bbx,Ta,Theta_f);
+PSIss=PSIs(NL,1);
 %% 2. Energy balance iteration loop
 
 %'Energy balance loop (Energy balance and radiative transfer)
@@ -267,8 +268,8 @@ while CONT                          % while energy balance does not close
     
     biochem_out         = b(biochem_in);
  
-    Au                  = biochem_out.A;
-    Auu                  = biochem_out.Ag;
+    Au                  = biochem_out.A; % Ag? or A?
+    Auu                  = biochem_out.Ag;   %GPP calculation.
     Ciu                 = biochem_out.Ci;
     Fu                  = biochem_out.eta;
     rcwu                = biochem_out.rcw;
@@ -292,23 +293,26 @@ while CONT                          % while energy balance does not close
     [lEcu,Hcu,ecu,Ccu]     = heatfluxes((LAI+1)*(raa+rawc),rcwu,Tcu,ea,Ta,e_to_q,PSI,Ca,Ciu);
     [lEs,Hs]               = heatfluxes((LAI+1)*(raa+raws),rss ,Ts ,ea,Ta,e_to_q,PSIss,Ca,Ca);
 
-    if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
-       error('Heatfluxes produced complex values for CO2 concentration!')
-    end
+    %if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
+     %  error('Heatfluxes produced complex values for CO2 concentration!')
+    %end
 
- %   if any( Cch < 0 ) || any( Ccu(:) < 0 )
+  %  if any( Cch < 0 ) || any( Ccu(:) < 0 )
   %     error('Heatfluxes produced negative values for CO2 concentration!')
-  %  end
+   % end
 
     % integration over the layers and sunlit and shaded fractions
     Hstot       = Fs*Hs;
     Hctot       = LAI*(Fc*Hch + equations.meanleaf(canopy,Hcu,'angles_and_layers',Ps));
     Htot        = Hstot + Hctot;
-    %%%%%% Leaf water potential calculate
-
+     %%%%%% Leaf water potential calculate
+    lambda1      = (2.501-0.002361*Ta)*1E6;
     lEctot     = LAI*(Fc*lEch + equations.meanleaf(canopy,lEcu,'angles_and_layers',Ps)); % latent heat leaves
-   
-    Trans = lEctot/2454000/1000;  %unit: m s-1
+    if (isreal(lEctot) && lEctot<1000 && lEctot>-300)
+    else
+        lEctot=0;
+    end
+    Trans = lEctot/lambda1/1000;  %unit: m s-1
     AA1=PSIs./(rsss+rrr+rxx);
     AA2=1./(rsss+rrr+rxx);
     BB1=AA1(~isnan(AA1));
@@ -318,7 +322,7 @@ while CONT                          % while energy balance does not close
     if isnan(PSI1)
     PSI1 = -1; 
     end
-    if PSI/PSI1>0.99
+    if abs(PSI-PSI1)<0.0001
         break
     end
     PSI  = (PSI + PSI1)/2;
@@ -390,7 +394,9 @@ if SoilHeatMethod<2
     Tsold(2:end,:) = soil.Tsold(1:end-1,:);
     Tsold(1,:) 	= Ts(:);
     if isnan(Ts), Tsold(1,:) = Tsold(2,:); end
+    if isreal(Ts)
     soil.Tsold = Tsold;
+    end
 end
 
 Tbr         = (rad.Eoutte/constants.sigmaSB)^0.25;
@@ -440,6 +446,7 @@ end
 Rnctot          = LAI*(Fc*Rnch + equations.meanleaf(canopy,Rncu,'angles_and_layers',Ps)); % net radiation leaves
 lEctot          = LAI*(Fc*lEch + equations.meanleaf(canopy,lEcu,'angles_and_layers',Ps)); % latent heat leaves
 Hctot           = LAI*(Fc*Hch  + equations.meanleaf(canopy,Hcu ,'angles_and_layers',Ps)); % sensible heat leaves
+%Actot           = LAI*(Fc*Ah   + equations.meanleaf(canopy,Au  ,'angles_and_layers',Ps)); % photosynthesis leaves
 Actot           = LAI*(Fc*Ahh   + equations.meanleaf(canopy,Auu  ,'angles_and_layers',Ps)); % photosynthesis leaves
 Tcave           =     (Fc*Tch  + equations.meanleaf(canopy,Tcu ,'angles_and_layers',Ps)); % mean leaf temperature
 Pntot           = LAI*(Fc*Pinh + equations.meanleaf(canopy,Pinu,'angles_and_layers',Ps)); % net PAR leaves
@@ -498,7 +505,7 @@ thermal.Tch   = Tch;
 
 fluxes.Au     = Au;
 fluxes.Ah     = Ah;
-RWU =( PSIs - PSI)./(rsss+rrr+rxx).*bbx;
+RWU =(PSIs - PSI)./(rsss+rrr+rxx).*bbx;
 nn=numel(RWU);
 for i=1:nn
     if isnan(RWU(i))
@@ -511,12 +518,14 @@ for i=1:nn
     end
 end
 frac = RWU./abs(sum(sum(RWU)));
-RWU =( PSIs - PSI)./(rsss+rrr+rxx).*bbx;
+RWU =(PSIs - PSI)./(rsss+rrr+rxx).*bbx;
+RWU =real(RWU);
 for i=1:nn
     if isnan(RWU(i))
         RWU(i)=0;
     end
 end
+
 
 profiles.Knu     = Knu;
 profiles.Knh     = Knh;

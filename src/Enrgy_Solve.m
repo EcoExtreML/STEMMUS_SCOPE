@@ -12,7 +12,6 @@ for ML=NL:-1:1
 end
 
 for MN=1:NN
-    CHK(MN)=abs(RHS(MN)-TT(MN)); 
-    %CHK(MN)=abs((RHS(MN)-TT(MN))/TT(MN)); %
+    CHK(MN)=abs(RHS(MN)-TT(MN));SAVETT(MN)=TT(MN); %abs((RHS(MN)-TT(MN))/TT(MN)); %
     TT(MN)=RHS(MN);
 end

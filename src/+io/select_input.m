@@ -1,5 +1,5 @@
 function [soil,leafbio,canopy,meteo,angles,xyt] = select_input(V,vi,canopy,options,xyt,soil)
-global Theta_LL
+global Theta_LL latitude longitude
 soil.spectrum      = V(16).Val(vi(16));
 soil.rss           = V(17).Val(vi(17));
 soil.rs_thermal    = V(18).Val(vi(18));
@@ -8,7 +8,7 @@ soil.rhos          = V(20).Val(vi(20));
 soil.CSSOIL        = V(43).Val(vi(43));
 soil.lambdas       = V(21).Val(vi(21));
 soil.rbs           = V(44).Val(vi(44));
-soil.SMC           = Theta_LL(45,1); %%%%%%% soil.SMC = flip£¨Theta_LL£©£¨:,1£©
+soil.SMC           = Theta_LL(54,1); %%%%%%% soil.SMC = flip£¨Theta_LL£©£¨:,1£©
 soil.BSMBrightness = V(61).Val(vi(61));
 soil.BSMlat	       = V(62).Val(vi(62));
 soil.BSMlon	       = V(63).Val(vi(63));

@@ -1,9 +1,13 @@
 function biochem_out = biochemical(biochem_in,Ci_input)
 %
-global sfactor
+global sfactor KT TT
 if isnan(sfactor)
     sfactor=1;
 end
+%Tmin=min(min(TT));
+%if Tmin<0
+%   sfactor= sfactor*0.3;
+%end
 % Date: 	21 Sep 2012
 % Update:   20 Feb 2013
 % Update:      Aug 2013: correction of L171: Ci = Ci*1e6 ./ p .* 1E3;
@@ -91,7 +95,12 @@ end
 % qQ        % []                    photochemical quenching
 % Vcmax     % [umol/m2/s]           carboxylation capacity after
 %                                   ... temperature correction 
-
+            A = [];
+            Ag = [];
+            Vc = [];
+            Vs = [];
+            Ve = [];
+            CO2_per_electron = [];
 if nargin < 2
     Ci_input = [];
 end
@@ -105,11 +114,24 @@ else
    Cs         = NaN; %biochem_in.Ci;
 end
 Q             = biochem_in.Q;
-assert(all(Q(:) >=0), 'Negative light is not allowed!');
-assert(all(isreal(Q(:))), 'Complex-values are not allowed for PAR!');
+%assert(all(Q(:) >=0), 'Negative light is not allowed!');
+if all(Q(:) >=0)
+else
+   Q= abs(Q);
+end
 
-assert(all(Cs(:) >=0), 'Negative CO2 concentration is not allowed!');
-assert(all(isreal(Cs(:))), 'Complex-values are not allowed for CO2 concentration!');
+assert(all(isreal(Q(:))), 'Complex-values are not allowed for PAR!');
+%assert(all(Cs(:) >=0), 'Negative CO2 concentration is not allowed!');
+if all(isreal(Cs(:)))
+else
+    Cs=real(Cs);
+end
+
+if all(Cs(:) >=0)
+else
+   Cs=abs(Cs);
+end
+%assert(all(isreal(Cs(:))), 'Complex-values are not allowed for CO2 concentration!');
 
 T             = biochem_in.T + 273.15*(biochem_in.T<200); % convert temperatures to K if not already
 eb            = biochem_in.eb;
@@ -320,7 +342,7 @@ else
     % compute Ci using iteration (JAK)
     % it would be nice to use a built-in root-seeking function but fzero requires scalar inputs and outputs,
     % Here I use a fully vectorized method based on Brent's method (like fzero) with some optimizations.
-    tol = 1e-7;  % 0.1 ppm more-or-less
+    tol = 1e-6;  % 0.1 ppm more-or-less
     % Setting the "corner" argument to Gamma may be useful for low Ci cases, but not very useful for atmospheric CO2, so it's ignored.
     %                     (fn,                           x0, corner, tolerance)
     Ci = equations.fixedp_brent_ari(@(x) Ci_next(x, Cs, RH, minCi), Cs, [], tol); % [] in place of Gamma: it didn't make much difference

@@ -6,8 +6,7 @@ function [rss,rbs] = calc_rssrbs(SMC,LAI,rbs)
 %elseif rss<30,
     %rss=30;
 %end
-rss =11.2*exp(0.3563*100.0*(0.38-SMC));
-%rss = exp(7.9-1.6*(SMC-0.0008)/(0.38-0.0008));
+rss = exp(7.6-1.5*(SMC-0.0875)/(0.25-0.0875));
 %if  rss<70,
   %  rss=70;
 %end

@@ -1,6 +1,5 @@
 function [C6,P_gg,RHS]=Air_Solve(C6,NN,NL,C6_a,RHS)
 
-
 RHS(1)=RHS(1)/C6(1,1);
 
 for ML=2:NN

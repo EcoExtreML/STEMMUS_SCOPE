@@ -1,4 +1,4 @@
-function Output_dir = create_output_files(parameter_file, F, path_of_code, options, V, vmax, spectral)
+function Output_dir = create_output_files(parameter_file, F, path_of_code, input_path, output_path, options, V, vmax, spectral)
 %% Create DATA files
 % author J.timmermans
 % last modified      4 Aug 2008: Added the creation of log file (file with input parameters)
@@ -21,7 +21,7 @@ function Output_dir = create_output_files(parameter_file, F, path_of_code, optio
 string          = clock;
 
 Outdir_Name     = char(F(1).FileName);
-Output_dir      = sprintf(['../output/',Outdir_Name,'_%4.0f-%02.0f-%02.0f-%02.0f%02.0f/'],[string(1) string(2) string(3) string(4) string(5)]);
+Output_dir      = sprintf([output_path,Outdir_Name,'_%4.0f-%02.0f-%02.0f-%02.0f%02.0f/'],[string(1) string(2) string(3) string(4) string(5)]);
 warning('off','MATLAB:DELETE:FileNotFound')
 if any(~exist(Output_dir,'dir'))
     mkdir(Output_dir)
@@ -33,11 +33,11 @@ end
 
 %% Log File
 for i = 1:length(parameter_file)  
-    copyfile(['../input/' parameter_file{i}],[Output_dir,'Parameters/', parameter_file{i}],'f')
+    copyfile([input_path parameter_file{i}],[Output_dir,'Parameters/', parameter_file{i}],'f')
 end
 fidpath          = fopen([Output_dir,'Parameters/SCOPEversion.txt'],'w');      % complete path of the SCOPE code
 fprintf(fidpath,'%s', path_of_code);
-%copyfile(['../' parameter_file],[Output_dir,'Parameters/', parameter_file ],'f')
+%copyfile([input_path parameter_file],[Output_dir,'Parameters/', parameter_file ],'f')
 
 %% Normal Output
 fidf            = fopen([Output_dir,'fluxes.dat'],'w');       %     fluxes
@@ -87,12 +87,12 @@ if options.calc_vert_profiles
     end
     
 else
-    delete([Output_dir,'../output/leaftemp.dat'])
-    delete([Output_dir,'../output/layer_H.dat'])
-    delete([Output_dir,'../output/layer_lE.dat'])
-    delete([Output_dir,'../output/layer_A.dat'])
-    delete([Output_dir,'../output/layer_aPAR.dat'])
-    delete([Output_dir,'../output/layer_Rn.dat'])
+    delete([Output_dir,'leaftemp.dat'])
+    delete([Output_dir,'layer_H.dat'])
+    delete([Output_dir,'layer_lE.dat'])
+    delete([Output_dir,'layer_A.dat'])
+    delete([Output_dir,'layer_aPAR.dat'])
+    delete([Output_dir,'layer_Rn.dat'])
 end
 
 if options.calc_fluor

@@ -29,8 +29,7 @@ time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,1,1,0,0,0);
 DELT=time1(2);
 %Set the end time of the main loop in STEMMUS_SCOPE.m
-Dur_tot=10;
-%Dur_tot=length(time1);
+Dur_tot=length(time1);
 dt=time1(2)/3600/24;
 t2=datenum(endyear,12,31,23,30,0);
 T=t1:dt:t2;

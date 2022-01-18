@@ -23,7 +23,7 @@
 %%
 
 %% 0. globals
-run filesread %prepare input files
+run filesread %get paths and prepare input files
 run Constants %input soil parameters
 global i tS KT Delt_t TEND TIME MN NN NL ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
 global KIT NIT TimeStep Processing
@@ -60,13 +60,14 @@ global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot N
 [constants] = io.define_constants();
 [Rl] = Initial_root_biomass(RTB,DeltZ_R,rroot,ML);
 %% 2. simulation options
+path_input = InputPath;          % path of all inputs
 path_of_code                = cd;
 run set_parameter_filenames; 
 
 if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
 
 if ~useXLSX
-    run(['../' parameter_file{1}])
+    run([path_input parameter_file{1}])
     
     options.calc_ebal           = N(1);    % calculate the energy balance (default). If 0, then only SAIL is executed!
     options.calc_vert_profiles  = N(2);    % calculate vertical profiles of fluxes
@@ -90,16 +91,16 @@ if ~useXLSX
     % 2: Lookup-Table (specify the values to be included)
     % 3: Lookup-Table with random input (specify the ranges of values)
 else
-    options = io.readStructFromExcel(['../input/' char(parameter_file)], 'options', 3, 1);
+    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
 end
 
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
 if ~useXLSX
-    run(['../input/' parameter_file{2}])
+    run([path_input parameter_file{2}])
 else
-    [dummy,X]                       = xlsread(['../input/' char(parameter_file)],'filenames');
+    [dummy,X]                       = xlsread([path_input char(parameter_file)],'filenames');
     j = find(~strcmp(X(:,2),{''}));
     X = X(j,(1:end));
 end
@@ -118,10 +119,10 @@ end
 %% 4. input data
 
 if ~useXLSX
-    X                           = textread(['../input/' parameter_file{3}],'%s'); %#ok<DTXTRD>
+    X                           = textread([path_input parameter_file{3}],'%s'); %#ok<DTXTRD>
     N                           = str2double(X);
 else
-    [N,X]                       = xlsread(['../input/' char(parameter_file)],'inputdata', '');
+    [N,X]                       = xlsread([path_input char(parameter_file)],'inputdata', '');
     X                           = X(9:end,1);
 end
 V                           = io.assignvarnames();
@@ -260,7 +261,7 @@ else
     end
 end
 %% 5. Declare paths
-path_input      = '../input/';          % path of all inputs
+path_input      = InputPath;          % path of all inputs
 
 %% 6. Numerical parameters (iteration stops etc)
 iter.maxit           = 400;                          %                   maximum number of iterations
@@ -352,7 +353,7 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
 %% 13. create output files
-[Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, spectral, options);
+[Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
 
 
@@ -782,7 +783,7 @@ if options.verify
     io.output_verification(Output_dir)
 end
 io.bin_to_csv(fnames, V, vmax, n_col, k, options,Ztot)
-if options.makeplots
-    plot.plots(Output_dir)
-end
+%if options.makeplots
+%    plot.plots(Output_dir)
+%end
 

@@ -20,14 +20,14 @@ Integrated code of SCOPE and STEMMUS
        The results of the model will be saved at the folder named 'output'.
 
     2. The main program is 'STEMMUS_SCOPE.m'. Currently, the model can be run at the site scale. 
-    For example, if we put the 'FI-Hyy_1996-2014_FLUXNET2015_Met.nc' file in the 'input' folder. The model will be run at the AU-TUM site.
+    For example, if we put the 'FI-Hyy_1996-2014_FLUXNET2015_Met.nc' file in the 'input' folder. The model will be run at the FI-Hyy site.
 
     3. After the model was started, the workflow are as follows:
        (1) The model will read the 'FI-Hyy_1996-2014_FLUXNET2015_Met.nc' file and transfer it into '.dat' files with 'filesread.m' (you can find the '.dat' files in the 'input' folder). In addition, the site information (including location and vegetation) were also read.
        (2) Then, the model will read the soil parameters with 'soilpropertyread.m'.
-       (3) Some constants will be load using 'Constant.m'.
+       (3) Some constants will be loaded using 'Constant.m'.
        (4) The model will run step by step until the whole simulation period is completed.
-       (5) The results were be saved as 'binary files' temporarily and the 'binary files' will be transfer to '.csv' files at the end.
+       (5) The results will be saved as 'binary files' temporarily and the 'binary files' will be transferred to '.csv' files at the end.
 
 (3) Run STEMMUS_SCOPE v1.0.0 on a different compute node:
 

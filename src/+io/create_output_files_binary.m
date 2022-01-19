@@ -1,9 +1,9 @@
-function [Output_dir, f, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, spectral, options)
+function [Output_dir, f, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, output_path, spectral, options)
 %% Create Output dir
 string          = clock;
 simulation_name = char(sitename);
 outdir_name     = sprintf('%s_%4.0f-%02.0f-%02.0f-%02.0f%02.0f', simulation_name, string(1:5));
-Output_dir = [fullfile('../output/', outdir_name) filesep];
+Output_dir = [fullfile(output_path, outdir_name) filesep];
 
 warning('off','MATLAB:DELETE:FileNotFound')
 if any(~exist(Output_dir,'dir'))
@@ -70,12 +70,12 @@ if options.calc_vert_profiles
     end
     
 else
-    delete([Output_dir,'../output/leaftemp.bin'])
-    delete([Output_dir,'../output/layer_H.bin'])
-    delete([Output_dir,'../output/layer_lE.bin'])
-    delete([Output_dir,'../output/layer_A.bin'])
-    delete([Output_dir,'../output/layer_aPAR.bin'])
-    delete([Output_dir,'../output/layer_Rn.bin'])
+    delete([Output_dir,'leaftemp.bin'])
+    delete([Output_dir,'layer_H.bin'])
+    delete([Output_dir,'layer_lE.bin'])
+    delete([Output_dir,'layer_A.bin'])
+    delete([Output_dir,'layer_aPAR.bin'])
+    delete([Output_dir,'layer_Rn.bin'])
 end
 
 if options.calc_fluor

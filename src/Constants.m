@@ -29,7 +29,7 @@ PERR=5000;                  % Maximum desirable change of soil air pressure (Pa,
 uERR=0.02;                  % Maximum desirable change of total water content;                                                                    
 Tot_Depth=500;           % Unit is cm. it should be usually bigger than 0.5m. Otherwise, 
                                  % the DeltZ would be reset in 50cm by hand;                                  
-R_depth=300; %¸ùÉî                                                                               
+R_depth=300; %ï¿½ï¿½ï¿½ï¿½                                                                               
 Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       
 NL=100;
 if ~Eqlspace                                                                     
@@ -434,7 +434,7 @@ Precipp=0;
 % Input for producing initial soil moisture and soil temperature profile
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Mdata=textread('../input/Mdata.txt');
+Mdata=textread([InputPath, 'Mdata.txt']);
 Ta_msr=Mdata(:,2)';
 RH_msr=Mdata(:,3)';
 WS_msr=Mdata(:,4)';

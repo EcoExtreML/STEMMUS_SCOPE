@@ -262,7 +262,7 @@ else
 end
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
-
+path_output     = OutputPath;
 %% 6. Numerical parameters (iteration stops etc)
 iter.maxit           = 400;                          %                   maximum number of iterations
 iter.maxEBer         = 5;                            %[W m-2]            maximum accepted error in energy bal.

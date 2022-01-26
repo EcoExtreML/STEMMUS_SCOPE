@@ -1,13 +1,13 @@
 %%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set soil parameters path
-SoilPropertyPath='/home/jovyan/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/';
+SoilPropertyPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/';
 % Set input paths including vegetation parameters and forcing dat files
 % Set this path the same as working dir and copy file there
-InputPath='/home/jovyan/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/';
+InputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/';
 % Set output path
-OutputPath='/home/jovyan/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/';
+OutputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/';
 % Set forcing data path
-ForcingPath='/home/jovyan/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/Plumber2_data/';
+ForcingPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data';
 % Set forsing netcdf file name
 % here as an example, we pick 'FI-Hyy_1996-2014_FLUXNET2015_Met'
 ForcingFileName='FI-Hyy_1996-2014_FLUXNET2015_Met.nc';

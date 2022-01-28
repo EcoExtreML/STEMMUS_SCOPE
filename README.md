@@ -32,3 +32,9 @@ Integrated code of SCOPE and STEMMUS
 (3) Run STEMMUS_SCOPE v1.0.0 on a different compute node:
 
 Open the file "filesread.m" and set all paths at the top of this file. The rest of the workflow is the same as explained above. 
+
+(4) [Create Standalone Application from MATLAB](https://nl.mathworks.com/help/compiler/mcc.html)
+
+```bash
+mcc -m STEMMUS_SCOPE_exe.m -d STEMMUS_SCOPE/exe -o STEMMUS_SCOPE -R nodisplay
+```

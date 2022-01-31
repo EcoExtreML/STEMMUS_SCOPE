@@ -784,7 +784,7 @@ if options.verify
 end
 io.bin_to_csv(fnames, V, vmax, n_col, k, options, DeltZ_R)
 save([Output_dir,'output.mat'])
-if options.makeplots
-  plot.plots(Output_dir)
-end  
+%if options.makeplots
+%  plot.plots(Output_dir)
+%end  
 

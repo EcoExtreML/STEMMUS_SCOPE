@@ -10,7 +10,7 @@ OutputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/';
 ForcingPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data';
 % Set forsing netcdf file name
 % here as an example, we pick 'FI-Hyy_1996-2014_FLUXNET2015_Met'
-ForcingFileName='FI-Hyy_1996-2014_FLUXNET2015_Met.nc';
+ForcingFileName='AU-Emr_2012-2013_OzFlux_Met.nc';
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename

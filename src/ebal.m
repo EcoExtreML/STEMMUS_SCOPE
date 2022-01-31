@@ -1,7 +1,7 @@
 function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...  
          = ebal(iter,options,spectral,rad,gap,leafopt,  ...
                 angles,meteo,soil,canopy,leafbio,xyt,k,profiles,Delt_t)
- global Rl DeltZ Ztot Ks Theta_s Theta_r Theta_LL Theta_o bbx NL KT sfactor wfrac  PSItot sfactortot Theta_f
+ global Rl DeltZ Ks Theta_s Theta_r Theta_LL Theta_o bbx NL KT sfactor wfrac  PSItot sfactortot Theta_f
  global  m n Alpha TT
 % function ebal.m calculates the energy balance of a vegetated surface
 %
@@ -395,7 +395,10 @@ if SoilHeatMethod<2
     Tsold(1,:) 	= Ts(:);
     if isnan(Ts), Tsold(1,:) = Tsold(2,:); end
     if isreal(Ts)
-    soil.Tsold = Tsold;
+        soil.Tsold = Tsold;
+    else
+        Tsold(1,:) = Tsold(2,:);
+        soil.Tsold = Tsold;
     end
 end
 

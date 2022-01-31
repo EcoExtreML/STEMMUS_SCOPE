@@ -6,7 +6,7 @@
 %     Version: 1.0.1
 %
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
-%     Contact: y.zeng@utwente.nl
+%     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl 
 %
 %     This program is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
@@ -53,8 +53,8 @@ global KLT_Switch xERR hERR TERR NBChB NBCT uERR
 global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
 global constants
-global RWU EVAP
-global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin TT
+global RWU EVAP theta_s0
+global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
 
 %% 1. define constants
 [constants] = io.define_constants();
@@ -264,7 +264,7 @@ end
 path_input      = InputPath;          % path of all inputs
 path_output     = OutputPath;
 %% 6. Numerical parameters (iteration stops etc)
-iter.maxit           = 400;                          %                   maximum number of iterations
+iter.maxit           = 100;                          %                   maximum number of iterations
 iter.maxEBer         = 5;                            %[W m-2]            maximum accepted error in energy bal.
 iter.Wc              = 1;                         %                   Weight coefficient for iterative calculation of Tc
 
@@ -331,7 +331,7 @@ if options.simulation==1
     I_tmin              =   find(min(diff_tmin)==diff_tmin);
     I_tmax              =   find(min(diff_tmax)==diff_tmax);
     if options.soil_heat_method<2
-        if (isempty(meteo.Ta) || meteo.Ta<-273), meteo.Ta = 20; end
+        meteo.Ta = Ta_msr(1);
         soil.Tsold = meteo.Ta*ones(12,2);
     end
 end
@@ -363,7 +363,7 @@ calculate = 1;
 TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros(1,NN);
 TIMELAST=0;
 SAVEtS=tS; kk=0;   %DELT=Delt_t; 
-for i = 1:1:Dur_tot-1
+for i = 1:1:Dur_tot
     KT=KT+1                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
         Delt_t=TEND-TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
@@ -430,12 +430,7 @@ for i = 1:1:Dur_tot-1
                 ALPHA(MN,KT)=alpha_h(MN,1);
                 BX(MN,KT)=bx(MN,1);
             end
-        end
-        DSTOR0=DSTOR;
-        
-        if KT>1
-            run SOIL1
-        end
+         end
     if options.simulation == 1, vi(vmax>1) = k; end
     if options.simulation == 0, vi(vmax==telmax) = k; end
     [soil,leafbio,canopy,meteo,angles,xyt] = io.select_input(V,vi,canopy,options,xyt,soil);
@@ -595,7 +590,12 @@ for i = 1:1:Dur_tot-1
     end
  
     sfactortot(KT)=sfactor;
+    DSTOR0=DSTOR; 
     
+      if KT>1
+          run SOIL1
+      end
+        
       for ML=1:NL
             QVV(ML,KT)=QV(ML);
             QLL(ML,KT)=QL(ML,1);
@@ -763,7 +763,7 @@ for i = 1:1:Dur_tot-1
                     P_ggg(MN,KT)=P_gg(MN);
                 end
             end
-            break
+            %break
         end
     end
     if KT>0
@@ -782,8 +782,9 @@ end
 if options.verify
     io.output_verification(Output_dir)
 end
-io.bin_to_csv(fnames, V, vmax, n_col, k, options,Ztot)
-%if options.makeplots
-%    plot.plots(Output_dir)
-%end
+io.bin_to_csv(fnames, V, vmax, n_col, k, options, DeltZ_R)
+save([Output_dir,'output.mat'])
+if options.makeplots
+  plot.plots(Output_dir)
+end  
 

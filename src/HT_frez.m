@@ -15,7 +15,7 @@ function [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin)
                     else
                         TT_CRIT(MN)=TT_CRIT(MN);
                     end
-                    if heaviside(TT_CRIT(MN)-(TT(MN)+T0))>0 
+                    if helpers.heaviside1(TT_CRIT(MN)-(TT(MN)+T0))>0 
                         hh_frez(MN)=L_f*1e4*((TT(MN)+T0)-TT_CRIT(MN))/g/T0;
                     else
                         hh_frez(MN)=0;

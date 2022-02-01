@@ -345,7 +345,7 @@ for ML=1:NL
             if ~isreal(KL_h(ML,ND))
                 keyboard
             end
-            KfL_T(ML,ND)=heaviside(TT_CRIT(MN)-(TT(MN)+T0))*L_f*1e4/(g*(T0));   % thermal consider for freezing soil
+            KfL_T(ML,ND)=helpers.heaviside1(TT_CRIT(MN)-(TT(MN)+T0))*L_f*1e4/(g*(T0));   % thermal consider for freezing soil
         else
             KL_h(ML,ND)=0;
             KfL_h(ML,ND)=0;

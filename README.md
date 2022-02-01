@@ -32,3 +32,11 @@ Integrated code of SCOPE and STEMMUS
 (3) Run STEMMUS_SCOPE v1.0.0 on a different compute node:
 
 Open the file "filesread.m" and set all paths at the top of this file. The rest of the workflow is the same as explained above. 
+
+(4) Converting `.csv` files to NetCDF files:
+
+There is some files in utils directory in this repository. The utils are used to
+read `.csv` files and save them in `.nc` format. 
+
+> An example NetCDF file is stored in the project directory to show the desired
+  structure of variables in one file.

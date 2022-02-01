@@ -1,4 +1,4 @@
-global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha porosity FOC FOS FOSL MSOC Coef_Lamda fieldMC latitude longitude
+global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha porosity FOC FOS FOSL MSOC Coef_Lamda fieldMC latitude longitude fmax theta_s0
 % the path SoilPropertyPath is set in filereads.m
 dirOutput=dir([SoilPropertyPath, 'Hydraul_Param_SoilGrids_Schaap_sl7.nc']);
 %ncdisp([SoilPropertyPath,'Hydraul_Param_SoilGrids_Schaap_sl1.nc'],'/','full');
@@ -179,6 +179,35 @@ end
  theta_s200=mean_theta_s_200cm(j,i);
  theta_r200=mean_theta_r_200cm(j,i);
  Ks200=mean_Ks_200cm(j,i);
+ %% load maximum fractional saturated area
+ FMAX=ncread([SoilPropertyPath,'surfdata.nc'],'FMAX');
+ if longitude>=0
+     j = fix(longitude/0.5);
+     l = mod(longitude,0.5);
+       if l<0.25
+          j=j+1;
+       else
+          j=j;
+       end
+ else
+     j = fix((longitude+360)/0.5);
+     l = mod((longitude+360),0.5);
+       if l<0.25
+          j=j+1;
+       else
+          j=j;
+       end
+ end
+
+     i = fix((latitude+90)/0.5);
+     k = mod((latitude+90),0.5);
+       if k<0.25
+          i=i+1;
+       else
+          i=i;
+       end
+
+fmax=FMAX(j,i);
 % soil property
 SaturatedK=[Ks0/(3600*24) Ks5/(3600*24) Ks30/(3600*24) Ks60/(3600*24) Ks100/(3600*24) Ks200/(3600*24)];%[2.67*1e-3  1.79*1e-3 1.14*1e-3 4.57*1e-4 2.72*1e-4];      %[2.3*1e-4  2.3*1e-4 0.94*1e-4 0.94*1e-4 0.68*1e-4] 0.18*1e-4Saturation hydraulic conductivity (cm.s^-1);
 SaturatedMC=[theta_s0 theta_s5 theta_s30 theta_s60 theta_s100 theta_s200];                              % 0.42 0.55 Saturated water content;

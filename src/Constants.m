@@ -1,9 +1,9 @@
 % function Constants
-global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin Precipp
+global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin
 global xERR hERR TERR PERR tS uERR
 global KT TIME Delt_t0 DURTN TEND NIT KIT Nmsrmn Eqlspace h_SUR Msrmn_Fitting  
 global Msr_Mois Msr_Temp Msr_Time Tp_t Evap EPCT SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh
-global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur FOC FOS FOSL MSOC Coef_Lamda fieldMC DELT Dur_tot
+global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur FOC FOS FOSL MSOC Coef_Lamda fieldMC DELT Dur_tot Precipp fmax
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% The time and domain information setting. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,7 +11,7 @@ KIT=0;                      % KIT is used to count the number of iteration in a 
 NIT=30;                     % Desirable number of iterations in a time step;               
 Nmsrmn=Dur_tot*10;       %Nmsrmn=140256*100;  Here, it is made as big as possible, in case a long simulation period containing many time step is defined. 
 SUMTIME=0;                                                                                    
-DURTN=60*60*Dur_tot;     % Duration of simulation period;                                  
+DURTN=DELT*Dur_tot;     % Duration of simulation period;                                  
 KT=0;                        % Number of time steps;                                           
 TIME=0*DELT;                     % Time of simulation released;                                  
 
@@ -29,7 +29,7 @@ PERR=5000;                  % Maximum desirable change of soil air pressure (Pa,
 uERR=0.02;                  % Maximum desirable change of total water content;                                                                    
 Tot_Depth=500;           % Unit is cm. it should be usually bigger than 0.5m. Otherwise, 
                                  % the DeltZ would be reset in 50cm by hand;                                  
-R_depth=300; %����                                                                               
+R_depth=300; %¸ùÉî                                                                               
 Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       
 NL=100;
 if ~Eqlspace                                                                     
@@ -74,7 +74,7 @@ global Kcvh KcvT Kcva Ccvh CcvT Kcah KcaT Kcaa Ccah CcaT Ccaa
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Meteorological Forcing Information Variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global MO Ta U Ts Zeta_MO        % U_wind is the mean wind speed at height z_ref (m��s^-1), U is the wind speed at each time step.
+global MO Ta U Ts Zeta_MO        % U_wind is the mean wind speed at height z_ref (mï¿½ï¿½s^-1), U is the wind speed at each time step.
 global Precip SH HR_a UseTs_msrmn      % Notice that Evap and Precip have only one value for each time step. Precip needs to be measured in advance as the input.
 global Gsc Sigma_E 
 global Rns Rnl 
@@ -164,11 +164,11 @@ alpha_h=zeros(mL,nD);      %root water uptake
 bx=zeros(mL,nD);SAVEKfL_h=zeros(mL,nD);
 Srt=zeros(mL,nD);DhDZ=zeros(mL,1);DTDZ=zeros(mL,1);DRHOVZ=zeros(mL,1); DTheta_LLh=zeros(mL,nD);DTheta_UUh=zeros(mL,nD);SAVETheta_UU=zeros(mL,nD);SAVEDTheta_UUh=zeros(mL,nD);SAVEDTheta_LLh=zeros(mL,nD);SAVEDTheta_LLT=zeros(mL,nD);
 Ratio_ice=zeros(mL,nD);
-KL_h=zeros(mL,nD);       % The hydraulic conductivity(m��s^-1); 
-KfL_h=zeros(mL,nD);       % The hydraulic conductivity considering ice blockking effect(m��s^-1); 
-KfL_T=zeros(mL,nD);       % The depression temperature controlled by ice(m^2��Cels^-1��s^-1); 
-KL_T=zeros(mL,nD);       % The conductivity controlled by thermal gradient(m^2��Cels^-1��s^-1); 
-D_Ta=zeros(mL,nD);      % The thermal dispersivity for soil water (m^2��Cels^-1��s^-1); 
+KL_h=zeros(mL,nD);       % The hydraulic conductivity(mï¿½ï¿½s^-1); 
+KfL_h=zeros(mL,nD);       % The hydraulic conductivity considering ice blockking effect(mï¿½ï¿½s^-1); 
+KfL_T=zeros(mL,nD);       % The depression temperature controlled by ice(m^2ï¿½ï¿½Cels^-1ï¿½ï¿½s^-1); 
+KL_T=zeros(mL,nD);       % The conductivity controlled by thermal gradient(m^2ï¿½ï¿½Cels^-1ï¿½ï¿½s^-1); 
+D_Ta=zeros(mL,nD);      % The thermal dispersivity for soil water (m^2ï¿½ï¿½Cels^-1ï¿½ï¿½s^-1); 
 Theta_L=zeros(mL,nD);   % The soil moisture at the start of current time step;  
 Theta_LL=zeros(mL,nD);  % The soil moisture at the end of current time step;      
 Theta_U=zeros(mL,nD);   % The total soil moisture(water+ice) at the start of current time step;  
@@ -187,12 +187,12 @@ T_CRIT=zeros(mN,1);              % The soil ice critical temperature at the star
 TT_CRIT=zeros(mN,1);              % The soil ice critical temperature at the start of current time step; 
 EPCT=zeros(mN,1);
 Theta_V=zeros(mL,nD);    % Volumetric gas content;  
-W=zeros(mL,nD);             % Differential heat of wetting at the start of current time step(J��kg^-1);  
-WW=zeros(mL,nD);          % Differential heat of wetting at the end of current time step(J��kg^-1);
-                                    % Integral heat of wetting in individual time step(J��m^-2); %%%%%%%%%%%%%%% Notice: the formulation of this in 'CondL_Tdisp' is not a sure. %%%%%%%%%%%%%%
-MU_W=zeros(mL,nD);        % Visocity of water(kg��m^?6?1��s^?6?1);
+W=zeros(mL,nD);             % Differential heat of wetting at the start of current time step(Jï¿½ï¿½kg^-1);  
+WW=zeros(mL,nD);          % Differential heat of wetting at the end of current time step(Jï¿½ï¿½kg^-1);
+                                    % Integral heat of wetting in individual time step(Jï¿½ï¿½m^-2); %%%%%%%%%%%%%%% Notice: the formulation of this in 'CondL_Tdisp' is not a sure. %%%%%%%%%%%%%%
+MU_W=zeros(mL,nD);        % Visocity of water(kgï¿½ï¿½m^?6?1ï¿½ï¿½s^?6?1);
 f0=zeros(mL,nD);              % Tortusity factor [Millington and Quirk (1961)];                   kg.m^2.s^-2.m^-2.kg.m^-3       
-L_WT=zeros(mL,nD);         % Liquid dispersion factor in Thermal dispersivity(kg��m^-1��s^-1)=-------------------------- m^2 (1.5548e-013 m^2);
+L_WT=zeros(mL,nD);         % Liquid dispersion factor in Thermal dispersivity(kgï¿½ï¿½m^-1ï¿½ï¿½s^-1)=-------------------------- m^2 (1.5548e-013 m^2);
 DhT=zeros(mN,1);             % Difference of matric head with respect to temperature;              m. kg.m^-1.s^-1
 RHS=zeros(mN,1);             % The right hand side part of equations in '*_EQ' subroutine;
 EHCAP=zeros(mL,nD);        % Effective heat capacity;
@@ -212,29 +212,29 @@ C5=zeros(mL,nD);            % Conductivity term coefficients related to temperat
 C6=zeros(mL,nD);            % Conductivity term coefficients related to soil air pressure;
 C7=zeros(mN,1);             % Gravity term coefficients;
 C9=zeros(mN,1);             % root water uptake coefficients;
-QL=zeros(mL,nD);            % Soil moisture mass flux (kg��m^-2��s^-1);
-QL_D=zeros(mL,nD);         % Convective moisturemass flux (kg��m^-2��s^-1);
-QL_disp=zeros(mL,nD);     % Dispersive moisture mass flux (kg��m^-2��s^-1);
-QL_h=zeros(mL,nD);     % potential driven moisture mass flux (kg��m^-2��s^-1);
-QL_T=zeros(mL,nD);     % temperature driven moisture mass flux (kg��m^-2��s^-1);
+QL=zeros(mL,nD);            % Soil moisture mass flux (kgï¿½ï¿½m^-2ï¿½ï¿½s^-1);
+QL_D=zeros(mL,nD);         % Convective moisturemass flux (kgï¿½ï¿½m^-2ï¿½ï¿½s^-1);
+QL_disp=zeros(mL,nD);     % Dispersive moisture mass flux (kgï¿½ï¿½m^-2ï¿½ï¿½s^-1);
+QL_h=zeros(mL,nD);     % potential driven moisture mass flux (kgï¿½ï¿½m^-2ï¿½ï¿½s^-1);
+QL_T=zeros(mL,nD);     % temperature driven moisture mass flux (kgï¿½ï¿½m^-2ï¿½ï¿½s^-1);
 HR=zeros(mN,1);             % The relative humidity in soil pores, used for calculatin the vapor density;
-RHOV_s=zeros(mN,1);      % Saturated vapor density in soil pores (kg��m^-3);
-RHOV=zeros(mN,1);         % Vapor density in soil pores (kg��m^-3);
+RHOV_s=zeros(mN,1);      % Saturated vapor density in soil pores (kgï¿½ï¿½m^-3);
+RHOV=zeros(mN,1);         % Vapor density in soil pores (kgï¿½ï¿½m^-3);
 DRHOV_sT=zeros(mN,1);   % Derivative of saturated vapor density with respect to temperature;
 DRHOVh=zeros(mN,1);      % Derivative of vapor density with respect to matric head;
 DRHOVT=zeros(mN,1);      % Derivative of vapor density with respect to temperature;
-RHODA=zeros(mN,1);        % Dry air density in soil pores(kg��m^-3);
+RHODA=zeros(mN,1);        % Dry air density in soil pores(kgï¿½ï¿½m^-3);
 DRHODAt=zeros(mN,1);     % Derivative of dry air density with respect to time;
 DRHODAz=zeros(mN,1);     % Derivative of dry air density with respect to distance;
 Xaa=zeros(mN,1);            % Coefficients of derivative of dry air density with respect to temperature and matric head;
 XaT=zeros(mN,1);            % Coefficients of derivative of dry air density with respect to temperature and matric head;
 Xah=zeros(mN,1);            % Coefficients of derivative of dry air density with respect to temperature and matric head;
-D_Vg=zeros(mL,1);           % Gas phase longitudinal dispersion coefficient (m^2��s^-1);
-D_V=zeros(mL,nD);           % Molecular diffusivity of water vapor in soil(m^2��s^-1);
-D_A=zeros(mN,1);            % Diffusivity of water vapor in air (m^2��s^-1);
+D_Vg=zeros(mL,1);           % Gas phase longitudinal dispersion coefficient (m^2ï¿½ï¿½s^-1);
+D_V=zeros(mL,nD);           % Molecular diffusivity of water vapor in soil(m^2ï¿½ï¿½s^-1);
+D_A=zeros(mN,1);            % Diffusivity of water vapor in air (m^2ï¿½ï¿½s^-1);
 k_g=zeros(mL,nD);           % Intrinsic air permeability (m^2);
 Sa=zeros(mL,nD);            % Saturation degree of gas in soil pores;
-V_A=zeros(mL,nD);           % Soil air velocity (m��s^-1);
+V_A=zeros(mL,nD);           % Soil air velocity (mï¿½ï¿½s^-1);
 Alpha_Lg=zeros(mL,nD);    % Longitudinal dispersivity in gas phase (m);
 POR_C=zeros(mL,nD);        % The threshold air-filled porosity;
 Eta=zeros(mL,nD);            % Enhancement factor for thermal vapor transport in soil.
@@ -288,11 +288,11 @@ Ta=zeros(Nmsrmn,1);         % Air temperature;
 Ts=zeros(Nmsrmn,1);         % Surface temperature;
 U=zeros(Nmsrmn,1);          % Wind speed (m.s^-1);
 HR_a=zeros(Nmsrmn,1);      % Air relative humidity;
-Rns=zeros(Nmsrmn,1);        % Net shortwave radiation(W��m^-2);
-Rnl=zeros(Nmsrmn,1);        % Net longwave radiation(W��m^-2);
+Rns=zeros(Nmsrmn,1);        % Net shortwave radiation(Wï¿½ï¿½m^-2);
+Rnl=zeros(Nmsrmn,1);        % Net longwave radiation(Wï¿½ï¿½m^-2);
 Rn=zeros(Nmsrmn,1);
 h_SUR=zeros(Nmsrmn,1);    % Observed matric potential at surface;
-SH=zeros(Nmsrmn,1);         % Sensible heat (W��m^-2);
+SH=zeros(Nmsrmn,1);         % Sensible heat (Wï¿½ï¿½m^-2);
 MO=zeros(Nmsrmn,1);         % Monin-Obukhov's stability parameter (MO Length);
 Zeta_MO=zeros(Nmsrmn,1); % Atmospheric stability parameter;
 TopPg=zeros(Nmsrmn,1);     % Atmospheric pressure above the surface as the boundary condition (Pa);
@@ -380,7 +380,7 @@ hThmrl=1;                            % Value of 1, the special calculation of wa
 h_TE=0;                               % Value of 1 means that the temperature dependence                                      %
                                           % of matric head would be considered.Otherwise,0;                                       %   
 W_Chg=1;                            % Value of 0 means that the heat of wetting would                                       %
-                                          % be calculated by Milly's method��Otherwise,1. The                                     %  
+                                          % be calculated by Milly's methodï¿½ï¿½Otherwise,1. The                                     %  
                                           % method of Lyle Prunty would be used;                                                  %
 ThmrlCondCap=1; %1;            % The indicator for choosing Milly's effective thermal capacity and conductivity         %
                                           % formulation to verify the vapor and heat transport in extremly dry soil.              % 
@@ -419,16 +419,16 @@ b=4*10^(-6);                     % Coefficient for calculating viscosity of wate
 W0=1.001*10^3;                % Coefficient for calculating differential heat of wetting by Milly's method
 L0=597.3*4.182;
 Tr=20;                              % Reference temperature
-c_L=4.186;                        % Specific heat capacity of liquid water (J��g^-1��Cels^-1) %%%%%%%%% Notice the original unit is 4186kg^-1
-c_V=1.870;                        % Specific heat capacity of vapor (J��g^-1��Cels^-1)
+c_L=4.186;                        % Specific heat capacity of liquid water (Jï¿½ï¿½g^-1ï¿½ï¿½Cels^-1) %%%%%%%%% Notice the original unit is 4186kg^-1
+c_V=1.870;                        % Specific heat capacity of vapor (Jï¿½ï¿½g^-1ï¿½ï¿½Cels^-1)
 c_a=1.005;
-%c_a=1.005;                        % 0.0003*4.186; %Specific heat capacity of dry air (J��g^-1��Cels^-1)
-c_i=2.0455;                        % Specific heat capacity of ice (J��g^-1��Cels^-1)
-Gsc=1360;                         % The solar constant (1360 W��m^-2)
-Sigma_E=4.90*10^(-9);       % The stefan-Boltzman constant.(=4.90*10^(-9) MJ��m^-2��Cels^-4��d^-1)
+%c_a=1.005;                        % 0.0003*4.186; %Specific heat capacity of dry air (Jï¿½ï¿½g^-1ï¿½ï¿½Cels^-1)
+c_i=2.0455;                        % Specific heat capacity of ice (Jï¿½ï¿½g^-1ï¿½ï¿½Cels^-1)
+Gsc=1360;                         % The solar constant (1360 Wï¿½ï¿½m^-2)
+Sigma_E=4.90*10^(-9);       % The stefan-Boltzman constant.(=4.90*10^(-9) MJï¿½ï¿½m^-2ï¿½ï¿½Cels^-4ï¿½ï¿½d^-1)
 P_g0=95197.850;%951978.50;               % The mean atmospheric pressure (Should be given in new simulation period subroutine.)
 rroot=1.5*1e-3; 
-RTB=1000;                    %initial root total biomass (g)
+RTB=1000;                    %initial root total biomass (g m-2)
 Precipp=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input for producing initial soil moisture and soil temperature profile
@@ -447,6 +447,7 @@ G_msr=Mdata(:,7)'*0.15;
 Ts_msr=Mdata(:,2)';
 Precip_msr=Mdata(:,6)'*10*DELT;
 Tmin=min(Ts_msr);
+Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
 InitND2=30;
 InitND3=60;
@@ -471,20 +472,21 @@ InitX5=	0.0845;
 InitX6=	0.078;
 BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-InitT0= -0.32554812042345;  %-1.75estimated soil surface temperature-1.762
-InitT1=	1.47214795327483;
-InitT2=	2.31236451432981;
-InitT3=	2.89208940206501;
-InitT4=	3.73006346689778;
-InitT5=	4.07350351072157;%;
-InitT6=	4.033;
-BtmT=mean(Ts_msr);  %9 8.1
-InitX0=	0.077503746503950;  %0.0793
-InitX1=	0.092141294540442; % Measured soil liquid moisture content
-InitX2=	0.139618635508642; %0.182
-InitX3=	0.156812295825425;
-InitX4= 0.169971216306663; %0.14335
-InitX5=	0.19354781823877;
-InitX6=	0.1896;
+InitT0= mean(Ta_msr);  %-1.75estimated soil surface temperature-1.762
+InitT1=	mean(Ta_msr);
+InitT2=	mean(Ta_msr);
+InitT3=	mean(Ta_msr);
+InitT4=	mean(Ta_msr);
+InitT5=	mean(Ta_msr);%;
+InitT6=	mean(Ta_msr);
+Tss=InitT0;
+BtmT=mean(Ta_msr);  %9 8.1
+InitX0=	fieldMC(1);  %0.0793
+InitX1=	fieldMC(1); % Measured soil liquid moisture content
+InitX2=	fieldMC(2); %0.182
+InitX3=	fieldMC(3);
+InitX4= fieldMC(4); %0.14335
+InitX5=	fieldMC(5);
+InitX6=	fieldMC(6);
 BtmX=fieldMC(6);%0.05;    % The initial moisture content at the bottom of the column.
 end

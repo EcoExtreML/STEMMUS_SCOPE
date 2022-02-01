@@ -307,7 +307,7 @@ if (lEctot<1000 && lEstot<800 && lEctot>-300 && lEstot>-300 && any(TT>5))
     Srt1=RWU*100./DeltZ';
 else 
     Evap(KT)=0; % transfer to second value unit: cm s-1
-    EVAP(KT,1)=0;
+    EVAP(KT,1)=Evap(KT);
     Tp_t(KT)=0; % transfer to second value 
     Srt1=0./DeltZ'; 
 end

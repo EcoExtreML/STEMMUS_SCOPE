@@ -1,10 +1,10 @@
 function [GAM] = Soil_Inertia1(SMC)
-
+global theta_s0
 %soil inertia method by Murray and Verhoef (
 
-%% parameters
+% % parameters
 
-theta_s = 0.42; %(saturated water content, m3/m3)
+theta_s = theta_s0; %(saturated water content, m3/m3)
 Sr = SMC/theta_s;
 
 %fss = 0.58; %(sand fraction)
@@ -14,7 +14,7 @@ dels = 1.33; %(shape parameter)
 
 ke = exp(gamma_s*(1- power(Sr,(gamma_s - dels))));
 
-phis  = 0.5; %(phis == theta_s)
+phis  = theta_s0; %(phis == theta_s)
 lambda_d = -0.56*phis + 0.51;
 
 QC = 0.20; %(quartz content)

@@ -33,7 +33,15 @@ Integrated code of SCOPE and STEMMUS
 
 Open the file "filesread.m" and set all paths at the top of this file. The rest of the workflow is the same as explained above. 
 
-(4) [Create Standalone Application from MATLAB](https://nl.mathworks.com/help/compiler/mcc.html)
+(4) Converting `.csv` files to NetCDF files:
+
+There is some files in utils directory in this repository. The utils are used to
+read `.csv` files and save them in `.nc` format. 
+
+> An example NetCDF file is stored in the project directory to show the desired
+  structure of variables in one file.
+
+(5) [Create Standalone Application from MATLAB](https://nl.mathworks.com/help/compiler/mcc.html)
 
 ```bash
 mcc -m STEMMUS_SCOPE/src/STEMMUS_SCOPE_exe.m -a STEMMUS_SCOPE/src -d STEMMUS_SCOPE/exe -o STEMMUS_SCOPE -R nodisplay

@@ -18,7 +18,7 @@ global EVAP CHK QET QEB r_a_SOIL Resis_a Tbtm Rn_SOIL QLT QLH QVH QVT QVa h_frez
 [RHS,C5,C5_a]=Enrgy_BC(RHS,KT,NN,c_L,RHOL,QMB,SH,Precip,L,L_ts,NBCTB,NBCT,BCT,BCTB,DSTOR0,Delt_t,T,Ts,Ta,EVAP,C5,C5_a,r_a_SOIL,Resis_a,Tbtm,c_a,Rn_SOIL);
 [TT,CHK,RHS,C5]= Enrgy_Solve(C5,C5_a,TT,NN,NL,RHS);
 DeltT=abs(TT-TOLD);
-if any(isnan(TT)) || any(TT(1:NN)<Tmin) || any(DeltT(1:NN)>30) %isnan(TT)==1
+if any(isnan(TT)) || any(TT(1:NN)<Tmin) %|| any(DeltT(1:NN)>30) %isnan(TT)==1
     for MN=1:NN
     TT(MN)=TOLD(MN);
     end

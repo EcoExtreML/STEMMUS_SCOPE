@@ -1,17 +1,16 @@
-%%%%%%% Get paths from a config file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global CFG
-global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName
-
-% read the config file
-file_id = fopen(CFG);
-config = textscan(file_id,'%s %s', 'HeaderLines',0, 'Delimiter', '=');
-fclose(file_id);
-
-% assign config paths to global variables
-% reshape so each path is in one column
-paths = config{2}';
-% TODO check if one path isnot avaialble
-[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName] = paths{:};
+%%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set soil parameters path
+SoilPropertyPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/';
+% Set input paths including vegetation parameters and forcing dat files
+% Set this path the same as working dir and copy file there
+InputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/';
+% Set output path
+OutputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/';
+% Set forcing data path
+ForcingPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data';
+% Set forsing netcdf file name
+% here as an example, we pick 'FI-Hyy_1996-2014_FLUXNET2015_Met'
+ForcingFileName='AU-Emr_2012-2013_OzFlux_Met.nc';
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename

@@ -36,5 +36,5 @@ Open the file "filesread.m" and set all paths at the top of this file. The rest 
 (4) [Create Standalone Application from MATLAB](https://nl.mathworks.com/help/compiler/mcc.html)
 
 ```bash
-mcc -m STEMMUS_SCOPE_exe.m -d STEMMUS_SCOPE/exe -o STEMMUS_SCOPE -R nodisplay
+mcc -m STEMMUS_SCOPE/src/STEMMUS_SCOPE_exe.m -a STEMMUS_SCOPE/src -d STEMMUS_SCOPE/exe -o STEMMUS_SCOPE -R nodisplay
 ```

@@ -1,0 +1,6 @@
+SoilPropertyPath=/projects/0/einf2480/model_parameters/soil_property/
+InputPath=/scratch-shared/EcoExtreML/STEMMUS_SCOPE/input/
+OutPath=/scratch-shared/EcoExtreML/STEMMUS_SCOPE/output/
+ForcingPath=/projects/0/einf2480/forcing/plumber2_data/
+ForcingFileName=AU-Emr_2012-2013_OzFlux_Met.nc
+VegetationPropertyPath=/projects/0/einf2480/model_parameters/vegetation_property/

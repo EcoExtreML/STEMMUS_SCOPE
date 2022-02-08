@@ -1,6 +1,6 @@
 #!/bin/bash
 # This is a batch script for Snellius at Surf
-# usage: sbatch run_stemmus_scope.sh
+# usage: cd STEMMUS_SCOPE; sbatch exe/build_stemmus_scope_exe.sh
 
 # SLURM settings
 #SBATCH -J stemmus_scope
@@ -23,5 +23,4 @@ module load 2021
 module load MATLAB/2021a-upd3
 
 # Create executable file
-cd STEMMUS_SCOPE
 mcc -m ./src/STEMMUS_SCOPE_exe.m -a ./src -d ./exe -o STEMMUS_SCOPE -R nodisplay

@@ -1,6 +1,6 @@
 #!/bin/bash
 # This is a batch script for Snellius at Surf
-# usage: cd STEMMUS_SCOPE; sbatch run_stemmus_scope_snellius.sh
+# usage: cd STEMMUS_SCOPE; mkdir -p slurm; sbatch run_stemmus_scope_snellius.sh
 
 # SLURM settings
 #SBATCH -J stemmus_scope

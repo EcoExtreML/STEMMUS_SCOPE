@@ -239,8 +239,9 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
         > and copies required data to those working drs. To change the number of
         > sites, open the script and change the parameter `1-2` in line `#SBATCH
         > --array=1-2%32`. Note that the model run can take long for some of the
-        > sites. You can run the script in a terminal: `cd STEMMUS_SCOPE; sbatch
-        > run_stemmus_scope_snellius.sh`
+        > sites. You can run the script in a terminal: `cd STEMMUS_SCOPE; mkdir
+        > -p slurm; sbatch run_stemmus_scope_snellius.sh`. This creates a log
+        > file per each forcing file in a folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE
 

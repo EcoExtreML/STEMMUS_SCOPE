@@ -7,8 +7,8 @@ The file `STEMMUS_SCOPE` under `exe` directory is an executable file of
 STEMMUS_SCOPE that is created using MATLAB version `2021a` in a Linux system.
 Note that the version of the MATLAB Runtime is tied to the version of MATLAB.
 For more information, see [How to run STEMMUS_SCOPE on
-CRIB](../README.md#how_to_run_stemmus_scope_on_crib) or [How to run
-STEMMUS_SCOPE on Snellius](../README.md#how_to_run_stemmus_scope_on_snellius).
+CRIB](../README.md#how-to-run-stemmus_scope-on-crib) or [How to run
+STEMMUS_SCOPE on Snellius](../README.md#how-to-run-stemmus_scope-on-snellius).
 
 To re-create an executable file of `STEMMUS_SCOPE`, you need a MATLAB license.
 In order to use MATLAB on Snellius, you need to send a request to add you to the

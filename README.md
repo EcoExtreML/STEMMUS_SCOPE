@@ -170,7 +170,7 @@ Dutch National supercomputer hosted at SURF.
 ### Workflow of STEMMUS_SCOPE on Snellius:
 
 This is the same as the workflow of STEMMUS_SCOPE on crib, see section
-[Workflow of STEMMUS_SCOPE on CRIB](workflow_of_stemmus_scope_on_crib). 
+[Workflow of STEMMUS_SCOPE on CRIB](#workflow-of-stemmus_scope-on-crib). 
 
 ### How to run STEMMUS_SCOPE on Snellius:
 

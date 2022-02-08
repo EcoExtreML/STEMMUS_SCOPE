@@ -4,12 +4,12 @@
 
 # SLURM settings
 #SBATCH -J stemmus_scope
-#SBATCH -t 01:00:00
-#SBATCH -N 1
+#SBATCH -t 00:10:00
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
 #SBATCH -p thin
-#SBATCH --array=1-2%32
+#SBATCH --array=1-2
 #SBATCH --output=./slurm/slurm_%A_%a.out
 #SBATCH --error=./slurm/slurm_%A_%a.out
 
@@ -26,18 +26,19 @@ source $config
 
 ############ Config file should have the variables below ############
 echo "SoilPropertyPath is $SoilPropertyPath"
+echo "InputPath is $InputPath"
 echo "OutputPath is $OutputPath"
 echo "ForcingPath is $ForcingPath"
 echo "VegetationPropertyPath is $VegetationPropertyPath"
 
 ### 3. Run the model ############
 ### 3.1 loop over forcing file using Array jobs
-echo "$SLURM_ARRAY_TASK_ID"
+echo "SLURM_ARRAY_TASK_ID is $SLURM_ARRAY_TASK_ID"
 
 ncfiles=("$(echo "$ForcingPath" | tr -d '\r')"*.nc)
 ### -1 is needed because ncfiles array starts from 0
 file=${ncfiles[$SLURM_ARRAY_TASK_ID-1]}
-echo "ForcingFileName is $file"
+echo "ForcingFile is $file"
 
 start_time=$(date +%s)
 base_name=$(basename ${file})
@@ -46,7 +47,7 @@ timestamp=$(date +"%Y-%m-%d-%H%M")
 
 ### 3.2 create input directories, 
 WorkDir="$(echo "$InputPath" | tr -d '\r')${station_name}_${timestamp}/"
-mkdir $WorkDir
+mkdir -p $WorkDir
 
 ### 3.3 copy files to WorkDir,
 vegetation_path="$(echo "$VegetationPropertyPath" | tr -d '\r')"
@@ -63,6 +64,10 @@ sed -e "s/ForcingFileName=.*$/ForcingFileName=$base_name/g" \
 exe/STEMMUS_SCOPE $station_config
 
 end_time=$(date +%s)
-echo $(expr $end_time - $start_time) s
-## TODO 3.6 check if model run is finished
-## This can be done later by checking "State" in slurm*.out file
+run_time=$(expr $end_time - $start_time)
+
+## 3.6 Add some information to the end of slurm*.out file
+## some of the sacct information cannot be retrieved here, 
+## but later when the job is finished.
+echo "ForcingFileName is $base_name"
+echo "Model run_time is $run_time s"

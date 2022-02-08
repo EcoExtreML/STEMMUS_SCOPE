@@ -238,10 +238,15 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
         > `sitename_timestamped` working directories under "InputPath" directory
         > and copies required data to those working drs. To change the number of
         > sites, open the script and change the parameter `1-2` in line `#SBATCH
-        > --array=1-2%32`. Note that the model run can take long for some of the
-        > sites. You can run the script in a terminal: `cd STEMMUS_SCOPE; mkdir
-        > -p slurm; sbatch run_stemmus_scope_snellius.sh`. This creates a log
-        > file per each forcing file in a folder `slurm`.
+        > --array=1-2`. A maximum number of simultaneously running tasks from
+        > the job array may be specified using a "%" separator. For example
+        > "--array=1-10%4" will limit the number of simultaneously running tasks
+        > from this job array to 4, see [Slurm Job
+        > Array](https://slurm.schedmd.com/job_array.html). Note that the model
+        > run can take long for some of the sites. You can run the script in a
+        > terminal: `cd STEMMUS_SCOPE; mkdir -p slurm; sbatch
+        > run_stemmus_scope_snellius.sh`. This creates a log file per each
+        > forcing file in a folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE
 

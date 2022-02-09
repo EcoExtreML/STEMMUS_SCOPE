@@ -6,8 +6,7 @@
 #SBATCH -J stemmus_scope
 #SBATCH -t 00:10:00
 #SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --tasks-per-node=32
 #SBATCH -p thin
 #SBATCH --array=1-2
 #SBATCH --output=./slurm/slurm_%A_%a.out

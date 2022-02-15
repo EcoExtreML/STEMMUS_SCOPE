@@ -62,10 +62,10 @@ def read2d_transposed_unit(filename, nrHeaderLines, unit, depths):
 def generateNetCdf(lat, lon, outputfile, workdir):
     # location and filenames:
 
-    filename_out = workdir + '\\' + outputfile
-    variables_filename = workdir + '\\Variables will be in NetCDF file.csv' # This is Sheet 2 from the Excel file, stored as csv, with the following changes, to make it work:
-    sim_theta = workdir + '\\Sim_Theta.csv'
-    sim_temp = workdir + '\\Sim_Temp.csv'
+    filename_out = workdir + '/' + outputfile
+    variables_filename = workdir + '/Variables_will_be_in_NetCDF_file.csv' # This is Sheet 2 from the Excel file, stored as csv, with the following changes, to make it work:
+    sim_theta = workdir + '/Sim_Theta.csv'
+    sim_temp = workdir + '/Sim_Temp.csv'
 
     # Renamed radiation.dat to radiation.csv
     # Renamed LEtot to lEtot
@@ -153,13 +153,13 @@ def generateNetCdf(lat, lon, outputfile, workdir):
         if stemmusname != '':
             if file not in data:
                 print('Reading data from file', "'" + file + "'")
-                data[file] = readcsv(workdir + '\\' + file, headerlines[file])
+                data[file] = readcsv(workdir + '/' + file, headerlines[file])
             var[:] = data[file][stemmusname]
             if var_t_length == None:
                 var_t_length = len(data[file][stemmusname])
         else: # Sim_Temp or Sim_Theta
             print('Reading data from file', "'" + file + "'")
-            matrix = read2d_transposed_unit(workdir + '\\' + file, headerlines[file], unit, depths)
+            matrix = read2d_transposed_unit(workdir + '/' + file, headerlines[file], unit, depths)
             var[:] = matrix
 
     # Finally fill var_t with the nr of seconds per timestep
@@ -173,8 +173,8 @@ def generateNetCdf(lat, lon, outputfile, workdir):
 # main()
 lat = -35.6566009521484
 lon = 148.151702880859
-workdir = r'path_to_output_dir' # This is the working folder; place all related files here (aerodyn.csv, ECdata.csv, fluxes.csv, radiation.csv, Sim_Temp.csv, Sim_Theta.csv, surftemp.csv, Variables will be in NetCDF file.csv)
-site_name = 'MySite' # change as required
+workdir = r'/home/sarah/temp/ecoextreml/AR-SLu_2022-02-09-1551' # This is the working folder; place all related files here (aerodyn.csv, ECdata.csv, fluxes.csv, radiation.csv, Sim_Temp.csv, Sim_Theta.csv, surftemp.csv, Variables will be in NetCDF file.csv)
+site_name = 'AR-SLu' # change as required
 model_name = 'Stemmus' # update/correct if needed
-outputfile = site_name + '_2002-2017_' + model_name + '.nc' # This is the output filename
+outputfile = site_name + '2022-02-09-1551' + model_name + '.nc' # This is the output filename
 generateNetCdf(lat, lon, outputfile, workdir)

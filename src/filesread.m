@@ -8,6 +8,7 @@ if isempty(CFG)
 end
 
 %% Read the CFG file. Due to using MATLAB compiler, we cannot use run(CFG)
+disp (['Reading config from ',CFG])
 [SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName] = io.read_config(CFG);
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

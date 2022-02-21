@@ -13,7 +13,8 @@ Integrated code of SCOPE and STEMMUS.
 
     - Plumber2_data: the forcing/driving data provided by PLUMBER2.
     - SoilProperty: the soil texture data and soil hydraulic parameters.
-    - directional: [FIXE ME]
+    Below directory explanations are from SCOPE documentation (https://scope-model.readthedocs.io/en/latest/directories.html):
+    - directional: the observer’s zenith and azimuth angles.(only used for multi-angle simulations (if the option ‘directional’ is switched on in parameters).
     - fluspect_parameters: [FIXE ME]
     - leafangles: [FIXE ME]
     - radiationdata: [FIXE ME]

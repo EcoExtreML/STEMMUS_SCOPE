@@ -138,7 +138,7 @@ Dutch National supercomputer hosted at SURF.
       - input_data.xlsx: [FIXE ME]
 
 2. Config file: it is a text file that sets the paths **required** by the
-    model. For example, see `config_file_snellius.txt` in this repository. This file
+    model. For example, see [config_file_snellius.txt](config_file_snellius.txt) in this repository. This file
     includes:
 
     - SoilPropertyPath: a path to soil texture data and soil hydraulic

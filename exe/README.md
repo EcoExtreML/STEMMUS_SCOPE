@@ -1,7 +1,7 @@
 # Create an executable file of STEMMUS_SCOPE
 
 If you want to run the STEMMUS_SCOPE model, you need to run it using MATLAB or
-MATLAB Runtime. You don't need a license for MATLAB Runtime. 
+[MATLAB Runtime](https://nl.mathworks.com/products/compiler/matlab-runtime.html). You don't need a license for MATLAB Runtime. 
 
 The file `STEMMUS_SCOPE` under `exe` directory is an executable file of
 STEMMUS_SCOPE that is created using MATLAB version `2021a` in a Linux system.

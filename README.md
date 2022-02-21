@@ -17,7 +17,7 @@ Integrated code of SCOPE and STEMMUS.
     - directional: the observer’s zenith and azimuth angles.(only used for multi-angle simulations (if the option ‘directional’ is switched on in parameters).
     - fluspect_parameters: absorption spectra of different leaf components are provided, according to PROSPECT 3.1, as well as Fluspect input: standard spectra for PSI and PSII.
     - leafangles: example leaf inclination distribution data are provided.
-    - radiationdata: [FIXE ME]
+    - radiationdata: RTMo.m calculates spectra based on MODTRAN5 outputs (T-18 system).Note that in the input data (files as well as the spreadsheet), the broadband input radiation may be provided. SCOPE linearly scales the input spectra of the optical and the thermal domain in such a way, that the spectrally integrated input shortwave and long wave radiation matches with the measured values.
     - soil_spectra: [FIXE ME]
     - input_data.xlsx: [FIXE ME]
 

@@ -246,7 +246,7 @@ matlab -nodisplay -nosplash -nodesktop -r "STEMMUS_SCOPE_exe('config_file_snelli
 
 module load 2021
 module load MATLAB/2021a-upd3
-matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
+matlab -nodisplay -nosplash -nodesktop -r "STEMMUS_SCOPE_exe('config_file_snellius.txt');exit;"
 ```
 
 #### Run using MATLAB Compiler that does not require a license

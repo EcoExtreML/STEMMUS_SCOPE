@@ -10,7 +10,7 @@ For more information, see [How to run STEMMUS_SCOPE on
 CRIB](../README.md#how-to-run-stemmus_scope-on-crib) or [How to run
 STEMMUS_SCOPE on Snellius](../README.md#how-to-run-stemmus_scope-on-snellius).
 
-To re-create an executable file of `STEMMUS_SCOPE`, you need a MATLAB license.
+To re-create an executable file of `STEMMUS_SCOPE`, you need a license for [MATLAB compiler](https://nl.mathworks.com/products/compiler.html).
 In order to use MATLAB on Snellius, you need to send a request to add you to the
 user pool. The bash script `build_stemmus_scope_exe.sh` creates an executable
 file on Snelluis of Surf.nl.

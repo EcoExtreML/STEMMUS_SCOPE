@@ -193,7 +193,7 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
     pool on Snellius. Then, open the file `filesread.m` and set the variable
     `CFG` to the path of the config file e.g. `CFG =
     './STEMMUS_SCOPE/config_file_snellius.txt';`. Then, run the main script
-    `STEMMUS_SCOPE.m` using MATLAB command line in a terminal on a **comupute
+    `STEMMUS_SCOPE.m` using MATLAB command line in a terminal on a **compute
     node**:
 
         ```bash

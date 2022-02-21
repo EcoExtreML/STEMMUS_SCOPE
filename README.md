@@ -223,7 +223,7 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
 
     2. **Using MATLAB Compiler that does not require a license**:
     If you want to run the model as a standalone application, you need MATLAB
-    Runtime version `2021a`. This is avialbale on Snellius. You can run the
+    Runtime version `2021a`. This is available on Snellius. You can run the
     model by passing the path of the config file in a terminal on a **comupute
     node**:
 

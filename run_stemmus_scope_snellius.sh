@@ -60,10 +60,8 @@ sed -e "s/ForcingFileName=.*$/ForcingFileName=$base_name/g" \
     -e "s|InputPath=.*$|InputPath=$WorkDir|g" <$config >$station_config
 
 ### 3.5 run the model 
-exe/STEMMUS_SCOPE $station_config
+time exe/STEMMUS_SCOPE $station_config
 
-end_time=$(date +%s)
-run_time=$(expr $end_time - $start_time)
 
 ## 3.6 Add some information to the end of slurm*.out file
 ## some of the sacct information cannot be retrieved here, 

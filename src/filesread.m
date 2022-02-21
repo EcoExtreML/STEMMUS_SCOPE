@@ -1,16 +1,15 @@
 %%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Set soil parameters path
-SoilPropertyPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/';
-% Set input paths including vegetation parameters and forcing dat files
-% Set this path the same as working dir and copy file there
-InputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/';
-% Set output path
-OutputPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/';
-% Set forcing data path
-ForcingPath='/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data';
-% Set forsing netcdf file name
-% here as an example, we pick 'FI-Hyy_1996-2014_FLUXNET2015_Met'
-ForcingFileName='AU-Emr_2012-2013_OzFlux_Met.nc';
+global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName
+global CFG
+
+%% CFG is a path to a config file
+if isempty(CFG)
+    CFG = '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/STEMMUS_SCOPE/config_file_crib.txt';
+end
+
+%% Read the CFG file. Due to using MATLAB compiler, we cannot use run(CFG)
+disp (['Reading config from ',CFG])
+[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName] = io.read_config(CFG);
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename

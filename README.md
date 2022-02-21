@@ -19,7 +19,7 @@ Integrated code of SCOPE and STEMMUS.
     - leafangles: example leaf inclination distribution data are provided.
     - radiationdata: RTMo.m calculates spectra based on MODTRAN5 outputs (T-18 system).Note that in the input data (files as well as the spreadsheet), the broadband input radiation may be provided. SCOPE linearly scales the input spectra of the optical and the thermal domain in such a way, that the spectrally integrated input shortwave and long wave radiation matches with the measured values.
     - soil_spectra: the soil spectrum is provided. Note that it is also possible to simulate a soil reflectance spectrum with the BSM model. In that case the values for the BSM model parameters are taken from the input data, and the archived spectra in this folder are not used.
-    - input_data.xlsx: [FIXE ME]
+    - input_data.xlsx: In this file the input to SCOPE model is provided. It provides parameter inputs for PROSPECT, leaf_biochemical, fluoresence, soil, canopy, aerodynamic, anles, photosynthetic temperature dependence functional parameters, etc.
 
 2. Config file: it is a text file that sets the paths **required** by the
     model. For example, see `config_file_crib.txt` in this repository. This file

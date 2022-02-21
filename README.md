@@ -12,14 +12,32 @@ Integrated code of SCOPE and STEMMUS.
     directory on CRIB. This folder includes:
 
     - Plumber2_data: the forcing/driving data provided by PLUMBER2.
-    - SoilProperty: the soil texture data and soil hydraulic parameters.
-    Below directory explanations are from SCOPE documentation (https://scope-model.readthedocs.io/en/latest/directories.html):
-    - directional: the observer’s zenith and azimuth angles.(only used for multi-angle simulations (if the option ‘directional’ is switched on in parameters).
-    - fluspect_parameters: absorption spectra of different leaf components are provided, according to PROSPECT 3.1, as well as Fluspect input: standard spectra for PSI and PSII.
+    - SoilProperty: the soil texture data and soil hydraulic parameters. 
+    
+    Below the directory explanations are from [SCOPE
+    documentation](https://scope-model.readthedocs.io/en/latest/directories.html):
+
+    - directional: the observer’s zenith and azimuth angles.(only used for
+      multi-angle simulations (if the option ‘directional’ is switched on in
+      parameters).
+    - fluspect_parameters: absorption spectra of different leaf components are
+      provided, according to PROSPECT 3.1, as well as Fluspect input: standard
+      spectra for PSI and PSII.
     - leafangles: example leaf inclination distribution data are provided.
-    - radiationdata: RTMo.m calculates spectra based on MODTRAN5 outputs (T-18 system).Note that in the input data (files as well as the spreadsheet), the broadband input radiation may be provided. SCOPE linearly scales the input spectra of the optical and the thermal domain in such a way, that the spectrally integrated input shortwave and long wave radiation matches with the measured values.
-    - soil_spectra: the soil spectrum is provided. Note that it is also possible to simulate a soil reflectance spectrum with the BSM model. In that case the values for the BSM model parameters are taken from the input data, and the archived spectra in this folder are not used.
-    - input_data.xlsx: In this file the input to SCOPE model is provided. It provides parameter inputs for PROSPECT, leaf_biochemical, fluoresence, soil, canopy, aerodynamic, anles, photosynthetic temperature dependence functional parameters, etc.
+    - radiationdata: RTMo.m calculates spectra based on MODTRAN5 outputs (T-18
+      system).Note that in the input data (files as well as the spreadsheet),
+      the broadband input radiation may be provided. SCOPE linearly scales the
+      input spectra of the optical and the thermal domain in such a way that
+      the spectrally integrated input shortwave and long-wave radiation matches
+      with the measured values.
+    - soil_spectra: the soil spectrum is provided. Note that it is also possible
+      to simulate a soil reflectance spectrum with the BSM model. In that case,
+      the values for the BSM model parameters are taken from the input data, and
+      the archived spectra in this folder are not used.
+    - input_data.xlsx: the input to SCOPE model is provided. It
+      provides parameter inputs for PROSPECT, leaf_biochemical, fluorescence,
+      soil, canopy, aerodynamic, angles, photosynthetic temperature dependence
+      functional parameters, etc.
 
 2. Config file: it is a text file that sets the paths **required** by the
     model. For example, see `config_file_crib.txt` in this repository. This file
@@ -43,15 +61,15 @@ Integrated code of SCOPE and STEMMUS.
     > paths. The variable names e.g. `SoilPropertyPath` should not be changed.
     > Also, note a `/` is required at the end of each line.
 
-> As explained above, the "InputPath" directory of the model is considered as
-> the working/running directory and should include some data required by the
-> model. As seen in the config file, the "InputPath" is now set as same as the
-> "input" folder. This means that the "input" folder is treated as the
-> model's working/running directory. However, it is possible to create a
-> different working/running directory and set the "InputPath" to it. Then,
-> you should copy the required data i.e. `directional`, `fluspect_parameters`,
-> `leafangles`, `radiationdata`, `soil_spectra`, and `input_data.xlsx` to the
-> working/running directory.
+As explained above, the "InputPath" directory of the model is considered as
+the working/running directory and should include some data required by the
+model. As seen in the config file, the "InputPath" is now set as same as the
+"input" folder. This means that the "input" folder is treated as the
+model's working/running directory. However, it is possible to create a
+different working/running directory and set the "InputPath" to it. Then,
+you should copy the required data i.e. `directional`, `fluspect_parameters`,
+`leafangles`, `radiationdata`, `soil_spectra`, and `input_data.xlsx` to the
+working/running directory.
 
 ### Workflow of STEMMUS_SCOPE on CRIB:
 
@@ -75,47 +93,49 @@ Integrated code of SCOPE and STEMMUS.
 2. Download the source code from this repository or get it using `git clone` in
   a terminal:
   
-    ` git clone https://github.com/EcoExtreML/STEMMUS_SCOPE.git `
-    
-    All the codes can be found in the folder `src` whereas the executable file in
-    the folder `exe`.
+  ` git clone https://github.com/EcoExtreML/STEMMUS_SCOPE.git `
+  
+  All the codes can be found in the folder `src` whereas the executable file in
+  the folder `exe`.
 
 3. Check `config_file_crib.txt` and change the paths if needed, specifically
    "InputPath" and "OutputPath".
-4. Follow instruction 1 OR 2 below:
+4. Follow one of the instructions below:
 
 #### Run using MATLAB that requires a license
 
-If you want to use MATLAB desktop, 
+If you want to use MATLAB desktop,
+
 1. click on the `Remote Desktop` in the
 Launcher. Click on the `Applications`. You will find the 'MATLAB' software under
 the `Research`. 
-2. After clicking on 'MATLAB', it asks for your account information
-that is connected to a MATLAB license. 
+2. After clicking on 'MATLAB', it asks for your account information that is
+connected to a MATLAB license.
 3. Open the file `filesread.m` and set the
 variable `CFG` to the path of the config file e.g. `CFG =
 '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/STEMMUS_SCOPE/config_file_crib.txt';`.
-4. Then, run the main script `STEMMUS_SCOPE.m`. 
+4. Then, run the main script `STEMMUS_SCOPE.m`.
 
 As an alternative, you can run the
 main script using MATLAB command line in a terminal:
 
-    ```bash
-    matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
-    ```
+```bash
+matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
+```
 
-    2. **Using MATLAB Compiler that does not require a license**:
-    If you want to run the model as a standalone application, you need MATLAB
-    Runtime version `2021a`. To download and install the MATLAB Runtime, follow
-    this
-    [instruction](https://nl.mathworks.com/products/compiler/matlab-runtime.html).
-    The "STEMMUS_SCOPE" executable file is in `STEMMUS_SCOPE/exe` directory
-    in this repository. You can run the model by passing the path of the config
-    file in a terminal:
+#### Run using MATLAB Compiler that does not require a license
 
-        ```bash
-        exe/STEMMUS_SCOPE config_file_crib.txt
-        ```
+If you want to run the model as a standalone application, you need MATLAB
+Runtime version `2021a`. To download and install the MATLAB Runtime, follow
+this
+[instruction](https://nl.mathworks.com/products/compiler/matlab-runtime.html).
+The "STEMMUS_SCOPE" executable file is in `STEMMUS_SCOPE/exe` directory
+in this repository. You can run the model by passing the path of the config
+file in a terminal:
+
+```bash
+exe/STEMMUS_SCOPE config_file_crib.txt
+```
 
 ## STEMMUS_SCOPE on Snellius
 
@@ -130,16 +150,19 @@ Dutch National supercomputer hosted at SURF.
     - forcing/plumber2_data: the forcing/driving data provided by PLUMBER2.
     - model_parameters/soil_property: the soil texture data and soil hydraulic parameters.
     - model_parameters/vegetation_property:
-      - directional: [FIXE ME]
-      - fluspect_parameters: [FIXE ME]
-      - leafangles: [FIXE ME]
-      - radiationdata: [FIXE ME]
-      - soil_spectra: [FIXE ME]
-      - input_data.xlsx: [FIXE ME]
+      - directional
+      - fluspect_parameters
+      - leafangles
+      - radiationdata
+      - soil_spectra
+      - input_data.xlsx
 
-2. Config file: it is a text file that sets the paths **required** by the
-    model. For example, see [config_file_snellius.txt](config_file_snellius.txt) in this repository. This file
-    includes:
+    For the explanation of the directories see 
+  [Dataflow of STEMMUS_SCOPE on CRIB](#dataflow-of-stemmus_scope-on-crib).
+
+2. Config file: it is a text file that sets the paths **required** by the model.
+    For example, see [config_file_snellius.txt](config_file_snellius.txt) in
+    this repository. This file includes:
 
     - SoilPropertyPath: a path to soil texture data and soil hydraulic
       parameters.
@@ -160,19 +183,18 @@ Dutch National supercomputer hosted at SURF.
     > paths. The variable name e.g. `SoilPropertyPath` should not be changed.
     > Also, note a `/` is required at the end of each line.
 
-> As explained above, the "InputPath" directory of the model is considered as
-> the working/running directory and should include some data required by the
-> model. As seen in the config file, the "InputPath" is now set to an "input"
-> folder under "scratch-shared" directory. This means that the "input" folder is
-> treated as the model's working/running directory. However, it is possible to
-> create a different working/running directory and set the "InputPath" to it.
-> Then, you should copy the required data i.e. `directional`,
-> `fluspect_parameters`, `leafangles`, `radiationdata`, `soil_spectra`, and `
-> input_data.xlsx` to the working/running directory. For example:
->
-> ` cp -r
-> /projects/0/einf2480/model_parameters/vegetation_property/*
-> /scratch-shared/EcoExtreML/STEMMUS_SCOPE/input/<your_work_dir> `
+As explained above, the "InputPath" directory of the model is considered as
+the working/running directory and should include some data required by the
+model. As seen in the config file, the "InputPath" is now set to an "input"
+folder under "scratch-shared" directory. This means that the "input" folder is
+treated as the model's working/running directory. However, it is possible to
+create a different working/running directory and set the "InputPath" to it.
+Then, you should copy the required data i.e. `directional`,
+`fluspect_parameters`, `leafangles`, `radiationdata`, `soil_spectra`, and `
+input_data.xlsx` to the working/running directory. For example:
+` cp -r
+/projects/0/einf2480/model_parameters/vegetation_property/*
+/scratch-shared/EcoExtreML/STEMMUS_SCOPE/input/<your_work_dir> `
 
 ### Workflow of STEMMUS_SCOPE on Snellius:
 
@@ -192,68 +214,69 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
 
 3. Check `config_file_snellius.txt` and change the paths if needed,
    specifically "InputPath" and "OutputPath".
-4. Follow instruction 1 OR 2 below: 
+4. Follow one of the instructions below: 
 
-    1. **Using MATLAB that requires a license**: 
-    In order to use MATLAB, you need to send a request to add you to the user
-    pool on Snellius. Then, open the file `filesread.m` and set the variable
-    `CFG` to the path of the config file e.g. `CFG =
-    './STEMMUS_SCOPE/config_file_snellius.txt';`. Then, run the main script
-    `STEMMUS_SCOPE.m` using MATLAB command line in a terminal on a **compute
-    node**:
+#### Run using MATLAB that requires a license
 
-        ```bash
-        module load 2021
-        module load MATLAB/2021a-upd3
-        matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
-        ```
+In order to use MATLAB, you need to send a request to add you to the user pool
+on Snellius. Then, open the file
+[config_file_snellius.txt](config_file_snellius.txt) and set the paths. Then,
+run the main script `STEMMUS_SCOPE_exe.m` using MATLAB command line in a terminal on
+a **compute node**:
 
-        > To run the codes above on a compute node, you can create a bash script as:
-        
-        ```bash
-        #!/bin/bash
-        # SLURM settings
-        #SBATCH -J stemmus_scope
-        #SBATCH -t 01:00:00
-        #SBATCH -N 1
-        #SBATCH --ntasks=1
-        #SBATCH --cpus-per-task=32
-        #SBATCH -p thin
-        #SBATCH --output=./slurm_%j.out
-        #SBATCH --error=./slurm_%j.out
+```bash
+module load 2021
+module load MATLAB/2021a-upd3
+matlab -nodisplay -nosplash -nodesktop -r "STEMMUS_SCOPE_exe('config_file_snellius.txt');exit;"
+```
 
-        module load 2021
-        module load MATLAB/2021a-upd3
-        matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
-        ```
+> To run the codes above on a compute node, you can create a bash script as:
 
-    2. **Using MATLAB Compiler that does not require a license**:
-    If you want to run the model as a standalone application, you need MATLAB
-    Runtime version `2021a`. This is available on Snellius. You can run the
-    model by passing the path of the config file in a terminal on a **compute
-    node**:
+```bash
+#!/bin/bash
+# SLURM settings
+#SBATCH -J stemmus_scope
+#SBATCH -t 01:00:00
+#SBATCH -N 1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+#SBATCH -p thin
+#SBATCH --output=./slurm_%j.out
+#SBATCH --error=./slurm_%j.out
 
-        ```bash
-        module load 2021
-        module load MCR/R2021a.3
-        ./STEMMUS_SCOPE/exe/STEMMUS_SCOPE config_file_snellius.txt
-        ```
-    
-        > The bash script `run_stemmus_scope_snellius.sh` in this repository,
-        > runs the model at two sites (default) on a **comupute node**. The
-        > scripts loops over forcing files in the "ForcingPath", creates
-        > `sitename_timestamped` working directories under "InputPath" directory
-        > and copies required data to those working drs. To change the number of
-        > sites, open the script and change the parameter `1-2` in line `#SBATCH
-        > --array=1-2`. A maximum number of simultaneously running tasks from
-        > the job array may be specified using a "%" separator. For example
-        > "--array=1-10%4" will limit the number of simultaneously running tasks
-        > from this job array to 4, see [Slurm Job
-        > Array](https://slurm.schedmd.com/job_array.html). Note that the model
-        > run can take long for some of the sites. You can run the script in a
-        > terminal: `cd STEMMUS_SCOPE; mkdir -p slurm; sbatch
-        > run_stemmus_scope_snellius.sh`. This creates a log file per each
-        > forcing file in a folder `slurm`.
+module load 2021
+module load MATLAB/2021a-upd3
+matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
+```
+
+#### Run using MATLAB Compiler that does not require a license
+
+If you want to run the model as a standalone application, you need MATLAB
+Runtime version `2021a`. This is available on Snellius. You can run the
+model by passing the path of the config file in a terminal on a **compute
+node**:
+
+```bash
+module load 2021
+module load MCR/R2021a.3
+./STEMMUS_SCOPE/exe/STEMMUS_SCOPE config_file_snellius.txt
+```
+
+The bash script `run_stemmus_scope_snellius.sh` in this repository,
+runs the model at two sites (default) on a **comupute node**. The
+scripts loops over forcing files in the "ForcingPath", creates
+`sitename_timestamped` working directories under "InputPath" directory
+and copies required data to those working drs. To change the number of
+sites, open the script and change the parameter `1-2` in line `#SBATCH
+--array=1-2`. A maximum number of simultaneously running tasks from
+the job array may be specified using a "%" separator. For example
+"--array=1-10%4" will limit the number of simultaneously running tasks
+from this job array to 4, see [Slurm Job
+Array](https://slurm.schedmd.com/job_array.html). Note that the model
+run can take long for some of the sites. You can run the script in a
+terminal: `cd STEMMUS_SCOPE; mkdir -p slurm; sbatch
+run_stemmus_scope_snellius.sh`. This creates a log file per each
+forcing file in a folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE
 

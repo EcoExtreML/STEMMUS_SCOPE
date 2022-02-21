@@ -84,19 +84,25 @@ Integrated code of SCOPE and STEMMUS.
    "InputPath" and "OutputPath".
 4. Follow instruction 1 OR 2 below:
 
-    1. **Using MATLAB that requires a license**:
-    If you want to use MATLAB desktop, click on the `Remote Desktop` in the
-    Launcher. Click on the `Applications`. You will find the 'MATLAB' software under
-    the `Research`. After clicking on 'MATLAB', it asks for your account information
-    that is connected to a MATLAB license. Open the file `filesread.m` and set the
-    variable `CFG` to the path of the config file e.g. `CFG =
-    '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/STEMMUS_SCOPE/config_file_crib.txt';`.
-    Then, run the main script `STEMMUS_SCOPE.m`. As an alternative, you can run the
-    main script using MATLAB command line in a terminal:
+#### Run using MATLAB that requires a license
 
-        ```bash
-        matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
-        ```
+If you want to use MATLAB desktop, 
+1. click on the `Remote Desktop` in the
+Launcher. Click on the `Applications`. You will find the 'MATLAB' software under
+the `Research`. 
+2. After clicking on 'MATLAB', it asks for your account information
+that is connected to a MATLAB license. 
+3. Open the file `filesread.m` and set the
+variable `CFG` to the path of the config file e.g. `CFG =
+'/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/STEMMUS_SCOPE/config_file_crib.txt';`.
+4. Then, run the main script `STEMMUS_SCOPE.m`. 
+
+As an alternative, you can run the
+main script using MATLAB command line in a terminal:
+
+    ```bash
+    matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
+    ```
 
     2. **Using MATLAB Compiler that does not require a license**:
     If you want to run the model as a standalone application, you need MATLAB

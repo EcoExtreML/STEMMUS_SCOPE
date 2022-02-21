@@ -18,7 +18,7 @@ Integrated code of SCOPE and STEMMUS.
     - fluspect_parameters: absorption spectra of different leaf components are provided, according to PROSPECT 3.1, as well as Fluspect input: standard spectra for PSI and PSII.
     - leafangles: example leaf inclination distribution data are provided.
     - radiationdata: RTMo.m calculates spectra based on MODTRAN5 outputs (T-18 system).Note that in the input data (files as well as the spreadsheet), the broadband input radiation may be provided. SCOPE linearly scales the input spectra of the optical and the thermal domain in such a way, that the spectrally integrated input shortwave and long wave radiation matches with the measured values.
-    - soil_spectra: [FIXE ME]
+    - soil_spectra: the soil spectrum is provided. Note that it is also possible to simulate a soil reflectance spectrum with the BSM model. In that case the values for the BSM model parameters are taken from the input data, and the archived spectra in this folder are not used.
     - input_data.xlsx: [FIXE ME]
 
 2. Config file: it is a text file that sets the paths **required** by the

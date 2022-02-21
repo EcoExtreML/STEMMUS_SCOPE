@@ -57,9 +57,9 @@ Integrated code of SCOPE and STEMMUS.
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
 
-    > To edit the config file, open the file with a text editor and change the
-    > paths. The variable names e.g. `SoilPropertyPath` should not be changed.
-    > Also, note a `/` is required at the end of each line.
+    To edit the config file, open the file with a text editor and change the
+    paths. The variable names e.g. `SoilPropertyPath` should not be changed.
+    Also, note a `/` is required at the end of each line.
 
 As explained above, the "InputPath" directory of the model is considered as
 the working/running directory and should include some data required by the
@@ -179,9 +179,9 @@ Dutch National supercomputer hosted at SURF.
     site.
     - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`. 
 
-    > To edit the config file, open the file with a text editor and change the
-    > paths. The variable name e.g. `SoilPropertyPath` should not be changed.
-    > Also, note a `/` is required at the end of each line.
+    To edit the config file, open the file with a text editor and change the
+    paths. The variable name e.g. `SoilPropertyPath` should not be changed.
+    Also, note a `/` is required at the end of each line.
 
 As explained above, the "InputPath" directory of the model is considered as
 the working/running directory and should include some data required by the

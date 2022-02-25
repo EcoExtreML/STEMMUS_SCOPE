@@ -44,21 +44,21 @@ loop_func() {
     timestamp=$(date +"%Y-%m-%d-%H%M")
 
     ### 3.4 create input directories, 
-    WorkDir="$(echo "$InputPath" | tr -d '\r')${station_name}_${timestamp}/"
-    mkdir -p $WorkDir
+    work_dir="$(echo "$InputPath" | tr -d '\r')${station_name}_${timestamp}/"
+    mkdir -p $work_dir
 
-    ### 3.5 copy files to WorkDir,
+    ### 3.5 copy files to work_dir,
     vegetation_path="$(echo "$VegetationPropertyPath" | tr -d '\r')"
-    cp -r $vegetation_path/* $WorkDir
+    cp -r $vegetation_path/* $work_dir
 
     ### 3.6 update config file for ForcingFileName and InputPath,
-    ### !due to "/" in WorkDir, the sed uses "|" instead of "/"
-    station_config="${WorkDir}${station_name}_${timestamp}_config.txt"
+    ### !due to "/" in work_dir, the sed uses "|" instead of "/"
+    station_config="${work_dir}${station_name}_${timestamp}_config.txt"
     sed -e "s/ForcingFileName=.*$/ForcingFileName=$base_name/g" \
-        -e "s|InputPath=.*$|InputPath=$WorkDir|g" <$config >$station_config
+        -e "s|InputPath=.*$|InputPath=$work_dir|g" <$config >$station_config
 
-    ### 3.7 Add info to a stdout file
-    StdOut="./slurm/slurm_${SLURM_JOB_ID}_${i}.out"
+    ### 3.7 Add info to a std_out file
+    std_out="./slurm/slurm_${SLURM_JOB_ID}_${i}.out"
     echo "
     SoilPropertyPath is $SoilPropertyPath
     InputPath is $InputPath
@@ -66,20 +66,21 @@ loop_func() {
     ForcingPath is $ForcingPath
     VegetationPropertyPath is $VegetationPropertyPath
     WorkDir is $WorkDir
-    ForcingFileName is $base_name" > $StdOut
+    ForcingFileName is $base_name" > $std_out
 
     ### 3.8 run the model and store the time and model log info
-    time exe/STEMMUS_SCOPE $station_config >> $StdOut
+    ###TODO check why this creates java.log files in user home dir
+    time exe/STEMMUS_SCOPE $station_config >> $std_out
 
     end_time=$(date +%s)
     run_time=$(expr $end_time - $start_time)
 
     ## 3.9 Add some information to slurm*.out file later will be used.
-    echo "Run is COMPLETED. Model run time is $run_time s." >> $StdOut
+    echo "Run is COMPLETED. Model run time is $run_time s." >> $std_out
 }
 
 ### 4. Create a log file for GNU parallel
-LogFile="./slurm/parallel_${SLURM_JOB_ID}.log"
+log_file="./slurm/parallel_${SLURM_JOB_ID}.log"
 
 ### 5. Run env_parallel instead of parallel to have our environment
-env_parallel -n1 -j32 --joblog $LogFile loop_func ::: {1..170}
+env_parallel -n1 -j32 --joblog $log_file loop_func ::: {1..170}

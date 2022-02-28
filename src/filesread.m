@@ -4,7 +4,7 @@ global CFG
 
 %% CFG is a path to a config file
 if isempty(CFG)
-    CFG = '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/STEMMUS_SCOPE/config_file_crib.txt';
+    CFG = '../config_file_crib.txt';
 end
 
 %% Read the CFG file. Due to using MATLAB compiler, we cannot use run(CFG)

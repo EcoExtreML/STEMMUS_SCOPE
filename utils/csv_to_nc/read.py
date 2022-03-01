@@ -1,27 +1,48 @@
-from netCDF4 import Dataset
-import os
+"""
+Read forcing data and create EC data in csv format.
+"""
+import pandas as pd
 
-workdir = r'path_to_output_dir'
+from netCDF4 import Dataset, num2date
 
-filename = workdir + '\\AU-Tum_2002-2017_OzFlux_Met.nc'
-print(filename, 'contains the following:')
-nc_fid = Dataset(filename, mode='r')
-print(nc_fid)
-x=nc_fid.variables['x']
-y=nc_fid.variables['y']
-time=nc_fid.variables['time']
+forcing_path = './Plumber2_data/'
+forcing_name = 'FI-Hyy_1996-2014_FLUXNET2015_Met.nc'
 
-filename = workdir + '\\output.nc'
-if os.path.exists(filename):
-    print()
-    print(filename, 'contains the following:')
-    nc_fid2 = Dataset(filename, mode='r')
-    print(nc_fid2)
-    x2=nc_fid2.variables['x']
-    y2=nc_fid2.variables['y']
-    z2=nc_fid2.variables['z']
-    time2=nc_fid2.variables['time']
-    temp2=nc_fid2.variables['SoilTemp']
-    moist2=nc_fid2.variables['SoilMoist']
+# read data
+nc_fid = Dataset(forcing_path + forcing_name, mode='r')
 
+# Extract variables as numpy arrays
+t = nc_fid.variables['time'][:].flatten()/3600/24
 
+Ta = nc_fid.variables['Tair'][:].flatten()-273.15
+
+Rin = nc_fid.variables['SWdown'][:].flatten()
+
+u = nc_fid.variables['Wind'][:].flatten()
+
+Rli = nc_fid.variables['LWdown'][:].flatten()
+
+p = nc_fid.variables['Psurf'][:].flatten()/100
+
+RH = nc_fid.variables['RH'][:].flatten()
+
+LAI = nc_fid.variables['LAI'][:].flatten()
+
+nctime = nc_fid.variables['time']
+ncdate = num2date(nctime[:],units= nctime.units, calendar=nctime.calendar)
+year = [date.year for date in ncdate]
+
+Pre = nc_fid.variables['Precip'][:].flatten()/10
+
+CO2air = nc_fid.variables['CO2air'][:].flatten()*44/22.4
+
+Qair = nc_fid.variables['Qair'][:].flatten()
+
+data = [t, Ta, Rin, u, Rli, p, RH, LAI, year, Pre, CO2air, Qair]
+names = ['t', 'Ta', 'Rin', 'u', 'Rli', 'p', 'RH', 'LAI', 'year', 'Pre', 'CO2air', 'Qair']
+
+# Write to csv
+df = pd.DataFrame.from_dict(dict(zip(names, data)))
+output_path = "."
+output_name = forcing_name.replace(".nc", "_ECdata.csv")
+df.to_csv(output_path + output_name, index=False)

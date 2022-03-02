@@ -36,7 +36,7 @@ Open the file "filesread.m" and set all paths at the top of this file. The rest 
 (4) Converting `.csv` files to NetCDF files:
 
 There is some files in utils directory in this repository. The utils are used to
-read `.csv` files and save them in `.nc` format. 
+read `.csv` files and save them in `.nc` format. See [utils readme](./utils/csv_to_nc/README.md).
 
 > An example NetCDF file is stored in the project directory to show the desired
   structure of variables in one file.

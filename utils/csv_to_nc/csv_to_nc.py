@@ -202,21 +202,24 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
         stemmusname = variables['Variable name in STEMMUS-SCOPE'][i]
         unit = variables['unit'][i]
         long_name = variables['long_name'][i]
+        standard_name = variables['standard_name'][i]
         definition = variables['definition'][i]
         dimensions = variables['dimension'][i]
         var = None
         if dimensions == 'XYT':
             var = nc.createVariable(variable, 'float32', ('time','y','x'))
         elif dimensions == 'XYZT':
-            var = nc.createVariable(variable, 'float32', ('time','z','y','x'))
+            var = nc.createVariable(variable, 'float32', ('time','y','x','z'))
         var.setncattr('units', unit)
         var.setncattr('long_name', long_name)
+        var.setncattr('standard_name', standard_name)
         if stemmusname != '':
             var.setncattr('STEMMUS-SCOPE_name', stemmusname)
         if definition != '':
             var.setncattr('definition', definition)
         if stemmusname != '':
             if file not in data:
+                print(f"file is {file}")
                 print('Reading data from file', "'" + file + "'")
                 data[file] = readcsv(Path(csvfiles_path, file), headerlines[file])
             var[:] = data[file][stemmusname]

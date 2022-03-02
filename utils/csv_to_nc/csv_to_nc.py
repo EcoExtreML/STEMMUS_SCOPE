@@ -50,15 +50,17 @@ def generate_ec_data(forcing_path, forcing_name, output_path):
     # Extra information
     lat = float(nc_fid.variables['latitude'][:].flatten()[0])
     lon = float(nc_fid.variables['longitude'][:].flatten()[0])
-    return filename, lat, lon
+    return filename, lat, lon, nctime
 
     
 def split(s):
     t=s.split('"')
     u=[t[i] for i in range(0, len(t), 2)]
     v=[t[i] for i in range(1, len(t), 2)]
-    #u=[u[i][(i%2):(len(u[i])-(i+1)%2)] for i in range(0, len(u))]
-    u=[u[i][(i%2):(len(u[i])-(i+1)%2)] for i in range(0, len(u)-1)] + [u[i][(i%2):] for i in range(len(u)-1, len(u))]
+    #u=[u[i][(i%2):(len(u[i])-(i+1)%2)] for i in range(len(u))]
+    u=[
+        u[i][(i%2):(len(u[i])-(i+1)%2)] for i in range(len(u)-1)
+        ] + [u[i][(i%2):] for i in range(len(u)-1, len(u))]
     w = []
     for i in range(len(u)):
         w.extend(u[i].split(','))
@@ -77,7 +79,7 @@ def readcsv(filename, nrHeaderLines):
     data = {}
     for line in content:
         line = split(line.strip())
-        for i in range(0, len(header)):
+        for i in range(len(header)):
             if header[i] != '':
                 if header[i] not in data:
                     data[header[i]] = []
@@ -116,7 +118,7 @@ def read2d_transposed_unit(filename, nrHeaderLines, unit, depths):
     return data
 
 
-def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
+def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filename):
     # Renamed radiation.dat to radiation.csv
     # Renamed LEtot to lEtot
     # Split AResist into AResist_rac and AResist_ras
@@ -141,7 +143,7 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
 
     headerlines = {'aerodyn.csv': 2, 'ECdata.csv': 1, 'fluxes.csv': 2, 'radiation.csv': 2, 'Sim_Temp.csv': 2, 'Sim_Theta.csv': 2, 'surftemp.csv': 2}
 
-    print('Reading variable metadata from', "'" + variables_filename + "'")
+    print(f'Reading variable metadata from {variables_filename}')
     variables = readcsv(variables_filename, 1)
     depths = read_depths(sim_temp)
 
@@ -187,8 +189,8 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
     var_y[:] = lat # in the example AU-Tum_2002-2017_OzFlux_Met.nc this is 1
     var_z.setncattr('units', 'depth in cm')
     var_z[:] = depths
-    var_t.setncattr('units', 'seconds since 2002-01-01 00:00:00') # Note: I do not read this from the files; if it changes, edit this
-    var_t.setncattr('calendar', 'standard')
+    var_t.setncattr('units', f'{nctime.units}')
+    var_t.setncattr('calendar', f'{nctime.calendar}')
     # The data of var_t is inserted at the end; when we "know" the length
     var_t_length = None
 
@@ -219,14 +221,14 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
             var.setncattr('definition', definition)
         if stemmusname != '':
             if file not in data:
-                print(f"file is {file}")
-                print('Reading data from file', "'" + file + "'")
+                print(f'file is {file}')
+                print(f'Reading data from file: {file}')
                 data[file] = readcsv(Path(csvfiles_path, file), headerlines[file])
             var[:] = data[file][stemmusname]
             if var_t_length is None:
                 var_t_length = len(data[file][stemmusname])
         else: # Sim_Temp or Sim_Theta
-            print('Reading data from file', "'" + file + "'")
+            print(f'Reading data from file: {file}')
             matrix = read2d_transposed_unit(Path(csvfiles_path, file), headerlines[file], unit, depths)
             var[:] = matrix
 

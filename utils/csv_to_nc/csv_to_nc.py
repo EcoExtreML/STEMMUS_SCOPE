@@ -44,13 +44,12 @@ def generate_ec_data(forcing_path, forcing_name, output_path):
 
     # Write to csv
     df = pd.DataFrame.from_dict(dict(zip(names, data)))
-    output_name = forcing_name.replace(".nc", "_ECdata.csv")
-    filename = Path(output_path, output_name)
+    filename = Path(output_path, "ECdata.csv")
     df.to_csv(filename, index=False)
 
     # Extra information
-    lat = nc_fid.variables['latitude'][:].flatten()[0]
-    lon = nc_fid.variables['longitude'][:].flatten()[0]
+    lat = float(nc_fid.variables['latitude'][:].flatten()[0])
+    lon = float(nc_fid.variables['longitude'][:].flatten()[0])
     return filename, lat, lon
 
     
@@ -117,7 +116,7 @@ def read2d_transposed_unit(filename, nrHeaderLines, unit, depths):
     return data
 
 
-def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, model_name):
+def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename):
     # Renamed radiation.dat to radiation.csv
     # Renamed LEtot to lEtot
     # Split AResist into AResist_rac and AResist_ras
@@ -127,7 +126,9 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, mode
     # specify additional metadata here:
 
     additional_metadata = {
-        'tower_height': '80 m',
+        'model': 'STEMMUS_SCOPE',
+        'institution': 'University of Twente; Northwest A&F University',
+        'contact': 'Zhongbo Su, z.su@utwente.nl; Yijian Zeng, y.zeng@utwente.nl; Yunfei Wang, y.wang-3@utwente.nl',
         'license_type': 'CC BY 4.0',
         'license_url': 'https://creativecommons.org/licenses/by/4.0/',
         'latitude': lat,
@@ -145,7 +146,7 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, mode
     depths = read_depths(sim_temp)
 
     # Create a new empty netCDF file, in NETCDF3_CLASSIC format, just like the example file AU-Tum_2002-2017_OzFlux_Met.nc
-    filename = f"{Path(csvfiles_path).stem}_{model_name}.nc"
+    filename = f"{Path(csvfiles_path).stem}_STEMMUS_SCOPE.nc"
     filename_out = Path(output_dir, filename)
     print(f"Creating {filename_out} ")
     nc = Dataset(filename_out, mode='w', format='NETCDF3_CLASSIC')
@@ -164,6 +165,16 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, mode
     var_y = nc.createVariable('y', 'float64', ('y'))
     var_z = nc.createVariable('z', 'float64', ('z'))
     var_t = nc.createVariable('time', 'float64', ('time'))
+    var_latitude = nc.createVariable('latitude', 'float32', ('y','x'))
+    var_latitude.setncattr('long_name', 'Gridbox latitude')
+    var_latitude.setncattr('standard_name', 'latitude')
+    var_latitude.setncattr('units', 'degrees')
+    var_latitude[:] = lat
+    var_longitude = nc.createVariable('longitude', 'float32', ('y','x'))
+    var_longitude.setncattr('long_name', 'Gridbox longitude')
+    var_longitude.setncattr('standard_name', 'longitude')
+    var_longitude.setncattr('units', 'degrees')
+    var_longitude[:] = lon
 
     # Add the generic metadata (taken from additional_metadata above)
 
@@ -201,7 +212,7 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, mode
         var.setncattr('units', unit)
         var.setncattr('long_name', long_name)
         if stemmusname != '':
-            var.setncattr('Stemmus_name', stemmusname)
+            var.setncattr('STEMMUS-SCOPE_name', stemmusname)
         if definition != '':
             var.setncattr('definition', definition)
         if stemmusname != '':
@@ -218,7 +229,7 @@ def generateNetCdf(lat, lon, output_dir, csvfiles_path, variables_filename, mode
 
     # Finally fill var_t with the nr of seconds per timestep
     # Note: we don't take the numbers from the file, because Year + DoY is not as accurate (it becomes 3599.99, 7199.99 etc)
-    var_t[:] = [i*3600 for i in range(var_t_length)]
+    var_t[:] = [i*1800 for i in range(var_t_length)]
 
     nc.close()
     print(f'Done writing {filename_out}')

@@ -42,7 +42,7 @@ for ML=1:NL
         
         if Thmrlefc==1
             ChT(ML,ND)=(1-RHOV(MN)/RHOL)*DTheta_LLT(ML,ND)+Theta_V(ML,ND)*DRHOVT(MN)/RHOL;   %-RHOI/RHOL*KfL_T(ML,ND)*DTheta_LLh(ML,ND)/1e4DTheta_LLT==>DTheta_UUT   
-            KhT(ML,ND)=(D_V(ML,ND)*Eta(ML,ND)+D_Vg(ML))*DRHOVT(MN)/RHOL+KL_T(ML,ND)+D_Ta(ML,ND);%-Khh(ML,ND)*1e4*L_f/(g*(T0+TT(MN)))*max(heaviside(TT_CRIT(MN)-(TT(MN)+T0)))considering ice freezing pressure*KfL_T(ML,ND);%;%();% KfL_T considering the ice
+            KhT(ML,ND)=(D_V(ML,ND)*Eta(ML,ND)+D_Vg(ML))*DRHOVT(MN)/RHOL+KL_T(ML,ND)+D_Ta(ML,ND);%-Khh(ML,ND)*1e4*L_f/(g*(T0+TT(MN)))*max(helpers.heaviside1(TT_CRIT(MN)-(TT(MN)+T0)))considering ice freezing pressure*KfL_T(ML,ND);%;%();% KfL_T considering the ice
         end
 
         if KLa_Switch==1

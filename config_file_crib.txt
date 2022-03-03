@@ -1,0 +1,5 @@
+SoilPropertyPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/
+InputPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/
+OutputPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/
+ForcingPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data/
+ForcingFileName=FI-Hyy_1996-2014_FLUXNET2015_Met.nc

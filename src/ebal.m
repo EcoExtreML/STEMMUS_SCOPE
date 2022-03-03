@@ -365,7 +365,7 @@ while CONT                          % while energy balance does not close
     if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
     if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
     
-    %Ts(abs(Ts)>100 ) = Ta;
+    Ts(abs(Ts)>100 ) = Ta;
     %Ts          = Ta + update(Ts-Ta,Wc, (raa + raws)/(rhoa*cp).*(Rns - lEs - G));     
     Ts         = Ts + Wc*(Rns-lEs-Hs-G)./((rhoa*cp)./(raa + rawc) + 4*sigmaSB*(Ts+273.15).^3);
 
@@ -494,6 +494,8 @@ fluxes.aPAR     = Pntot;  % [umol m-2 s-1]      absorbed PAR
 fluxes.aPAR_Cab = Pntot_Cab;% [umol m-2 s-1]      absorbed PAR
 fluxes.aPAR_Wm2 = Rntot_PAR;% [W m-2]      absorbed PAR
 fluxes.aPAR_Cab_eta = aPAR_Cab_eta;
+fluxes.GPP    = Actot*12/1000000000;  % [kg C m-2 s-1]      gross primary production
+fluxes.NEE      = (Resp-Actot)*12/1000000000; % [kg C m-2 s-1]      net primary production
 
 thermal.Ta    = Ta;       % [oC]                air temperature (as in input)
 thermal.Ts    = Ts;       % [oC]                soil temperature, sunlit and shaded [2x1]

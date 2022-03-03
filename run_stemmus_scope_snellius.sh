@@ -4,7 +4,7 @@
 
 # SLURM settings
 #SBATCH -J stemmus_scope
-#SBATCH -t 01:00:00
+#SBATCH -t 00:10:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH -p thin

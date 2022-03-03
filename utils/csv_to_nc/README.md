@@ -38,10 +38,11 @@ The environment can be activated with
 
 ## 3. Run python script
 
-Open the file [generate_netcdf_files.py][./generate_netcdf_files.py] and edit paths. Then,
+Open the configuration file [config_file_crib.txt][../../config_file_crib.txt]
+or [config_file_snellius.txt][../../config_file_snellius.txt] and edit paths. Then,
 
 ```sh
-python generate_netcdf_files.py
+python generate_netcdf_files.py --config_file ../../config_file_crib.txt --variable_file Variables_will_be_in_NetCDF_file.csv
 ```
 
-This will generate `ECdata.csv` and a netcf file related to model output.
+This will generate `ECdata.csv` and a netcdf file related to model output.

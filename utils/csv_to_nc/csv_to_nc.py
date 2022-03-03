@@ -221,7 +221,6 @@ def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filena
             var.setncattr('definition', definition)
         if stemmusname != '':
             if file not in data:
-                print(f'file is {file}')
                 print(f'Reading data from file: {file}')
                 data[file] = readcsv(Path(csvfiles_path, file), headerlines[file])
             var[:] = data[file][stemmusname]
@@ -237,4 +236,4 @@ def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filena
     var_t[:] = [i*1800 for i in range(var_t_length)]
 
     nc.close()
-    print(f'Done writing {filename_out}')
+    return filename_out

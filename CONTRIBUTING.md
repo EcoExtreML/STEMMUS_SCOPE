@@ -20,12 +20,12 @@ authentication](https://docs.github.com/en/authentication/securing-your-account-
 
 With SSH keys, you can connect to GitHub without supplying your username and
 personal access token at each visit. Please follow the instructions below. If
-you lik eto know more, see [Connecting to GitHub with
+you like to know more, see [Connecting to GitHub with
 SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 
 #### 2.1. Checking for existing SSH keys
 
-Open a Terminal and run the command below: 
+Open a terminal and run the command below: 
 
 ```bash
 ls -la ~/.ssh

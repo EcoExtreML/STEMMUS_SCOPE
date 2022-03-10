@@ -128,5 +128,5 @@ git clone git@github.com:EcoExtreML/STEMMUS_SCOPE.git
 ```
 
 > In this command, we clone the repository using `ssh` option. As we set the ssh
-connection in [**Step 3**](#3.-Set-ssh-connection), this command here does not ask for our user name and
+connection in [**Step 3**](#3-set-ssh-connection), this command here does not ask for our user name and
 password. 

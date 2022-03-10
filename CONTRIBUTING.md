@@ -118,11 +118,18 @@ Git](https://swcarpentry.github.io/git-novice/02-setup/index.html).
 
 ### 4. Clone the repository
 
-Open a terminal and run the command:
+Open a terminal and run the command below:
+
+```bash
+cd 
+```
+Now you are in your `HOME` directory. Run the command below:
 
 ```bash
 git clone git@github.com:EcoExtreML/STEMMUS_SCOPE.git
 ```
+
+Now a new GitHub folder `STEMMUS_SCOPE` is created in your `HOME` directory.
 
 > In this command, we clone the repository using `ssh` option. As we set the ssh
 connection in [**Step 2**](#2-set-ssh-connection), this command here does not ask for our user name and

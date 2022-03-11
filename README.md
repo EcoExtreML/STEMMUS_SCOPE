@@ -263,7 +263,7 @@ module load MCR/R2021a.3
 ```
 
 The bash script `run_stemmus_scope_snellius.sh` in this repository, runs the
-model at 170 sites (default) on a **comupute node**. The scripts loops over
+model at 170 sites (default) on a **compute node**. The scripts loops over
 forcing files in the "ForcingPath", creates `sitename_timestamped` working
 directories under "InputPath" directory and copies required data to those
 working drs. To change the number of sites, open the script and on the last line

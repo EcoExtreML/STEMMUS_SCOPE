@@ -269,15 +269,16 @@ directories under "InputPath" directory and copies required data to those
 working dirs. To change the number of sites, open the script and on the last line
 change the parameter `{1..170}`. For example `env_parallel -n1 -j32 --joblog
 $log_file loop_func ::: {1..170}` will run the model at 32 sites simultaneously.
-For now, the time of bash script is defined as `00:10:00`. Note that the model
+For testing purposes, the time of the bash script is set to `00:10:00`. Note that the model
 run can take long for some of the sites. You can run the script in a terminal:
+
 ```shell
 cd STEMMUS_SCOPE
 mkdir -p slurm
 sbatch run_stemmus_scope_snellius.sh
 ```
-This
-creates a log file per each forcing file in a folder `slurm`.
+
+This creates a log file per each forcing file in the folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE
 

@@ -65,7 +65,7 @@ loop_func() {
     OutputPath is $OutputPath
     ForcingPath is $ForcingPath
     VegetationPropertyPath is $VegetationPropertyPath
-    WorkDir is $WorkDir
+    WorkDir is $work_dir
     ForcingFileName is $base_name" > $std_out
 
     ### 3.8 run the model and store the time and model log info

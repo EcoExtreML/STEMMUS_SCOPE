@@ -266,7 +266,7 @@ The bash script `run_stemmus_scope_snellius.sh` in this repository, runs the
 model at 170 sites (default) on a **compute node**. The scripts loops over
 forcing files in the "ForcingPath", creates `sitename_timestamped` working
 directories under "InputPath" directory and copies required data to those
-working drs. To change the number of sites, open the script and on the last line
+working dirs. To change the number of sites, open the script and on the last line
 change the parameter `{1..170}`. For example `env_parallel -n1 -j32 --joblog
 $log_file loop_func ::: {1..170}` will run the model at 32 sites simultaneously.
 For now, the time of bash script is defined as `00:10:00`. Note that the model

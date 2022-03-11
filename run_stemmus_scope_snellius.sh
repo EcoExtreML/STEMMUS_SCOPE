@@ -58,7 +58,7 @@ loop_func() {
         -e "s|InputPath=.*$|InputPath=$work_dir|g" <$config >$station_config
 
     ### 3.7 Add info to a std_out file
-    std_out="./slurm/slurm_${SLURM_JOB_ID}_${i}.out"
+    std_out="./slurm/slurm_${SLURM_JOB_ID}_${station_name}.out"
     echo "
     SoilPropertyPath is $SoilPropertyPath
     InputPath is $InputPath

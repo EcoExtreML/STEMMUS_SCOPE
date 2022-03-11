@@ -271,7 +271,12 @@ change the parameter `{1..170}`. For example `env_parallel -n1 -j32 --joblog
 $log_file loop_func ::: {1..170}` will run the model at 32 sites simultaneously.
 For now, the time of bash script is defined as `00:10:00`. Note that the model
 run can take long for some of the sites. You can run the script in a terminal:
-`cd STEMMUS_SCOPE; mkdir -p slurm; sbatch run_stemmus_scope_snellius.sh`. This
+```shell
+cd STEMMUS_SCOPE
+mkdir -p slurm
+sbatch run_stemmus_scope_snellius.sh
+```
+This
 creates a log file per each forcing file in a folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE

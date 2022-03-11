@@ -29,7 +29,7 @@ loop_func() {
     set -euo pipefail
     
     ### 3.2 Get paths from a config file 
-    config="my_config_file.txt"
+    config="config_file_snellius.txt"
     source $config
 
     ### 3.3 loop over forcing file using i that is the function input argument

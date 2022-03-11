@@ -71,7 +71,7 @@ loop_func() {
     ### 3.8 run the model and store the time and model log info
     ###TODO check why this creates java.log files in user home dir
     export MATLAB_LOG_DIR=./slurm
-    time exe/STEMMUS_SCOPE $station_config >> $std_out
+    exe/STEMMUS_SCOPE $station_config >> $std_out
 
     end_time=$(date +%s)
     run_time=$(expr $end_time - $start_time)

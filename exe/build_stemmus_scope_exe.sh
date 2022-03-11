@@ -4,7 +4,7 @@
 
 # SLURM settings
 #SBATCH -J stemmus_scope
-#SBATCH -t 00:15:00
+#SBATCH -t 00:05:00
 #SBATCH -N 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
@@ -23,4 +23,4 @@ module load 2021
 module load MATLAB/2021a-upd3
 
 # Create executable file
-mcc -m ./src/STEMMUS_SCOPE_exe.m -a ./src -d ./exe -o STEMMUS_SCOPE -R nodisplay
+mcc -m ./src/STEMMUS_SCOPE_exe.m -a ./src -d ./exe -o STEMMUS_SCOPE -R nodisplay -R singleCompThread

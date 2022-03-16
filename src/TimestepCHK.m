@@ -3,7 +3,7 @@ function [KT,TIME,Delt_t,tS,NBChh,IRPT1,IRPT2]=TimestepCHK(NBCh,BCh,NBChh,DSTOR,
     if Delt_t<1.0e-10
         keyboard  
     end
-
+% testing this function %%%
 if NBCh==1
 %     CnvrgnCHK
     [KT,TIME,Delt_t,IRPT1,IRPT2,tS]=CnvrgnCHK(xERR,hERR,TERR,Theta_LL,Theta_L,Theta_UU,Theta_U,hh,h,TT,T,KT,TIME,Delt_t,NL,NN,Thmrlefc,NBCh,NBChB,NBCT,NBCTB,tS,uERR);

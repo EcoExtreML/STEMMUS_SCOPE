@@ -19,7 +19,7 @@ X = {
 
 %optional (leave empty for constant values From inputdata.TXT)
 'CO2_file'		, '';
-'SMC_file'		, '';
+'SMC_file'		, ''; %soil moisture content will be given by STEMMUS
 
 % optional (leave empty for calculations based on t_file year timezn)
 'tts_file' 		, '';

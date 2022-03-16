@@ -14,6 +14,7 @@ disp (['Reading config from ',CFG])
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 
+% Add the forcing name to forcing path
 ForcingFilePath=fullfile(ForcingPath, ForcingFileName);
 %prepare input files
 sitefullname=dir(ForcingFilePath).name; %read sitename
@@ -24,6 +25,7 @@ sitefullname=dir(ForcingFilePath).name; %read sitename
     endyear=str2double(endyear);
 %ncdisp(sitefullname,'/','full');
 
+% Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,1,1,0,0,0);
 DELT=time1(2);

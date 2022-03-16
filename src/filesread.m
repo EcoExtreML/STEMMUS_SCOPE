@@ -14,6 +14,7 @@ disp (['Reading config from ',CFG])
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 
+% Add the forcing name to forcing path
 ForcingFilePath=fullfile(ForcingPath, ForcingFileName);
 %prepare input files
 sitefullname=dir(ForcingFilePath).name; %read sitename

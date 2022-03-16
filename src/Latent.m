@@ -7,4 +7,4 @@ function [L]= Latent(TT,NN)
     end
     
     
-    % It's a test
+% Git lesson test

@@ -25,6 +25,7 @@ sitefullname=dir(ForcingFilePath).name; %read sitename
     endyear=str2double(endyear);
 %ncdisp(sitefullname,'/','full');
 
+% Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,1,1,0,0,0);
 DELT=time1(2);

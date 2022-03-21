@@ -36,7 +36,8 @@ loop_func() {
     i=$1
     ncfiles=("$(echo "$ForcingPath" | tr -d '\r')"*.nc)
     
-    file=${ncfiles[$i]}
+    ### -1 is needed because ncfiles array starts from 0
+    file=${ncfiles[$i-1]}
 
     start_time=$(date +%s)
     base_name=$(basename ${file})
@@ -58,7 +59,7 @@ loop_func() {
         -e "s|InputPath=.*$|InputPath=$work_dir|g" <$config >$station_config
 
     ### 3.7 Add info to a std_out file
-    std_out="./slurm/slurm_${SLURM_JOB_ID}_${station_name}.out"
+    std_out="./slurm/slurm_${SLURM_JOB_ID}_${i}_${station_name}.out"
     echo "
     SoilPropertyPath is $SoilPropertyPath
     InputPath is $InputPath

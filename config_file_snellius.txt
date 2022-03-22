@@ -4,3 +4,4 @@ OutputPath=/scratch-shared/ecoextreml/stemmus_scope/output/
 ForcingPath=/projects/0/einf2480/forcing/plumber2_data/
 ForcingFileName=FI-Hyy_1996-2014_FLUXNET2015_Met.nc
 VegetationPropertyPath=/projects/0/einf2480/model_parameters/vegetation_property/
+DurationSize=10

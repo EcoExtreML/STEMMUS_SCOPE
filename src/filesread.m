@@ -30,11 +30,19 @@ time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,1,1,0,0,0);
 DELT=time1(2);
 
+%get  time length of forcing file
+time_length=length(time1);
+
 %Set the end time of the main loop in STEMMUS_SCOPE.m
 %using config file or time length of forcing file
-Dur_tot=DurationSize;
-if isempty(Dur_tot)
-    Dur_tot=length(time1);
+if isempty(DurationSize)
+    Dur_tot=time_length;
+else
+    if (DurationSize>time_length)
+        Dur_tot=time_length;
+    else
+        Dur_tot=DurationSize;
+    end
 end
 
 dt=time1(2)/3600/24;

@@ -27,5 +27,5 @@ ForcingFileName = config_paths{indx};
 % it is optional
 indx = find(strcmp(config_vars, 'DurationSize'));
 if indx
-    DurationSize = config_paths{indx};
+    DurationSize = str2double(config_paths{indx});
 end

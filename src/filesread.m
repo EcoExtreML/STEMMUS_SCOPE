@@ -35,7 +35,7 @@ time_length=length(time1);
 
 %Set the end time of the main loop in STEMMUS_SCOPE.m
 %using config file or time length of forcing file
-if isempty(DurationSize)
+if isnan(DurationSize)
     Dur_tot=time_length;
 else
     if (DurationSize>time_length)

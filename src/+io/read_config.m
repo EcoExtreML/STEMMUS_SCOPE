@@ -24,8 +24,6 @@ ForcingPath = config_paths{indx};
 indx = find(strcmp(config_vars, 'ForcingFileName'));
 ForcingFileName = config_paths{indx};
 
-% it is optional
+% value of DurationSize is optional and can be NA
 indx = find(strcmp(config_vars, 'DurationSize'));
-if indx
-    DurationSize = str2double(config_paths{indx});
-end
+DurationSize = str2double(config_paths{indx});

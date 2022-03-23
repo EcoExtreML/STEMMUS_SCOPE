@@ -321,7 +321,7 @@ while CONT                          % while energy balance does not close
     BB1=AA1(~isnan(AA1));
     BB2=AA2(~isinf(AA2));
     PSI1 = (sum(BB1)-Trans)/sum(BB2);
-   % µ¥Î»ÒªÍ³Ò»£¬ÊÇÃë»¹ÊÇ°ëÐ¡Ê±£¬ÍÁ²ãºñ¶ÈÊÇ·ñÒª¿¼ÂÇ
+   % ï¿½ï¿½Î»ÒªÍ³Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ë»¹ï¿½Ç°ï¿½Ð¡Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½ï¿½ï¿½
     if isnan(PSI1)
     PSI1 = -1; 
     end
@@ -496,7 +496,11 @@ fluxes.aPAR_Cab = Pntot_Cab;% [umol m-2 s-1]      absorbed PAR
 fluxes.aPAR_Wm2 = Rntot_PAR;% [W m-2]      absorbed PAR
 fluxes.aPAR_Cab_eta = aPAR_Cab_eta;
 fluxes.GPP    = Actot*12/1000000000;  % [kg C m-2 s-1]      gross primary production
+<<<<<<< HEAD
 fluxes.NEE      = (Actot-Resp)*12/1000000000; % [kg C m-2 s-1]      net primary production
+=======
+fluxes.NEE      = (Resp-Actot)*12/1000000000; % [kg C m-2 s-1]      net primary production
+>>>>>>> main
 
 thermal.Ta    = Ta;       % [oC]                air temperature (as in input)
 thermal.Ts    = Ts;       % [oC]                soil temperature, sunlit and shaded [2x1]

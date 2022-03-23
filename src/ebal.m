@@ -98,7 +98,8 @@ maxEBer         = iter.maxEBer;
 Wc              = iter.Wc;
 
 CONT            = 1;              %           is 0 when the calculation has finished
-
+es_fun      = @(T)6.107*10.^(7.5.*T./(237.3+T));
+s_fun       = @(es, T) es*2.3026*7.5*237.3./(237.3+T).^2;
 t               = xyt.t(k);   
 Ta              = meteo.Ta;
 ea              = meteo.ea;
@@ -288,11 +289,13 @@ while CONT                          % while energy balance does not close
     
     %soil.PSIs;
     rss  = soil.rss;
+    rac     = (LAI+1)*(raa+rawc);
+    ras     = (LAI+1)*(raa+raws);
     for i=1:30
-    [lEch,Hch,ech,Cch]     = heatfluxes((LAI+1)*(raa+rawc),rcwh,Tch,ea,Ta,e_to_q,PSI,Ca,Cih);
-    [lEcu,Hcu,ecu,Ccu]     = heatfluxes((LAI+1)*(raa+rawc),rcwu,Tcu,ea,Ta,e_to_q,PSI,Ca,Ciu);
-    [lEs,Hs]               = heatfluxes((LAI+1)*(raa+raws),rss ,Ts ,ea,Ta,e_to_q,PSIss,Ca,Ca);
-
+    [lEch,Hch,ech,Cch,lambdah,sh]     = heatfluxes(rac,rcwh,Tch,ea,Ta,e_to_q,PSI,Ca,Cih,constants,es_fun,s_fun);
+    [lEcu,Hcu,ecu,Ccu,lambdau,su]     = heatfluxes(rac,rcwu,Tcu,ea,Ta,e_to_q,PSI,Ca,Ciu,constants,es_fun,s_fun);
+    [lEs,Hs,~,~,lambdas,ss]           = heatfluxes(ras,rss,Ts ,ea,Ta,e_to_q,PSIss,Ca,Ca,constants,es_fun,s_fun);
+    
     %if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
      %  error('Heatfluxes produced complex values for CO2 concentration!')
     %end
@@ -318,7 +321,7 @@ while CONT                          % while energy balance does not close
     BB1=AA1(~isnan(AA1));
     BB2=AA2(~isinf(AA2));
     PSI1 = (sum(BB1)-Trans)/sum(BB2);
-   % µ¥Î»ÒªÍ³Ò»£¬ÊÇÃë»¹ÊÇ°ëÐ¡Ê±£¬ÍÁ²ãºñ¶ÈÊÇ·ñÒª¿¼ÂÇ
+   % ï¿½ï¿½Î»ÒªÍ³Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ë»¹ï¿½Ç°ï¿½Ð¡Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½ï¿½ï¿½
     if isnan(PSI1)
     PSI1 = -1; 
     end
@@ -355,34 +358,19 @@ while CONT                          % while energy balance does not close
                     maxEBerch >   maxEBer    |...
                    maxEBers  >   maxEBer)    &...
                     counter   <   maxit+1;%        Continue iteration?
-                
+    if counter==5, Wc = 0.6;  end
+    if counter==10; Wc = 0.4;  end
+    if counter==30; Wc = 0.1;  end   
+         
     % 2.7. New estimates of soil (s) and leaf (c) temperatures, shaded (h) and sunlit (1) 
-    %Tch         = Ta + update(Tch-Ta,Wc,(raa + rawc)/(rhoa*cp).*(Rnch - lEch));
-    Tch         = Tch + Wc*(Rnch-lEch-Hch)./((rhoa*cp)./((LAI+1)*(raa + rawc)) + 4*sigmaSB*(Tch+273.15).^3);
-    %Tcu         = Ta + update(Tcu-Ta,Wc,(raa + rawc)/(rhoa*cp).*(Rncu - lEcu));
-    Tcu         = Tcu + Wc*(Rncu-lEcu-Hcu)./((rhoa*cp)./((LAI+1)*(raa + rawc)) + 4*sigmaSB*(Tcu+273.15).^3);
-    
-    if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
-    if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
-    
-    Ts(abs(Ts)>100 ) = Ta;
-    %Ts          = Ta + update(Ts-Ta,Wc, (raa + raws)/(rhoa*cp).*(Rns - lEs - G));     
-    Ts         = Ts + Wc*(Rns-lEs-Hs-G)./((rhoa*cp)./(raa + rawc) + 4*sigmaSB*(Ts+273.15).^3);
+    Tch         = Tch + Wc*EBerch./((rhoa*cp)./rac + rhoa*lambdah*e_to_q.*sh./(rac+rcwh)+ 4*leafbio.emis*sigmaSB*(Tch+273.15).^3);
+    Tcu         = Tcu + Wc*EBercu./((rhoa*cp)./rac + rhoa*lambdau*e_to_q.*su./(rac+rcwu)+ 4*leafbio.emis*sigmaSB*(Tcu+273.15).^3);
+    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3);  
+    Tch(abs(Tch)>100) = Ta;
+    Tcu(abs(Tcu)>100) = Ta;
 
-%     if mean(abs(Hs))>1E4,
-%         Ts(:) = Ta-1; Tcu(:) = Ta-1; Tch(:) = Ta-1;
-%     end
-    
-    
-    %     if t==0 || SoilHeatMethod == 2,
-%         Ts      = Ta + update(Ts-Ta,Wc, (raa + raws)/(rhoa*cp).*(Rns - lEs - G));
-%     else
-%         Ts      = Tsold + G/GAM*sqrt(Deltat/pi);
-%     end  
-    % 2.8. error check 
     if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
     if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
-  if counter>50, Wc = 0.2;  end
   
 end
 
@@ -489,13 +477,30 @@ fluxes.Rnstot   = Rnstot; % [W m-2]             soil net radiation
 fluxes.lEstot   = lEstot; % [W m-2]             soil latent heat flux
 fluxes.Hstot    = Hstot;  % [W m-2]             soil sensible heat flux
 fluxes.Gtot     = Gtot;   % [W m-2]             soil heat flux
+if isnan(fluxes.Rntot)
+    fluxes.lEtot=Rntot;
+    fluxes.Htot=Rntot;
+    fluxes.Atot=Rntot;
+    fluxes.Rnctot   = Rntot; % [W m-2]             canopy net radiation
+    fluxes.lEctot   = Rntot; % [W m-2]             canopy latent heat flux
+    fluxes.Hctot    = Rntot;  % [W m-2]             canopy sensible heat flux
+    fluxes.Actot    = Rntot;  % [umol m-2 s-1]      canopy net CO2 uptake
+    fluxes.Rnstot   = Rntot; % [W m-2]             soil net radiation
+    fluxes.lEstot   = Rntot; % [W m-2]             soil latent heat flux
+    fluxes.Hstot    = Rntot;  % [W m-2]             soil sensible heat flux
+    fluxes.Gtot     = Rntot;   % [W m-2]             soil heat flux
+end
 fluxes.Resp     = Resp;   % [umol m-2 s-1]      soil respiration
 fluxes.aPAR     = Pntot;  % [umol m-2 s-1]      absorbed PAR
 fluxes.aPAR_Cab = Pntot_Cab;% [umol m-2 s-1]      absorbed PAR
 fluxes.aPAR_Wm2 = Rntot_PAR;% [W m-2]      absorbed PAR
 fluxes.aPAR_Cab_eta = aPAR_Cab_eta;
 fluxes.GPP    = Actot*12/1000000000;  % [kg C m-2 s-1]      gross primary production
+<<<<<<< HEAD
+fluxes.NEE      = (Actot-Resp)*12/1000000000; % [kg C m-2 s-1]      net primary production
+=======
 fluxes.NEE      = (Resp-Actot)*12/1000000000; % [kg C m-2 s-1]      net primary production
+>>>>>>> main
 
 thermal.Ta    = Ta;       % [oC]                air temperature (as in input)
 thermal.Ts    = Ts;       % [oC]                soil temperature, sunlit and shaded [2x1]

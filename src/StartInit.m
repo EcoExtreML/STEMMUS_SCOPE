@@ -541,7 +541,7 @@ if Thmrlefc==1
     NBCT=1;  % Energy Surface B.C.: 1 --> Specified temperature (BCT); 2 --> Specified heat flux (BCT); 3 --> Atmospheric forcing;
     BCT=Ta_msr(1);  % surface temperature
     NBCTB=1;% Energy Bottom B.C.: 1 --> Specified temperature (BCTB); 2 --> Specified heat flux (BCTB); 3 --> Zero temperature gradient;
-    BCTB=mean(Ta_msr);
+    BCTB=nanmean(Ta_msr);
 end
 if Soilairefc==1
     NBCP=2; % Soil air pressure B.C.: 1 --> Ponded infiltration caused a specified pressure value; 

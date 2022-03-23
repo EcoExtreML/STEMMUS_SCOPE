@@ -56,6 +56,9 @@ Integrated code of SCOPE and STEMMUS.
     the model runs at the site scale. For example, if we put the
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
+    - DurationSize: total number of time steps in which model runs. It can be
+      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The variable names e.g. `SoilPropertyPath` should not be changed.
@@ -178,6 +181,9 @@ Dutch National supercomputer hosted at SURF.
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
     - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`. 
+    - DurationSize: total number of time steps in which model runs. It can be
+      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The variable name e.g. `SoilPropertyPath` should not be changed.

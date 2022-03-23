@@ -53,7 +53,7 @@ global KLT_Switch xERR hERR TERR NBChB NBCT uERR
 global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
 global constants
-global RWU EVAP theta_s0
+global RWU EVAP theta_s0 Ks0
 global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
 
 %% 1. define constants
@@ -451,6 +451,8 @@ for i = 1:1:Dur_tot
         else
             canopy.lidf     = equations.leafangles(canopy.LIDFa,canopy.LIDFb);    % This is 'ladgen' in the original SAIL model,
         end
+        
+        leafbio.emis        = 1-leafbio.rho_thermal-leafbio.tau_thermal; 
         
         if options.calc_PSI
             fversion = @fluspect_B_CX;

@@ -497,7 +497,6 @@ fluxes.aPAR_Wm2 = Rntot_PAR;% [W m-2]      absorbed PAR
 fluxes.aPAR_Cab_eta = aPAR_Cab_eta;
 fluxes.GPP    = Actot*12/1000000000;  % [kg C m-2 s-1]      gross primary production
 fluxes.NEE      = (Actot-Resp)*12/1000000000; % [kg C m-2 s-1]      net primary production
-fluxes.NEE      = (Resp-Actot)*12/1000000000; % [kg C m-2 s-1]      net primary production
 
 thermal.Ta    = Ta;       % [oC]                air temperature (as in input)
 thermal.Ts    = Ts;       % [oC]                soil temperature, sunlit and shaded [2x1]

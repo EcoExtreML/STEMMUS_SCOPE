@@ -29,7 +29,7 @@ def cli():
 
     # Find model output sub-directory linked to the forcing_filename
     station_name = forcing_filename.split("_")[0]
-    model_output_dir = list(Path(output_path).glob(f"{station_name}*"))[0]
+    model_output_dir = sorted(Path(output_path).glob(f"{station_name}*"))[-1]
 
     # Generate EC data from forcing data
     ECdata_filename, lat, lon, nctime = csv_to_nc.generate_ec_data(forcing_path, forcing_filename, model_output_dir)

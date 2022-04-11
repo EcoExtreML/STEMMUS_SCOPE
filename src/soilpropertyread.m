@@ -1,4 +1,4 @@
-global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha porosity FOC FOS FOSL MSOC Coef_Lamda fieldMC latitude longitude fmax theta_s0
+global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha porosity FOC FOS FOSL MSOC Coef_Lamda fieldMC latitude longitude fmax theta_s0 Ks0
 % the path SoilPropertyPath is set in filereads.m
 dirOutput=dir([SoilPropertyPath, 'Hydraul_Param_SoilGrids_Schaap_sl7.nc']);
 %ncdisp([SoilPropertyPath,'Hydraul_Param_SoilGrids_Schaap_sl1.nc'],'/','full');
@@ -128,12 +128,12 @@ var_scaling_200cm=ncread([SoilPropertyPath,'Hydraul_Param_SoilGrids_Schaap_sl7.n
 valid_subpixels_200cm=ncread([SoilPropertyPath,'Hydraul_Param_SoilGrids_Schaap_sl7.nc'],'valid_subpixels_200cm');
 % read data
 for i=1:600
-    if abs(lat(i)-latitude)<0.25
+    if abs(lat(i)-latitude)<=0.125
     break
     end
 end
  for j=1:1440
-        if abs(lon(j)-longitude)<0.25
+        if abs(lon(j)-longitude)<=0.125
         break
         end
  end

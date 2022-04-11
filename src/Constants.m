@@ -436,6 +436,11 @@ Precipp=0;
 
 Mdata=textread([InputPath, 'Mdata.txt']);
 Ta_msr=Mdata(:,2)';
+for jj=1:Dur_tot
+if Ta_msr(jj)<-100
+Ta_msr(jj)=NaN;
+end
+end
 RH_msr=Mdata(:,3)';
 WS_msr=Mdata(:,4)';
 Pg_msr=Mdata(:,5)';
@@ -472,21 +477,21 @@ InitX5=	0.0845;
 InitX6=	0.078;
 BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-InitT0= mean(Ta_msr);  %-1.75estimated soil surface temperature-1.762
-InitT1=	mean(Ta_msr);
-InitT2=	mean(Ta_msr);
-InitT3=	mean(Ta_msr);
-InitT4=	mean(Ta_msr);
-InitT5=	mean(Ta_msr);%;
-InitT6=	mean(Ta_msr);
+InitT0= nanmean(Ta_msr);  %-1.75estimated soil surface temperature-1.762
+InitT1=	nanmean(Ta_msr);
+InitT2=	nanmean(Ta_msr);
+InitT3=	nanmean(Ta_msr);
+InitT4=	nanmean(Ta_msr);
+InitT5=	nanmean(Ta_msr);
+InitT6=	nanmean(Ta_msr);
 Tss=InitT0;
-BtmT=mean(Ta_msr);  %9 8.1
-InitX0=	fieldMC(1);  %0.0793
-InitX1=	fieldMC(1); % Measured soil liquid moisture content
-InitX2=	fieldMC(2); %0.182
-InitX3=	fieldMC(3);
-InitX4= fieldMC(4); %0.14335
-InitX5=	fieldMC(5);
-InitX6=	fieldMC(6);
-BtmX=fieldMC(6);%0.05;    % The initial moisture content at the bottom of the column.
+BtmT=nanmean(Ta_msr);  %9 8.1
+InitX0=	fieldMC(1)*0.6;  %0.0793
+InitX1=	fieldMC(1)*0.6; % Measured soil liquid moisture content
+InitX2=	fieldMC(2)*0.6; %0.182
+InitX3=	fieldMC(3)*0.6;
+InitX4= fieldMC(4)*0.6; %0.14335
+InitX5=	fieldMC(5)*0.6;
+InitX6=	fieldMC(6)*0.6;
+BtmX=fieldMC(6)*0.6;%0.05;    % The initial moisture content at the bottom of the column.
 end

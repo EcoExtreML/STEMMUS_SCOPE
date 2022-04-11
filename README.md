@@ -56,6 +56,9 @@ Integrated code of SCOPE and STEMMUS.
     the model runs at the site scale. For example, if we put the
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
+    - DurationSize: total number of time steps in which model runs. It can be
+      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The variable names e.g. `SoilPropertyPath` should not be changed.
@@ -178,6 +181,9 @@ Dutch National supercomputer hosted at SURF.
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
     - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`. 
+    - DurationSize: total number of time steps in which model runs. It can be
+      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The variable name e.g. `SoilPropertyPath` should not be changed.
@@ -262,21 +268,27 @@ module load MCR/R2021a.3
 ./STEMMUS_SCOPE/exe/STEMMUS_SCOPE config_file_snellius.txt
 ```
 
-The bash script `run_stemmus_scope_snellius.sh` in this repository,
-runs the model at two sites (default) on a **comupute node**. The
-scripts loops over forcing files in the "ForcingPath", creates
-`sitename_timestamped` working directories under "InputPath" directory
-and copies required data to those working drs. To change the number of
-sites, open the script and change the parameter `1-2` in line `#SBATCH
---array=1-2`. A maximum number of simultaneously running tasks from
-the job array may be specified using a "%" separator. For example
-"--array=1-10%4" will limit the number of simultaneously running tasks
-from this job array to 4, see [Slurm Job
-Array](https://slurm.schedmd.com/job_array.html). Note that the model
-run can take long for some of the sites. You can run the script in a
-terminal: `cd STEMMUS_SCOPE; mkdir -p slurm; sbatch
-run_stemmus_scope_snellius.sh`. This creates a log file per each
-forcing file in a folder `slurm`.
+The bash script `run_stemmus_scope_snellius.sh` in this repository, runs the
+model at 170 sites (default) on a **compute node**. The scripts loops over
+forcing files in the "ForcingPath", creates `sitename_timestamped` working
+directories under "InputPath" directory and copies required data to those
+working dirs. To change the number of sites, open the script and on the last
+line change the parameter `{1..170}`. For example `env_parallel -n1 -j32
+--joblog $log_file loop_func ::: {1..170}` will run the model at 32 sites
+simultaneously. For testing purposes, the time of the bash script is set to
+`00:10:00`. Note that the model run can take long for some of the sites. As the
+maxium time wall is 5 days on a partition thin, time can be set to`5-00:00:00`
+for a complete run of the model.
+
+ You can run the script in a terminal:
+
+```shell
+cd STEMMUS_SCOPE
+mkdir -p slurm
+sbatch run_stemmus_scope_snellius.sh
+```
+
+This creates a log file per each forcing file in the folder `slurm`.
 
 ## Create an executable file of STEMMUS_SCOPE
 

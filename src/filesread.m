@@ -1,5 +1,5 @@
 %%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName
+global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName DurationSize
 global CFG
 
 %% CFG is a path to a config file
@@ -9,11 +9,12 @@ end
 
 %% Read the CFG file. Due to using MATLAB compiler, we cannot use run(CFG)
 disp (['Reading config from ',CFG])
-[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName] = io.read_config(CFG);
+[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize] = io.read_config(CFG);
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 
+% Add the forcing name to forcing path
 ForcingFilePath=fullfile(ForcingPath, ForcingFileName);
 %prepare input files
 sitefullname=dir(ForcingFilePath).name; %read sitename
@@ -24,11 +25,26 @@ sitefullname=dir(ForcingFilePath).name; %read sitename
     endyear=str2double(endyear);
 %ncdisp(sitefullname,'/','full');
 
+% Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,1,1,0,0,0);
 DELT=time1(2);
+
+%get  time length of forcing file
+time_length=length(time1);
+
 %Set the end time of the main loop in STEMMUS_SCOPE.m
-Dur_tot=length(time1);
+%using config file or time length of forcing file
+if isnan(DurationSize)
+    Dur_tot=time_length;
+else
+    if (DurationSize>time_length)
+        Dur_tot=time_length;
+    else
+        Dur_tot=DurationSize;
+    end
+end
+
 dt=time1(2)/3600/24;
 t2=datenum(endyear,12,31,23,30,0);
 T=t1:dt:t2;

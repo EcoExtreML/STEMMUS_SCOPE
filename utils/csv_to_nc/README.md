@@ -19,9 +19,12 @@ wget https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforg
 bash Mambaforge-pypy3-Linux-x86_64.sh -b -p ~/mamba
 ```
 
-Then, update base environment
+Then, update base environment:
+
+```sh
 . ~/mamba/bin/activate
 mamba update --name base mamba
+```
 
 Finally, we create new conda environment called 'stemmus' with all required dependencies:
 

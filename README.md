@@ -186,8 +186,10 @@ Dutch National supercomputer hosted at SURF.
       half-hour time step i.e. `365*24*2=17520`.
 
     To edit the config file, open the file with a text editor and change the
-    paths. The variable name e.g. `SoilPropertyPath` should not be changed.
-    Also, note a `/` is required at the end of each line.
+    paths. The `InputPath` and `OutputPath` are user-defined directories, make
+    sure they exist and you have right permissions. The variable name e.g.
+    `SoilPropertyPath` should not be changed. Also, note a `/` is required at
+    the end of each line.
 
 As explained above, the "InputPath" directory of the model is considered as
 the working/running directory and should include some data required by the
@@ -296,8 +298,9 @@ See the [exe readme](./exe/README.md).
 
 ## Preparing the outputs of the model in NetCDF:
 
-There are some files in `utils` directory in this repository. The utils are used
-to read `.csv` files and save them in `.nc` format. 
+There is some files in utils directory in this repository. The utils are used to
+read `.csv` files and save them in `.nc` format. See [utils
+readme](./utils/csv_to_nc/README.md).
 
 > An example NetCDF file is stored in the project directory to show the desired
   structure of variables in one file.

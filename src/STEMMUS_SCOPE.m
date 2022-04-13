@@ -54,7 +54,7 @@ global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
 global constants
 global RWU EVAP theta_s0 Ks0
-global HR Precip Precipp Tss frac sfactortot sfactor Tsss fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
+global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
 
 %% 1. define constants
 [constants] = io.define_constants();
@@ -200,51 +200,79 @@ V(23).Val=canopy_height;
 V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
 if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
-   V(14).Val= [0.2 0.3 288 313 328];
+    V(14).Val= [0.2 0.3 288 313 328];
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
     V(14).Val= [0.2 0.3 283 311 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['D'; 'e']     %['Deciduous Broadleaf'] 
     V(14).Val= [0.2 0.3 283 311 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0];  
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['M'; 'i']     %['Mixed Forests'] 
     V(14).Val= [0.2 0.3 281 307 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0]; 
+    V(28).Val= [0.04];
 elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf'] 
     V(14).Val= [0.2 0.3 278 303 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0];   
+    V(28).Val= [0.01];
 elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands'] 
     V(14).Val= [0.2 0.3 278 303 328];
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0]; 
+    V(28).Val= [0.03];
 elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
     V(14).Val= [0.2 0.3 288 313 328];
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0];  
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['C'; 'l']     %['Closed Shrublands'] 
     V(14).Val= [0.2 0.3 288 313 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['S'; 'a']     %['Savannas'] 
     V(14).Val= [0.2 0.3 278 313 328];
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.05];
 elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas'] 
     V(14).Val= [0.2 0.3 278 313 328];
-else %IGBP_veg_long(1)==['Grasslands'] 
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.03];
+else %IGBP_veg_long==['Grasslands'] 
     V(14).Val= [0.2 0.3 288 303 328];
+    if sitename(1:6)==['A','R','-','S','L','u']||sitename(1:6)==['A','U','-','Y','n','c']||sitename(1:6)==['D','K','-','L','v','a']||sitename(1:6)==['U','S','-','A','R','1']||sitename(1:6)==['U','S','-','A','R','2']||sitename(1:6)==['U','S','-','A','u','d']
+    V(9).Val= [120];
+    V(10).Val= [4];
+    V(11).Val= [1];
+    else
+    V(9).Val= [120];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    end
+    V(28).Val= [0.02];
 end
-if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
-   V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['D'; 'e']     %['Deciduous Broadleaf'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['M'; 'i']     %['Mixed Forests'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['C'; 'l']     %['Closed Shrublands'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['S'; 'a']     %['Savannas'] 
-    V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas'] 
-    V(28).Val= [0.05];
-else %IGBP_veg_long(1)==['Grasslands'] 
-    V(28).Val= [0.05];
-end
+
 TZ=fix(longitude/15);
 TZZ=mod(longitude,15);
 if longitude>0
@@ -566,13 +594,11 @@ for i = 1:1:Dur_tot
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tsss=Tss;
            Tss=thermal.Tsave; 
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tsss=Tss;
            Tss=Ta_msr(KT); 
         end
     elseif NoTime(KT)>NoTime(KT-1)
@@ -580,13 +606,11 @@ for i = 1:1:Dur_tot
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tsss=Tss;
            Tss=thermal.Tsave; 
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tsss=Tss;
            Tss=Ta_msr(KT); 
         end
     end

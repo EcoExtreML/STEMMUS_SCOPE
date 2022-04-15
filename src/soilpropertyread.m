@@ -10,7 +10,7 @@ dirOutput=dir([SoilPropertyPath, 'Hydraul_Param_SoilGrids_Schaap_sl7.nc']);
 %ncdisp([SoilPropertyPath,'Hydraul_Param_SoilGrids_Schaap_sl7.nc'],'/','full');
 %ncdisp([SoilPropertyPath,'CLAY1.nc','/','full');
 %% load soil property
-if sitename(1:2)==['ID']
+if sitename(1:2)==['ID'] % Soil data missing at ID-Pag site, we use anothor location information here.
 latitude=-1;
 longitude=112;
 end

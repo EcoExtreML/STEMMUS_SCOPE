@@ -22,6 +22,10 @@ module load parallel/20210622-GCCcore-10.3.0
 ### 2. To transfer environment vars, functions, ... 
 source `which env_parallel.bash`
 
+### python environment stemmus is needed to convert csv files to nc files
+### see utils/csv_to_nc/README.md
+. ~/mamba/bin/activate stemmus
+
 ### 3. Create a function to loop over
 loop_func() {
 
@@ -78,7 +82,14 @@ loop_func() {
     run_time=$(expr $end_time - $start_time)
 
     ## 3.9 Add some information to slurm*.out file later will be used.
-    echo "Run is COMPLETED. Model run time is $run_time s." >> $std_out
+    completed="COMPLETED"
+    echo "Run is $completed. Model run time is $run_time s." >> $std_out
+
+    ## 3.10 Convert csv files to a nc file, if run is completed
+    if [[ -v completed ]];
+    then
+        python utils/csv_to_nc/generate_netcdf_files.py --config_file $station_config --variable_file utils/csv_to_nc/Variables_will_be_in_NetCDF_file.csv
+    fi
 }
 
 ### 4. Create a log file for GNU parallel

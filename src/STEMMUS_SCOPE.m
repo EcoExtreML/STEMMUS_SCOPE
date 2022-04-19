@@ -232,18 +232,18 @@ elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf']
     V(28).Val= [0.01];
 elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands']    
     if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
-    V(14).Val= [0.2 0.3 278 303 328];
-    V(9).Val= [50];
-    V(10).Val= [4];
-    V(11).Val= [1]; 
-    V(13).Val= [0.025]; % Respiration = Rdparam*Vcmcax
-    V(28).Val= [0.03];
+        V(14).Val= [0.2 0.3 278 303 328];
+        V(9).Val= [50];
+        V(10).Val= [4];
+        V(11).Val= [1]; 
+        V(13).Val= [0.025]; % Respiration = Rdparam*Vcmcax
+        V(28).Val= [0.03];
     else 
-    V(14).Val= [0.2 0.3 278 303 328];
-    V(9).Val= [120];
-    V(10).Val= [9];
-    V(11).Val= [0]; 
-    V(28).Val= [0.03];    
+        V(14).Val= [0.2 0.3 278 303 328];
+        V(9).Val= [120];
+        V(10).Val= [9];
+        V(11).Val= [0]; 
+        V(28).Val= [0.03];    
     end
 elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
     V(14).Val= [0.2 0.3 288 313 328];
@@ -272,14 +272,14 @@ elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas']
 else %IGBP_veg_long==['Grasslands'] 
     V(14).Val= [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
-    V(9).Val= [120];
-    V(10).Val= [4];
-    V(11).Val= [1];
-    V(13).Val= [0.025]; 
+        V(9).Val= [120];
+        V(10).Val= [4];
+        V(11).Val= [1];
+        V(13).Val= [0.025]; 
     else
-    V(9).Val= [120];
-    V(10).Val= [9];
-    V(11).Val= [0];
+        V(9).Val= [120];
+        V(10).Val= [9];
+        V(11).Val= [0];
     end
     V(28).Val= [0.02];
 end

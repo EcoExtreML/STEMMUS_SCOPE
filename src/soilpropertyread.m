@@ -11,20 +11,20 @@ dirOutput=dir([SoilPropertyPath, 'Hydraul_Param_SoilGrids_Schaap_sl7.nc']);
 %ncdisp([SoilPropertyPath,'CLAY1.nc','/','full');
 %% load soil property
 if sitename(1:2)==['ID'] % Soil data missing at ID-Pag site, we use anothor location information here.
-latitude=-1;
-longitude=112;
+   latitude=-1;
+   longitude=112;
 end
 lat=ncread([SoilPropertyPath,'CLAY1.nc'],'lat');
 lon=ncread([SoilPropertyPath,'CLAY1.nc'],'lon');
 for i=1:16800
-    if abs(lat(i)-latitude)<0.0085
-    break
-    end
+   if abs(lat(i)-latitude)<0.0085
+      break
+   end
 end
  for j=1:43200
-        if abs(lon(j)-longitude)<0.0085
-        break
-        end
+      if abs(lon(j)-longitude)<0.0085
+         break
+      end
  end
 depth1=ncread([SoilPropertyPath,'CLAY1.nc'],'depth');
 depth2=ncread([SoilPropertyPath,'CLAY2.nc'],'depth');
@@ -46,14 +46,14 @@ MSOC=double([OC1(1) OC1(3) OC2(1) OC2(2) OC2(3) OC2(4)])./10000;  %mass fraction
 lati=ncread([SoilPropertyPath,'lambda/lambda_l1.nc'],'lat');
 long=ncread([SoilPropertyPath,'lambda/lambda_l1.nc'],'lon');
 for i=1:21600
-    if abs(lati(i)-latitude)<=0.0042
-    break
-    end
+   if abs(lati(i)-latitude)<=0.0042
+      break
+   end
 end
  for j=1:43200
-        if abs(long(j)-longitude)<=0.0042
-        break
-        end
+      if abs(long(j)-longitude)<=0.0042
+         break
+      end
  end
 lambda1=ncread([SoilPropertyPath,'lambda/lambda_l1.nc'],'lambda',[j,i],[1,1]);
 lambda2=ncread([SoilPropertyPath,'lambda/lambda_l2.nc'],'lambda',[j,i],[1,1]); 
@@ -69,14 +69,14 @@ lat=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl1_alpha.nc'],'latitu
 lon=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl1_alpha.nc'],'longitude');
 % read data
 for i=1:17924
-    if abs(lat(i)-latitude)<=0.0042
-    break
-    end
+   if abs(lat(i)-latitude)<=0.0042
+      break
+   end
 end
  for j=1:43200
-        if abs(lon(j)-longitude)<=0.0042
-        break
-        end
+      if abs(lon(j)-longitude)<=0.0042
+         break
+      end
 end
 % 0cm
 alpha0=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl1_alpha.nc'],'alpha_0cm',[j,i],[1,1]);

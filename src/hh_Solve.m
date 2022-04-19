@@ -17,8 +17,10 @@ for MN=1:NN
 end
 
 if isnan(SAVEhh)==1
-    keyboard
+    %%keyboard
+    fprintf('\n Warning: FIX_ME: replace keyboard \r')
 end
 if ~isreal(SAVEhh)
-    keyboard
+    %%keyboard
+    fprintf('\n Warning: FIX_ME: replace keyboard \r')
 end

@@ -59,34 +59,44 @@ for ML=1:NL
             VvT(ML,ND)=0;
         end
         if isnan(Chh(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if isnan(Khh(ML,ND))==1
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if isnan(Chg(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if isnan(ChT(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if isnan(KhT(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if ~isreal(Chh(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if ~isreal(Khh(ML,ND))==1
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if ~isreal(Chg(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if ~isreal(ChT(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
         if ~isreal(KhT(ML,ND))
-            keyboard
+            %%keyboard
+            fprintf('\n Warning: FIX_ME: replace keyboard \r')
         end
     end
 end 

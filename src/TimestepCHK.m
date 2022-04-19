@@ -1,7 +1,8 @@
 function [KT,TIME,Delt_t,tS,NBChh,IRPT1,IRPT2]=TimestepCHK(NBCh,BCh,NBChh,DSTOR,DSTOR0,EXCESS,QMT,Precip,Evap,hh,IRPT1,NN,SAVEhh,TT_CRIT,T0,TT,T,EPCT,h,T_CRIT,xERR,hERR,TERR,Theta_LL,Theta_L,Theta_UU,Theta_U,KT,TIME,Delt_t,NL,Thmrlefc,NBChB,NBCT,NBCTB,tS,uERR)
 
     if Delt_t<1.0e-10
-        keyboard  
+        %%keyboard
+        fprintf('\n Warning: FIX_ME: replace keyboard \r')
     end
 % testing this function %%%
 if NBCh==1

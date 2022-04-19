@@ -321,7 +321,6 @@ while CONT                          % while energy balance does not close
     BB1=AA1(~isnan(AA1));
     BB2=AA2(~isinf(AA2));
     PSI1 = (sum(BB1)-Trans)/sum(BB2);
-   % ��λҪͳһ�����뻹�ǰ�Сʱ���������Ƿ�Ҫ����
     if isnan(PSI1)
     PSI1 = -1; 
     end

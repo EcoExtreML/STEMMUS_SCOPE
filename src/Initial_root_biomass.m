@@ -4,7 +4,7 @@ global Ztot IGBP_veg_long
 root_den = 250*1000; %% [gDM / m^3] Root density  Jackson et al., 1997 
 R_C = 0.488; %% [gC/gDM] Ratio Carbon-Dry Matter in root   Jackson et al.,  1997 
 if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
-    beta = 0.993; %% ? is a plant-dependent root distribution parameter adopted from Jackson et al. (1996) 
+    beta = 0.993; %% beta is a plant-dependent root distribution parameter adopted from Jackson et al. (1996), it is refered to CLM5.0 document. 
 elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
     beta = 0.993; 
 elseif IGBP_veg_long(1:2)== ['D'; 'e']     %['Deciduous Broadleaf'] 
@@ -16,15 +16,15 @@ elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf']
 elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands'] 
     beta = 0.943; 
 elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
-    beta = 0.943; 
+    beta = 0.966; 
 elseif IGBP_veg_long(1:2)== ['C'; 'l']     %['Closed Shrublands'] 
-    beta = 0.943; 
+    beta = 0.966; 
 elseif IGBP_veg_long(1:2)== ['S'; 'a']     %['Savannas'] 
     beta = 0.943; 
 elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas'] 
     beta = 0.943; 
 else %IGBP_veg_long(1)==['Grasslands'] 
-    beta = 0.993; 
+    beta = 0.943; 
 end
 
 Rltot = RTB/R_C/root_den/(pi*(rroot^2)); %% %% root length index [m root / m^2 PFT]

@@ -64,7 +64,7 @@ for i = 1:L
                 D0 = dlmread([path0_ info0(i).name],',',1,0);
                 D1 = dlmread([path1_ info1(j).name],',',1,0);
             end
-            if length(D0) ~= length(D1), keyboard, end
+            if length(D0) ~= length(D1), fprintf('\n Warning: FIX_ME: replace keyboard \r'), end
             if (sum(sum(D0-D1).^2))>1E-9
                 fprintf(['\nWarning: data in the output file ' info0(i).name ' are different from the verification output \r '])
                 h0 = textread([path0_ info0(i).name],'%s','bufsize', 1E9); %#ok<DTXTRD>

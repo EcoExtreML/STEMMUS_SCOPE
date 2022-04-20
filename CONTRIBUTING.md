@@ -133,4 +133,9 @@ Now a new GitHub folder `STEMMUS_SCOPE` is created in your `HOME` directory.
 
 > In this command, we clone the repository using `ssh` option. As we set the ssh
 connection in [**Step 2**](#2-set-ssh-connection), this command here does not ask for our user name and
-password. 
+password.
+
+### 5. Collaborate using GitHub
+
+To know about the most common Git commands, follow the guides
+[here](https://hackmd.io/B4v6KwsBRzG-akLDF8e5pg).

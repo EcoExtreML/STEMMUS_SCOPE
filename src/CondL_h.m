@@ -236,8 +236,7 @@ for ML=1:NL
             Se(ML,ND)=0;
         end
         if isnan(Se(ML,ND))==1
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         Theta_II(ML,ND)=(Theta_UU(ML,ND)-Theta_LL(ML,ND))*RHOL/RHOI;  % ice water content
         if Theta_UU(ML,ND)~=0
@@ -341,12 +340,10 @@ for ML=1:NL
                 end
             if isnan(KL_h(ML,ND))==1
                 KL_h(ML,ND)=0;
-                %%keyboard
-                fprintf('\n Warning: FIX_ME: replace keyboard \r')
+                warning('\n Warning: FIX warning message \r')
             end
             if ~isreal(KL_h(ML,ND))
-                %%keyboard
-                fprintf('\n Warning: FIX_ME: replace keyboard \r')
+                warning('\n Warning: FIX warning message \r')
             end
             KfL_T(ML,ND)=helpers.heaviside1(TT_CRIT(MN)-(TT(MN)+T0))*L_f*1e4/(g*(T0));   % thermal consider for freezing soil
         else

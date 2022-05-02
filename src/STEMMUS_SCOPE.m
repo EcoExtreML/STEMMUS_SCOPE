@@ -133,17 +133,17 @@ for i = 1:length(V)
     if ~useXLSX, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
     if isempty(j) || cond
         if i==2
-            fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet...');
-            fprintf(1,'%s %s %s\n', 'I will use 0.25*Cab instead');
+            warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
+                'I will use 0.25*Cab instead');
             options.Cca_function_of_Cab = 1;
         else
             
             if ~(options.simulation==1) && (i==30 || i==32)
-                fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet...');
-                fprintf(1,'%s %s %s\n', 'I will use the MODTRAN spectrum as it is');
+                warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
+                    'I will use the MODTRAN spectrum as it is');
             else
                 if (options.simulation == 1 || (options.simulation~=1 && (i<46 || i>50)))
-                    fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet');
+                    warning('warning: input "', V(i).Name, '" not provided in input spreadsheet');
                     if (options.simulation ==1 && (i==1 ||i==9||i==22||i==23||i==54 || (i>29 && i<37)))
                         fprintf(1,'%s %s %s\n', 'I will look for the values in Dataset Directory "',char(F(5).FileName),'"');
                     else

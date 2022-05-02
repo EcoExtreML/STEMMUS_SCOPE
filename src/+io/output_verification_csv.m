@@ -34,8 +34,7 @@ info1   = dir([path1_ filesep '*.csv']);           %the most recent output
 [differentsize,differentcontent,differentnumberoffiles]  = deal(0);
 
 if ~(length(info0)==length(info1))
-    warning(
-        ['\nWarning: in the output file, ' num2str(length(info1)) ' files were stored, \r'], ...
+    warning(['\nWarning: in the output file, ' num2str(length(info1)) ' files were stored, \r'], ...
         ['whereas there should be ' num2str(length(info0)) ' files in this directory \r '], ...
         'check the simulation options that are specified the options tab of the input spreadsheet \r')
     differentnumberoffiles = 1;

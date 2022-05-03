@@ -3,7 +3,7 @@ import pandas as pd
 from netCDF4 import Dataset, num2date
 from pathlib import Path
 
-def generate_ec_data(forcing_path, forcing_name, output_path):
+def generate_ec_data(forcing_path, forcing_name, output_path, duration_size):
     """
     Read forcing data and create EC data in csv format.
     """
@@ -44,6 +44,12 @@ def generate_ec_data(forcing_path, forcing_name, output_path):
 
     # Write to csv
     df = pd.DataFrame.from_dict(dict(zip(names, data)))
+
+    # subset data, if needed
+    if duration_size != 'NA':
+        var_t_length = int(duration_size)
+        df = df.loc[:var_t_length-1]
+
     filename = Path(output_path, "ECdata.csv")
     df.to_csv(filename, index=False)
 
@@ -118,7 +124,7 @@ def read2d_transposed_unit(filename, nrHeaderLines, unit, depths):
     return data
 
 
-def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filename):
+def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filename, duration_size):
     # Renamed radiation.dat to radiation.csv
     # Renamed LEtot to lEtot
     # Split AResist into AResist_rac and AResist_ras
@@ -191,8 +197,6 @@ def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filena
     var_z[:] = depths
     var_t.setncattr('units', f'{nctime.units}')
     var_t.setncattr('calendar', f'{nctime.calendar}')
-    # The data of var_t is inserted at the end; when we "know" the length
-    var_t_length = None
 
     # Add all parameters as a netCDF variable; also add the known metadata (units, long_name, Stemmus_name, definition)
 
@@ -224,8 +228,6 @@ def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filena
                 print(f'Reading data from file: {file}')
                 data[file] = readcsv(Path(csvfiles_path, file), headerlines[file])
             var[:] = data[file][stemmusname]
-            if var_t_length is None:
-                var_t_length = len(data[file][stemmusname])
         else: # Sim_Temp or Sim_Theta
             print(f'Reading data from file: {file}')
             matrix = read2d_transposed_unit(Path(csvfiles_path, file), headerlines[file], unit, depths)
@@ -233,6 +235,10 @@ def generateNetCdf(lat, lon, nctime, output_dir, csvfiles_path, variables_filena
 
     # Finally fill var_t with the nr of seconds per timestep
     # Note: we don't take the numbers from the file, because Year + DoY is not as accurate (it becomes 3599.99, 7199.99 etc)
+    if duration_size != 'NA':
+        var_t_length = int(duration_size)
+    else:
+         var_t_length = len(nctime[:])
     var_t[:] = [i*1800 for i in range(var_t_length)]
 
     nc.close()

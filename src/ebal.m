@@ -395,11 +395,11 @@ rad.LotBB_  = Lot_;           % Note that this is the blackbody radiance!
 
 %% 3. Print warnings whenever the energy balance could not be solved
 if counter>=maxit
-    fprintf(1,'%s \n','warning: maximum number of iteratations exceeded');
-    fprintf(1,'%s ',['Energy balance error sunlit vegetation = ',sprintf('%4.2f',maxEBercu),'W m-2 ']);
-    fprintf(1,'%s ',['Energy balance error shaded vegetation = ',sprintf('%4.2f',maxEBerch),'W m-2 ']);
-    fprintf(1,'%s ',['Energy balance error soil              = ',sprintf('%4.2f',maxEBers ),'W m-2 ']);
-    fprintf(1,'\r');
+    warning('\n warning: maximum number of iteratations exceeded', ...
+        ['Energy balance error sunlit vegetation = ',sprintf('%4.2f',maxEBercu),'W m-2 '], ...
+        ['Energy balance error shaded vegetation = ',sprintf('%4.2f',maxEBerch),'W m-2 '], ...
+        ['Energy balance error soil              = ',sprintf('%4.2f',maxEBers ),'W m-2 ']);
+    
 end
 
 %% 4. Calculate the output per layer

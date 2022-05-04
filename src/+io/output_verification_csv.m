@@ -34,9 +34,9 @@ info1   = dir([path1_ filesep '*.csv']);           %the most recent output
 [differentsize,differentcontent,differentnumberoffiles]  = deal(0);
 
 if ~(length(info0)==length(info1))
-    fprintf(['\nWarning: in the output file, ' num2str(length(info1)) ' files were stored, \r'])
-    fprintf(['whereas there should be ' num2str(length(info0)) ' files in this directory \r '])
-    fprintf('check the simulation options that are specified the options tab of the input spreadsheet \r')
+    warning(['\nWarning: in the output file, ' num2str(length(info1)) ' files were stored, \r'], ...
+        ['whereas there should be ' num2str(length(info0)) ' files in this directory \r '], ...
+        'check the simulation options that are specified the options tab of the input spreadsheet \r')
     differentnumberoffiles = 1;
 end
 
@@ -51,8 +51,8 @@ for i = 1:L
     if k
         s1 = info1(j).bytes;
         if ~(s0==s1)
-            fprintf(['\n Warning: the file size of ' info0(i).name ' is different from the verification output \r'])
-            fprintf(['(' num2str(s1) ' instead of ' num2str(s0) ' bytes) \r'])
+            warning(['\n Warning: the file size of ' info0(i).name ' is different from the verification output \r'], ...
+                ['(' num2str(s1) ' instead of ' num2str(s0) ' bytes) \r'])
             differentsize = 1;
         else
             if (~strcmp(info0(i).name,'pars_and_input.csv') && ~strcmp(info0(i).name,'pars_and_input_short.csv'))
@@ -64,9 +64,9 @@ for i = 1:L
                 D0 = dlmread([path0_ info0(i).name],',',1,0);
                 D1 = dlmread([path1_ info1(j).name],',',1,0);
             end
-            if length(D0) ~= length(D1), fprintf('\n Warning: FIX_ME: replace keyboard \r'), end
+            if length(D0) ~= length(D1), warning('\n FIX warning message \r'), end
             if (sum(sum(D0-D1).^2))>1E-9
-                fprintf(['\nWarning: data in the output file ' info0(i).name ' are different from the verification output \r '])
+                warning(['\n Warning: data in the output file ' info0(i).name ' are different from the verification output \r '])
                 h0 = textread([path0_ info0(i).name],'%s','bufsize', 1E9); %#ok<DTXTRD>
                 spn = ceil(sqrt(size(D0,2)));              
                 figure(i)         
@@ -88,13 +88,13 @@ for i = 1:L
             end
         end
     else
-        fprintf(['\nWarning: the file ' info0(i).name ' was not found in the output\r'])
-    end
+        warning(['\n Warning: the file ' info0(i).name ' was not found in the output\r'])
+    end 
 end
 if differentsize
-    fprintf('\nWarning The size of some of the output files is different from the verification data \r')
-    fprintf('Check if the startdate and enddate in the spreadsheet\r')
-    fprintf('and the verification data in  are specified in "Dataset_Dir" in the Filenames tab of the input data spreadsheet \r')
+    warning('\n Warning The size of some of the output files is different from the verification data \r', ...
+        'Check if the startdate and enddate in the spreadsheet\r', ...
+        'and the verification data in  are specified in "Dataset_Dir" in the Filenames tab of the input data spreadsheet \r')
 end
 if ~(differentsize || differentcontent || differentnumberoffiles)
     fprintf('All right, the output is the same as in the verification data set \r')

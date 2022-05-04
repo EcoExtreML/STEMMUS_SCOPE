@@ -59,44 +59,34 @@ for ML=1:NL
             VvT(ML,ND)=0;
         end
         if isnan(Chh(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if isnan(Khh(ML,ND))==1
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if isnan(Chg(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message\r')
         end
         if isnan(ChT(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if isnan(KhT(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if ~isreal(Chh(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if ~isreal(Khh(ML,ND))==1
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if ~isreal(Chg(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if ~isreal(ChT(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
         if ~isreal(KhT(ML,ND))
-            %%keyboard
-            fprintf('\n Warning: FIX_ME: replace keyboard \r')
+            warning('\n Warning: FIX warning message \r')
         end
     end
 end 

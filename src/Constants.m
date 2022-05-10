@@ -1,4 +1,4 @@
-% function Constants
+cccccc% function Constants
 global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin
 global xERR hERR TERR PERR tS uERR
 global KT TIME Delt_t0 DURTN TEND NIT KIT Nmsrmn Eqlspace h_SUR Msrmn_Fitting  
@@ -30,7 +30,7 @@ uERR=0.02;                  % Maximum desirable change of total water content;
 Tot_Depth=500;           % Unit is cm. it should be usually bigger than 0.5m. Otherwise, 
                                  % the DeltZ would be reset in 50cm by hand;                                  
 R_depth=300; %                                                                               
-Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       
+Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       c
 NL=100;
 if ~Eqlspace                                                                     
    run Dtrmn_Z              % Determination of NL, the number of elments;              
@@ -486,12 +486,12 @@ InitT5=	nanmean(Ta_msr);
 InitT6=	nanmean(Ta_msr);
 Tss=InitT0;
 BtmT=nanmean(Ta_msr);  %9 8.1
-InitX0=	fieldMC(1);  %0.0793
-InitX1=	fieldMC(1); % Measured soil liquid moisture content
-InitX2=	fieldMC(2); %0.182
-InitX3=	fieldMC(3);
-InitX4= fieldMC(4); %0.14335
-InitX5=	fieldMC(5);
-InitX6=	fieldMC(6);
-BtmX=fieldMC(6);%0.05;    % The initial moisture content at the bottom of the column.
+InitX0=	fieldMC(1)*0.6;  %0.0793
+InitX1=	fieldMC(1)*0.6; % Measured soil liquid moisture content
+InitX2=	fieldMC(2)*0.6; %0.182
+InitX3=	fieldMC(3)*0.6;
+InitX4= fieldMC(4)*0.6; %0.14335
+InitX5=	fieldMC(5)*0.6;
+InitX6=	fieldMC(6)*0.6;
+BtmX=fieldMC(6)*0.6;%0.05;    % The initial moisture content at the bottom of the column.
 end

@@ -133,17 +133,17 @@ for i = 1:length(V)
     if ~useXLSX, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
     if isempty(j) || cond
         if i==2
-            fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet...');
-            fprintf(1,'%s %s %s\n', 'I will use 0.25*Cab instead');
+            warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
+                'I will use 0.25*Cab instead');
             options.Cca_function_of_Cab = 1;
         else
             
             if ~(options.simulation==1) && (i==30 || i==32)
-                fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet...');
-                fprintf(1,'%s %s %s\n', 'I will use the MODTRAN spectrum as it is');
+                warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
+                    'I will use the MODTRAN spectrum as it is');
             else
                 if (options.simulation == 1 || (options.simulation~=1 && (i<46 || i>50)))
-                    fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet');
+                    warning('warning: input "', V(i).Name, '" not provided in input spreadsheet');
                     if (options.simulation ==1 && (i==1 ||i==9||i==22||i==23||i==54 || (i>29 && i<37)))
                         fprintf(1,'%s %s %s\n', 'I will look for the values in Dataset Directory "',char(F(5).FileName),'"');
                     else
@@ -403,7 +403,7 @@ TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros
 TIMELAST=0;
 SAVEtS=tS; kk=0;   %DELT=Delt_t; 
 for i = 1:1:Dur_tot
-    KT=KT+1                         % Counting Number of timesteps
+    KT=KT+1;                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
         Delt_t=TEND-TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
     end
@@ -752,7 +752,7 @@ for i = 1:1:Dur_tot
         TSAVE=TT(NN);
     end
     TIMEOLD=KT;
-    KIT
+    KIT;
     KIT=0;
     [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin);
     [hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
@@ -816,6 +816,7 @@ for i = 1:1:Dur_tot
     kk=k;
     n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
 end
+fprintf('\n The calculations end now \r')
 if options.verify
     io.output_verification(Output_dir)
 end

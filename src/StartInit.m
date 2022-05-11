@@ -14,7 +14,7 @@ global TERM ZETA0 CON0 PS1 PS2 i KLT_Switch DVT_Switch KaT_Switch
 global Kaa_Switch DVa_Switch KLa_Switch
 global KfL_T Theta_II Theta_I Theta_UU Theta_U T_CRIT L_f g T0 TT_CRIT XUOLD XIOLD ISFT TCON_s TCON_dry TCON_L RHo_bulk Imped TPS1 TPS2 FEHCAP TS1 TS2 TCON0 TCON_min Theta_qtz XSOC
 global Lamda Phi_s SWCC XCAP ThermCond Gama_hh Theta_a Gama_h hm hd SAVEhh SAVEh
-global COR CORh Theta_V Theta_g Se KL_h DTheta_LLh KfL_h DTheta_UUh hThmrl Tr Hystrs KIT RHOI RHOL FOC FOS FOSL MSOC Coef_Lamda fieldMC Theta_f Ta_msr
+global COR CORh Theta_V Theta_g Se KL_h DTheta_LLh KfL_h DTheta_UUh hThmrl Tr Hystrs KIT RHOI RHOL FOC FOS FOSL MSOC Coef_Lamda fieldMC Theta_f Ta_msr IGBP_veg_long
 
 hd=-1e7;hm=-9899;
 % SWCC=0;    % indicator for choose the soil water characteristic curve, =0, Clapp and Hornberger; =1, Van Gen;
@@ -535,7 +535,11 @@ IRPT1=0;
 IRPT2=0;
 NBCh=3;      % Moisture Surface B.C.: 1 --> Specified matric head(BCh); 2 --> Specified flux(BCh); 3 --> Atmospheric forcing;
 BCh=-20/3600;
+if IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands']   
+NBChB=1;    % Moisture Bottom B.C.: 1 --> Specified matric head (BChB); 2 --> Specified flux(BChB); 3 --> Zero matric head gradient (Gravitiy drainage);
+else
 NBChB=3;    % Moisture Bottom B.C.: 1 --> Specified matric head (BChB); 2 --> Specified flux(BChB); 3 --> Zero matric head gradient (Gravitiy drainage);
+end
 BChB=-9e-10; 
 if Thmrlefc==1
     NBCT=1;  % Energy Surface B.C.: 1 --> Specified temperature (BCT); 2 --> Specified heat flux (BCT); 3 --> Atmospheric forcing;

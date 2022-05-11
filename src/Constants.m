@@ -1,4 +1,4 @@
-cccccc% function Constants
+% function Constants
 global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin
 global xERR hERR TERR PERR tS uERR
 global KT TIME Delt_t0 DURTN TEND NIT KIT Nmsrmn Eqlspace h_SUR Msrmn_Fitting  
@@ -30,7 +30,7 @@ uERR=0.02;                  % Maximum desirable change of total water content;
 Tot_Depth=500;           % Unit is cm. it should be usually bigger than 0.5m. Otherwise, 
                                  % the DeltZ would be reset in 50cm by hand;                                  
 R_depth=300; %                                                                               
-Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       c
+Eqlspace=0;                 % Indicator for deciding is the space step equal or not;       
 NL=100;
 if ~Eqlspace                                                                     
    run Dtrmn_Z              % Determination of NL, the number of elments;              

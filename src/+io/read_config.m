@@ -25,5 +25,5 @@ indx = find(strcmp(config_vars, 'ForcingFileName'));
 ForcingFileName = config_paths{indx};
 
 % value of DurationSize is optional and can be NA
-indx = find(strcmp(config_vars, 'DurationSize'));
+indx = find(strcmp(config_vars, 'NumberOfTimeSteps'));
 DurationSize = str2double(config_paths{indx});

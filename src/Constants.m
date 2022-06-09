@@ -501,8 +501,8 @@ InitX4= ncread([Initial_dir,Initial_path(9).name],'swvl4'); %0.14335
 InitX5=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
 InitX6=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
 BtmX  = ncread([Initial_dir,Initial_path(9).name],'swvl4');%0.05;    % The initial moisture content at the bottom of the column.
-if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(1) ||...
-InitX3 > SaturatedMC(1) || InitX4 > SaturatedMC(1) || 
+if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(2) ||...
+InitX3 > SaturatedMC(3) || InitX4 > SaturatedMC(4) || InitX5 > SaturatedMC(5) || InitX6 > SaturatedMC(6)
 InitX0=	fieldMC(1);  %0.0793
 InitX1=	fieldMC(1); % Measured soil liquid moisture content
 InitX2=	fieldMC(2); %0.182

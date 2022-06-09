@@ -127,7 +127,7 @@ elevation=ncread(ForcingFilePath,'elevation');
 LAI=ncread(ForcingFilePath,'LAI');
 LAIL=length(LAI);
 LAIa=reshape(LAI,LAIL,1);
-
+LAIa(LAIa<0.01)=0.01;
 
 LAI_alternative=ncread(ForcingFilePath,'LAI_alternative');
 LAI_alternativeL=length(LAI_alternative);

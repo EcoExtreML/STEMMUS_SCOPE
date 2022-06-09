@@ -12,7 +12,7 @@ global DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2 Soilairefc XK XWILT
 global HCAP TCON SF TCA GA1 GA2 GB1 GB2 S1 S2 HCD TARG1 TARG2 GRAT VPER 
 global TERM ZETA0 CON0 PS1 PS2 i KLT_Switch DVT_Switch KaT_Switch
 global Kaa_Switch DVa_Switch KLa_Switch
-global KfL_T Theta_II Theta_I Theta_UU Theta_U T_CRIT L_f g T0 TT_CRIT XUOLD XIOLD ISFT TCON_s TCON_dry TCON_L RHo_bulk Imped TPS1 TPS2 FEHCAP TS1 TS2 TCON0 TCON_min Theta_qtz XSOC
+global KfL_T Theta_II Theta_I Theta_UU Theta_U  L_f g T0 TT_CRIT XUOLD XIOLD ISFT TCON_s TCON_dry TCON_L RHo_bulk Imped TPS1 TPS2 FEHCAP TS1 TS2 TCON0 TCON_min Theta_qtz XSOC
 global Lamda Phi_s SWCC XCAP ThermCond Gama_hh Theta_a Gama_h hm hd SAVEhh SAVEh
 global COR CORh Theta_V Theta_g Se KL_h DTheta_LLh KfL_h DTheta_UUh hThmrl Tr Hystrs KIT RHOI RHOL FOC FOS FOSL MSOC Coef_Lamda fieldMC Theta_f Ta_msr IGBP_veg_long
 
@@ -543,9 +543,13 @@ end
 BChB=-9e-10; 
 if Thmrlefc==1
     NBCT=1;  % Energy Surface B.C.: 1 --> Specified temperature (BCT); 2 --> Specified heat flux (BCT); 3 --> Atmospheric forcing;
-    BCT=Ta_msr(1);  % surface temperature
+    BCT=0;%Ta_msr(1);  % surface temperature
     NBCTB=1;% Energy Bottom B.C.: 1 --> Specified temperature (BCTB); 2 --> Specified heat flux (BCTB); 3 --> Zero temperature gradient;
-    BCTB=nanmean(Ta_msr);
+    if nanmean(Ta_msr)<0
+        BCTB  = 0;  %9 8.1
+    else
+        BCTB  =  nanmean(Ta_msr);
+    end
 end
 if Soilairefc==1
     NBCP=2; % Soil air pressure B.C.: 1 --> Ponded infiltration caused a specified pressure value; 

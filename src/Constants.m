@@ -480,14 +480,24 @@ InitX5=	0.0845;
 InitX6=	0.078;
 BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-InitT0= 0;%ncread([Initial_dir,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
-InitT1=	0;%ncread([Initial_dir,Initial_path(2).name],'stl1')-273.15;
-InitT2=	0;%ncread([Initial_dir,Initial_path(3).name],'stl2')-273.15;
-InitT3=	0;%ncread([Initial_dir,Initial_path(4).name],'stl3')-273.15;
-InitT4=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
-InitT5=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
-InitT6=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
-Tss = InitT0;
+      InitT0=   ncread([Initial_dir,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
+      InitT1=	ncread([Initial_dir,Initial_path(2).name],'stl1')-273.15;
+      InitT2=	ncread([Initial_dir,Initial_path(3).name],'stl2')-273.15;
+      InitT3=	ncread([Initial_dir,Initial_path(4).name],'stl3')-273.15;
+      InitT4=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+      InitT5=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+      InitT6=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+      Tss = InitT0;
+    if InitT0 < 0 || InitT1 < 0 || InitT2 < 0 || InitT3 < 0 || InitT4 < 0 || InitT5 < 0 || InitT6 < 0 
+      InitT0=   0;
+      InitT1=	0;
+      InitT2=	0;
+      InitT3=	0;
+      InitT4=	0;
+      InitT5=	0;
+      InitT6=	0;
+      Tss = InitT0;
+    end
 if nanmean(Ta_msr)<0
     BtmT  = 0;  %9 8.1
 else

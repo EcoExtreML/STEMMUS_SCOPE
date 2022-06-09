@@ -543,7 +543,7 @@ end
 BChB=-9e-10; 
 if Thmrlefc==1
     NBCT=1;  % Energy Surface B.C.: 1 --> Specified temperature (BCT); 2 --> Specified heat flux (BCT); 3 --> Atmospheric forcing;
-    BCT=0;%Ta_msr(1);  % surface temperature
+    BCT= Ta_msr(1);  % surface temperature
     NBCTB=1;% Energy Bottom B.C.: 1 --> Specified temperature (BCTB); 2 --> Specified heat flux (BCTB); 3 --> Zero temperature gradient;
     if nanmean(Ta_msr)<0
         BCTB  = 0;  %9 8.1

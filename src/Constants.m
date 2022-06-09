@@ -454,8 +454,7 @@ Precip_msr=Mdata(:,6)'*10*DELT;
 Tmin=min(Ts_msr);
 Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
 % load initial soil moisture and soil temperature from ERA5
-Initial_dir = '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Initial_condition/';
-Initial_path=dir(fullfile(Initial_dir,[sitename,'*.nc']));
+Initial_path=dir(fullfile(InitialConditionPath,[sitename,'*.nc']));
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
 InitND2=15;
 InitND3=60;
@@ -480,13 +479,13 @@ InitX5=	0.0845;
 InitX6=	0.078;
 BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-      InitT0=   ncread([Initial_dir,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
-      InitT1=	ncread([Initial_dir,Initial_path(2).name],'stl1')-273.15;
-      InitT2=	ncread([Initial_dir,Initial_path(3).name],'stl2')-273.15;
-      InitT3=	ncread([Initial_dir,Initial_path(4).name],'stl3')-273.15;
-      InitT4=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
-      InitT5=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
-      InitT6=	ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+      InitT0=   ncread([InitialConditionPath,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
+      InitT1=	ncread([InitialConditionPath,Initial_path(2).name],'stl1')-273.15;
+      InitT2=	ncread([InitialConditionPath,Initial_path(3).name],'stl2')-273.15;
+      InitT3=	ncread([InitialConditionPath,Initial_path(4).name],'stl3')-273.15;
+      InitT4=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
+      InitT5=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
+      InitT6=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
       Tss = InitT0;
     if InitT0 < 0 || InitT1 < 0 || InitT2 < 0 || InitT3 < 0 || InitT4 < 0 || InitT5 < 0 || InitT6 < 0 
       InitT0=   0;
@@ -503,14 +502,14 @@ if nanmean(Ta_msr)<0
 else
     BtmT  =  nanmean(Ta_msr);
 end
-InitX0=	ncread([Initial_dir,Initial_path(6).name],'swvl1');  %0.0793
-InitX1=	ncread([Initial_dir,Initial_path(6).name],'swvl1'); % Measured soil liquid moisture content
-InitX2=	ncread([Initial_dir,Initial_path(7).name],'swvl2'); %0.182
-InitX3=	ncread([Initial_dir,Initial_path(8).name],'swvl3');
-InitX4= ncread([Initial_dir,Initial_path(9).name],'swvl4'); %0.14335
-InitX5=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
-InitX6=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
-BtmX  = ncread([Initial_dir,Initial_path(9).name],'swvl4');%0.05;    % The initial moisture content at the bottom of the column.
+InitX0=	ncread([InitialConditionPath,Initial_path(6).name],'swvl1');  %0.0793
+InitX1=	ncread([InitialConditionPath,Initial_path(6).name],'swvl1'); % Measured soil liquid moisture content
+InitX2=	ncread([InitialConditionPath,Initial_path(7).name],'swvl2'); %0.182
+InitX3=	ncread([InitialConditionPath,Initial_path(8).name],'swvl3');
+InitX4= ncread([InitialConditionPath,Initial_path(9).name],'swvl4'); %0.14335
+InitX5=	ncread([InitialConditionPath,Initial_path(9).name],'swvl4');
+InitX6=	ncread([InitialConditionPath,Initial_path(9).name],'swvl4');
+BtmX  = ncread([InitialConditionPath,Initial_path(9).name],'swvl4');%0.05;    % The initial moisture content at the bottom of the column.
 if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(2) ||...
 InitX3 > SaturatedMC(3) || InitX4 > SaturatedMC(4) || InitX5 > SaturatedMC(5) || InitX6 > SaturatedMC(6)
 InitX0=	fieldMC(1);  %0.0793

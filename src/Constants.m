@@ -3,7 +3,7 @@ global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin
 global xERR hERR TERR PERR tS uERR
 global KT TIME Delt_t0 DURTN TEND NIT KIT Nmsrmn Eqlspace h_SUR Msrmn_Fitting  
 global Msr_Mois Msr_Temp Msr_Time Tp_t Evap EPCT SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh
-global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur FOC FOS FOSL MSOC Coef_Lamda fieldMC DELT Dur_tot Precipp fmax
+global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur FOC FOS FOSL MSOC Coef_Lamda fieldMC DELT Dur_tot Precipp fmax sitename
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% The time and domain information setting. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -453,8 +453,11 @@ Ts_msr=Mdata(:,2)';
 Precip_msr=Mdata(:,6)'*10*DELT;
 Tmin=min(Ts_msr);
 Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
+% load initial soil moisture and soil temperature from ERA5
+Initial_dir = '/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Initial_condition/';
+Initial_path=dir(fullfile(Initial_dir,[sitename,'*.nc']));
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
-InitND2=30;
+InitND2=15;
 InitND3=60;
 InitND4=100;
 InitND5=200;
@@ -477,21 +480,36 @@ InitX5=	0.0845;
 InitX6=	0.078;
 BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-InitT0= nanmean(Ta_msr);  %-1.75estimated soil surface temperature-1.762
-InitT1=	nanmean(Ta_msr);
-InitT2=	nanmean(Ta_msr);
-InitT3=	nanmean(Ta_msr);
-InitT4=	nanmean(Ta_msr);
-InitT5=	nanmean(Ta_msr);
-InitT6=	nanmean(Ta_msr);
-Tss=InitT0;
-BtmT=nanmean(Ta_msr);  %9 8.1
-InitX0=	fieldMC(1)*0.6;  %0.0793
-InitX1=	fieldMC(1)*0.6; % Measured soil liquid moisture content
-InitX2=	fieldMC(2)*0.6; %0.182
-InitX3=	fieldMC(3)*0.6;
-InitX4= fieldMC(4)*0.6; %0.14335
-InitX5=	fieldMC(5)*0.6;
-InitX6=	fieldMC(6)*0.6;
-BtmX=fieldMC(6)*0.6;%0.05;    % The initial moisture content at the bottom of the column.
+InitT0= 0;%ncread([Initial_dir,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
+InitT1=	0;%ncread([Initial_dir,Initial_path(2).name],'stl1')-273.15;
+InitT2=	0;%ncread([Initial_dir,Initial_path(3).name],'stl2')-273.15;
+InitT3=	0;%ncread([Initial_dir,Initial_path(4).name],'stl3')-273.15;
+InitT4=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+InitT5=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+InitT6=	0;%ncread([Initial_dir,Initial_path(5).name],'stl4')-273.15;
+Tss = InitT0;
+if nanmean(Ta_msr)<0
+    BtmT  = 0;  %9 8.1
+else
+    BtmT  =  nanmean(Ta_msr);
+end
+InitX0=	ncread([Initial_dir,Initial_path(6).name],'swvl1');  %0.0793
+InitX1=	ncread([Initial_dir,Initial_path(6).name],'swvl1'); % Measured soil liquid moisture content
+InitX2=	ncread([Initial_dir,Initial_path(7).name],'swvl2'); %0.182
+InitX3=	ncread([Initial_dir,Initial_path(8).name],'swvl3');
+InitX4= ncread([Initial_dir,Initial_path(9).name],'swvl4'); %0.14335
+InitX5=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
+InitX6=	ncread([Initial_dir,Initial_path(9).name],'swvl4');
+BtmX  = ncread([Initial_dir,Initial_path(9).name],'swvl4');%0.05;    % The initial moisture content at the bottom of the column.
+if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(1) ||...
+InitX3 > SaturatedMC(1) || InitX4 > SaturatedMC(1) || 
+InitX0=	fieldMC(1);  %0.0793
+InitX1=	fieldMC(1); % Measured soil liquid moisture content
+InitX2=	fieldMC(2); %0.182
+InitX3=	fieldMC(3);
+InitX4= fieldMC(4); %0.14335
+InitX5=	fieldMC(5);
+InitX6=	fieldMC(6);
+BtmX  = fieldMC(6);    
+end
 end

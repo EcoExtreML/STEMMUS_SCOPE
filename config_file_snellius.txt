@@ -1,7 +1,13 @@
+WorkDir=/scratch-shared/ecoextreml/stemmus_scope/
 SoilPropertyPath=/projects/0/einf2480/model_parameters/soil_property/
-InputPath=/scratch-shared/ecoextreml/stemmus_scope/input/
-OutputPath=/scratch-shared/ecoextreml/stemmus_scope/output/
 ForcingPath=/projects/0/einf2480/forcing/plumber2_data/
 ForcingFileName=FI-Hyy_1996-2014_FLUXNET2015_Met.nc
-VegetationPropertyPath=/projects/0/einf2480/model_parameters/vegetation_property/
-DurationSize=17520
+Directional=/projects/0/einf2480/model_parameters/vegetation_property/directional/
+FluspectParameters=/projects/0/einf2480/model_parameters/vegetation_property/fluspect_parameters/
+Leafangles=/projects/0/einf2480/model_parameters/vegetation_property/leafangles/
+Radiationdata=/projects/0/einf2480/model_parameters/vegetation_property/radiationdata/
+SoilSpectra=/projects/0/einf2480/model_parameters/vegetation_property/soil_spectrum/
+InputData=/projects/0/einf2480/model_parameters/vegetation_property/input_data.xlsx
+NumberOfTimeSteps=17520
+InputPath=/scratch-shared/ecoextreml/stemmus_scope/input/FI-Hyy_2022-05-11-1705/
+OutputPath=/scratch-shared/ecoextreml/stemmus_scope/output/FI-Hyy_2022-05-11-1705/

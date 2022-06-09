@@ -1,9 +1,6 @@
 function [Output_dir, f, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, output_path, spectral, options)
-%% Create Output dir
-string          = clock;
-simulation_name = char(sitename);
-outdir_name     = sprintf('%s_%4.0f-%02.0f-%02.0f-%02.0f%02.0f', simulation_name, string(1:5));
-Output_dir = [fullfile(output_path, outdir_name) filesep];
+%% Set Output dir
+Output_dir = output_path;
 
 warning('off','MATLAB:DELETE:FileNotFound')
 if any(~exist(Output_dir,'dir'))
@@ -13,7 +10,7 @@ end
 
 %% Log File
 for i = 1:length(parameter_file)
-    copy_name = [strrep(parameter_file{i}, '.csv', '') '_' outdir_name '.csv'];
+    copy_name = [strrep(parameter_file{i}, '.csv', '') '_' sitename '.csv'];
     copyfile([input_path parameter_file{i}],[Output_dir,'Parameters/', copy_name],'f')
 end
 fidpath          = fopen([Output_dir,'Parameters/SCOPEversion.txt'],'w');      % complete path of the SCOPE code

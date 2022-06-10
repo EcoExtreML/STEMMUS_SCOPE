@@ -9,7 +9,7 @@ end
 
 %% Read the CFG file. Due to using MATLAB compiler, we cannot use run(CFG)
 disp (['Reading config from ',CFG])
-[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize] = io.read_config(CFG);
+[SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize, InitialConditionPath] = io.read_config(CFG);
 
 %%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
@@ -127,7 +127,7 @@ elevation=ncread(ForcingFilePath,'elevation');
 LAI=ncread(ForcingFilePath,'LAI');
 LAIL=length(LAI);
 LAIa=reshape(LAI,LAIL,1);
-
+LAIa(LAIa<0.01)=0.01;
 
 LAI_alternative=ncread(ForcingFilePath,'LAI_alternative');
 LAI_alternativeL=length(LAI_alternative);
@@ -162,4 +162,4 @@ Meteodata=[time';Taira';RHa';Winda';Psurfa';Precipa';SWdowna';LWdowna';VPDa';LAI
 save([InputPath, 'Mdata.txt'], '-ascii', 'Meteodata') %save meteorological data for STEMMUS
 %Lacationdata=[latitude;longitude;reference_height;canopy_height;elevation]';
 %save([InputPath, 'Lacationdata.txt'], '-ascii', 'Lacationdata')
-clearvars -except SoilPropertyPath InputPath OutputPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename
+clearvars -except SoilPropertyPath InputPath OutputPath InitialConditionPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename

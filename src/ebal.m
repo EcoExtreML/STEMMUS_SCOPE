@@ -364,10 +364,10 @@ while CONT                          % while energy balance does not close
     % 2.7. New estimates of soil (s) and leaf (c) temperatures, shaded (h) and sunlit (1) 
     Tch         = Tch + Wc*EBerch./((rhoa*cp)./rac + rhoa*lambdah*e_to_q.*sh./(rac+rcwh)+ 4*leafbio.emis*sigmaSB*(Tch+273.15).^3);
     Tcu         = Tcu + Wc*EBercu./((rhoa*cp)./rac + rhoa*lambdau*e_to_q.*su./(rac+rcwu)+ 4*leafbio.emis*sigmaSB*(Tcu+273.15).^3);
-    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3);  
+    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3); % Ts contains shaded soil temperature and sunlit soil temperature 
     Tch(abs(Tch)>100) = Ta;
     Tcu(abs(Tcu)>100) = Ta;
-
+    Ts(abs(Ts)>100) = Ta;
     if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
     if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
   
@@ -395,10 +395,10 @@ rad.LotBB_  = Lot_;           % Note that this is the blackbody radiance!
 
 %% 3. Print warnings whenever the energy balance could not be solved
 if counter>=maxit
-    warning('\n warning: maximum number of iteratations exceeded', ...
-        ['Energy balance error sunlit vegetation = ',sprintf('%4.2f',maxEBercu),'W m-2 '], ...
-        ['Energy balance error shaded vegetation = ',sprintf('%4.2f',maxEBerch),'W m-2 '], ...
-        ['Energy balance error soil              = ',sprintf('%4.2f',maxEBers ),'W m-2 ']);
+    warning(['\n warning: maximum number of iteratations exceeded', ...
+        '\n Energy balance error sunlit vegetation = %4.2f W m-2 ', ...
+        '\n Energy balance error shaded vegetation = %4.2f W m-2 ', ...
+        '\n Energy balance error soil              = %4.2f W m-2 '],maxEBercu, maxEBerch, maxEBers);
     
 end
 

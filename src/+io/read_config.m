@@ -1,4 +1,4 @@
-function [SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize] = read_config(config_file)
+function [SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize, InitialConditionPath] = read_config(config_file)
 
 file_id = fopen(config_file);
 config = textscan(file_id,'%s %s', 'HeaderLines',0, 'Delimiter', '=');
@@ -23,6 +23,9 @@ ForcingPath = config_paths{indx};
 
 indx = find(strcmp(config_vars, 'ForcingFileName'));
 ForcingFileName = config_paths{indx};
+
+indx = find(strcmp(config_vars, 'InitialConditionPath'));
+InitialConditionPath = config_paths{indx};
 
 % value of DurationSize is optional and can be NA
 indx = find(strcmp(config_vars, 'DurationSize'));

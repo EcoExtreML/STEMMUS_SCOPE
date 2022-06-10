@@ -364,10 +364,10 @@ while CONT                          % while energy balance does not close
     % 2.7. New estimates of soil (s) and leaf (c) temperatures, shaded (h) and sunlit (1) 
     Tch         = Tch + Wc*EBerch./((rhoa*cp)./rac + rhoa*lambdah*e_to_q.*sh./(rac+rcwh)+ 4*leafbio.emis*sigmaSB*(Tch+273.15).^3);
     Tcu         = Tcu + Wc*EBercu./((rhoa*cp)./rac + rhoa*lambdau*e_to_q.*su./(rac+rcwu)+ 4*leafbio.emis*sigmaSB*(Tcu+273.15).^3);
-    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3);  
+    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3); % Ts contains shaded soil temperature and sunlit soil temperature 
     Tch(abs(Tch)>100) = Ta;
     Tcu(abs(Tcu)>100) = Ta;
-
+    Ts(abs(Ts)>100) = Ta;
     if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
     if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
   

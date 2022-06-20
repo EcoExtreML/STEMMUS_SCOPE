@@ -24,16 +24,12 @@ def cli():
          config = dict(line.strip().split('=') for line in file)
     
     # get paths
-    output_path = config['OutputPath']
+    model_output_dir = config['OutputPath']
     forcing_path = config['ForcingPath']
     forcing_filename = config['ForcingFileName']
 
     # get settings
-    duration_size = config['DurationSize']
-
-    # Find model output sub-directory linked to the forcing_filename
-    station_name = forcing_filename.split("_")[0]
-    model_output_dir = sorted(Path(output_path).glob(f"{station_name}*"))[-1]
+    duration_size = config['NumberOfTimeSteps']
 
     # Generate EC data from forcing data
     ECdata_filename, lat, lon, nctime = csv_to_nc.generate_ec_data(forcing_path, forcing_filename, model_output_dir, duration_size)

@@ -2,13 +2,8 @@ function [Output_dir, f, fnames] = create_output_files_binary(parameter_file, si
 %% Set Output dir
 Output_dir = output_path;
 
-warning('off','MATLAB:DELETE:FileNotFound')
-if any(~exist(Output_dir,'dir'))
-    mkdir(Output_dir)
-    mkdir([Output_dir,'Parameters' filesep])
-end
-
 %% Log File
+mkdir([Output_dir,'Parameters' filesep])
 for i = 1:length(parameter_file)
     copy_name = [strrep(parameter_file{i}, '.csv', '') '_' sitename '.csv'];
     copyfile([input_path parameter_file{i}],[Output_dir,'Parameters/', copy_name],'f')

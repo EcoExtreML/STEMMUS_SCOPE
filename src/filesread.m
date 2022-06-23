@@ -1,5 +1,5 @@
-%%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName DurationSize
+%%% Set paths %%%
+global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName
 global CFG
 
 %% CFG is a path to a config file
@@ -11,45 +11,17 @@ end
 disp (['Reading config from ',CFG])
 [SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize, InitialConditionPath] = io.read_config(CFG);
 
-%%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Prepare global input variables. %%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 
-% Add the forcing name to forcing path
-ForcingFilePath=fullfile(ForcingPath, ForcingFileName);
-%prepare input files
-sitefullname=dir(ForcingFilePath).name; %read sitename
-    sitename=sitefullname(1:6);
-    startyear=sitefullname(8:11);
-    endyear=sitefullname(13:16);
-    startyear=str2double(startyear);
-    endyear=str2double(endyear);
-%ncdisp(sitefullname,'/','full');
+forcing_global_path = fullfile(InputPath, 'forcing_globals.mat');
 
-% Read time values from forcing file
-time1=ncread(ForcingFilePath,'time');
-t1=datenum(startyear,1,1,0,0,0);
-DELT=time1(2);
+%% Explicitly load all variables into the workspace
+load(forcing_global_path, 'DELT', 'Dur_tot', 'IGBP_veg_long', 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename')
 
-%get  time length of forcing file
-time_length=length(time1);
+% Convert the int vectors back to strings
+sitename = char(sitename);
+IGBP_veg_long = strtrim(char(IGBP_veg_long));
 
-%Set the end time of the main loop in STEMMUS_SCOPE.m
-%using config file or time length of forcing file
-if isnan(DurationSize)
-    Dur_tot=time_length;
-else
-    if (DurationSize>time_length)
-        Dur_tot=time_length;
-    else
-        Dur_tot=DurationSize;
-    end
-end
-
-latitude=ncread(ForcingFilePath,'latitude');
-longitude=ncread(ForcingFilePath,'longitude');
-elevation=ncread(ForcingFilePath,'elevation');
-IGBP_veg_long=ncread(ForcingFilePath,'IGBP_veg_long');
-reference_height=ncread(ForcingFilePath,'reference_height');
-canopy_height=ncread(ForcingFilePath,'canopy_height');
-
+%% Clear unnescessary variables from workspace
 clearvars -except SoilPropertyPath InputPath OutputPath InitialConditionPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename

@@ -3,28 +3,33 @@ global Ztot IGBP_veg_long
 %rri=zeros(1,45);
 root_den = 250*1000; %% [gDM / m^3] Root density  Jackson et al., 1997 
 R_C = 0.488; %% [gC/gDM] Ratio Carbon-Dry Matter in root   Jackson et al.,  1997 
-if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
-    beta = 0.993; %% beta is a plant-dependent root distribution parameter adopted from Jackson et al. (1996), it is refered to CLM5.0 document. 
-elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
+%% beta is a plant-dependent root distribution parameter adopted from 
+%% Jackson et al. (1996), it is refered to CLM5.0 document. 
+if strcmp(IGBP_veg_long, 'Permanent Wetlands')
     beta = 0.993; 
-elseif IGBP_veg_long(1:2)== ['D'; 'e']     %['Deciduous Broadleaf'] 
+elseif strcmp(IGBP_veg_long, 'Evergreen Broadleaf') 
     beta = 0.993; 
-elseif IGBP_veg_long(1:2)== ['M'; 'i']     %['Mixed Forests'] 
+elseif strcmp(IGBP_veg_long, 'Deciduous Broadleaf') 
     beta = 0.993; 
-elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf'] 
+elseif strcmp(IGBP_veg_long, 'Mixed Forests') 
+    beta = 0.993; 
+elseif strcmp(IGBP_veg_long, 'Evergreen Needleleaf') 
     beta = 0.943; 
-elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands'] 
+elseif strcmp(IGBP_veg_long, 'Croplands') 
     beta = 0.943; 
-elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
+elseif strcmp(IGBP_veg_long, 'Open Shrublands')
     beta = 0.966; 
-elseif IGBP_veg_long(1:2)== ['C'; 'l']     %['Closed Shrublands'] 
+elseif strcmp(IGBP_veg_long, 'Closed Shrublands') 
     beta = 0.966; 
-elseif IGBP_veg_long(1:2)== ['S'; 'a']     %['Savannas'] 
+elseif strcmp(IGBP_veg_long, 'Savannas') 
     beta = 0.943; 
-elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas'] 
+elseif strcmp(IGBP_veg_long, 'Woody Savannas') 
     beta = 0.943; 
-else %IGBP_veg_long(1)==['Grasslands'] 
+elseif strcmp(IGBP_veg_long, 'Grasslands') 
     beta = 0.943; 
+else 
+    beta = 0.943; 
+    warning('IGBP vegetation name unknown, "%s" is not recognized. Falling back to default value for beta', IGBP_veg_long)
 end
 
 Rltot = RTB/R_C/root_den/(pi*(rroot^2)); %% %% root length index [m root / m^2 PFT]

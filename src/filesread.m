@@ -23,6 +23,8 @@ load(forcing_global_path, 'DELT', 'Dur_tot', 'IGBP_veg_long', 'latitude', 'longi
 sitename = char(sitename);
 %IGBP_veg_long = strtrim(char(IGBP_veg_long));
 IGBP_veg_long = char(IGBP_veg_long);
+% The model expects the char vector to be transposed:
+IGBP_veg_long = transpose(IGBP_veg_long);
 
 %% Clear unnescessary variables from workspace
 clearvars -except SoilPropertyPath InputPath OutputPath InitialConditionPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename

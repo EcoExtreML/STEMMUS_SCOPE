@@ -535,7 +535,7 @@ IRPT1=0;
 IRPT2=0;
 NBCh=3;      % Moisture Surface B.C.: 1 --> Specified matric head(BCh); 2 --> Specified flux(BCh); 3 --> Atmospheric forcing;
 BCh=-20/3600;
-if IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands']   
+if strcmp(IGBP_veg_long, 'Croplands')     %['Croplands']   
 NBChB=1;    % Moisture Bottom B.C.: 1 --> Specified matric head (BChB); 2 --> Specified flux(BChB); 3 --> Zero matric head gradient (Gravitiy drainage);
 else
 NBChB=3;    % Moisture Bottom B.C.: 1 --> Specified matric head (BChB); 2 --> Specified flux(BChB); 3 --> Zero matric head gradient (Gravitiy drainage);

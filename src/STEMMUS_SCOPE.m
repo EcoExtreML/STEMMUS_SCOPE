@@ -200,37 +200,37 @@ V(23).Val=canopy_height;
 V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
     sitename1=cellstr(sitename);
-if     IGBP_veg_long(1:2)== ['P'; 'e']     %['Permanent Wetlands'] 
+if strcmp(IGBP_veg_long, 'Permanent Wetlands') 
     V(14).Val= [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
     V(9).Val= [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
     V(10).Val= [9]; % Ball-Berry stomatal conductance parameter
     V(11).Val= [0]; % Photochemical pathway: 0=C3, 1=C4
     V(28).Val= [0.05]; % leaf width
-elseif IGBP_veg_long(1:2)== ['E'; 'v']     %['Evergreen Broadleaf'] 
+elseif strcmp(IGBP_veg_long, 'Evergreen Broadleaf')  
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['D'; 'e']     %['Deciduous Broadleaf'] 
+elseif strcmp(IGBP_veg_long, 'Deciduous Broadleaf') 
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];  
     V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['M'; 'i']     %['Mixed Forests'] 
+elseif strcmp(IGBP_veg_long, 'Mixed Forests') 
     V(14).Val= [0.2 0.3 281 307 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0]; 
     V(28).Val= [0.04];
-elseif IGBP_veg_long(11:12)== ['N'; 'e']     %['Evergreen Needleleaf'] 
+elseif strcmp(IGBP_veg_long, 'Evergreen Needleleaf') 
     V(14).Val= [0.2 0.3 278 303 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];   
     V(28).Val= [0.01];
-elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands']    
+elseif strcmp(IGBP_veg_long, 'Croplands')    
     if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
         V(14).Val= [0.2 0.3 278 303 328];
         V(9).Val= [50];
@@ -245,31 +245,31 @@ elseif IGBP_veg_long(1:2)== ['C'; 'r']     %['Croplands']
         V(11).Val= [0]; 
         V(28).Val= [0.03];    
     end
-elseif IGBP_veg_long(1:2)== ['O'; 'p']     %['Open Shrublands']
+elseif strcmp(IGBP_veg_long, 'Open Shrublands')
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];  
     V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['C'; 'l']     %['Closed Shrublands'] 
+elseif strcmp(IGBP_veg_long, 'Closed Shrublands') 
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['S'; 'a']     %['Savannas'] 
+elseif strcmp(IGBP_veg_long, 'Savannas')  
     V(14).Val= [0.2 0.3 278 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif IGBP_veg_long(1:2)== ['W'; 'o']     %['Woody Savannas'] 
+elseif strcmp(IGBP_veg_long, 'Woody Savannas')
     V(14).Val= [0.2 0.3 278 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.03];
-else %IGBP_veg_long==['Grasslands'] 
+elseif strcmp(IGBP_veg_long, 'Grasslands')  
     V(14).Val= [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
         V(9).Val= [120];
@@ -282,6 +282,13 @@ else %IGBP_veg_long==['Grasslands']
         V(11).Val= [0];
     end
     V(28).Val= [0.02];
+else
+    V(14).Val= [0.2 0.3 288 313 328];
+    V(9).Val= [80];
+    V(10).Val= [9];
+    V(11).Val= [0];
+    V(28).Val= [0.05];
+    warning('IGBP vegetation name unknown, "%s" is not recognized. ', IGBP_veg_long)
 end
 
 TZ=fix(longitude/15);
@@ -403,7 +410,7 @@ TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros
 TIMELAST=0;
 SAVEtS=tS; kk=0;   %DELT=Delt_t; 
 for i = 1:1:Dur_tot
-    KT=KT+1;                         % Counting Number of timesteps
+    KT=KT+1                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
         Delt_t=TEND-TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
     end

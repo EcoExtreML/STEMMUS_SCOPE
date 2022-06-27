@@ -5,27 +5,27 @@ root_den = 250*1000; %% [gDM / m^3] Root density  Jackson et al., 1997
 R_C = 0.488; %% [gC/gDM] Ratio Carbon-Dry Matter in root   Jackson et al.,  1997 
 %% beta is a plant-dependent root distribution parameter adopted from 
 %% Jackson et al. (1996), it is refered to CLM5.0 document. 
-if strcmp(IGBP_veg_long, 'Permanent Wetlands')
+if strcmp(IGBP_veg_long(1:18), 'Permanent Wetlands')
     beta = 0.993; 
-elseif strcmp(IGBP_veg_long, 'Evergreen Broadleaf') 
+elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf') 
     beta = 0.993; 
-elseif strcmp(IGBP_veg_long, 'Deciduous Broadleaf') 
+elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf') 
     beta = 0.993; 
-elseif strcmp(IGBP_veg_long, 'Mixed Forests') 
+elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests') 
     beta = 0.993; 
-elseif strcmp(IGBP_veg_long, 'Evergreen Needleleaf') 
+elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long, 'Croplands') 
+elseif strcmp(IGBP_veg_long(1:9)', 'Croplands') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long, 'Open Shrublands')
+elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
     beta = 0.966; 
-elseif strcmp(IGBP_veg_long, 'Closed Shrublands') 
+elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands') 
     beta = 0.966; 
-elseif strcmp(IGBP_veg_long, 'Savannas') 
+elseif strcmp(IGBP_veg_long(1:9)', 'Savannas') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long, 'Woody Savannas') 
+elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long, 'Grasslands') 
+elseif strcmp(IGBP_veg_long(1:10)', 'Grasslands') 
     beta = 0.943; 
 else 
     beta = 0.943; 

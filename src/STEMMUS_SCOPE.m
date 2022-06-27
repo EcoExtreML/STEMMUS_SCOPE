@@ -200,37 +200,37 @@ V(23).Val=canopy_height;
 V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
     sitename1=cellstr(sitename);
-if strcmp(IGBP_veg_long, 'Permanent Wetlands') 
+if strcmp(IGBP_veg_long(1:18)', 'Permanent Wetlands') 
     V(14).Val= [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
     V(9).Val= [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
     V(10).Val= [9]; % Ball-Berry stomatal conductance parameter
     V(11).Val= [0]; % Photochemical pathway: 0=C3, 1=C4
     V(28).Val= [0.05]; % leaf width
-elseif strcmp(IGBP_veg_long, 'Evergreen Broadleaf')  
+elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf')  
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long, 'Deciduous Broadleaf') 
+elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf') 
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];  
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long, 'Mixed Forests') 
+elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests') 
     V(14).Val= [0.2 0.3 281 307 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0]; 
     V(28).Val= [0.04];
-elseif strcmp(IGBP_veg_long, 'Evergreen Needleleaf') 
+elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf') 
     V(14).Val= [0.2 0.3 278 303 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];   
     V(28).Val= [0.01];
-elseif strcmp(IGBP_veg_long, 'Croplands')    
+elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')    
     if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
         V(14).Val= [0.2 0.3 278 303 328];
         V(9).Val= [50];
@@ -245,31 +245,31 @@ elseif strcmp(IGBP_veg_long, 'Croplands')
         V(11).Val= [0]; 
         V(28).Val= [0.03];    
     end
-elseif strcmp(IGBP_veg_long, 'Open Shrublands')
+elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];  
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long, 'Closed Shrublands') 
+elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands') 
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long, 'Savannas')  
+elseif strcmp(IGBP_veg_long(1:8)', 'Savannas')  
     V(14).Val= [0.2 0.3 278 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long, 'Woody Savannas')
+elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas')
     V(14).Val= [0.2 0.3 278 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.03];
-elseif strcmp(IGBP_veg_long, 'Grasslands')  
+elseif strcmp(IGBP_veg_long(1:10)', 'Grasslands')  
     V(14).Val= [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
         V(9).Val= [120];

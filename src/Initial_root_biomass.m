@@ -25,7 +25,7 @@ elseif strcmp(IGBP_veg_long(1:9)', 'Savannas')
     beta = 0.943; 
 elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long(1:10)', 'Grasslands') 
+elseif strcmp(IGBP_veg_long(1:9)', 'Grassland') 
     beta = 0.943; 
 else 
     beta = 0.943; 

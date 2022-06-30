@@ -269,7 +269,7 @@ elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas')
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.03];
-elseif strcmp(IGBP_veg_long(1:10)', 'Grasslands')  
+elseif strcmp(IGBP_veg_long(1:9)', 'Grassland')  
     V(14).Val= [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
         V(9).Val= [120];

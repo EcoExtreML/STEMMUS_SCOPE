@@ -1,5 +1,4 @@
-%%%%%%% Set paths %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global SoilPropertyPath InputPath OutputPath ForcingPath ForcingFileName DurationSize
+%%% Set paths %%%
 global CFG
 
 %% CFG is a path to a config file
@@ -11,155 +10,21 @@ end
 disp (['Reading config from ',CFG])
 [SoilPropertyPath, InputPath, OutputPath, ForcingPath, ForcingFileName, DurationSize, InitialConditionPath] = io.read_config(CFG);
 
-%%%%%%% Prepare input files. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Prepare global input variables. %%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 
-% Add the forcing name to forcing path
-ForcingFilePath=fullfile(ForcingPath, ForcingFileName);
-%prepare input files
-sitefullname=dir(ForcingFilePath).name; %read sitename
-    sitename=sitefullname(1:6);
-    startyear=sitefullname(8:11);
-    endyear=sitefullname(13:16);
-    startyear=str2double(startyear);
-    endyear=str2double(endyear);
-%ncdisp(sitefullname,'/','full');
+% The "forcing_globals.mat" file is generated using "PyStemmusScope" python package, see https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing
+forcing_global_path = fullfile(InputPath, 'forcing_globals.mat');
 
-% Read time values from forcing file
-time1=ncread(ForcingFilePath,'time');
-t1=datenum(startyear,1,1,0,0,0);
-DELT=time1(2);
+%% Explicitly load all variables into the workspace
+load(forcing_global_path, 'DELT', 'Dur_tot', 'IGBP_veg_long', 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename')
 
-%get  time length of forcing file
-time_length=length(time1);
+% Convert the int vectors back to strings
+sitename = char(sitename);
+IGBP_veg_long = char(IGBP_veg_long);
 
-%Set the end time of the main loop in STEMMUS_SCOPE.m
-%using config file or time length of forcing file
-if isnan(DurationSize)
-    Dur_tot=time_length;
-else
-    if (DurationSize>time_length)
-        Dur_tot=time_length;
-    else
-        Dur_tot=DurationSize;
-    end
-end
+% The model expects the char vector to be transposed:
+IGBP_veg_long = transpose(IGBP_veg_long);
 
-dt=time1(2)/3600/24;
-t2=datenum(endyear,12,31,23,30,0);
-T=t1:dt:t2;
-TL=length(T);
-T=T';
-T=datestr(T,'yyyy-mm-dd HH:MM:SS');
-T0=T(:,1:4);
-T01=T0(:,1);
-T02=T0(:,2);
-T03=T0(:,3);
-T04=T0(:,4);
-T1=T(:,5:19);
-T3=T1(1,:);
-T4=T3(ones(TL,1),:);
-T5=[T0,T4];
-T6=datenum(T);
-T7=datenum(T5);
-T8=T6-T7;
-time=T8;
-T10=year(T);
-
-RH=ncread(ForcingFilePath,'RH');
-RHL=length(RH);
-RHa=reshape(RH,RHL,1);
-
-Tair=ncread(ForcingFilePath,'Tair');
-TairL=length(Tair);
-Taira=reshape(Tair,TairL,1)-273.15;
-
-es= 6.107*10.^(Taira.*7.5./(237.3+Taira));
-ea=es.*RHa./100;
-
-SWdown=ncread(ForcingFilePath,'SWdown');
-SWdownL=length(SWdown);
-SWdowna=reshape(SWdown,SWdownL,1);
-
-
-LWdown=ncread(ForcingFilePath,'LWdown');
-LWdownL=length(LWdown);
-LWdowna=reshape(LWdown,LWdownL,1);
-
-
-VPD=ncread(ForcingFilePath,'VPD');
-VPDL=length(VPD);
-VPDa=reshape(VPD,VPDL,1);
-
-
-Qair=ncread(ForcingFilePath,'Qair');
-QairL=length(Qair);
-Qaira=reshape(Qair,QairL,1);
-
-
-Psurf=ncread(ForcingFilePath,'Psurf');
-PsurfL=length(Psurf);
-Psurfa=reshape(Psurf,PsurfL,1);
-Psurfa=Psurfa./100;
-
-
-Precip=ncread(ForcingFilePath,'Precip');
-PrecipL=length(Precip);
-Precipa=reshape(Precip,PrecipL,1);
-Precipa=Precipa./10;
-
-
-Wind=ncread(ForcingFilePath,'Wind');
-WindL=length(Wind);
-Winda=reshape(Wind,WindL,1);
-
-
-CO2air=ncread(ForcingFilePath,'CO2air');
-CO2airL=length(CO2air);
-CO2aira=reshape(CO2air,CO2airL,1);
-CO2aira=CO2aira.*44./22.4;
-
-
-latitude=ncread(ForcingFilePath,'latitude');
-longitude=ncread(ForcingFilePath,'longitude');
-elevation=ncread(ForcingFilePath,'elevation');
-
-LAI=ncread(ForcingFilePath,'LAI');
-LAIL=length(LAI);
-LAIa=reshape(LAI,LAIL,1);
-LAIa(LAIa<0.01)=0.01;
-
-LAI_alternative=ncread(ForcingFilePath,'LAI_alternative');
-LAI_alternativeL=length(LAI_alternative);
-LAI_alternativea=reshape(LAI_alternative,LAI_alternativeL,1);
-
-IGBP_veg_long=ncread(ForcingFilePath,'IGBP_veg_long');
-reference_height=ncread(ForcingFilePath,'reference_height');
-canopy_height=ncread(ForcingFilePath,'canopy_height');
-% save .dat files for SCOPE
-%save([InputPath, 'LAI_alternative.dat'], '-ascii', LAI_alternative)
-save([InputPath, 't_.dat'], '-ascii', 'time')
-save([InputPath, 'Ta_.dat'], '-ascii', 'Taira')
-save([InputPath, 'Rin_.dat'], '-ascii', 'SWdowna')
-save([InputPath, 'Rli_.dat'], '-ascii', 'LWdowna')
-%save([InputPath, 'VPDa.dat'], '-ascii', 'VPDa')
-%save([InputPath, 'Qaira.dat'], '-ascii', 'Qaira')
-save([InputPath, 'p_.dat'], '-ascii', 'Psurfa')
-%save([InputPath, 'Precipa.dat'], '-ascii', 'Precipa') 
-save([InputPath, 'u_.dat'], '-ascii', 'Winda')
-%save([InputPath, 'RHa.dat'], '-ascii', 'RHa') 
-save([InputPath, 'CO2_.dat'], '-ascii', 'CO2aira') 
-%save([InputPath, 'latitude.dat'], '-ascii', 'latitude')
-%save([InputPath, 'longitude.dat'], '-ascii', 'longitude')
-%save([InputPath, 'reference_height.dat'], '-ascii', 'reference_height')
-%save([InputPath, 'canopy_height.dat'], '-ascii', 'canopy_height')
-%save([InputPath, 'elevation.dat'], '-ascii', 'elevation')
-save([InputPath, 'ea_.dat'], '-ascii', 'ea')
-save([InputPath, 'year_.dat'], '-ascii', 'T10')
-LAI=[time'; LAIa']';
-save([InputPath, 'LAI_.dat'], '-ascii', 'LAI') %save meteorological data for STEMMUS
-Meteodata=[time';Taira';RHa';Winda';Psurfa';Precipa';SWdowna';LWdowna';VPDa';LAIa']'; 
-save([InputPath, 'Mdata.txt'], '-ascii', 'Meteodata') %save meteorological data for STEMMUS
-%Lacationdata=[latitude;longitude;reference_height;canopy_height;elevation]';
-%save([InputPath, 'Lacationdata.txt'], '-ascii', 'Lacationdata')
+%% Clear unnescessary variables from workspace
 clearvars -except SoilPropertyPath InputPath OutputPath InitialConditionPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename

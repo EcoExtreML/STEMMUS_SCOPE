@@ -121,35 +121,18 @@ theta_s200=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl7_thetas.nc']
 theta_r200=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl7_thetar.nc'],'thetar_200cm',[j,i],[1,1]);
 Ks200=ncread([SoilPropertyPath,'Schaap/PTF_SoilGrids_Schaap_sl7_Ks.nc'],'Ks_200cm',[j,i],[1,1]);
 
- %% load maximum fractional saturated area
- FMAX=ncread([SoilPropertyPath,'surfdata.nc'],'FMAX');
- if longitude>=0
-     j = fix(longitude/0.5);
-     l = mod(longitude,0.5);
-       if l<0.25
-          j=j+1;
-       else
-          j=j;
-       end
- else
-     j = fix((longitude+360)/0.5);
-     l = mod((longitude+360),0.5);
-       if l<0.25
-          j=j+1;
-       else
-          j=j;
-       end
- end
+%% load maximum fractional saturated area
+ 
+FMAX=ncread([SoilPropertyPath,'surfdata.nc'],'FMAX');
+i = round((latitude + 90)*2) + 1;
 
-     i = fix((latitude+90)/0.5);
-     k = mod((latitude+90),0.5);
-       if k<0.25
-          i=i+1;
-       else
-          i=i;
-       end
-
+if longitude < 0
+  j = round((longitude + 360)*2) + 1;
+else
+  j = round(longitude*2) + 1;
+end
 fmax=FMAX(j,i);
+
 % soil property
 SaturatedK=[Ks0/(3600*24) Ks5/(3600*24) Ks30/(3600*24) Ks60/(3600*24) Ks100/(3600*24) Ks200/(3600*24)];%[2.67*1e-3  1.79*1e-3 1.14*1e-3 4.57*1e-4 2.72*1e-4];      %[2.3*1e-4  2.3*1e-4 0.94*1e-4 0.94*1e-4 0.68*1e-4] 0.18*1e-4Saturation hydraulic conductivity (cm.s^-1);
 SaturatedMC=[theta_s0 theta_s5 theta_s30 theta_s60 theta_s100 theta_s200];                              % 0.42 0.55 Saturated water content;

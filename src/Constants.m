@@ -390,7 +390,7 @@ ThermCond=1;      % The indicator for choosing effective thermal conductivity me
 CHST=0;            % Indicator of parameters derivation using soil texture or not. CHST=1, use; CHST=0 not use
 ISOC=1;            % Indicator of considering soil organic matter effect or not. ISOC=1, yes; ISOC=0 no
 %%%%% 172   27%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-run soilpropertyread %load soil property
+
 CKTN=(50+2.575*20);                                     % Constant used in calculating viscosity factor for hydraulic conductivity
 l=0.5;                                                           % Coefficient in VG model;
 g=981;                                                          % Gravity acceleration (cm.s^-2);

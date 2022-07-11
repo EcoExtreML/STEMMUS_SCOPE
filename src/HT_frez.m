@@ -8,8 +8,13 @@ function [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin)
                     else
                         TT_CRIT(MN)=T0+g*T0*HHH(MN)/L_f/1e4/2;
                     end
-                    if TT_CRIT(MN)<=T0+Tmin
-                        TT_CRIT(MN)=T0+Tmin;  % unit K
+                    if Tmin>0
+                        TTmin=0;
+                    else
+                        TTmin=Tmin;
+                    end
+                    if TT_CRIT(MN)<=T0+TTmin
+                        TT_CRIT(MN)=T0+TTmin;  % unit K
                     elseif TT_CRIT(MN)>=T0
                         TT_CRIT(MN)=T0;
                     else

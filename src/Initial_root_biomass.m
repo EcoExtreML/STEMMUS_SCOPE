@@ -14,7 +14,7 @@ elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf')
 elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests') 
     beta = 0.993; 
 elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf') 
-    beta = 0.943; 
+    beta = 0.993; 
 elseif strcmp(IGBP_veg_long(1:9)', 'Croplands') 
     beta = 0.943; 
 elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
@@ -25,7 +25,7 @@ elseif strcmp(IGBP_veg_long(1:9)', 'Savannas')
     beta = 0.943; 
 elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas') 
     beta = 0.943; 
-elseif strcmp(IGBP_veg_long(1:10)', 'Grasslands') 
+elseif strcmp(IGBP_veg_long(1:9)', 'Grassland') 
     beta = 0.943; 
 else 
     beta = 0.943; 

@@ -21,7 +21,7 @@ elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
     beta = 0.966; 
 elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands') 
     beta = 0.966; 
-elseif strcmp(IGBP_veg_long(1:9)', 'Savannas') 
+elseif strcmp(IGBP_veg_long(1:8)', 'Savannas') 
     beta = 0.943; 
 elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas') 
     beta = 0.943; 

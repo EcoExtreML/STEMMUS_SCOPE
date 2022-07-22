@@ -410,7 +410,7 @@ TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros
 TIMELAST=0;
 SAVEtS=tS; kk=0;   %DELT=Delt_t; 
 for i = 1:1:Dur_tot
-    KT=KT+1                         % Counting Number of timesteps
+    KT=KT+1;                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
         Delt_t=TEND-TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
     end

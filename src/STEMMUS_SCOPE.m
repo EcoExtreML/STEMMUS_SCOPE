@@ -588,8 +588,8 @@ for i = 1:1:Dur_tot
                 fluxes.aPAR_Cab = canopy.LAI*(Fc*rad.Pnh_Cab    + equations.meanleaf(canopy,rad.Pnu_Cab, 'angles_and_layers',gap.Ps));% net PAR leaves
                 [fluxes.aPAR_Wm2,fluxes.aPAR_Cab_eta] = deal(canopy.LAI*(Fc*rad.Rnh_PAR    + equations.meanleaf(canopy,rad.Rnu_PAR, 'angles_and_layers',gap.Ps)));% net PAR leaves
                 if options.calc_fluor
-                    profiles.etah = ones(60,1);
-                    profiles.etau = ones(13,36,60);
+                    profiles.etah = ones(nl,1);
+                    profiles.etau = ones(13,36,nl);
                     if options.calc_vert_profiles
                         [rad,profiles] = RTMf(spectral,rad,soil,leafopt,canopy,gap,angles,profiles);
                     else

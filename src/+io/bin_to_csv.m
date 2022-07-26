@@ -1,4 +1,4 @@
-function bin_to_csv(fnames, V, vmax, n_col, ns, options, Ztot)
+function bin_to_csv(fnames, V, vmax, n_col, ns, options, DeltZ_R)
 %% flu
 flu_names = {'simulation_number','nu_iterations','year','DoY',...
     'Rntot','lEtot','Htot', ...
@@ -33,12 +33,12 @@ radiation_units = {'','','',  ...
     'W m-2','W m-2','W m-2', 'W m-2','W m-2','W m-2','W m-2','W m-2'};
 write_output(radiation_names, radiation_units, fnames.radiation_file, n_col.radiation, ns)
 %% Soil temperature and moisture
-Sim_Theta_names = num2str(Ztot');
+Sim_Theta_names = num2str(DeltZ_R);
 Sim_Theta_names=cellstr(Sim_Theta_names);
 Sim_Theta_units ={'m-3 m-3'};
 write_output(Sim_Theta_names, Sim_Theta_units, ...
 fnames.Sim_Theta_file, n_col.Sim_Theta, ns, true)
-Sim_Temp_names = num2str(Ztot');
+Sim_Temp_names = num2str(DeltZ_R);
 Sim_Temp_names=cellstr(Sim_Temp_names);
 Sim_Temp_units ={'oC'};
 write_output(Sim_Temp_names, Sim_Temp_units, ...

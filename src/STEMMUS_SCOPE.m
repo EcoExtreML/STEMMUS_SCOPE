@@ -826,7 +826,7 @@ fprintf('\n The calculations end now \r')
 if options.verify
     io.output_verification(Output_dir)
 end
-io.bin_to_csv(fnames, V, vmax, n_col, k, options, Ztot)
+io.bin_to_csv(fnames, V, vmax, n_col, k, options, DeltZ_R)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)

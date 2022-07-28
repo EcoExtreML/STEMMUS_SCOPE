@@ -88,7 +88,7 @@ function [rad,gap,profiles] = RTMo(spectral,atmo,soil,leafopt,canopy,angles,mete
 %   rad         initialization of the structure of the output 'rad'
 %   options     simulation options. Here, the option
 %               'calc_vert_profiles' is used, a boolean that tells whether 
-%               or not to output data of 60 layers separately.
+%               or not to output data of canopy layers separately.
 %
 % Output:
 %   gap         probabilities of direct light penetration and viewing
@@ -113,7 +113,7 @@ tts     = angles.tts;              % solar zenith angle
 tto     = angles.tto;              % observer zenith angle
 psi     = angles.psi;              % relative azimuth anglee
 
-nl      = canopy.nlayers;       % number of canopy layers (60)
+nl      = canopy.nlayers;       % number of canopy layers (30)
 litab   = canopy.litab;         % SAIL leaf inclibation angles
 lazitab = canopy.lazitab;       % leaf azimuth angles relative to the sun
 nli     = canopy.nlincl;        % numler of leaf inclinations (13)
@@ -467,8 +467,8 @@ rad.fEskyo  = fEskyo;       % [2162x1 double]   normalized spectrum of diffuse l
 rad.fEsunt  = fEsunt;       % [2162x1 double]   normalized spectrum of direct light (thermal)
 rad.fEskyt  = fEskyt;       % [2162x1 double]   normalized spectrum of diffuse light (thermal)
 
-rad.Eplu_   = Eplu_;        % [61x2162 double]  upward diffuse radiation in the canopy (mW m-2 um-1) 
-rad.Emin_   = Emin_;        % [61x2162 double]  downward diffuse radiation in the canopy (mW m-2 um-1) 
+rad.Eplu_   = Eplu_;        % [(nl+1)x2162 double]  upward diffuse radiation in the canopy (mW m-2 um-1) 
+rad.Emin_   = Emin_;        % [(nl+1)x2162 double]  downward diffuse radiation in the canopy (mW m-2 um-1) 
 
 rad.Lo_     = Lo_;          % [2162x1 double]   TOC radiance in observation direction (mW m-2 um-1 sr-1) 
 rad.Eout_   = Eout_;        % [2162x1 double]   TOC upward radiation (mW m-2 um-1) 
@@ -477,14 +477,14 @@ rad.Eoutt   = Eoutt;        % [1 double]        TOC spectrally integrated upward
 
 rad.Rnhs    = Rnhs;         % [1 double]        net radiation (W m-2) of shaded soil
 rad.Rnus    = Rnus;         % [1 double]        net radiation (W m-2) of sunlit soil
-rad.Rnhc    = Rnhc;         % [60x1 double]     net radiation (W m-2) of shaded leaves
-rad.Rnuc    = Rnuc;         % [13x36x60 double] net radiation (W m-2) of sunlit leaves
-rad.Pnh     = Pnhc;         % [60x1 double]     net PAR (moles m-2 s-1) of shaded leaves
-rad.Pnu     = Pnuc;         % [13x36x60 double] net PAR (moles m-2 s-1) of sunlit leaves
-rad.Pnh_Cab = Pnhc_Cab;     % [60x1 double]     net PAR absorbed by Cab (moles m-2 s-1) of shaded leaves
-rad.Pnu_Cab = Pnuc_Cab;     % [13x36x60 double] net PAR absorbed by Cab (moles m-2 s-1) of sunlit leaves
-rad.Rnh_PAR = Rnhc_PAR;     % [60x1 double]     net PAR absorbed by Cab (moles m-2 s-1) of shaded leaves
-rad.Rnu_PAR = Rnuc_PAR;     % [13x36x60 double] net PAR absorbed (W m-2) of sunlit 
+rad.Rnhc    = Rnhc;         % [nlx1 double]     net radiation (W m-2) of shaded leaves
+rad.Rnuc    = Rnuc;         % [13x36xnl double] net radiation (W m-2) of sunlit leaves
+rad.Pnh     = Pnhc;         % [nlx1 double]     net PAR (moles m-2 s-1) of shaded leaves
+rad.Pnu     = Pnuc;         % [13x36xnl double] net PAR (moles m-2 s-1) of sunlit leaves
+rad.Pnh_Cab = Pnhc_Cab;     % [nlx1 double]     net PAR absorbed by Cab (moles m-2 s-1) of shaded leaves
+rad.Pnu_Cab = Pnuc_Cab;     % [13x36xnl double] net PAR absorbed by Cab (moles m-2 s-1) of sunlit leaves
+rad.Rnh_PAR = Rnhc_PAR;     % [nlx1 double]     net PAR absorbed by Cab (moles m-2 s-1) of shaded leaves
+rad.Rnu_PAR = Rnuc_PAR;     % [13x36xnl double] net PAR absorbed (W m-2) of sunlit 
 rad.Etoto   = Etoto;
 
 %% APPENDIX I functions J1 and J2 (introduced for numerically stable solutions)

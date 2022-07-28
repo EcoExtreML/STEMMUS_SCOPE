@@ -13,24 +13,19 @@
 
 ### 1. Load module needed to run the model (no need for license)
 module load 2021
+
 ### This is for Matlab
 module load MCR/R2021a.3
-### This is for GNU parallel
-### First time loading asks for citation agreement
-module load parallel/20210622-GCCcore-10.3.0
-
-### 2. To transfer environment vars, functions, ... 
-source `which env_parallel.bash`
 
 ### python environment stemmus is needed to convert csv files to nc files
 ### see utils/csv_to_nc/README.md
 . ~/mamba/bin/activate stemmus
 
+### 2. Some security: stop script on error and undefined variables
+set -euo pipefail
+
 ### 3. Create a function to loop over
 loop_func() {
-
-    ### 3.1 Some security: stop script on error and undefined variables
-    set -euo pipefail
     
     ### 3.2 Get paths from a config file 
     config="config_file_snellius.txt"
@@ -92,8 +87,25 @@ loop_func() {
     fi
 }
 
-### 4. Create a log file for GNU parallel
-log_file="./slurm/parallel_${SLURM_JOB_ID}.log"
+### 5. Run parallel loop
+# number of cores on a shared node
+ncores=32 
 
-### 5. Run env_parallel instead of parallel to have our environment
-env_parallel -n1 -j32 --joblog $log_file loop_func ::: {1..170}
+# number of forcing files
+nfiles=170
+
+# some indices for loop
+k=0
+i=0
+
+for k in `seq 0 5`; do
+  for j in `seq 1 $ncores` ; do
+  (
+    i=$(( ncores * k + j ))
+    if [[ $i -le $nfiles ]]; then
+      loop_func $i
+    fi
+  )&
+  done
+  wait
+done

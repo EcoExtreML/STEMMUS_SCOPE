@@ -328,7 +328,7 @@ if options.calc_directional
 end
 
 %% 9. Define canopy structure
-canopy.nlayers  = 60;
+canopy.nlayers  = 30;
 nl              = canopy.nlayers;
 canopy.x        = (-1/nl : -1/nl : -1)';         % a column vector
 canopy.xl       = [0; canopy.x];                 % add top level
@@ -432,35 +432,34 @@ for i = 1:1:Dur_tot
          for MN=1:NN
             hOLD_frez(MN)=h_frez(MN);
             h_frez(MN)=hh_frez(MN);
-            hhh_frez(MN,KT)=hh_frez(MN);
+            %hhh_frez(MN,KT)=hh_frez(MN);
             TOLD_CRIT(MN)=T_CRIT(MN);
             T_CRIT(MN)=TT_CRIT(MN);
-            TTT_CRIT(MN,KT)=TT_CRIT(MN);
+            %TTT_CRIT(MN,KT)=TT_CRIT(MN);
             
             hOLD(MN)=h(MN);
             h(MN)=hh(MN);
-            hhh(MN,KT)=hh(MN);
-            KfL_hh(MN,KT)=KfL_h(MN,2);
-            KL_hh(MN,KT)=KL_h(MN,2);
-            Chhh(MN,KT)=Chh(MN,2);
-            ChTT(MN,KT)=ChT(MN,2);
-            Khhh(MN,KT)=Khh(MN,2);
-            KhTT(MN,KT)=KhT(MN,2);
-            CTTT(MN,KT)=CTT(MN,2);
-            EPCTT(MN,KT)=EPCT(MN);
-            C_unsat(MN,KT)=c_unsat(MN,2);
-            CCTT_PH(MN,KT)=CTT_PH(MN,2);
-            CCTT_Lg(MN,KT)=CTT_Lg(MN,2);
-            CCTT_g(MN,KT)=CTT_g(MN,2);
-            CCTT_LT(MN,KT)=CTT_LT(MN,2);
-            Lambda_Eff(MN,KT)=Lambda_eff(MN,2);
-            EfTCON(MN,KT)=EfTCON(MN,2);
-            TTETCON(MN,KT)=TETCON(MN,2);
+            %hhh(MN,KT)=hh(MN);
+            %KfL_hh(MN,KT)=KfL_h(MN,2);
+            %KL_hh(MN,KT)=KL_h(MN,2);
+            %Chhh(MN,KT)=Chh(MN,2);
+            %ChTT(MN,KT)=ChT(MN,2);
+            %Khhh(MN,KT)=Khh(MN,2);
+            %KhTT(MN,KT)=KhT(MN,2);
+            %CTTT(MN,KT)=CTT(MN,2);
+            %EPCTT(MN,KT)=EPCT(MN);
+            %C_unsat(MN,KT)=c_unsat(MN,2);
+            %CCTT_PH(MN,KT)=CTT_PH(MN,2);
+            %CCTT_Lg(MN,KT)=CTT_Lg(MN,2);
+            %CCTT_g(MN,KT)=CTT_g(MN,2);
+            %CCTT_LT(MN,KT)=CTT_LT(MN,2);
+            %Lambda_Eff(MN,KT)=Lambda_eff(MN,2);
+            %EfTCON(MN,KT)=EfTCON(MN,2);
+            %TTETCON(MN,KT)=TETCON(MN,2);
             DDhDZ(MN,KT)=DhDZ(MN);
-            DDTDZ(MN,KT)=DTDZ(MN);
-            DDTDZ(MN,KT)=DTDZ(MN);
-            DDRHOVZ(MN,KT)=DRHOVZ(MN);
-            TKCHK(MN,KT)=KCHK(MN);
+            %DDTDZ(MN,KT)=DTDZ(MN);
+            %DDRHOVZ(MN,KT)=DRHOVZ(MN);
+            %TKCHK(MN,KT)=KCHK(MN);
             if Thmrlefc==1
                 TOLD(MN)=T(MN);
                 T(MN)=TT(MN);
@@ -469,12 +468,12 @@ for i = 1:1:Dur_tot
             if Soilairefc==1
                 P_gOLD(MN)=P_g(MN);
                 P_g(MN)=P_gg(MN);
-                P_ggg(MN,KT)=P_gg(MN);
+                %P_ggg(MN,KT)=P_gg(MN);
             end
             if rwuef==1
                 SRT(MN,KT)=Srt(MN,1);
-                ALPHA(MN,KT)=alpha_h(MN,1);
-                BX(MN,KT)=bx(MN,1);
+                %ALPHA(MN,KT)=alpha_h(MN,1);
+                %BX(MN,KT)=bx(MN,1);
             end
          end
     if options.simulation == 1, vi(vmax>1) = k; end
@@ -589,8 +588,8 @@ for i = 1:1:Dur_tot
                 fluxes.aPAR_Cab = canopy.LAI*(Fc*rad.Pnh_Cab    + equations.meanleaf(canopy,rad.Pnu_Cab, 'angles_and_layers',gap.Ps));% net PAR leaves
                 [fluxes.aPAR_Wm2,fluxes.aPAR_Cab_eta] = deal(canopy.LAI*(Fc*rad.Rnh_PAR    + equations.meanleaf(canopy,rad.Rnu_PAR, 'angles_and_layers',gap.Ps)));% net PAR leaves
                 if options.calc_fluor
-                    profiles.etah = ones(60,1);
-                    profiles.etau = ones(13,36,60);
+                    profiles.etah = ones(nl,1);
+                    profiles.etau = ones(13,36,nl);
                     if options.calc_vert_profiles
                         [rad,profiles] = RTMf(spectral,rad,soil,leafopt,canopy,gap,angles,profiles);
                     else
@@ -641,43 +640,43 @@ for i = 1:1:Dur_tot
       end
         
       for ML=1:NL
-            QVV(ML,KT)=QV(ML);
-            QLL(ML,KT)=QL(ML,1);
-            DDEhBAR(ML,KT)=DEhBAR(ML);
-            DDRHOVhDz(ML,KT)=DRHOVhDz(ML);
+            %QVV(ML,KT)=QV(ML);
+            %QLL(ML,KT)=QL(ML,1);
+            %DDEhBAR(ML,KT)=DEhBAR(ML);
+            %DDRHOVhDz(ML,KT)=DRHOVhDz(ML);
             DDhDZ(ML,KT)=DhDZ(ML);
-            EEtaBAR(ML,KT)=EtaBAR(ML);
-            DD_Vg(ML,KT)=D_Vg(ML);
-            DDRHOVTDz(ML,KT)=DRHOVTDz(ML);
-            DDTDZ(ML,KT)=DTDZ(ML);
-            DDPgDZ(ML,KT)=DPgDZ(ML);
-            KKLhBAR(ML,KT)=KLhBAR(ML);
-            KKLTBAR(ML,KT)=KLTBAR(ML);
-            DDTDBAR(ML,KT)=DTDBAR(ML);
-            QVAA(ML,KT)=QVa(ML);
-            QAA(ML,KT)=Qa(ML);
+            %EEtaBAR(ML,KT)=EtaBAR(ML);
+            %DD_Vg(ML,KT)=D_Vg(ML);
+            %DDRHOVTDz(ML,KT)=DRHOVTDz(ML);
+            %DDTDZ(ML,KT)=DTDZ(ML);
+            %DDPgDZ(ML,KT)=DPgDZ(ML);
+            %KKLhBAR(ML,KT)=KLhBAR(ML);
+            %KKLTBAR(ML,KT)=KLTBAR(ML);
+            %DDTDBAR(ML,KT)=DTDBAR(ML);
+            %QVAA(ML,KT)=QVa(ML);
+            %QAA(ML,KT)=Qa(ML);
             if ~Soilairefc
-                QLHH(ML,KT)=QLH(ML);
-                QLTT(ML,KT)=QLT(ML);
+                %QLHH(ML,KT)=QLH(ML);
+                %QLTT(ML,KT)=QLT(ML);
             else
-                QLHH(ML,KT)=QL_h(ML);
-                QLTT(ML,KT)=QL_T(ML);
-                QLAA(ML,KT)=QL_a(ML);
+                %QLHH(ML,KT)=QL_h(ML);
+                %QLTT(ML,KT)=QL_T(ML);
+                %QLAA(ML,KT)=QL_a(ML);
             end
-            DVHH(ML,KT)=DVH(ML);
-            DVTT(ML,KT)=DVT(ML);
-            SSe(ML,KT)=Se(ML,1);
-            SSa(ML,KT)=Sa(ML,1);
-            DSAVEDTheta_LLh(ML,KT)=SAVEDTheta_LLh(ML,1);
-            DSAVEDTheta_LLT(ML,KT)=SAVEDTheta_LLT(ML,1);
-            DSAVEDTheta_UUh(ML,KT)=SAVEDTheta_UUh(ML,1);
+            %DVHH(ML,KT)=DVH(ML);
+            %DVTT(ML,KT)=DVT(ML);
+            %SSe(ML,KT)=Se(ML,1);
+            %SSa(ML,KT)=Sa(ML,1);
+            %DSAVEDTheta_LLh(ML,KT)=SAVEDTheta_LLh(ML,1);
+            %DSAVEDTheta_LLT(ML,KT)=SAVEDTheta_LLT(ML,1);
+            %DSAVEDTheta_UUh(ML,KT)=SAVEDTheta_UUh(ML,1);
 
-            QVHH(ML,KT)=QVH(ML);
-            QVTT(ML,KT)=QVT(ML);
-            DDTheta_LLh(ML,KT)=DTheta_LLh(ML,1);
-            CChh(ML,KT)=Chh(ML,1);
-            kk_g(ML,KT)=k_g(ML,1);
-            VV_A(ML,KT)=V_A(ML);
+            %QVHH(ML,KT)=QVH(ML);
+            %QVTT(ML,KT)=QVT(ML);
+            %DDTheta_LLh(ML,KT)=DTheta_LLh(ML,1);
+            %CChh(ML,KT)=Chh(ML,1);
+            %kk_g(ML,KT)=k_g(ML,1);
+            %VV_A(ML,KT)=V_A(ML);
       end
     end
     if Delt_t~=Delt_t0
@@ -752,7 +751,7 @@ for i = 1:1:Dur_tot
             run Enrgy_sub;
         end
         
-        if max(CHK)<0.001 %&& max(FCHK)<0.001 %&& max(hCHK)<0.001 %&& min(KCHK)>0.001
+        if max(CHK)<0.1 %&& max(FCHK)<0.001 %&& max(hCHK)<0.001 %&& min(KCHK)>0.001
             break
         end
         hSAVE=hh(NN);
@@ -777,9 +776,9 @@ for i = 1:1:Dur_tot
                     Theta_U(ML,ND)=Theta_UU(ML,ND);
                     Theta_III(ML,ND,KT)=Theta_II(ML,ND);
                     Theta_I(ML,ND)=Theta_II(ML,ND);
-                    DDTheta_LLh(ML,KT)=DTheta_LLh(ML,2);
-                    DDTheta_LLT(ML,KT)=DTheta_LLT(ML,2);
-                    DDTheta_UUh(ML,KT)=DTheta_UUh(ML,2);
+                    %DDTheta_LLh(ML,KT)=DTheta_LLh(ML,2);
+                    %DDTheta_LLT(ML,KT)=DTheta_LLT(ML,2);
+                    %DDTheta_UUh(ML,KT)=DTheta_UUh(ML,2);
                 end
             end
             run ObservationPoints
@@ -788,23 +787,23 @@ for i = 1:1:Dur_tot
             for MN=1:NN
                 hOLD(MN)=h(MN);
                 h(MN)=hh(MN);
-                hhh(MN,KT)=hh(MN);
-                HRA(MN,KT)=HR(MN);               
+                %hhh(MN,KT)=hh(MN);
+                %HRA(MN,KT)=HR(MN);               
                 if Thmrlefc==1
                     TOLD(MN)=T(MN);
                     T(MN)=TT(MN);
                     TTT(MN,KT)=TT(MN);
                     TOLD_CRIT(MN)=T_CRIT(MN);
                     T_CRIT(MN)=TT_CRIT(MN);
-                    TTT_CRIT(MN,KT)=TT_CRIT(MN);
+                    %TTT_CRIT(MN,KT)=TT_CRIT(MN);
                     hOLD_frez(MN)=h_frez(MN);
                     h_frez(MN)=hh_frez(MN);
-                    hhh_frez(MN,KT)=hh_frez(MN);
+                    %hhh_frez(MN,KT)=hh_frez(MN);
                 end
                 if Soilairefc==1
                     P_gOLD(MN)=P_g(MN);
                     P_g(MN)=P_gg(MN);
-                    P_ggg(MN,KT)=P_gg(MN);
+                    %P_ggg(MN,KT)=P_gg(MN);
                 end
             end
             %break
@@ -812,13 +811,13 @@ for i = 1:1:Dur_tot
     end
     if KT>0
         for MN=1:NN
-            QL(MN,KT)=QL(MN);
-            QL_HH(MN,KT)=QL_h(MN);
-            QL_TT(MN,KT)=QL_T(MN);
-            QV(MN,KT)=QV(MN);
-            SAVEhhh(MN,KT)=SAVEhh(MN);
+            %QL(MN,KT)=QL(MN);
+            %QL_HH(MN,KT)=QL_h(MN);
+            %QL_TT(MN,KT)=QL_T(MN);
+            %QV(MN,KT)=QV(MN);
+            %SAVEhhh(MN,KT)=SAVEhh(MN);
         end
-        SAVEDSTOR(KT)=DSTOR;
+        %SAVEDSTOR(KT)=DSTOR;
     end
     kk=k;
     n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);

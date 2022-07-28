@@ -1,7 +1,7 @@
 function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...  
          = ebal(iter,options,spectral,rad,gap,leafopt,  ...
                 angles,meteo,soil,canopy,leafbio,xyt,k,profiles,Delt_t)
- global Rl DeltZ Ks Theta_s Theta_r Theta_LL Theta_o bbx NL KT sfactor wfrac  PSItot sfactortot Theta_f
+ global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT sfactor   PSItot sfactortot Theta_f
  global  m n Alpha TT
 % function ebal.m calculates the energy balance of a vegetated surface
 %
@@ -156,9 +156,9 @@ if ~exist('SMCsf','var'), SMCsf = 1; end    % HERE COULD BE A STRESS FACTOR FOR 
 % incorporated
 
 fVh             = exp(kV*xl(1:end-1));
-fVu             = ones(13,36,60);
+fVu             = ones(13,36,nl);
 
-for i = 1:60
+for i = 1:nl
     fVu(:,:,i) = fVh(i);
 end
 
@@ -324,7 +324,10 @@ while CONT                          % while energy balance does not close
     if isnan(PSI1)
     PSI1 = -1; 
     end
-    if abs(PSI-PSI1)<0.0001
+    if ~isreal(PSI1)
+        PSI1 = -1;
+    end
+    if abs(PSI-PSI1)<0.01
         break
     end
     PSI  = (PSI + PSI1)/2;

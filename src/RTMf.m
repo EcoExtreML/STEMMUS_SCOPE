@@ -17,7 +17,7 @@ function [rad,profiles] = RTMf(spectral,rad,soil,leafopt,canopy,gap,angles,profi
 % Update:   Jan-Feb 2013 WV         Inputs and outputs via structures for
 %                                   SCOPE Version 1.40
 % Update:   Jan 2015  CvdT          Added two contributions to SIF radiance cuased by rescattering of hemispherical SIF fluxes
-% Update:   Jan 2015  JAK           (from SCOPE 1.53): Improved speed by factor of 9+! (by vectorizing the summation over the 60 layers)
+% Update:   Jan 2015  JAK           (from SCOPE 1.53): Improved speed by factor of 9+! (by vectorizing the summation over the canopy layers)
 % Update:   Jan 2015  WV            Rearranged some arrays to smoothen the vectorizations; adjusted some internal names
 %
 % The inputs and outputs are structures. These structures are further

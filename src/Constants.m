@@ -113,12 +113,6 @@ global  Pg_w Pg_a0 Pg_a Pg_b
 global Hsur_w Hsur_a0 Hsur_a Hsur_b Rn VPD_msr LAI_msr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables information for boundary condition settings
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global DVhSUM DVTSUM DVaSUM KahSUM KaTSUM KaaSUM  KLhhSUM KLTTSUM
-DVhSUM=zeros(Nmsrmn/2,1);DVTSUM=zeros(Nmsrmn/2,1); DVaSUM=zeros(Nmsrmn/2,1); 
-KahSUM=zeros(Nmsrmn/2,1); KaTSUM=zeros(Nmsrmn/2,1); KaaSUM=zeros(Nmsrmn/2,1);  
-KLhhSUM=zeros(Nmsrmn/2,1); KLTTSUM=zeros(Nmsrmn/2,1);
-
 %> NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
 %>        "1"--Specified matric head; 
 %>        "2"--Specified potential moisture flux (potential evaporation rate of precipitation rate);

@@ -184,7 +184,7 @@ if options.calc_fluor% && options.calc_ebal
         
     end    
 end
-        BOC_irradiance_out  =  [rad.Emin_(61,:),rad.Emin_(61,:)+(rad.Esun_*gap.Ps(61)')'];
+        BOC_irradiance_out  =  [rad.Emin_(canopy.nlayers+1,:),rad.Emin_(canopy.nlayers+1,:)+(rad.Esun_*gap.Ps(canopy.nlayers+1)')'];
         n_col.BOC_irradiance = length(BOC_irradiance_out);
         fwrite(f.BOC_irradiance_file,BOC_irradiance_out,'double');       
 

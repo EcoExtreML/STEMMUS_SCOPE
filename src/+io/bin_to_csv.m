@@ -44,7 +44,7 @@ write_output(Sim_Theta_names, Sim_Theta_units, ...
 fnames.Sim_Theta_file, n_col.Sim_Theta, ns, true)
 
 %% Prepare soil temperature data
-Sim_Temp_names= [depth; thickness];
+Sim_Temp_names = [depth; thickness];
 Sim_Temp_units = repelem({'oC'}, length(depth));
 write_output(Sim_Temp_names, Sim_Temp_units, ...
 fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true)
@@ -144,10 +144,10 @@ function write_output(header, units, bin_path, f_n_col, ns, not_header)
     f_csv = fopen(n_csv, 'w');
 
     %% in case header has more than one row
-    header_str = string(join(append(join(header, ','), '\n'), ''))
+    header_str = string(join(append(join(header, ','), '\n'), ''));
    
     if not_header
-        header_str = [header_str]
+        header_str = [header_str];
     else
         % it is a header => each column must have one
         assert(length(header) == f_n_col, 'Less headers than lines `%s` or n_col is wrong', bin_path)

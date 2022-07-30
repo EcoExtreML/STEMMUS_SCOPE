@@ -826,7 +826,14 @@ fprintf('\n The calculations end now \r')
 if options.verify
     io.output_verification(Output_dir)
 end
-io.bin_to_csv(fnames, V, vmax, n_col, k, options, DeltZ_R)
+
+%% soil layer information
+%% Ztot is defined as a global variable in Initial_root_biomass.m
+%% TODO avoid global variables
+SoilLayer.thickness = DeltZ_R;
+SoilLayer.depth = Ztot';
+
+io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)

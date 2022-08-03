@@ -1,4 +1,4 @@
-function bin_to_csv(fnames, V, vmax, n_col, ns, options, DeltZ_R)
+function bin_to_csv(fnames, V, vmax, n_col, ns, options, SoilLayer)
 %% flu
 flu_names = {'simulation_number','nu_iterations','year','DoY',...
     'Rntot','lEtot','Htot', ...
@@ -32,17 +32,23 @@ radiation_names = {'simulation_number','year','DoY',...
 radiation_units = {'','','',  ...
     'W m-2','W m-2','W m-2', 'W m-2','W m-2','W m-2','W m-2','W m-2'};
 write_output(radiation_names, radiation_units, fnames.radiation_file, n_col.radiation, ns)
-%% Soil temperature and moisture
-Sim_Theta_names = num2str(DeltZ_R);
-Sim_Theta_names=cellstr(Sim_Theta_names);
-Sim_Theta_units ={'m-3 m-3'};
+
+%% Get soil layer information
+depth = string(SoilLayer.depth);
+thickness = string(SoilLayer.thickness);
+ 
+%% Prepare soil moisture data
+Sim_Theta_names = [depth; thickness];
+Sim_Theta_units = repelem({'m-3 m-3'}, length(depth));
 write_output(Sim_Theta_names, Sim_Theta_units, ...
 fnames.Sim_Theta_file, n_col.Sim_Theta, ns, true)
-Sim_Temp_names = num2str(DeltZ_R);
-Sim_Temp_names=cellstr(Sim_Temp_names);
-Sim_Temp_units ={'oC'};
+
+%% Prepare soil temperature data
+Sim_Temp_names = [depth; thickness];
+Sim_Temp_units = repelem({'oC'}, length(depth));
 write_output(Sim_Temp_names, Sim_Temp_units, ...
 fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true)
+
 %% spectrum (added on 19 September 2008)
 
 spectrum_hemis_optical_names = {'hemispherically integrated radiation spectrum'};
@@ -136,15 +142,18 @@ function write_output(header, units, bin_path, f_n_col, ns, not_header)
     n_csv = strrep(bin_path, '.bin', '.csv');
     
     f_csv = fopen(n_csv, 'w');
-    header_str = [strjoin(header, ','), '\n'];
+
+    %% in case header has more than one row
+    header_str = string(join(append(join(header, ','), '\n'), ''));
+   
     if not_header
-        header_str = ['#' header_str];
+        header_str = [header_str];
     else
         % it is a header => each column must have one
         assert(length(header) == f_n_col, 'Less headers than lines `%s` or n_col is wrong', bin_path)
     end
     fprintf(f_csv, header_str);
-    fprintf(f_csv, ['#' strjoin(units, ','), '\n']);
+    fprintf(f_csv, [strjoin(units, ','), '\n']);
     
     f_bin = fopen(bin_path, 'r');
     out = fread(f_bin, 'double');

@@ -20,10 +20,29 @@
 %
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-%%
 
 %% 0. globals
-run filesread %get paths and prepare input files
+% We change the filereads (old) script as a function named prepareforcing,
+% but there still global variables here, because we not sure which
+% progresses related to these global variables.
+global CFG
+if isempty(CFG)
+    CFG = '../config_file_crib.txt';
+end
+[FilePaths, SiteProperties, DELT, Dur_tot] = io.prepareforcing(CFG);
+SoilPropertyPath     = FilePaths.soilProperty;
+InputPath            = FilePaths.input;
+OutputPath           = FilePaths.output;
+InitialConditionPath = FilePaths.initialCondition;
+IGBP_veg_long        = SiteProperties.igbpVegLong;
+latitude             = SiteProperties.latitude;
+longitude            = SiteProperties.longitude;
+reference_height     = SiteProperties.referenceHeight;
+canopy_height        = SiteProperties.canopyHeight;
+sitename             = SiteProperties.siteName;
+global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+
+%%
 run Constants %input soil parameters
 global i tS KT Delt_t TEND TIME MN NN NL ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
 global KIT NIT TimeStep Processing

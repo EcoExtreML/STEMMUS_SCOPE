@@ -63,18 +63,22 @@ global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 path_input = InputPath;          % path of all inputs
 path_of_code                = cd;
 
-% parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
-parameter_file            = {'input_data.xlsx'};
-if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
-
-% Read parameter file which is 'input_data.xlsx' and return it as options.
-options = io.setOptions(parameter_file,path_input);
+useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
+if useXLSX == 0
+    % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
+    % Read parameter file which is 'input_data.xlsx' and return it as options.
+%     options = io.setOptions(parameter_file,path_input); 
+    warning("the current stemmus-scope does not support useXLSX=0");
+else
+    parameter_file            = {'input_data.xlsx'}; 
+    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
+end  
 
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
 % Todo: fix use set_parameter_filenames.m
-if ~useXLSX
+if useXLSX==0
     run([path_input parameter_file{2}])
 else
     [dummy,X]                       = xlsread([path_input char(parameter_file)],'filenames');
@@ -95,7 +99,7 @@ end
 
 %% 4. input data
 
-if ~useXLSX
+if useXLSX==0
     X                           = textread([path_input parameter_file{3}],'%s'); %#ok<DTXTRD>
     N                           = str2double(X);
 else
@@ -107,7 +111,7 @@ options.Cca_function_of_Cab = 0;
 
 for i = 1:length(V)
     j = find(strcmp(strtok(X(:,1)),V(i).Name));
-    if ~useXLSX, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
+    if useXLSX==0, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
     if isempty(j) || cond
         if i==2
             warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
@@ -146,7 +150,7 @@ for i = 1:length(V)
         end
     end
     
-    if ~useXLSX
+    if useXLSX==0
         j2 = []; j1 = j+1;
         while 1
             if isnan(N(j1)), break, end

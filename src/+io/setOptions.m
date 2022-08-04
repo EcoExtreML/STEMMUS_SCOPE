@@ -5,16 +5,13 @@ Read parameter file and set options. The parameter_file is defined in set_parame
 Input:
     parameter_file:  A cell array of the strings where each string is a
         file name.
-    path_input: The path of parameter files. For example, the path of "input_data.xlsx".
+    path_input: The path of parameter files. the path of setOptions.m .
  
 Output:
     options: A structure containing options we set in parameter file.
 %}
 
-if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
 
-if ~useXLSX
-    fprintf('The current STEMMUS-SCOPE does not support this part of the code.\n');
 %     run([path_input parameter_file{1}])
 %     
 %     options.calc_ebal           = N(1);    % calculate the energy balance (default). If 0, then only SAIL is executed!
@@ -38,8 +35,6 @@ if ~useXLSX
      % 1: time series (uses text files with meteo input as time series)
      % 2: Lookup-Table (specify the values to be included)
      % 3: Lookup-Table with random input (specify the ranges of values)
-else
-    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
 end
 
 

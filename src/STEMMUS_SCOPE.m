@@ -62,9 +62,10 @@ global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
 path_of_code                = cd;
-run set_parameter_filenames; 
+
 % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
 parameter_file            = {'input_data.xlsx'};
+if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
 
 % Read parameter file which is 'input_data.xlsx' and return it as options.
 options = io.setOptions(parameter_file,path_input);

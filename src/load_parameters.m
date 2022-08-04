@@ -52,8 +52,8 @@ if ~use_xlsx
         end
 end
 end
-ScopeParameters.LAT=Lat;
-ScopeParameters.Lon=Lon;
+ScopeParameters(48).Val=Lat;
+ScopeParameters(49).Val=Lon;
 ScopeParameters(62).Val=Lat;
 ScopeParameters(63).Val=Lon;
 ScopeParameters(29).Val=z;

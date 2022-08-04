@@ -1,4 +1,4 @@
-function [ScopeParameters,Options] = load_parameters(VarNames,Options,use_xlsx,ExcelData,ForcingData,N,Lat,Lon,hc,z,Ta,Sitename,IGBP_veg_long)
+function [ScopeParameters,Options] = load_parameters(VarNames,Options,use_xlsx,ExcelData,ForcingData,N,Lat,Lon,hc,z,Ta,Sitename,Vege_type)
     ScopeParameters = VarNames;
     Options.Cca_function_of_Cab = 0;
     for i = 1:length(ScopeParameters)
@@ -30,7 +30,6 @@ function [ScopeParameters,Options] = load_parameters(VarNames,Options,use_xlsx,E
                     end
     end                
     end
-    end
 if ~use_xlsx
         j2 = []; j1 = j+1;
         while 1
@@ -52,8 +51,9 @@ if ~use_xlsx
             ScopeParameters(i).Val            = N(j,~isnan(N(j,:)));
         end
 end
-ScopeParameters(48).Val=Lat;
-ScopeParameters(49).Val=Lon;
+end
+ScopeParameters.LAT=Lat;
+ScopeParameters.Lon=Lon;
 ScopeParameters(62).Val=Lat;
 ScopeParameters(63).Val=Lon;
 ScopeParameters(29).Val=z;
@@ -61,37 +61,37 @@ ScopeParameters(23).Val=hc;
 ScopeParameters(55).Val=mean(Ta);
 %Input T parameters for different vegetation type
     sitename1=cellstr(Sitename);
-if strcmp(IGBP_veg_long(1:18)', 'Permanent Wetlands') 
+if strcmp(Vege_type(1:18)', 'Permanent Wetlands') 
     ScopeParameters(14).Val = [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
     ScopeParameters(9).Val = [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
     ScopeParameters(10).Val = [9]; % Ball-Berry stomatal conductance parameter
     ScopeParameters(11).Val = [0]; % Photochemical pathway: 0=C3, 1=C4
     ScopeParameters(28).Val = [0.05]; % leaf width
-elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf')  
+elseif strcmp(Vege_type(1:19)', 'Evergreen Broadleaf')  
     ScopeParameters(14).Val = [0.2 0.3 283 311 328];
     ScopeParameters(9).Val = [80];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];
     ScopeParameters(28).Val = [0.05];
-elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf') 
+elseif strcmp(Vege_type(1:19)', 'Deciduous Broadleaf') 
     ScopeParameters(14).Val = [0.2 0.3 283 311 328];
     ScopeParameters(9).Val = [80];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];  
     ScopeParameters(28).Val = [0.05];
-elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests') 
+elseif strcmp(Vege_type(1:13)', 'Mixed Forests') 
     ScopeParameters(14).Val = [0.2 0.3 281 307 328];
     ScopeParameters(9).Val = [80];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0]; 
     ScopeParameters(28).Val = [0.04];
-elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf') 
+elseif strcmp(Vege_type(1:20)', 'Evergreen Needleleaf') 
     ScopeParameters(14).Val = [0.2 0.3 278 303 328];
     ScopeParameters(9).Val = [80];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];   
     ScopeParameters(28).Val = [0.01];
-elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')    
+elseif strcmp(Vege_type(1:9)', 'Croplands')    
     if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
         ScopeParameters(14).Val = [0.2 0.3 278 303 328];
         ScopeParameters(9).Val = [50];
@@ -106,31 +106,31 @@ elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')
         ScopeParameters(11).Val = [0]; 
         ScopeParameters(28).Val = [0.03];    
     end
-elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
+elseif strcmp(Vege_type(1:15)', 'Open Shrublands')
     ScopeParameters(14).Val = [0.2 0.3 288 313 328];
     ScopeParameters(9).Val = [120];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];  
     ScopeParameters(28).Val = [0.05];
-elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands') 
+elseif strcmp(Vege_type(1:17)', 'Closed Shrublands') 
     ScopeParameters(14).Val = [0.2 0.3 288 313 328];
     ScopeParameters(9).Val = [80];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];
     ScopeParameters(28).Val = [0.05];
-elseif strcmp(IGBP_veg_long(1:8)', 'Savannas')  
+elseif strcmp(Vege_type(1:8)', 'Savannas')  
     ScopeParameters(14).Val = [0.2 0.3 278 313 328];
     ScopeParameters(9).Val = [120];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];
     ScopeParameters(28).Val = [0.05];
-elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas')
+elseif strcmp(Vege_type(1:14)', 'Woody Savannas')
     ScopeParameters(14).Val = [0.2 0.3 278 313 328];
     ScopeParameters(9).Val = [120];
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];
     ScopeParameters(28).Val = [0.03];
-elseif strcmp(IGBP_veg_long(1:9)', 'Grassland')  
+elseif strcmp(Vege_type(1:9)', 'Grassland')  
     ScopeParameters(14).Val = [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
         ScopeParameters(9).Val = [120];
@@ -149,7 +149,7 @@ else
     ScopeParameters(10).Val = [9];
     ScopeParameters(11).Val = [0];
     ScopeParameters(28).Val = [0.05];
-    warning('IGBP vegetation name unknown, "%s" is not recognized. ', IGBP_veg_long)
+    warning('IGBP vegetation name unknown, "%s" is not recognized. ', Vege_type)
 end
 
 TZ=fix(Lon/15);

@@ -65,28 +65,28 @@ T8=T6-T7;
 time=T8;
 T10=year(T);
 
-RH=ncread(ForcingFilePath,'RH');
+RH=ncread(ForcingFilePath,'RH');            % Unit: %
 RHL=length(RH);
 RHa=reshape(RH,RHL,1);
 
-Tair=ncread(ForcingFilePath,'Tair');
+Tair=ncread(ForcingFilePath,'Tair');        % Unit: K
 TairL=length(Tair);
-Taira=reshape(Tair,TairL,1)-273.15;
+Taira=reshape(Tair,TairL,1)-273.15;         % Unit: degree C
 
-es= 6.107*10.^(Taira.*7.5./(237.3+Taira));
+es= 6.107*10.^(Taira.*7.5./(237.3+Taira));  % Unit: hPa
 ea=es.*RHa./100;
 
-SWdown=ncread(ForcingFilePath,'SWdown');
+SWdown=ncread(ForcingFilePath,'SWdown');    % Unit: W/m2
 SWdownL=length(SWdown);
 SWdowna=reshape(SWdown,SWdownL,1);
 
 
-LWdown=ncread(ForcingFilePath,'LWdown');
+LWdown=ncread(ForcingFilePath,'LWdown');    % Unit: W/m2
 LWdownL=length(LWdown);
 LWdowna=reshape(LWdown,LWdownL,1);
 
 
-VPD=ncread(ForcingFilePath,'VPD');
+VPD=ncread(ForcingFilePath,'VPD');          % Unit: hPa
 VPDL=length(VPD);
 VPDa=reshape(VPD,VPDL,1);
 
@@ -96,27 +96,27 @@ VPDa=reshape(VPD,VPDL,1);
 % Qaira=reshape(Qair,QairL,1);
 
 
-Psurf=ncread(ForcingFilePath,'Psurf');
+Psurf=ncread(ForcingFilePath,'Psurf');      % Unit: Pa
 PsurfL=length(Psurf);
 Psurfa=reshape(Psurf,PsurfL,1);
-Psurfa=Psurfa./100;
+Psurfa=Psurfa./100;                         % Unit: hPa
 
 
-Precip=ncread(ForcingFilePath,'Precip');
+Precip=ncread(ForcingFilePath,'Precip');    % Unit: mm/s
 PrecipL=length(Precip);
 Precipa=reshape(Precip,PrecipL,1);
-Precipa=Precipa./10;
+Precipa=Precipa./10;                        % Unit: cm/s
 
 
-Wind=ncread(ForcingFilePath,'Wind');
+Wind=ncread(ForcingFilePath,'Wind');        % Unit: m/s
 WindL=length(Wind);
 Winda=reshape(Wind,WindL,1);
 
 
-CO2air=ncread(ForcingFilePath,'CO2air');
+CO2air=ncread(ForcingFilePath,'CO2air');    % Unit: ppm
 CO2airL=length(CO2air);
 CO2aira=reshape(CO2air,CO2airL,1);
-CO2aira=CO2aira.*44./22.4;
+CO2aira=CO2aira.*44./22.4;                  % Unit: mg/m3
 
 
 SiteProperties.latitude=ncread(ForcingFilePath,'latitude');

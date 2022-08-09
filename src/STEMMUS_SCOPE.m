@@ -404,7 +404,7 @@ run StartInit;   % Initialize Temperature, Matric potential and soil air pressur
 
 
 %% 14. Run the model
-fprintf('\n The calculations start now \r')
+disp('The calculations start now')
 calculate = 1;
 TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros(1,NN);
 TIMELAST=0;
@@ -822,11 +822,18 @@ for i = 1:1:Dur_tot
     kk=k;
     n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
 end
-fprintf('\n The calculations end now \r')
+disp('The calculations end now')
 if options.verify
     io.output_verification(Output_dir)
 end
-io.bin_to_csv(fnames, V, vmax, n_col, k, options, DeltZ_R)
+
+%% soil layer information
+%% Ztot is defined as a global variable in Initial_root_biomass.m
+%% TODO avoid global variables
+SoilLayer.thickness = DeltZ_R;
+SoilLayer.depth = Ztot';
+
+io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)

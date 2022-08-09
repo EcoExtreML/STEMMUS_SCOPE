@@ -22,25 +22,46 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% 0. globals
-% We change the filereads (old) script as a function named prepareforcing,
+% We change the filereads (old) script as a function named prepareForcing,
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
+clear all; clc;
+
+% Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
     CFG = '../config_file_crib.txt';
 end
-[FilePaths, SiteProperties, DELT, Dur_tot] = io.prepareforcing(CFG);
-SoilPropertyPath     = FilePaths.soilProperty;
-InputPath            = FilePaths.input;
-OutputPath           = FilePaths.output;
-InitialConditionPath = FilePaths.initialCondition;
+disp (['Reading config from ',CFG])
+[DataPaths.soilProperty, DataPaths.input, DataPaths.output, ...
+    DataPaths.forcingPath, forcingFileName, durationSize, ...
+    DataPaths.initialCondition] = io.read_config(CFG);
+
+% Prepare forcing data
+global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+[SiteProperties, DELT, timeLength] = io.prepareForcing(DataPaths, forcingFileName);
+SoilPropertyPath     = DataPaths.soilProperty;
+InputPath            = DataPaths.input;
+OutputPath           = DataPaths.output;
+InitialConditionPath = DataPaths.initialCondition;
 IGBP_veg_long        = SiteProperties.igbpVegLong;
 latitude             = SiteProperties.latitude;
 longitude            = SiteProperties.longitude;
 reference_height     = SiteProperties.referenceHeight;
 canopy_height        = SiteProperties.canopyHeight;
 sitename             = SiteProperties.siteName;
-global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+
+%Set the end time of the main loop in STEMMUS_SCOPE.m
+%using config file or time length of forcing file
+if isnan(durationSize)
+    Dur_tot=timeLength;
+else
+    if (durationSize>timeLength)
+        Dur_tot=timeLength;
+    else
+        Dur_tot=durationSize;
+    end
+end
 
 %%
 run Constants %input soil parameters

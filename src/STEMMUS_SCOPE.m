@@ -77,7 +77,6 @@ end
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
-% Todo: fix use set_parameter_filenames.m
 if useXLSX==0
     run([path_input parameter_file{2}])
 else

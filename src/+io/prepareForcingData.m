@@ -1,4 +1,4 @@
-function [SiteProperties, timeStep, timeLength] = prepareForcing(DataPaths, forcingFileName)
+function [SiteProperties, timeStep, forcingTimeLength] = prepareForcingData(DataPaths, forcingFileName)
 %{ 
 This function is used to read forcing data and site properties.
 
@@ -28,7 +28,7 @@ t1=datenum(startyear,1,1,0,0,0);
 timeStep=time1(2);
 
 %get time length of forcing file
-timeLength=length(time1);
+forcingTimeLength=length(time1);
 
 dt=time1(2)/3600/24;
 t2=datenum(endyear,12,31,23,30,0);

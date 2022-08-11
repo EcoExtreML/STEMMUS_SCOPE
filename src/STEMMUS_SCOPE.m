@@ -34,12 +34,12 @@ if isempty(CFG)
 end
 disp (['Reading config from ',CFG])
 [DataPaths.soilProperty, DataPaths.input, DataPaths.output, ...
-    DataPaths.forcingPath, forcingFileName, durationSize, ...
+    DataPaths.forcingPath, forcingFileName, numberOfTimeSteps, ...
     DataPaths.initialCondition] = io.read_config(CFG);
 
 % Prepare forcing data
 global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
-[SiteProperties, DELT, timeLength] = io.prepareForcing(DataPaths, forcingFileName);
+[SiteProperties, DELT, forcingTimeLength] = io.prepareForcingData(DataPaths, forcingFileName);
 SoilPropertyPath     = DataPaths.soilProperty;
 InputPath            = DataPaths.input;
 OutputPath           = DataPaths.output;
@@ -53,10 +53,10 @@ sitename             = SiteProperties.siteName;
 
 %Set the end time of the main loop in STEMMUS_SCOPE.m
 %using config file or time length of forcing file
-if isnan(durationSize)
-    Dur_tot=timeLength;
+if isnan(numberOfTimeSteps)
+    Dur_tot=forcingTimeLength;
 else
-    Dur_tot = min(durationSize, timeLength);
+    Dur_tot = min(numberOfTimeSteps, forcingTimeLength);
 end
 
 %%

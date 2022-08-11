@@ -77,6 +77,7 @@ end
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
+% the current stemmus-scope does not support useXLSX=0
 if useXLSX==0
     run([path_input parameter_file{2}])
 else
@@ -97,7 +98,7 @@ for i = 1:length(F)
 end
 
 %% 4. input data
-
+% the current stemmus-scope does not support useXLSX=0
 if useXLSX==0
     X                           = textread([path_input parameter_file{3}],'%s'); %#ok<DTXTRD>
     N                           = str2double(X);
@@ -110,6 +111,7 @@ options.Cca_function_of_Cab = 0;
 
 for i = 1:length(V)
     j = find(strcmp(strtok(X(:,1)),V(i).Name));
+    % the current stemmus-scope does not support useXLSX=0
     if useXLSX==0, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
     if isempty(j) || cond
         if i==2
@@ -149,6 +151,7 @@ for i = 1:length(V)
         end
     end
     
+    % the current stemmus-scope does not support useXLSX=0
     if useXLSX==0
         j2 = []; j1 = j+1;
         while 1

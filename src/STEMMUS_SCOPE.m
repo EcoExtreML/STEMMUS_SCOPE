@@ -25,7 +25,6 @@
 % We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
-clear all; clc;
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG

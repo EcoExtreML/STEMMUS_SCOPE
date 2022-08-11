@@ -56,11 +56,7 @@ sitename             = SiteProperties.siteName;
 if isnan(durationSize)
     Dur_tot=timeLength;
 else
-    if (durationSize>timeLength)
-        Dur_tot=timeLength;
-    else
-        Dur_tot=durationSize;
-    end
+    Dur_tot = min(durationSize, timeLength);
 end
 
 %%

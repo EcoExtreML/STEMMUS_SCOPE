@@ -22,7 +22,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% 0. globals
-% We change the filereads (old) script as a function named prepareForcing,
+% We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
 clear all; clc;

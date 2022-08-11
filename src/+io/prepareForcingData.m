@@ -16,11 +16,11 @@ Output:
 ForcingFilePath=fullfile(DataPaths.forcingPath, forcingFileName);
 % Prepare input files
 sitefullname=dir(ForcingFilePath).name; %read sitename
-    SiteProperties.siteName=sitefullname(1:6);
-    startyear=sitefullname(8:11);
-    endyear=sitefullname(13:16);
-    startyear=str2double(startyear);
-    endyear=str2double(endyear);
+SiteProperties.siteName=sitefullname(1:6);
+startyear=sitefullname(8:11);
+endyear=sitefullname(13:16);
+startyear=str2double(startyear);
+endyear=str2double(endyear);
     
 % Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');

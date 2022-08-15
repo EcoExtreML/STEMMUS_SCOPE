@@ -51,14 +51,15 @@ if ~use_xlsx
             ScopeParameters(i).Val            = N(j,~isnan(N(j,:)));
         end
 end
-end
-ScopeParameters(48).Val=Lat;
-ScopeParameters(49).Val=Lon;
-ScopeParameters(62).Val=Lat;
-ScopeParameters(63).Val=Lon;
-ScopeParameters(29).Val=z;
-ScopeParameters(23).Val=hc;
-ScopeParameters(55).Val=mean(Ta);
+    end
+% Define the location information
+ScopeParameters(48).Val=Lat; %latitude
+ScopeParameters(49).Val=Lon; %longitude
+ScopeParameters(62).Val=Lat; %latitude of BSM model
+ScopeParameters(63).Val=Lon; %longitude of BSM model
+ScopeParameters(29).Val=z;   %reference height
+ScopeParameters(23).Val=hc;  %canopy height
+ScopeParameters(55).Val=mean(Ta); %calculate mean air temperature
 %Input T parameters for different vegetation type
     sitename1=cellstr(Sitename);
 if strcmp(Vege_type(1:18)', 'Permanent Wetlands') 
@@ -151,7 +152,7 @@ else
     ScopeParameters(28).Val = [0.05];
     warning('IGBP vegetation name unknown, "%s" is not recognized. ', Vege_type)
 end
-
+% calculate the time zone based on longitude
 TZ=fix(Lon/15);
 TZZ=mod(Lon,15);
 if Lon>0

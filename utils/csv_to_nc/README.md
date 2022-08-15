@@ -9,3 +9,6 @@ convention table](https://docs.google.com/spreadsheets/d/1CA3aTvI9piXqRqO-3MGrsH
 The MATLAB source code writes model outputs in `csv` format in the output
 directory. The NetCDF file is generated using the module `save.py` from
 [`PyStemmusScope`](https://pystemmusscope.readthedocs.io/en/latest/autoapi/index.html).
+
+> An example NetCDF file is stored in the project directory to show the desired
+> structure of variables in one file.

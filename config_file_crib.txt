@@ -1,4 +1,4 @@
-WorkDir=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/
+WorkDir=/home/jovyan/private/
 SoilPropertyPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/
 ForcingPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Plumber2_data/
 ForcingFileName=AU-DaS_2010-2017_OzFlux_Met.nc
@@ -10,5 +10,5 @@ soil_spectrum=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/soil_spectrum/
 input_data=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/input_data.xlsx
 InitialConditionPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/Initial_condition/
 NumberOfTimeSteps=NA
-InputPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/AU-DaS_2022-05-11-1705/
-OutputPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/output/AU-DaS_2022-05-11-1705/
+InputPath=
+OutputPath=

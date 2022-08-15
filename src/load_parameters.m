@@ -1,5 +1,4 @@
-function [ScopeParameters,Options] = load_parameters(VarNames,Options,use_xlsx,ExcelData,ForcingData,N,Lat,Lon,hc,z,Ta,Sitename,Vege_type)
-    ScopeParameters = VarNames;
+function [ScopeParameters,Options] = load_parameters(ScopeParameters,Options,use_xlsx,ExcelData,ForcingData,N,Lat,Lon,hc,z,Ta,Sitename,Vege_type)
     Options.Cca_function_of_Cab = 0;
     for i = 1:length(ScopeParameters)
     j = find(strcmp(strtok(ExcelData(:,1)),ScopeParameters(i).Name));

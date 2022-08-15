@@ -1,8 +1,7 @@
 %%% This script runs both Python package PyStemmusScope and MATLAB code of STEMMUS_SCOPE model
 
-%% TODO test with python 3.9
-
 %% activate the pystemmusscope environment
+%% see readme how to create pystemmusscope environment
 pe = pyenv;
 if pe.Status ~= 'Loaded'
     pe = pyenv(...
@@ -39,4 +38,4 @@ STEMMUS_SCOPE_exe(string(config_path));
 %% save output in netcdf format
 required_netcdf_variables = "../utils/csv_to_nc/required_netcdf_variables.csv";
 nc_file_name = PyStemmusScope_save.to_netcdf(model.config, required_netcdf_variables);
-disp(['netcf file in ', string(nc_file_name)])
+fprintf('The output netcf file is in %s\n',string(nc_file_name));

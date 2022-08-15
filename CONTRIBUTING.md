@@ -154,3 +154,7 @@ To contribuute to STEMMUS_SCOPE model, you need access to model source code that
 ## Create an executable file of STEMMUS_SCOPE
 
 See the [exe readme](./exe/README.md).
+
+## Follow MATLAB style guidelines
+
+Please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).

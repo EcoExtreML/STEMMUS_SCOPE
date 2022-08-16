@@ -125,7 +125,7 @@ else
     [N,X]                       = xlsread([path_input char(parameter_file)],'inputdata', '');
     X                           = X(9:end,1);
 end
-[V,options] = load_parameters(io.assignvarnames(),options,useXLSX,X,F,N,latitude,longitude,reference_height,canopy_height,Ta_msr,sitename,IGBP_veg_long);
+[ScopeParameters,options] = load_parameters(io.assignvarnames(),options,useXLSX,X,F,N,latitude,longitude,reference_height,canopy_height,Ta_msr,sitename,IGBP_veg_long);
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
 path_output     = OutputPath;
@@ -183,9 +183,9 @@ spectral.IwlF = (640:850)-399;
 
 %% 11. load time series data
 if options.simulation == 1
-    vi = ones(length(V),1);
-    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(V,vi,canopy,options);
-    [V,xyt,canopy]  = io.load_timeseries(V,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
+    vi = ones(length(ScopeParameters),1);
+    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(ScopeParameters,vi,canopy,options);
+    [ScopeParameters,xyt,canopy]  = io.load_timeseries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
 else
     soil = struct;
 end
@@ -202,10 +202,10 @@ if options.simulation==1
     end
 end
 
-nvars = length(V);
+nvars = length(ScopeParameters);
 vmax = ones(nvars,1);
 for i = 1:nvars
-    vmax(i) = length(V(i).Val);
+    vmax(i) = length(ScopeParameters(i).Val);
 end
 vmax([14,27],1) = 1; % these are Tparam and LIDFb
 vi      = ones(nvars,1);
@@ -298,7 +298,7 @@ for i = 1:1:Dur_tot
          end
     if options.simulation == 1, vi(vmax>1) = k; end
     if options.simulation == 0, vi(vmax==telmax) = k; end
-    [soil,leafbio,canopy,meteo,angles,xyt] = io.select_input(V,vi,canopy,options,xyt,soil);
+    [soil,leafbio,canopy,meteo,angles,xyt] = io.select_input(ScopeParameters,vi,canopy,options,xyt,soil);
     if options.simulation ~=1
         fprintf('simulation %i ', k );
         fprintf('of %i \n', telmax);
@@ -640,7 +640,7 @@ for i = 1:1:Dur_tot
         %SAVEDSTOR(KT)=DSTOR;
     end
     kk=k;
-    n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    n_col = io.output_data_binary(f, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
 end
 fprintf('\n The calculations end now \r')
 if options.verify

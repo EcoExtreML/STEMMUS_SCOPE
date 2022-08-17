@@ -1,11 +1,10 @@
 %%% This script runs both Python package PyStemmusScope and MATLAB code of STEMMUS_SCOPE model
 
-%% activate the pystemmusscope environment
-%% see readme how to create pystemmusscope environment
+%% activate the pystemmusscope_3.8 environment
 pe = pyenv;
 if pe.Status ~= 'Loaded'
     pe = pyenv(...
-        'Version','~/mamba/envs/pystemmusscope/bin/python',...
+        'Version','~/mamba/envs/pystemmusscope_3.8/bin/python',...
         "ExecutionMode", "OutOfProcess"...
     );
 end

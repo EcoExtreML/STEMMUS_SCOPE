@@ -92,7 +92,7 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
 5. The results are saved as binary files temporarily. Then, the binary files are
     converted to `.csv` files and stored in a `sitename_timestamped` output
     directory under "OutputPath". A netcdf file is also created in the same
-    directory, see (csv_to_nc/README)[./utils/csv_to_nc/README.md].
+    directory, see [csv_to_nc/README](./utils/csv_to_nc/README.md).
 
 ### Dataflow of STEMMUS_SCOPE on Snellius:
 

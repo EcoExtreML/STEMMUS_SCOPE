@@ -1,6 +1,6 @@
 # STEMMUS_SCOPE
 
-Integrated code of SCOPE and STEMMUS. 
+Integrated code of SCOPE and STEMMUS.
 
 ## Run the model
 
@@ -13,8 +13,8 @@ model.
 
 As a user, you don't need to have a MATLAB license to run the STEMMUS-SCOPE
 model. The workflow is executed using python and MATLAB Runtime on a Unix-like
-system. Follow the
-[instructions](https://pystemmusscope.readthedocs.io/en/latest/readme_link.html#users)
+system. Follow this
+[instruction](https://pystemmusscope.readthedocs.io/en/latest/readme_link.html#users).
 
 ### Developers
 
@@ -29,8 +29,8 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
     directory on CRIB. This folder includes:
 
     - Plumber2_data: the forcing/driving data provided by PLUMBER2.
-    - SoilProperty: the soil texture data and soil hydraulic parameters. 
-    
+    - SoilProperty: the soil texture data and soil hydraulic parameters.
+
     Below the directory explanations are from [SCOPE
     documentation](https://scope-model.readthedocs.io/en/latest/directories.html):
 
@@ -112,7 +112,7 @@ Dutch National supercomputer hosted at SURF.
       - soil_spectra
       - input_data.xlsx
 
-    For the explanation of the directories see 
+    For the explanation of the directories see
   [Dataflow of STEMMUS_SCOPE on CRIB](#dataflow-of-stemmus_scope-on-crib).
 
 2. Config file: it is a text file that sets the paths **required** by the model.
@@ -132,7 +132,7 @@ Dutch National supercomputer hosted at SURF.
     the model runs at the site scale. For example, if we put the
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
-    - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`. 
+    - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`.
     - NumberOfTimeSteps: total number of time steps in which model runs. It can be
       `NA` or a number. Example `NumberOfTimeSteps=17520` runs the model for one year a
       half-hour time step i.e. `365*24*2=17520`.
@@ -140,4 +140,4 @@ Dutch National supercomputer hosted at SURF.
 ### Workflow of STEMMUS_SCOPE on Snellius:
 
 This is the same as the workflow of STEMMUS_SCOPE on crib, see section
-[Workflow of STEMMUS_SCOPE on CRIB](#workflow-of-stemmus_scope-on-crib). 
+[Workflow of STEMMUS_SCOPE on CRIB](#workflow-of-stemmus_scope-on-crib).

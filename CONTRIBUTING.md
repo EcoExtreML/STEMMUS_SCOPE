@@ -143,13 +143,10 @@ To know about the most common Git commands, follow the guides
 [here](https://hackmd.io/B4v6KwsBRzG-akLDF8e5pg).
 </details>
 
-## PyStemmusScope installation
-
-You need the python package `PyStemmusScope` for running the STEMMUS-SCOPE model. Follow the [instruction](https://pystemmusscope.readthedocs.io/en/latest/readme_link.html#installations) to install it.
-
 ## Development of the MATLAB source of STEMMUS_SCOPE model
 
-To contribuute to STEMMUS_SCOPE model, you need access to model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. Follow the instruction [here](https://pystemmusscope.readthedocs.io/en/latest/contributing_link.html#development-of-stemmus-scope-model).
+To contribuute to STEMMUS_SCOPE model, you need access to model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. MATLAB `2021a` is installed on
+[Snellius]((https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius)) and [CRIB](https://crib.utwente.nl/), see [this instruction](https://pystemmusscope.readthedocs.io/en/latest/contributing_link.html#development-of-stemmus-scope-model).
 
 ## Create an executable file of STEMMUS_SCOPE
 

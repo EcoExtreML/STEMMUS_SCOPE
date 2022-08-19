@@ -1,6 +1,6 @@
 # Contributing guidelines
 
-This repository includes the MATLAB codes of STEMMUS-SCOPE model. We welcome any
+This repository includes the MATLAB source code of the STEMMUS-SCOPE model. We welcome any
 kind of contributions to our software, from simple comment or question to a full
 [pull request](https://help.github.com/articles/about-pull-requests/). Please
 read and follow our contributing guidelines.

@@ -7,7 +7,7 @@ read and follow our contributing guidelines.
 
 ## Contributing via GitHub
 
-Note when we want to work with `STEMMUS_SCOPE` repository on a new computer for
+If you want to work with the `STEMMUS_SCOPE` repository for the first time, or on a new computer, 
 you need to configure a few things following steps 1 through 5 below.
 
 <details>

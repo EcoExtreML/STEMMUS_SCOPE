@@ -10,5 +10,5 @@ soil_spectrum=/projects/0/einf2480/model_parameters/vegetation_property/soil_spe
 input_data=/projects/0/einf2480/model_parameters/vegetation_property/input_data.xlsx
 InitialConditionPath=/projects/0/einf2480/soil_initialcondition/
 NumberOfTimeSteps=17520
-InputPath=/scratch-shared/ecoextreml/stemmus_scope/input/FI-Hyy_2022-05-11-1705/
-OutputPath=/scratch-shared/ecoextreml/stemmus_scope/output/FI-Hyy_2022-05-11-1705/
+InputPath=
+OutputPath=

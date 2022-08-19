@@ -145,7 +145,7 @@ To know about the most common Git commands, follow the guides
 
 ## Development of the MATLAB source of STEMMUS_SCOPE model
 
-To contribuute to STEMMUS_SCOPE model, you need access to model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. MATLAB `2021a` is installed on
+To contribute to the STEMMUS_SCOPE model, you need access to the model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. MATLAB `2021a` is installed on
 [Snellius]((https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius)) and [CRIB](https://crib.utwente.nl/), see [this instruction](https://pystemmusscope.readthedocs.io/en/latest/contributing_link.html#development-of-stemmus-scope-model).
 
 ## Create an executable file of STEMMUS_SCOPE

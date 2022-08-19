@@ -70,12 +70,12 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
     path.
     - ForcingPath: a path to the forcing/driving data.
     - ForcingFileName: name of the forcing file in a netcdf format. Currently,
-    the model runs at the site scale. For example, if we put the
-    `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
-    site.
+      the model runs at the site scale. For example, if we put the
+      `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy` site.
     - NumberOfTimeSteps: total number of time steps which model runs for. It can be
-      `NA` or a number. Example `NumberOfTimeSteps=17520` runs the model for one year a
-      half-hour time step i.e. `365*24*2=17520`.
+      `NA` or a number. Examples: `NumberOfTimeSteps=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`. `NumberOfTimeSteps=NA` runs the
+      model for all time steps in which the forcing data are available.
 
 ### Workflow of STEMMUS_SCOPE on CRIB:
 
@@ -125,17 +125,17 @@ Dutch National supercomputer hosted at SURF.
       include the data of `directional`, `fluspect_parameters`, `leafangles`,
       `radiationdata`, `soil_spectra`, and `input_data.xlsx`.
     - OutputPath: this is the base path to store outputs of the model. When
-    the model runs, it creates `sitename_timestamped` directories under
-    this path.
+      the model runs, it creates `sitename_timestamped` directories under
+      this path.
     - ForcingPath: a path to the forcing/driving data.
     - ForcingFileName: name of the forcing file in a netcdf format. Currently,
-    the model runs at the site scale. For example, if we put the
-    `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
-    site.
+      the model runs at the site scale. For example, if we put the
+      `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy` site.
     - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`.
     - NumberOfTimeSteps: total number of time steps in which model runs. It can be
-      `NA` or a number. Example `NumberOfTimeSteps=17520` runs the model for one year a
-      half-hour time step i.e. `365*24*2=17520`.
+      `NA` or a number. Examples: `NumberOfTimeSteps=17520` runs the model for one year a
+      half-hour time step i.e. `365*24*2=17520`. `NumberOfTimeSteps=NA` runs the
+      model for all time steps in which the forcing data are available.
 
 ### Workflow of STEMMUS_SCOPE on Snellius:
 

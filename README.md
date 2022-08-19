@@ -73,7 +73,7 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
     the model runs at the site scale. For example, if we put the
     `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
     site.
-    - NumberOfTimeSteps: total number of time steps in which model runs. It can be
+    - NumberOfTimeSteps: total number of time steps which model runs for. It can be
       `NA` or a number. Example `NumberOfTimeSteps=17520` runs the model for one year a
       half-hour time step i.e. `365*24*2=17520`.
 

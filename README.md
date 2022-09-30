@@ -2,6 +2,8 @@
 
 Integrated code of SCOPE and STEMMUS.
 
+<img width="600" alt="Logo" src=./assets/imgs/coupling_scheme.png>
+
 ## STEMMUS_SCOPE on CRIB
 
 [CRIB](https://crib.utwente.nl/) is the ITC Geospatial Computing Platform.

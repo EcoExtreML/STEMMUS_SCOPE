@@ -1,0 +1,10 @@
+### Description
+Please add a description of the changes proposed in the pull request.
+
+### Update executable file
+Please re-generate exe file if matlab codes are changed. <br>
+(About how to create an exe file, see [exe readme](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/exe/README.md).)
+
+### Checklist (optional, remove this section when creating the PR)
+- [ ] Add a refernce to related issues.
+- [ ] @mentions of the person or team responsible for reviewing proposed changes.

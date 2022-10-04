@@ -1,5 +1,5 @@
 % calculate the time zone based on longitude
-function [ScopeParameters] = calc_timezone(ScopeParameters,Longitude)
+function [ScopeParameters] = calculateTimeZone(ScopeParameters,Longitude)
 TZ=fix(Longitude/15);
 TZZ=mod(Longitude,15);
     if Longitude>0

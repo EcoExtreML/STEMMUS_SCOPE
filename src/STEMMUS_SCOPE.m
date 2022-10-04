@@ -202,7 +202,7 @@ spectral.IwlF = (640:850)-399;
 if options.simulation == 1
     vi = ones(length(ScopeParameters),1);
     [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(ScopeParameters,vi,canopy,options);
-    [ScopeParameters,xyt,canopy]  = io.LoadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
+    [ScopeParameters,xyt,canopy]  = io.loadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
 else
     soil = struct;
 end

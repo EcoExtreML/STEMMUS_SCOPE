@@ -1,4 +1,4 @@
-function [ScopeParameters,xyt,canopy]  = LoadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options)
+function [ScopeParameters,xyt,canopy]  = loadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options)
 
     %{
         This function loads time series data.

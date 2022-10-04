@@ -1,6 +1,6 @@
 %Input T parameters for different vegetation type
 function [ScopeParameters] = vege_type(ScopeParameters,Sitename,Vege_type)
-    sitename1=cellstr(Sitename);
+    Sitename=cellstr(Sitename);
 if strcmp(Vege_type(1:18)', 'Permanent Wetlands') 
     ScopeParameters(14).Val = [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
     ScopeParameters(9).Val = [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)

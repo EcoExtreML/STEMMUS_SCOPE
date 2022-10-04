@@ -126,6 +126,7 @@ else
     X                           = X(9:end,1);
 end
 [ScopeParameters,options] = load_parameters(io.assignvarnames(),options,useXLSX,X,F,N);
+
 % Define the location information
 ScopeParameters(48).Val=latitude; %latitude
 ScopeParameters(49).Val=longitude; %longitude

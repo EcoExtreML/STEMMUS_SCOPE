@@ -138,6 +138,7 @@ ScopeParameters(55).Val=mean(Ta_msr); %calculate mean air temperature
 
 % calculate the time zone based on longitude
 [ScopeParameters] = calc_timezone(ScopeParameters,longitude);
+
 %Input T parameters for different vegetation type
 [ScopeParameters] = vege_type(ScopeParameters,sitename,IGBP_veg_long);
 

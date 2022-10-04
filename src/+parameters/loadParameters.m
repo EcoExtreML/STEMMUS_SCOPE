@@ -1,4 +1,4 @@
-function [ScopeParameters,Options] = load_parameters(ScopeParameters,Options,use_xlsx,ExcelData,ForcingData,N)
+function [ScopeParameters,Options] = loadParameters(ScopeParameters,Options,use_xlsx,ExcelData,ForcingData,N)
     Options.Cca_function_of_Cab = 0;
     for i = 1:length(ScopeParameters)
     j = find(strcmp(strtok(ExcelData(:,1)),ScopeParameters(i).Name));

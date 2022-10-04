@@ -135,6 +135,7 @@ ScopeParameters(63).Val=longitude; %longitude of BSM model
 ScopeParameters(29).Val=reference_height;   %reference height
 ScopeParameters(23).Val=canopy_height;  %canopy height
 ScopeParameters(55).Val=mean(Ta_msr); %calculate mean air temperature
+
 % calculate the time zone based on longitude
 [ScopeParameters] = calc_timezone(ScopeParameters,longitude);
 %Input T parameters for different vegetation type

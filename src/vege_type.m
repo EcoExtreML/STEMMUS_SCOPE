@@ -32,7 +32,7 @@ elseif strcmp(Vege_type(1:20)', 'Evergreen Needleleaf')
     ScopeParameters(11).Val = [0];   
     ScopeParameters(28).Val = [0.01];
 elseif strcmp(Vege_type(1:9)', 'Croplands')    
-    if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
+    if isequal(Sitename,{'ES-ES2'})||isequal(Sitename,{'FR-Gri'})||isequal(Sitename,{'US-ARM'})||isequal(Sitename,{'US-Ne1'})
         ScopeParameters(14).Val = [0.2 0.3 278 303 328];
         ScopeParameters(9).Val = [50];
         ScopeParameters(10).Val = [4];

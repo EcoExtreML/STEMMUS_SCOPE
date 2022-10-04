@@ -125,7 +125,8 @@ else
     [N,X]                       = xlsread([path_input char(parameter_file)],'inputdata', '');
     X                           = X(9:end,1);
 end
-[ScopeParameters,options] = load_parameters(io.assignvarnames(),options,useXLSX,X,F,N);
+ScopeParameters = io.assignvarnames();
+[ScopeParameters,options] = load_parameters(ScopeParameters,options,useXLSX,X,F,N);
 
 % Define the location information
 ScopeParameters(48).Val=latitude; %latitude

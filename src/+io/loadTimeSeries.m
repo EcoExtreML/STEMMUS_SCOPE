@@ -135,3 +135,4 @@ function [ScopeParameters,xyt,canopy]  = loadTimeSeries(ScopeParameters,leafbio,
     else
         ScopeParameters(1).Val        = leafbio.Cab*ones(size(t_));
     end
+end

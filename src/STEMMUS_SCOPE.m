@@ -141,7 +141,7 @@ ScopeParameters(55).Val=mean(Ta_msr); %calculate mean air temperature
 [ScopeParameters] = helpers.calculateTimeZone(ScopeParameters,longitude);
 
 %Input T parameters for different vegetation type
-[ScopeParameters] = vege_type(ScopeParameters,sitename,IGBP_veg_long);
+[ScopeParameters] = parameters.setTempParameters(ScopeParameters,sitename,IGBP_veg_long);
 
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs

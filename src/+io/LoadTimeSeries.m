@@ -1,4 +1,4 @@
-function [ScopeParameters,xyt,canopy]  = load_timeseries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options)
+function [ScopeParameters,xyt,canopy]  = LoadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options)
 
 Dataset_dir         = '';
 t_file              = char(F(6).FileName);

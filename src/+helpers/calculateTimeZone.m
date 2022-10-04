@@ -1,18 +1,20 @@
-% calculate the time zone based on longitude
-function [ScopeParameters] = calculateTimeZone(ScopeParameters,Longitude)
-TZ=fix(Longitude/15);
-TZZ=mod(Longitude,15);
-    if Longitude>0
-        if abs(TZZ)>7.5
-            ScopeParameters(50).Val= TZ+1;
+function [ScopeParameters] = calculateTimeZone(ScopeParameters, longitude)
+    %{
+        This function calculate the time zone based on longitude.
+
+    %}
+    timeZone=fix(longitude/15);
+        if longitude>0
+            if abs(mod(longitude,15))>7.5
+                ScopeParameters(50).Val= timeZone+1;
+            else
+                ScopeParameters(50).Val= timeZone;
+            end
         else
-            ScopeParameters(50).Val= TZ;
-        end
-    else
-        if abs(TZZ)>7.5
-            ScopeParameters(50).Val= TZ-1;
-        else
-            ScopeParameters(50).Val= TZ;
+            if abs(mod(longitude,15))>7.5
+                ScopeParameters(50).Val= timeZone-1;
+            else
+                ScopeParameters(50).Val= timeZone;
+            end
         end
     end
-end

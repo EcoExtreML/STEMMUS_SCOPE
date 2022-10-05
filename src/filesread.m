@@ -13,7 +13,7 @@ disp (['Reading config from ',CFG])
 %%% Prepare global input variables. %%%
 global DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename
 global InputPath SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha
-global porosity FOC FOS FOSL MSOC Coef_Lamda fieldMC fmax theta_s0 Ks0
+global porosity FOC FOS MSOC Coef_Lamda fieldMC fmax theta_s0 Ks0
 
 % The "forcing_globals.mat" and "soil_parameters.mat" files are generated using "PyStemmusScope"
 %    python package, see https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing

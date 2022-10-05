@@ -32,6 +32,3 @@ IGBP_veg_long = char(IGBP_veg_long);
 
 % The model expects the char vector to be transposed:
 IGBP_veg_long = transpose(IGBP_veg_long);
-
-%% Clear unnescessary variables from workspace
-clearvars -except SoilPropertyPath InputPath OutputPath InitialConditionPath DELT Dur_tot IGBP_veg_long latitude longitude reference_height canopy_height sitename

@@ -1,67 +1,18 @@
 function ScopeParameters = assignvarnames()
 ScopeParameters                           = struct('Name','','Val', zeros(64,1));
-ScopeParameters(1).Name                   = 'Cab';
-ScopeParameters(2).Name                   = 'Cca';
-ScopeParameters(3).Name                   = 'Cdm';
-ScopeParameters(4).Name                   = 'Cw';
-ScopeParameters(5).Name                   = 'Cs';
-ScopeParameters(6).Name                   = 'N';
-ScopeParameters(7).Name                   = 'rho_thermal';
-ScopeParameters(8).Name                   = 'tau_thermal';
-ScopeParameters(9).Name                   = 'Vcmo';
-ScopeParameters(10).Name                   = 'm';  % see # 64, below for intercept: 'BallBerry0'
-ScopeParameters(11).Name                  = 'Type';
-ScopeParameters(12).Name                  = 'kV';
-ScopeParameters(13).Name                  = 'Rdparam';
-ScopeParameters(14).Name                  = 'Tparam';
-ScopeParameters(15).Name                  = 'fqe';
-ScopeParameters(16).Name                  = 'spectrum';
-ScopeParameters(17).Name                  = 'rss';
-ScopeParameters(18).Name                  = 'rs_thermal';
-ScopeParameters(19).Name                  = 'cs';
-ScopeParameters(20).Name                  = 'rhos';
-ScopeParameters(21).Name                  = 'lambdas';
-ScopeParameters(22).Name                  = 'LAI';
-ScopeParameters(23).Name                  = 'hc';
-ScopeParameters(24).Name                  = 'zo';
-ScopeParameters(25).Name                  = 'd';
-ScopeParameters(26).Name                  = 'LIDFa';
-ScopeParameters(27).Name                  = 'LIDFb';
-ScopeParameters(28).Name                  = 'leafwidth';
-ScopeParameters(29).Name                  = 'z';
-ScopeParameters(30).Name                  = 'Rin';
-ScopeParameters(31).Name                  = 'Ta';
-ScopeParameters(32).Name                  = 'Rli';
-ScopeParameters(33).Name                  = 'p';
-ScopeParameters(34).Name                  = 'ea';
-ScopeParameters(35).Name                  = 'u';
-ScopeParameters(36).Name                  = 'Ca';
-ScopeParameters(37).Name                  = 'Oa';
-ScopeParameters(38).Name                  = 'rb';
-ScopeParameters(39).Name                  = 'Cd';
-ScopeParameters(40).Name                  = 'CR';
-ScopeParameters(41).Name                  = 'CD1';
-ScopeParameters(42).Name                  = 'Psicor';
-ScopeParameters(43).Name                  = 'CSSOIL';
-ScopeParameters(44).Name                  = 'rbs';
-ScopeParameters(45).Name                  = 'rwc';
-ScopeParameters(46).Name                  = 'startDOY';
-ScopeParameters(47).Name                  = 'endDOY';
-ScopeParameters(48).Name                  = 'LAT';
-ScopeParameters(49).Name                  = 'LON';
-ScopeParameters(50).Name                  = 'timezn';
-ScopeParameters(51).Name                  = 'tts';
-ScopeParameters(52).Name                  = 'tto';
-ScopeParameters(53).Name                  = 'psi';
-ScopeParameters(54).Name                  = 'SMC';
-ScopeParameters(55).Name                  = 'Tyear';
-ScopeParameters(56).Name                  = 'beta';
-ScopeParameters(57).Name                  = 'kNPQs';
-ScopeParameters(58).Name                  = 'qLs';
-ScopeParameters(59).Name                  = 'stressfactor';
-ScopeParameters(60).Name                  = 'Cant';       %Added March 2017
-ScopeParameters(61).Name                  = 'BSMBrightness';
-ScopeParameters(62).Name                  = 'BSMlat';
-ScopeParameters(63).Name                  = 'BSMlon';
-ScopeParameters(64).Name                  = 'BallBerry0'; % acccidentally left out of v1.7
+
+'m',  % see # 64, below for intercept: 'BallBerry0'
+'Cant',       %Added March 2017
+'BallBerry0', % acccidentally left out of v1.7
+
+ScopeParametersNames = {
+    'Cab','Cca','Cdm','Cw','Cs','N','rho_thermal','tau_thermal',...
+    'Vcmo','m','Type','kV','Rdparam','Tparam','fqe','spectrum',...
+    'rss','rs_thermal','cs','rhos','lambdas','LAI','hc','zo','d',...
+    'LIDFa','LIDFb','leafwidth','z','Rin','Ta','Rli','p','ea','u',...
+    'Ca','Oa','rb','Cd','CR','CD1','Psicor','CSSOIL','rbs','rwc',...
+    'startDOY','endDOY','LAT','LON','timezn','tts','tto','psi','SMC',...
+    'Tyear','beta','kNPQs','qLs','stressfactor','Cant','BSMBrightness',...
+    'BSMlat','BSMlon','BallBerry0'
+}
 end

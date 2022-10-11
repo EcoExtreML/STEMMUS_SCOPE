@@ -3,7 +3,7 @@ global DeltZ Delt_t ML NS mL mN nD NL NN SAVE Tot_Depth Tmin
 global xERR hERR TERR PERR tS uERR
 global KT TIME Delt_t0 DURTN TEND NIT KIT Nmsrmn Eqlspace h_SUR Msrmn_Fitting  
 global Msr_Mois Msr_Temp Msr_Time Tp_t Evap EPCT SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh
-global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur FOC FOS FOSL MSOC Coef_Lamda fieldMC DELT Dur_tot Precipp fmax sitename
+global Ksoil Rl SMC Ztot DeltZ_R Theta_o rroot frac bbx wfrac RWUtot RWUtott RWUtottt Rls Tatot LR PSItot sfactortot LAI_msr R_depth RTB VPD_msr Tss Tsss SUMTIME Tsur Precipp
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% The time and domain information setting. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,6 @@ global DEhBAR DRHOVhDz EtaBAR DRHOVTDz KLhBAR KLTBAR DTDBAR QV QVa QLH QLT DVH D
 % Variable information for updating the state variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global hOLD TOLD P_gOLD J 
-global porosity SaturatedMC ResidualMC  Coefficient_n Coefficient_Alpha
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables information for initialization subroutine
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -20,10 +20,52 @@
 %
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-%%
 
 %% 0. globals
-run filesread %get paths and prepare input files
+% We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
+% but there still global variables here, because we not sure which
+% progresses related to these global variables.
+
+% Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
+global CFG
+if isempty(CFG)
+    CFG = '../config_file_crib.txt';
+end
+disp (['Reading config from ', CFG])
+global InputPath OutputPath InitialConditionPath
+[InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
+
+% Prepare forcing and soil data
+global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+[SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
+IGBP_veg_long        = SiteProperties.IGBP_veg_long;
+latitude             = SiteProperties.latitude;
+longitude            = SiteProperties.longitude;
+reference_height     = SiteProperties.reference_height;
+canopy_height        = SiteProperties.canopy_height;
+sitename             = SiteProperties.sitename;
+
+DELT = TimeProperties.DELT;
+Dur_tot = TimeProperties.Dur_tot;
+
+global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha
+global porosity FOC FOS MSOC Coef_Lamda fieldMC fmax theta_s0 Ks0
+SaturatedK = SoilProperties.SaturatedK;
+SaturatedMC = SoilProperties.SaturatedMC;
+ResidualMC = SoilProperties.ResidualMC;
+Coefficient_n = SoilProperties.Coefficient_n;
+Coefficient_Alpha = SoilProperties.Coefficient_Alpha;
+porosity = SoilProperties.porosity;
+FOC = SoilProperties.FOC;
+FOS = SoilProperties.FOS;
+MSOC = SoilProperties.MSOC;
+Coef_Lamda = SoilProperties.Coef_Lamda;
+fieldMC = SoilProperties.fieldMC;
+fmax = SoilProperties.fmax;
+theta_s0 = SoilProperties.theta_s0;
+Ks0 = SoilProperties.Ks0;
+
+%%
 run Constants %input soil parameters
 global i tS KT Delt_t TEND TIME MN NN NL ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
 global KIT NIT TimeStep Processing
@@ -62,42 +104,23 @@ global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
 path_of_code                = cd;
-run set_parameter_filenames; 
 
-if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
-
-if ~useXLSX
-    run([path_input parameter_file{1}])
-    
-    options.calc_ebal           = N(1);    % calculate the energy balance (default). If 0, then only SAIL is executed!
-    options.calc_vert_profiles  = N(2);    % calculate vertical profiles of fluxes
-    options.calc_fluor          = N(3);    % calculate chlorophyll fluorescence in observation direction
-    options.calc_planck         = N(4);    % calculate spectrum of thermal radiation
-    options.calc_directional    = N(5);    % calculate BRDF and directional temperature
-    options.calc_xanthophyllabs = N(6);    % include simulation of reflectance dependence on de-epoxydation state
-    options.calc_PSI            = N(7);    % 0: optipar 2017 file with only one fluorescence spectrum vs 1: Franck et al spectra for PSI and PSII
-    options.rt_thermal          = N(8);    % 1: use given values under 10 (default). 2: use values from fluspect and soil at 2400 nm for the TIR range
-    options.calc_zo             = N(9);
-    options.soilspectrum        = N(10);    %0: use soil spectrum from a file, 1: simulate soil spectrum with the BSM model
-    options.soil_heat_method    = N(11);    % 0: calculated from specific heat and conductivity (default), 1: empiricaly calibrated, 2: G as constant fraction of soil net radiation
-    options.Fluorescence_model  = N(12);     %0: empirical, with sustained NPQ (fit to Flexas' data); 1: empirical, with sigmoid for Kn; 2: Magnani 2012 model
-    options.calc_rss_rbs        = N(13);    % 0: calculated from specific heat and conductivity (default), 1: empiricaly calibrated, 2: G as constant fraction of soil net radiation
-    options.apply_T_corr        = N(14);    % correct Vcmax and rate constants for temperature in biochemical.m
-    options.verify              = N(15);
-    options.save_headers        = N(16);    % write headers in output files
-    options.makeplots           = N(17);
-    options.simulation          = N(18);    % 0: individual runs (specify all input in a this file)
-    % 1: time series (uses text files with meteo input as time series)
-    % 2: Lookup-Table (specify the values to be included)
-    % 3: Lookup-Table with random input (specify the ranges of values)
+useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
+if useXLSX == 0
+    % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
+    % Read parameter file which is 'input_data.xlsx' and return it as options.
+%     options = io.setOptions(parameter_file,path_input); 
+    warning("the current stemmus-scope does not support useXLSX=0");
 else
+    parameter_file            = {'input_data.xlsx'}; 
     options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
-end
+end  
 
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
-if ~useXLSX
+% the current stemmus-scope does not support useXLSX=0
+if useXLSX==0
     run([path_input parameter_file{2}])
 else
     [dummy,X]                       = xlsread([path_input char(parameter_file)],'filenames');
@@ -117,8 +140,8 @@ for i = 1:length(F)
 end
 
 %% 4. input data
-
-if ~useXLSX
+% the current stemmus-scope does not support useXLSX=0
+if useXLSX==0
     X                           = textread([path_input parameter_file{3}],'%s'); %#ok<DTXTRD>
     N                           = str2double(X);
 else
@@ -130,7 +153,8 @@ options.Cca_function_of_Cab = 0;
 
 for i = 1:length(V)
     j = find(strcmp(strtok(X(:,1)),V(i).Name));
-    if ~useXLSX, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
+    % the current stemmus-scope does not support useXLSX=0
+    if useXLSX==0, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
     if isempty(j) || cond
         if i==2
             warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
@@ -169,7 +193,8 @@ for i = 1:length(V)
         end
     end
     
-    if ~useXLSX
+    % the current stemmus-scope does not support useXLSX=0
+    if useXLSX==0
         j2 = []; j1 = j+1;
         while 1
             if isnan(N(j1)), break, end

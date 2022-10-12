@@ -13,6 +13,8 @@ flowchart LR
     B --> C(Choose platform)
     C -->D(Snellius)
     C -->E(CRIB)
+    click D "https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/polish_readme/docs/STEMMUS_SCOPE_on_Snellius.md" "Run STEMMUS_SCOPE on Snellius" _blank
+    click E "https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/polish_readme/docs/STEMMUS_SCOPE_on_CRIB.md" "Run STEMMUS_SCOPE on CRIB" _blank
 ```
 
 ## Create an executable file of STEMMUS_SCOPE

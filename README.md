@@ -14,7 +14,7 @@ flowchart LR
     direction RL
     Snellius
     CRIB
-    Local
+    Your own machine
   end
   A(Data)
   Platform --> A

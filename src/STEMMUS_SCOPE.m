@@ -424,7 +424,7 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
 %% 13. create output files
-[Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
+[Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
 
 
@@ -845,8 +845,13 @@ for i = 1:1:Dur_tot
         %SAVEDSTOR(KT)=DSTOR;
     end
     kk=k;
-    n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+
+    % Open files for writing
+    file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput',false);
+    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    fclose("all");
 end
+
 disp('The calculations end now')
 if options.verify
     io.output_verification(Output_dir)

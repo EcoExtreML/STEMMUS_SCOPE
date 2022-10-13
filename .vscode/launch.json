@@ -10,7 +10,7 @@
             "name": "Octave: Execute selected m-file",
             "program": "${file}",
             "octave": "octave.bat --no-gui --interactive --silent",
-            "autoTerminate": false,
+            "autoTerminate": true,
             "sourceFolder": "${workspaceFolder}/src"
         },
         {
@@ -19,7 +19,7 @@
             "name": "Octave: Debug STEMMUS-SCOPE",
             "program": "run_Octave.m",
             "octave": "octave.bat --no-gui --interactive --silent",
-            "autoTerminate": false,
+            "autoTerminate": true,
             "sourceFolder": "${workspaceFolder}/src"
         },
         {

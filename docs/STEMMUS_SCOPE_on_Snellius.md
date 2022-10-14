@@ -19,7 +19,7 @@ Dutch National supercomputer hosted at SURF.
       - input_data.xlsx
 
     For the explanation of the directories see 
-  [Dataflow of STEMMUS_SCOPE on CRIB](#dataflow-of-stemmus_scope-on-crib).
+  [Dataflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#dataflow-of-stemmus_scope-on-crib).
 
 2. Config file: it is a text file that sets the paths **required** by the model.
     For example, see [config_file_snellius.txt](../config_file_snellius.txt) in

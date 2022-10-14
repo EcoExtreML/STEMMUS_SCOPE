@@ -36,7 +36,7 @@
       functional parameters, etc.
 
 2. Config file: it is a text file that sets the paths **required** by the
-    model. For example, see `config_file_crib.txt` in this repository. This file
+    model. For example, see [config_file_crib.txt](../config_file_crib.txt) in this repository. This file
     includes:
 
     - SoilPropertyPath: a path to soil texture data and soil hydraulic
@@ -99,7 +99,7 @@ working/running directory.
 
 3. Check `config_file_crib.txt` and change the paths if needed, specifically
    "InputPath" and "OutputPath".
-4. Follow one of the instructions below:
+4. Follow the instructions below:
 
 #### Run using MATLAB that requires a license
 
@@ -120,18 +120,4 @@ main script using MATLAB command line in a terminal:
 
 ```bash
 matlab -nodisplay -nosplash -nodesktop -r "run('STEMMUS_SCOPE.m');exit;"
-```
-
-#### Run using MATLAB Compiler that does not require a license
-
-If you want to run the model as a standalone application, you need MATLAB
-Runtime version `2021a`. To download and install the MATLAB Runtime, follow
-this
-[instruction](https://nl.mathworks.com/products/compiler/matlab-runtime.html).
-The "STEMMUS_SCOPE" executable file is in `STEMMUS_SCOPE/exe` directory
-in this repository. You can run the model by passing the path of the config
-file in a terminal:
-
-```bash
-exe/STEMMUS_SCOPE config_file_crib.txt
 ```

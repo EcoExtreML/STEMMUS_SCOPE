@@ -22,7 +22,7 @@ Dutch National supercomputer hosted at SURF.
   [Dataflow of STEMMUS_SCOPE on CRIB](#dataflow-of-stemmus_scope-on-crib).
 
 2. Config file: it is a text file that sets the paths **required** by the model.
-    For example, see [config_file_snellius.txt](config_file_snellius.txt) in
+    For example, see [config_file_snellius.txt](../config_file_snellius.txt) in
     this repository. This file includes:
 
     - SoilPropertyPath: a path to soil texture data and soil hydraulic
@@ -65,7 +65,7 @@ input_data.xlsx` to the working/running directory. For example:
 ### Workflow of STEMMUS_SCOPE on Snellius:
 
 This is the same as the workflow of STEMMUS_SCOPE on crib, see section
-[Workflow of STEMMUS_SCOPE on CRIB](#workflow-of-stemmus_scope-on-crib). 
+[Workflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#workflow-of-stemmus_scope-on-crib). 
 
 ### How to run STEMMUS_SCOPE on Snellius:
 
@@ -86,7 +86,7 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
 
 In order to use MATLAB, you need to send a request to add you to the user pool
 on Snellius. Then, open the file
-[config_file_snellius.txt](config_file_snellius.txt) and set the paths. Then,
+[config_file_snellius.txt](../config_file_snellius.txt) and set the paths. Then,
 run the main script `STEMMUS_SCOPE_exe.m` using MATLAB command line in a terminal on
 a **compute node**:
 

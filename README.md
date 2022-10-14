@@ -12,9 +12,9 @@ SCOPE is a radiative transfer and energy balance model, and STEMMUS model is a t
 flowchart LR
   subgraph Platform
     direction RL
-    Snellius
-    CRIB
-    Your own machine
+    b[Snellius]
+    c[CRIB]
+    d[Your own machine]
   end
   A(Data)
   Platform --> A
@@ -22,25 +22,15 @@ flowchart LR
   A --> B
   C{{Run model}}
   B --> C
-  click Snellius "https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/docs/STEMMUS_SCOPE_on_Snellius.md" "Run STEMMUS_SCOPE on Snellius" _blank
-  click CRIB "https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/docs/STEMMUS_SCOPE_on_CRIB.md" "Run STEMMUS_SCOPE on CRIB" _blank
+  click b "https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/docs/STEMMUS_SCOPE_on_Snellius.md" "Run STEMMUS_SCOPE on Snellius" _blank
+  click c "https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/docs/STEMMUS_SCOPE_on_CRIB.md" "Run STEMMUS_SCOPE on CRIB" _blank
+  click d "https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/docs/STEMMUS_SCOPE_on_local_device.md" "Run STEMMUS_SCOPE on your own machine" _blank
 ```
 About how to run `STEMMUS_SCOPE` on Snellius, check [this document](./docs/STEMMUS_SCOPE_on_Snellius.md).
 
 If you want to run `STEMMUS_SCOPE` on CRIB, check [this document](./docs/STEMMUS_SCOPE_on_CRIB.md).
 
-## Create an executable file of STEMMUS_SCOPE
-
-See the [exe readme](./exe/README.md).
-
-## Preparing the outputs of the model in NetCDF:
-
-There is some files in utils directory in this repository. The utils are used to
-read `.csv` files and save them in `.nc` format. See [utils
-readme](./utils/csv_to_nc/README.md).
-
-> An example NetCDF file is stored in the project directory to show the desired
-  structure of variables in one file.
+If you want to run `STEMMUS_SCOPE` on your own machine, check [this document](./docs/STEMMUS_SCOPE_on_local_device.md).
 
 ## Contributing
 

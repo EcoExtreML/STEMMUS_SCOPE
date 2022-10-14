@@ -18,7 +18,11 @@ The debugger configurations are included in `/.vscode/launch.json`
 `Octave Hacking` by Andrew Janke https://marketplace.visualstudio.com/items?itemName=apjanke.octave-hacking
 This adds syntax highlighting and formatting.
 
-### Running STEMMUS-SCOPE
+### Running STEMMUS-SCOPE in Octave
+It is possible to run STEMMUS-SCOPE from the command line with the following setup:
+`octave.bat --no-gui --interactive --silent --eval "pkg load netcdf; pkg load statistics; STEMMUS_SCOPE_exe('C:\STEMMUS_SCOPE_data\workdir\input\ZA-Kru_2022-09-30-1448\ZA-Kru_2022-09-30-1448_config.txt')"`
+
+### Developing STEMMUS-SCOPE in Octave
 Open the `run_Octave.m` file, either in VS Code or the Octave GUI.
 
 #### Octave GUI
@@ -30,3 +34,17 @@ While having the `STEMMUS_SCOPE` folder as the workspace, open the debugger and 
 Start the debugger to run (and debug) the model.
 
 In the `run_Octave.m` file you can set the config file that should be used.
+
+
+
+
+### Snellius
+Activate mamba
+`. ~/mamba/bin/activate`
+
+Create a new env:
+`conda create --name octave`
+
+Install octave in this environment:
+`conda install -c conda-forge octave`
+

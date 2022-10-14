@@ -148,26 +148,29 @@ function write_output(header, units, bin_path, f_n_col, ns, not_header)
     f_csv = fopen(n_csv, 'w');
 
     %% in case header has more than one row
-    header_str = strcat(strjoin(header, ','), '\n');
+    nHeaderLines = size(header)(1);
+    headerString = repmat({}, nHeaderLines, 1);
+    for k=1:nHeaderLines
+        headerString(k) = strjoin(header(k, :), ",");
+    end
+    headerString = strcat(strjoin(headerString, "\n"), "\n");
 
     if not_header
-        header_str = [header_str];
+        headerString = [headerString];
     else
         % it is a header => each column must have one
         assert(length(header) == f_n_col, 'Less headers than lines `%s` or n_col is wrong', bin_path)
     end
-    fprintf(f_csv, header_str);
+
+    fprintf(f_csv, headerString);
     fprintf(f_csv, [strjoin(units, ','), '\n']);
 
     f_bin = fopen(bin_path, 'r');
     out = fread(f_bin, 'double');
-%     fclose(f_bin);  % + some useconds to execution
 
     out_2d = reshape(out, f_n_col, ns)';
-%     dlmwrite(n_csv, out_2d, '-append', 'precision', '%d'); % SLOW!
     for k=1:ns
         fprintf(f_csv, '%d,', out_2d(k, 1:end-1));
         fprintf(f_csv, '%d\n', out_2d(k, end));  % saves from extra comma
     end
-%     fclose(f_csv);
 end

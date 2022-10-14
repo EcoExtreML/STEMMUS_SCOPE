@@ -17,7 +17,7 @@
             "type": "OctaveDebugger",
             "request": "launch",
             "name": "Octave: Debug STEMMUS-SCOPE",
-            "program": "run_Octave.m",
+            "program": "debug_Octave.m",
             "octave": "octave.bat --no-gui --interactive --silent",
             "autoTerminate": true,
             "sourceFolder": "${workspaceFolder}/src"

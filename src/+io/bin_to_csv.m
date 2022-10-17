@@ -147,8 +147,8 @@ function write_output(header, units, bin_path, f_n_col, ns, not_header)
 
     f_csv = fopen(n_csv, 'w');
 
-    %% in case header has more than one row
-    nHeaderLines = size(header)(1);
+    header = cellstr(header); % For matlab - Octave compatibility
+    nHeaderLines = size(header)(1); % If there is a multi-line header
     headerString = repmat({}, nHeaderLines, 1);
     for k=1:nHeaderLines
         headerString(k) = strjoin(header(k, :), ",");

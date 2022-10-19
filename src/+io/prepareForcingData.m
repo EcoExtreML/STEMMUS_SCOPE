@@ -1,4 +1,4 @@
-function [SiteProperties, timeStep, forcingTimeLength] = prepareForcingData(DataPaths, forcingFileName)
+function [SiteProperties, timeStep, forcingTimeLength] = prepareForcingData(DataPaths, forcingFileName, startDate, endDate)
 %{ 
 This function is used to read forcing data and site properties.
 
@@ -17,22 +17,35 @@ ForcingFilePath=fullfile(DataPaths.forcingPath, forcingFileName);
 % Prepare input files
 sitefullname=dir(ForcingFilePath).name; %read sitename
 SiteProperties.siteName=sitefullname(1:6);
-startyear=sitefullname(8:11);
-endyear=sitefullname(13:16);
-startyear=str2double(startyear);
-endyear=str2double(endyear);
+% startyear=sitefullname(8:11);
+% endyear=sitefullname(13:16);
+startyear = str2double(startDate(1:4));
+startMonth = str2double(startDate(5:6));
+startDay = str2double(startDate(7:8));
+startHH = str2double(startDate(9:10));
+startMM = str2double(startDate(11:12));
+startSS = str2double(startDate(13:14));
+endyear = str2double(endDate(1:4));
+endMonth = str2double(endDate(5:6));
+endDay = str2double(endDate(7:8));
+endHH = str2double(endDate(9:10));
+endMM = str2double(endDate(11:12));
+endSS = str2double(endDate(13:14));
+% startyear=str2double(startyear);
+% endyear=str2double(endyear);
     
 % Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');
-t1=datenum(startyear,1,1,0,0,0);
-timeStep=time1(2);
+t1=datenum(startyear,startMonth,startDay,startHH,startMM,startSS);
+timeStep=1800; % default time step [s]
 
-%get time length of forcing file
-forcingTimeLength=length(time1);
+% %get time length of forcing file
+% forcingTimeLength=length(time1);
 
-dt=time1(2)/3600/24;
-t2=datenum(endyear,12,31,23,30,0);
+dt=timeStep/3600/24;
+t2=datenum(endyear,endMonth,endDay,endHH,endMM,endSS);
 T=t1:dt:t2;
+forcingTimeLength = length(T);
 TL=length(T);
 T=T';
 T=datestr(T,'yyyy-mm-dd HH:MM:SS');

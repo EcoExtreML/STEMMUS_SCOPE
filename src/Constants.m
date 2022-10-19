@@ -447,7 +447,10 @@ Ts_msr=Mdata(:,2)';
 Precip_msr=Mdata(:,6)'*10*DELT;
 Tmin=min(Ts_msr);
 Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
+
 % load initial soil moisture and soil temperature from ERA5
+% Noted: if the start of date isn't from 1st January, the initial condition
+% need be set manually.
 Initial_path=dir(fullfile(InitialConditionPath,[sitename,'*.nc']));
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
 InitND2=15;

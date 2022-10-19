@@ -20,20 +20,20 @@ SiteProperties.siteName=sitefullname(1:6);
 % startyear=sitefullname(8:11);
 % endyear=sitefullname(13:16);
 startyear = str2double(startDate(1:4));
-startMonth = str2double(startDate(5:6));
-startDay = str2double(startDate(7:8));
-startHH = str2double(startDate(9:10));
-startMM = str2double(startDate(11:12));
-startSS = str2double(startDate(13:14));
+startMonth = str2double(startDate(6:7));
+startDay = str2double(startDate(9:10));
+startHH = str2double(startDate(12:13));
+startMM = str2double(startDate(15:16));
+startSS = str2double(startDate(18:19));
 endyear = str2double(endDate(1:4));
-endMonth = str2double(endDate(5:6));
-endDay = str2double(endDate(7:8));
-endHH = str2double(endDate(9:10));
-endMM = str2double(endDate(11:12));
-endSS = str2double(endDate(13:14));
+endMonth = str2double(endDate(6:7));
+endDay = str2double(endDate(9:10));
+endHH = str2double(endDate(12:13));
+endMM = str2double(endDate(15:16));
+endSS = str2double(endDate(18:19));
 % startyear=str2double(startyear);
 % endyear=str2double(endyear);
-    
+ 
 % Read time values from forcing file
 time1=ncread(ForcingFilePath,'time');
 t1=datenum(startyear,startMonth,startDay,startHH,startMM,startSS);
@@ -60,28 +60,31 @@ T8=T6-T7;
 time=T8;
 T10=year(T);
 
-RH=ncread(ForcingFilePath,'RH');            % Unit: %
+startLoc = [1 1 1];
+readNcCount = [1 1 forcingTimeLength];
+
+RH=ncread(ForcingFilePath,'RH', startLoc, readNcCount);            % Unit: %
 RHL=length(RH);
 RHa=reshape(RH,RHL,1);
 
-Tair=ncread(ForcingFilePath,'Tair');        % Unit: K
+Tair=ncread(ForcingFilePath,'Tair', startLoc, readNcCount);        % Unit: K
 TairL=length(Tair);
 Taira=reshape(Tair,TairL,1)-273.15;         % Unit: degree C
 
 es= 6.107*10.^(Taira.*7.5./(237.3+Taira));  % Unit: hPa
 ea=es.*RHa./100;
 
-SWdown=ncread(ForcingFilePath,'SWdown');    % Unit: W/m2
+SWdown=ncread(ForcingFilePath,'SWdown', startLoc, readNcCount);    % Unit: W/m2
 SWdownL=length(SWdown);
 SWdowna=reshape(SWdown,SWdownL,1);
 
 
-LWdown=ncread(ForcingFilePath,'LWdown');    % Unit: W/m2
+LWdown=ncread(ForcingFilePath,'LWdown', startLoc, readNcCount);    % Unit: W/m2
 LWdownL=length(LWdown);
 LWdowna=reshape(LWdown,LWdownL,1);
 
 
-VPD=ncread(ForcingFilePath,'VPD');          % Unit: hPa
+VPD=ncread(ForcingFilePath,'VPD', startLoc, readNcCount);          % Unit: hPa
 VPDL=length(VPD);
 VPDa=reshape(VPD,VPDL,1);
 
@@ -91,24 +94,24 @@ VPDa=reshape(VPD,VPDL,1);
 % Qaira=reshape(Qair,QairL,1);
 
 
-Psurf=ncread(ForcingFilePath,'Psurf');      % Unit: Pa
+Psurf=ncread(ForcingFilePath,'Psurf', startLoc, readNcCount);      % Unit: Pa
 PsurfL=length(Psurf);
 Psurfa=reshape(Psurf,PsurfL,1);
 Psurfa=Psurfa./100;                         % Unit: hPa
 
 
-Precip=ncread(ForcingFilePath,'Precip');    % Unit: mm/s
+Precip=ncread(ForcingFilePath,'Precip', startLoc, readNcCount);    % Unit: mm/s
 PrecipL=length(Precip);
 Precipa=reshape(Precip,PrecipL,1);
 Precipa=Precipa./10;                        % Unit: cm/s
 
 
-Wind=ncread(ForcingFilePath,'Wind');        % Unit: m/s
+Wind=ncread(ForcingFilePath,'Wind', startLoc, readNcCount);        % Unit: m/s
 WindL=length(Wind);
 Winda=reshape(Wind,WindL,1);
 
 
-CO2air=ncread(ForcingFilePath,'CO2air');    % Unit: ppm
+CO2air=ncread(ForcingFilePath,'CO2air', startLoc, readNcCount);    % Unit: ppm
 CO2airL=length(CO2air);
 CO2aira=reshape(CO2air,CO2airL,1);
 CO2aira=CO2aira.*44./22.4;                  % Unit: mg/m3
@@ -118,7 +121,7 @@ SiteProperties.latitude=ncread(ForcingFilePath,'latitude');
 SiteProperties.longitude=ncread(ForcingFilePath,'longitude');
 SiteProperties.elevation=ncread(ForcingFilePath,'elevation');
 
-LAI=ncread(ForcingFilePath,'LAI');
+LAI=ncread(ForcingFilePath,'LAI', startLoc, readNcCount);
 LAIL=length(LAI);
 LAIa=reshape(LAI,LAIL,1);
 LAIa(LAIa<0.01)=0.01;
@@ -129,7 +132,15 @@ LAIa(LAIa<0.01)=0.01;
 
 SiteProperties.igbpVegLong=ncread(ForcingFilePath,'IGBP_veg_long');
 SiteProperties.referenceHeight=ncread(ForcingFilePath,'reference_height');
-SiteProperties.canopyHeight=ncread(ForcingFilePath,'canopy_height');
+
+canopyHeightSize = ncinfo(ForcingFilePath,'canopy_height').Size;
+if length(canopyHeightSize) == 2
+    % if the canopyHeight is a constant
+    SiteProperties.canopyHeight=ncread(ForcingFilePath,'canopy_height');
+else 
+    % if the canopyHeight is time series data
+    SiteProperties.canopyHeight = ncread(ForcingFilePath,'canopy_height', startLoc, readNcCount);
+end
 
 save([DataPaths.input, 't_.dat'], '-ascii', 'time')
 save([DataPaths.input, 'Ta_.dat'], '-ascii', 'Taira')

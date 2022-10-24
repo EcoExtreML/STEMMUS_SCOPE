@@ -3,7 +3,7 @@
 2022.10.20      : Workflow operator for STEMMUS_SCOPE on Snellius
 Author          : Team Beta
 Date            : 2022.10.20
-Last Update     : 2022.10.21
+Last Update     : 2022.10.24
 Description     : This script is used in the job submission file to run 
                   StemmusScope model with PyStemmusScope on a HPC cluster
                   using slurm workload manager.
@@ -35,7 +35,7 @@ def run_model(ncfile_index):
     nc_file = forcing_filenames_list[ncfile_index-1]
     
     # feed model with the correct forcing file 
-    _ = model.setup(
+    config_path = model.setup(
         ForcingFileName = nc_file,
         NumberOfTimeSteps="10",
     )
@@ -44,8 +44,8 @@ def run_model(ncfile_index):
     _ = model.run()
 
     # save output in netcdf format
-    required_netcdf_variables = "./required_netcdf_variables.csv"
-    _ = save.to_netcdf(model.config, required_netcdf_variables)
+    required_netcdf_variables = "../utils/csv_to_nc/required_netcdf_variables.csv"
+    _ = save.to_netcdf(config_path, required_netcdf_variables)
 
 
 if __name__=="__main__":

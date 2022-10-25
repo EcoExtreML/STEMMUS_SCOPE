@@ -3,7 +3,7 @@ The downloads can be found here
 https://octave.org/download
 
 TODO: installation of octave on linux
-After installation, install the following Octave packages have to be installed:
+After installation, launch octave and install the following Octave packages:
 `pkg install -forge netcdf`
 `pkg install -forge statistics`
 

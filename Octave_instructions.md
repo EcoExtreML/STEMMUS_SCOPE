@@ -2,9 +2,16 @@
 The downloads can be found here
 https://octave.org/download
 
-After installation, install the following Octave packages have to be installed:
-`pkg install netcdf`
-`pkg install statistics`
+TODO: installation of octave on linux
+After installation, launch octave and install the following Octave packages:
+`pkg install -forge netcdf`
+`pkg install -forge statistics`
+
+For off-line installation, first, download the packages [netcdf](https://octave.sourceforge.io/netcdf/index.html), [io](https://octave.sourceforge.io/io/index.html) and [statistics](https://octave.sourceforge.io/statistics/index.html). Then, launch octave and run:
+
+`pkg install netcdf-1.0.16.tar.gz`
+`pkg install io-2.6.4.tar.gz`
+`pkg install statistics-1.4.3.tar.gz`
 
 ### VS Code setup
 Add Octave to path, e.g. for (64-bit) Windows:
@@ -20,8 +27,9 @@ This adds syntax highlighting and formatting.
 
 ### Running STEMMUS-SCOPE in Octave
 It is possible to run STEMMUS-SCOPE from the command line with the following setup:
-`octave.bat --no-gui --interactive --silent --eval "pkg load netcdf; pkg load statistics; STEMMUS_SCOPE_exe('C:\STEMMUS_SCOPE_data\workdir\input\ZA-Kru_2022-09-30-1448\ZA-Kru_2022-09-30-1448_config.txt')"`
+`octave.bat --no-gui --interactive --silent --eval "STEMMUS_SCOPE_exe('path_to_config_file')"`
 
+On a Unix system, use `octave` instead of `octave.bat`.
 ### Developing STEMMUS-SCOPE in Octave
 Open the `run_Octave.m` file, either in VS Code or the Octave GUI.
 
@@ -36,15 +44,4 @@ Start the debugger to run (and debug) the model.
 In the `run_Octave.m` file you can set the config file that should be used.
 
 
-
-
-### Snellius
-Activate mamba
-`. ~/mamba/bin/activate`
-
-Create a new env:
-`conda create --name octave`
-
-Install octave in this environment:
-`conda install -c conda-forge octave`
 

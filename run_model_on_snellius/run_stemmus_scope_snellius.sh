@@ -8,8 +8,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH -p thin
-#SBATCH --output=./slurm/slurm_%j.out
-#SBATCH --error=./slurm/slurm_%j.out
+#SBATCH --output=../slurm/slurm_%j.out
+#SBATCH --error=../slurm/slurm_%j.out
 
 ### 1. Load module needed to run the model (no need for license)
 module load 2021
@@ -40,7 +40,7 @@ for k in `seq 0 5`; do
   (
     i=$(( ncores * k + j ))
     if [[ $i -le $nfiles ]]; then
-      python run_model.py -n $i
+      python run_model.py -n $i -j ${SLURM_JOB_ID}
     fi
   )&
   done

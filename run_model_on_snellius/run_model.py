@@ -35,17 +35,17 @@ def run_model(ncfile_index, job_id):
     nc_file = forcing_filenames_list[ncfile_index-1]
     station_name = nc_file.split("_")[0]
 
-    # create slurm log
-    slurm_log(ncfile_index, job_id, model.config, station_name)
-    
     # feed model with the correct forcing file 
     config_path = model.setup(
         ForcingFileName = nc_file,
         NumberOfTimeSteps="10",
     )
 
+    # create slurm log
+    slurm_log(ncfile_index, job_id, model.config, station_name)
+
     # run model
-    config_path = model.run()
+    _ = model.run()
 
     # save output in netcdf format
     required_netcdf_variables = "../utils/csv_to_nc/required_netcdf_variables.csv"

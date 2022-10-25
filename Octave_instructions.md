@@ -14,8 +14,9 @@ For off-line installation, first, download the packages [netcdf](https://octave.
 `pkg install statistics-1.4.3.tar.gz`
 
 ### VS Code setup
-Add Octave to path, e.g. for (64-bit) Windows:
+Add Octave to path, e.g. for (64-bit) Windows add the following folders:
 `C:\Program Files\GNU Octave\Octave-7.1.0\mingw64\bin`
+`C:\Program Files\GNU Octave\Octave-7.1.0\usr\bin`
 
 Add the extensions
 `Octave Debugger` by Paulo Silva https://marketplace.visualstudio.com/items?itemName=paulosilva.vsc-octave-debugger

@@ -26,12 +26,6 @@
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
 
-% Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
-if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load netcdf
-    pkg load statistics
-end
-
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)

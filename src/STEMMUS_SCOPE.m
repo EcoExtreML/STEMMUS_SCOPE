@@ -1,12 +1,12 @@
  %% STEMMUS-SCOPE.m (script)
 
-%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence, 
-%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum 
+%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
+%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum
 %
 %     Version: 1.0.1
 %
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
-%     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl 
+%     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl
 %
 %     This program is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,12 @@
 % We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
+
+% Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
+if exist('OCTAVE_VERSION', 'builtin') ~= 0
+    pkg load netcdf
+    pkg load statistics
+end
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
@@ -79,8 +85,8 @@ global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT 
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
 global Theta_g MU_a DeltZ Alpha_Lg
 global Beta_g KaT_Switch
-global D_V D_A fc Eta nD POR  
-global ThmrlCondCap ZETA XK DVT_Switch 
+global D_V D_A fc Eta nD POR
+global ThmrlCondCap ZETA XK DVT_Switch
 global MU_W Ks RHOL
 global Lambda1 Lambda2 Lambda3 RHO_bulk
 global RHODA RHOV c_a c_V c_L
@@ -90,7 +96,7 @@ global DRHOVT DRHOVh DRHODAt DRHODAz
 global hThmrl Tr COR IS Hystrs XWRE
 global Theta_V IH CORh XCAP Phi_s RHOI Lamda
 global W WW D_Ta SSUR
-global W_Chg SWCC Imped Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR 
+global W_Chg SWCC Imped Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
 global KLT_Switch xERR hERR TERR NBChB NBCT uERR
 global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
@@ -109,12 +115,12 @@ useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support
 if useXLSX == 0
     % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
     % Read parameter file which is 'input_data.xlsx' and return it as options.
-%     options = io.setOptions(parameter_file,path_input); 
+%     options = io.setOptions(parameter_file,path_input);
     warning("the current stemmus-scope does not support useXLSX=0");
 else
-    parameter_file            = {'input_data.xlsx'}; 
-    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
-end  
+    parameter_file = {'input_data.xlsx'};
+    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
+end
 
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
@@ -123,7 +129,7 @@ if options.simulation>2 || options.simulation<0, fprintf('\n simulation option s
 if useXLSX==0
     run([path_input parameter_file{2}])
 else
-    [dummy,X]                       = xlsread([path_input char(parameter_file)],'filenames');
+    [dummy,X] = xlsread([path_input char(parameter_file)],'filenames');
     j = find(~strcmp(X(:,2),{''}));
     X = X(j,(1:end));
 end
@@ -161,7 +167,7 @@ for i = 1:length(V)
                 'I will use 0.25*Cab instead');
             options.Cca_function_of_Cab = 1;
         else
-            
+
             if ~(options.simulation==1) && (i==30 || i==32)
                 warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
                     'I will use the MODTRAN spectrum as it is');
@@ -192,7 +198,7 @@ for i = 1:length(V)
             end
         end
     end
-    
+
     % the current stemmus-scope does not support useXLSX=0
     if useXLSX==0
         j2 = []; j1 = j+1;
@@ -206,8 +212,8 @@ for i = 1:length(V)
         else
             V(i).Val            = N(j2);
         end
-        
-        
+
+
     else
         if sum(~isnan(N(j,:)))<1
             V(i).Val            = -999;
@@ -225,64 +231,64 @@ V(23).Val=canopy_height;
 V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
     sitename1=cellstr(sitename);
-if strcmp(IGBP_veg_long(1:18)', 'Permanent Wetlands') 
+if strcmp(IGBP_veg_long(1:18)', 'Permanent Wetlands')
     V(14).Val= [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
     V(9).Val= [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
     V(10).Val= [9]; % Ball-Berry stomatal conductance parameter
     V(11).Val= [0]; % Photochemical pathway: 0=C3, 1=C4
     V(28).Val= [0.05]; % leaf width
-elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf')  
+elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf')
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf') 
+elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf')
     V(14).Val= [0.2 0.3 283 311 328];
     V(9).Val= [80];
     V(10).Val= [9];
-    V(11).Val= [0];  
+    V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests') 
+elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests')
     V(14).Val= [0.2 0.3 281 307 328];
     V(9).Val= [80];
     V(10).Val= [9];
-    V(11).Val= [0]; 
+    V(11).Val= [0];
     V(28).Val= [0.04];
-elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf') 
+elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf')
     V(14).Val= [0.2 0.3 278 303 328];
     V(9).Val= [80];
     V(10).Val= [9];
-    V(11).Val= [0];   
+    V(11).Val= [0];
     V(28).Val= [0.01];
-elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')    
+elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')
     if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
         V(14).Val= [0.2 0.3 278 303 328];
         V(9).Val= [50];
         V(10).Val= [4];
-        V(11).Val= [1]; 
+        V(11).Val= [1];
         V(13).Val= [0.025]; % Respiration = Rdparam*Vcmcax
         V(28).Val= [0.03];
-    else 
+    else
         V(14).Val= [0.2 0.3 278 303 328];
         V(9).Val= [120];
         V(10).Val= [9];
-        V(11).Val= [0]; 
-        V(28).Val= [0.03];    
+        V(11).Val= [0];
+        V(28).Val= [0.03];
     end
 elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
-    V(11).Val= [0];  
+    V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands') 
+elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands')
     V(14).Val= [0.2 0.3 288 313 328];
     V(9).Val= [80];
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:8)', 'Savannas')  
+elseif strcmp(IGBP_veg_long(1:8)', 'Savannas')
     V(14).Val= [0.2 0.3 278 313 328];
     V(9).Val= [120];
     V(10).Val= [9];
@@ -294,13 +300,13 @@ elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas')
     V(10).Val= [9];
     V(11).Val= [0];
     V(28).Val= [0.03];
-elseif strcmp(IGBP_veg_long(1:9)', 'Grassland')  
+elseif strcmp(IGBP_veg_long(1:9)', 'Grassland')
     V(14).Val= [0.2 0.3 288 303 328];
     if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
         V(9).Val= [120];
         V(10).Val= [4];
         V(11).Val= [1];
-        V(13).Val= [0.025]; 
+        V(13).Val= [0.025];
     else
         V(9).Val= [120];
         V(10).Val= [9];
@@ -424,7 +430,7 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
 %% 13. create output files
-[Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
+[Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
 
 
@@ -433,7 +439,7 @@ disp('The calculations start now')
 calculate = 1;
 TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros(1,NN);
 TIMELAST=0;
-SAVEtS=tS; kk=0;   %DELT=Delt_t; 
+SAVEtS=tS; kk=0;   %DELT=Delt_t;
 for i = 1:1:Dur_tot
     KT=KT+1;                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
@@ -461,7 +467,7 @@ for i = 1:1:Dur_tot
             TOLD_CRIT(MN)=T_CRIT(MN);
             T_CRIT(MN)=TT_CRIT(MN);
             %TTT_CRIT(MN,KT)=TT_CRIT(MN);
-            
+
             hOLD(MN)=h(MN);
             h(MN)=hh(MN);
             %hhh(MN,KT)=hh(MN);
@@ -510,20 +516,20 @@ for i = 1:1:Dur_tot
     else
         calculate = 1;
     end
-    
+
     if calculate
-        
+
         iter.counter = 0;
-        
+
         LIDF_file            = char(F(22).FileName);
         if  ~isempty(LIDF_file)
             canopy.lidf     = dlmread([path_input,'leafangles/',LIDF_file],'',3,0);
         else
             canopy.lidf     = equations.leafangles(canopy.LIDFa,canopy.LIDFb);    % This is 'ladgen' in the original SAIL model,
         end
-        
-        leafbio.emis        = 1-leafbio.rho_thermal-leafbio.tau_thermal; 
-        
+
+        leafbio.emis        = 1-leafbio.rho_thermal-leafbio.tau_thermal;
+
         if options.calc_PSI
             fversion = @fluspect_B_CX;
         else
@@ -533,15 +539,15 @@ for i = 1:1:Dur_tot
         leafopt  = fversion(spectral,leafbio,optipar);
         leafbio.V2Z = 1;
         leafoptZ = fversion(spectral,leafbio,optipar);
-        
+
         IwlP     = spectral.IwlP;
         IwlT     = spectral.IwlT;
-        
+
         rho(IwlP)  = leafopt.refl;
         tau(IwlP)  = leafopt.tran;
         rlast    = rho(nwlP);
         tlast    = tau(nwlP);
-        
+
         if options.soilspectrum == 0
             rs(IwlP) = rsfile(:,soil.spectrum+1);
         else
@@ -550,7 +556,7 @@ for i = 1:1:Dur_tot
             rs(IwlP) = BSM(soil,optipar,soilemp);
         end
         rslast   = rs(nwlP);
-        
+
         switch options.rt_thermal
             case 0
                 rho(IwlT) = ones(nwlT,1) * leafbio.rho_thermal;
@@ -563,26 +569,26 @@ for i = 1:1:Dur_tot
         end
         leafopt.refl = rho;     % extended wavelength ranges are stored in structures
         leafopt.tran = tau;
-        
+
         reflZ = leafopt.refl;
         tranZ = leafopt.tran;
         reflZ(1:300) = leafoptZ.refl(1:300);
         tranZ(1:300) = leafoptZ.tran(1:300);
         leafopt.reflZ = reflZ;
         leafopt.tranZ = tranZ;
-        
+
         soil.refl    = rs;
-        
+
         soil.Ts     = meteo.Ta * ones(2,1);       % initial soil surface temperature
-        
+
         if length(F(4).FileName)>1 && options.simulation==0
             atmfile     = [path_input 'radiationdata/' char(F(4).FileName(k))];
             atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
         end
         atmo.Ta     = meteo.Ta;
-        
+
         [rad,gap,profiles]   = RTMo(spectral,atmo,soil,leafopt,canopy,angles,meteo,rad,options);
-        
+
         switch options.calc_ebal
             case 1
                 [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]                          ...
@@ -598,15 +604,15 @@ for i = 1:1:Dur_tot
                 if options.calc_xanthophyllabs
                     [rad] = RTMz(spectral,rad,soil,leafopt,canopy,gap,angles,profiles);
                 end
-                
+
                 if options.calc_planck
                     rad         = RTMt_planck(spectral,rad,soil,leafopt,canopy,gap,angles,thermal.Tcu,thermal.Tch,thermal.Ts(2),thermal.Ts(1),1);
                 end
-                
+
                 if options.calc_directional
                     directional = calc_brdf(options,directional,spectral,angles,rad,atmo,soil,leafopt,canopy,meteo,profiles,thermal);
                 end
-                
+
             otherwise
                 Fc              = (1-gap.Ps(1:end-1))'/nl;      %           Matrix containing values for Ps of canopy
                 fluxes.aPAR     = canopy.LAI*(Fc*rad.Pnh        + equations.meanleaf(canopy,rad.Pnu    , 'angles_and_layers',gap.Ps));% net PAR leaves
@@ -628,42 +634,42 @@ for i = 1:1:Dur_tot
             else
                 rad.Femtot = 1E3*leafbio.fqe* optipar.phi(spectral.IwlF) * fluxes.aPAR_Cab_eta;
             end
-        end           
+        end
     end
     if options.simulation==2 && telmax>1, vi  = helpers.count(nvars,vi,vmax,1); end
-     if KT==1 
+     if KT==1
         if isreal(fluxes.Actot)&&isreal(thermal.Tsave)&&isreal(fluxes.lEstot)&&isreal(fluxes.lEctot)
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tss=thermal.Tsave; 
+           Tss=thermal.Tsave;
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tss=Ta_msr(KT); 
+           Tss=Ta_msr(KT);
         end
     elseif NoTime(KT)>NoTime(KT-1)
         if isreal(fluxes.Actot)&&isreal(thermal.Tsave)&&isreal(fluxes.lEstot)&&isreal(fluxes.lEctot)
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tss=thermal.Tsave; 
+           Tss=thermal.Tsave;
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tss=Ta_msr(KT); 
+           Tss=Ta_msr(KT);
         end
     end
- 
+
     sfactortot(KT)=sfactor;
-    DSTOR0=DSTOR; 
-    
+    DSTOR0=DSTOR;
+
       if KT>1
           run SOIL1
       end
-        
+
       for ML=1:NL
             %QVV(ML,KT)=QV(ML);
             %QLL(ML,KT)=QL(ML,1);
@@ -736,7 +742,7 @@ for i = 1:1:Dur_tot
         end
     end
     run Forcing_PARM
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT=1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin);
@@ -767,15 +773,15 @@ for i = 1:1:Dur_tot
             DSTOR=min(EXCESS,DSTMAX);
             RS(KT)=(EXCESS-DSTOR)/Delt_t;
         end
-        
+
         if Soilairefc==1
             run Air_sub;
         end
-        
+
         if Thmrlefc==1
             run Enrgy_sub;
         end
-        
+
         if max(CHK)<0.1 %&& max(FCHK)<0.001 %&& max(hCHK)<0.001 %&& min(KCHK)>0.001
             break
         end
@@ -813,7 +819,7 @@ for i = 1:1:Dur_tot
                 hOLD(MN)=h(MN);
                 h(MN)=hh(MN);
                 %hhh(MN,KT)=hh(MN);
-                %HRA(MN,KT)=HR(MN);               
+                %HRA(MN,KT)=HR(MN);
                 if Thmrlefc==1
                     TOLD(MN)=T(MN);
                     T(MN)=TT(MN);
@@ -845,8 +851,13 @@ for i = 1:1:Dur_tot
         %SAVEDSTOR(KT)=DSTOR;
     end
     kk=k;
-    n_col = io.output_data_binary(f, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+
+    % Open files for writing
+    file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput',false);
+    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    fclose("all");
 end
+
 disp('The calculations end now')
 if options.verify
     io.output_verification(Output_dir)
@@ -862,5 +873,5 @@ io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)
-%end  
+%end
 

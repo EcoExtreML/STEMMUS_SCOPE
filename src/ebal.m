@@ -1,4 +1,4 @@
-function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...  
+function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...
          = ebal(iter,options,spectral,rad,gap,leafopt,  ...
                 angles,meteo,soil,canopy,leafbio,xyt,k,profiles,Delt_t)
  global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT sfactor   PSItot sfactortot Theta_f
@@ -27,7 +27,7 @@ function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...
 %       soil_respiration.m
 %
 % Table of contents of the function
-%   
+%
 %   1. Initialisations for the iteration loop
 %           intial values are attributed to variables
 %   2. Energy balance iteration loop
@@ -38,29 +38,29 @@ function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...
 %
 % The energy balance iteration loop works as follows:
 %
-% RTMo              More or less the classic SAIL model for Radiative 
+% RTMo              More or less the classic SAIL model for Radiative
 %                   Transfer of sun and sky light (no emission by the vegetation)
-% While continue	Here an iteration loop starts to close the energy 
-%                   balance, i.e. to match the micro-meteorological model 
+% While continue	Here an iteration loop starts to close the energy
+%                   balance, i.e. to match the micro-meteorological model
 %                   and the radiative transfer model
-% 	RTMt_sb         A numerical Radiative Transfer Model for thermal 
+% 	RTMt_sb         A numerical Radiative Transfer Model for thermal
 %                   radiation emitted by the vegetation
-% 	resistances     Calculates aerodynamic and boundary layer resistances 
+% 	resistances     Calculates aerodynamic and boundary layer resistances
 %                   of vegetation and soil (the micro-meteorological model)
-% 	biochemical     Calculates photosynthesis, fluorescence and stomatal 
+% 	biochemical     Calculates photosynthesis, fluorescence and stomatal
 %                   resistance of leaves (or biochemical_MD12: alternative)
-% 	heatfluxes      Calculates sensible and latent heat flux of soil and 
+% 	heatfluxes      Calculates sensible and latent heat flux of soil and
 %                   vegetation
-%                   Next soil heat flux is calculated, the energy balance 
-%                   is evaluated, and soil and leaf temperatures adjusted 
+%                   Next soil heat flux is calculated, the energy balance
+%                   is evaluated, and soil and leaf temperatures adjusted
 %                   to force energy balance closure
 % end {while continue}
-% 
-% meanleaf          Integrates the fluxes over all leaf inclinations 
+%
+% meanleaf          Integrates the fluxes over all leaf inclinations
 %                   azimuth angles and layers, integrates over the spectrum
 %
 % usage:
-%[iter,fluxes,rad,profiles,thermal]             ...  
+%[iter,fluxes,rad,profiles,thermal]             ...
 %         = ebal(iter,options,spectral,rad,gap,leafopt,  ...
 %                angles,meteo,soil,canopy,leafbio)
 %
@@ -68,7 +68,7 @@ function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...
 % specified in a readme file.
 %
 % Input:
-% 
+%
 %   iter        numerical parameters used in the iteration for energy balance closure
 %   options     calculation options
 %   spectral    spectral resolutions and wavelengths
@@ -81,7 +81,7 @@ function [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]             ...
 %   leafbio     leaf biochemical parameters
 %
 % Output:
-% 
+%
 %   iter        numerical parameters used in the iteration for energy balance closure
 %   fluxes      energy balance, turbulent, and CO2 fluxes
 %   rad         radiation spectra
@@ -100,7 +100,7 @@ Wc              = iter.Wc;
 CONT            = 1;              %           is 0 when the calculation has finished
 es_fun      = @(T)6.107*10.^(7.5.*T./(237.3+T));
 s_fun       = @(es, T) es*2.3026*7.5*237.3./(237.3+T).^2;
-t               = xyt.t(k);   
+t               = xyt.t(k);
 Ta              = meteo.Ta;
 ea              = meteo.ea;
 Ca              = meteo.Ca;
@@ -112,7 +112,7 @@ if options.soil_heat_method < 2 && options.simulation ==1
     else
         Deltat          = Delt_t;
     end
-    x 		= [1:12;1:12]'*Deltat;
+    x 		= [1:12;1:12]'.*Deltat;
     Tsold = soil.Tsold;
 end
 
@@ -174,31 +174,31 @@ PSIss=PSIs(NL,1);
 %'Energy balance loop (Energy balance and radiative transfer)
 
 while CONT                          % while energy balance does not close
-    
+
     % 2.1. Net radiation of the components
     % Thermal radiative transfer model for vegetation emission (with Stefan-Boltzman's equation)
     rad  = RTMt_sb(spectral,rad,soil,leafopt,canopy,gap,angles,Tcu,Tch,Ts(2),Ts(1),1);
     % Add net radiation of (1) solar and sky and (2) thermal emission model
-    
+
     Rnhct = rad.Rnhct;
     Rnuct = rad.Rnuct;
     Rnhst = rad.Rnhst;
     Rnust = rad.Rnust;
-    
+
     Rnhc = rad.Rnhc;
     Rnuc = rad.Rnuc;
     Rnhs = rad.Rnhs;
     Rnus = rad.Rnus;
-    
+
     Rnch        = Rnhc + Rnhct;             %           Canopy (shaded) net radiation
     Rncu        = Rnuc + Rnuct;             %           Canopy (sunlit) net radiation
     Rnsh        = Rnhs + Rnhst;             %           Soil   (shaded) net radiation
     Rnsu        = Rnus + Rnust;             %           Soil   (sunlit) net radiation
     Rns         = [Rnsh Rnsu]';             %           Soil   (sun+sh) net radiation
-    
+
     % 2.2. Aerodynamic roughness
     % calculate friction velocity [m s-1] and aerodynamic resistances [s m-1]
-    
+
     resist_in.u   = max(meteo.u,.2);
     resist_in.L   = L;
     resist_in.LAI = canopy.LAI;
@@ -211,16 +211,16 @@ while CONT                          % while energy balance does not close
     resist_in.hc  = canopy.hc;
     resist_in.w   = canopy.leafwidth;
     resist_in.Cd  = canopy.Cd;
-    
+
     [resist_out]  = resistances(resist_in);
-    
+
     ustar = resist_out.ustar;
     raa   = resist_out.raa;
     rawc  = resist_out.rawc;
     raws  = resist_out.raws;
-    
+
     % 2.3. Biochemical processes
-    
+
     % photosynthesis (A), fluorescence factor (F), and stomatal resistance (rcw), for shaded (1) and sunlit (h) leaves
     biochem_in.Fluorescence_model = options.Fluorescence_model;
     biochem_in.Type         = leafbio.Type;
@@ -229,7 +229,7 @@ while CONT                          % while energy balance does not close
     biochem_in.BallBerry0   = leafbio.BallBerry0;
     biochem_in.O            = meteo.Oa;
     biochem_in.Rdparam      = leafbio.Rdparam;
-    
+
     if options.Fluorescence_model==2    % specific for the v.Caemmerer-Magnani model
         b                   = @biochemical_MD12;
         biochem_in.Tyear        = leafbio.Tyear;
@@ -241,7 +241,7 @@ while CONT                          % while energy balance does not close
         b                   = @biochemical; % specific for Berry-v.d.Tol model
         biochem_in.tempcor      = options.apply_T_corr;
         biochem_in.Tparams      = leafbio.Tparam;
-        biochem_in.stressfactor = SMCsf;    
+        biochem_in.stressfactor = SMCsf;
     end
 
     % for shaded leaves
@@ -250,7 +250,7 @@ while CONT                          % while energy balance does not close
     biochem_in.Vcmo     = fVh.*leafbio.Vcmo;
     biochem_in.Cs       = Cch;
     biochem_in.Q        = rad.Pnh_Cab*1E6;
-    
+
     biochem_out         = b(biochem_in);
     Ah                  = biochem_out.A;
     Ahh                  = biochem_out.Ag;
@@ -259,16 +259,16 @@ while CONT                          % while energy balance does not close
     rcwh                = biochem_out.rcw;
     qEh                 = biochem_out.qE; % vCaemmerer- Magnani does not generate this parameter (dummy value)
     Knh                 = biochem_out.Kn;
-    
+
     % for sunlit leaves
     biochem_in.T        = Tcu;
     biochem_in.eb       = ecu;
     biochem_in.Vcmo     = fVu.*leafbio.Vcmo;
     biochem_in.Cs       = Ccu;
     biochem_in.Q        = rad.Pnu_Cab*1E6;
-    
+
     biochem_out         = b(biochem_in);
- 
+
     Au                  = biochem_out.A; % Ag? or A?
     Auu                  = biochem_out.Ag;   %GPP calculation.
     Ciu                 = biochem_out.Ci;
@@ -276,17 +276,17 @@ while CONT                          % while energy balance does not close
     rcwu                = biochem_out.rcw;
     qEu                 = biochem_out.qE;
     Knu                 = biochem_out.Kn;
-    
+
     Pinh                = rad.Pnh;
     Pinu                = rad.Pnu;
     Pinh_Cab            = rad.Pnh_Cab;
     Pinu_Cab            = rad.Pnu_Cab;
-    Rnh_PAR             = rad.Rnh_PAR;        
+    Rnh_PAR             = rad.Rnh_PAR;
     Rnu_PAR             = rad.Rnu_PAR;
-    
+
     % 2.4. Fluxes (latent heat flux (lE), sensible heat flux (H) and soil heat flux G
     % in analogy to Ohm's law, for canopy (c) and soil (s). All in units of [W m-2]
-    
+
     %soil.PSIs;
     rss  = soil.rss;
     rac     = (LAI+1)*(raa+rawc);
@@ -295,7 +295,7 @@ while CONT                          % while energy balance does not close
     [lEch,Hch,ech,Cch,lambdah,sh]     = heatfluxes(rac,rcwh,Tch,ea,Ta,e_to_q,PSI,Ca,Cih,constants,es_fun,s_fun);
     [lEcu,Hcu,ecu,Ccu,lambdau,su]     = heatfluxes(rac,rcwu,Tcu,ea,Ta,e_to_q,PSI,Ca,Ciu,constants,es_fun,s_fun);
     [lEs,Hs,~,~,lambdas,ss]           = heatfluxes(ras,rss,Ts ,ea,Ta,e_to_q,PSIss,Ca,Ca,constants,es_fun,s_fun);
-    
+
     %if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
      %  error('Heatfluxes produced complex values for CO2 concentration!')
     %end
@@ -322,7 +322,7 @@ while CONT                          % while energy balance does not close
     BB2=AA2(~isinf(AA2));
     PSI1 = (sum(BB1)-Trans)/sum(BB2);
     if isnan(PSI1)
-    PSI1 = -1; 
+    PSI1 = -1;
     end
     if ~isreal(PSI1)
         PSI1 = -1;
@@ -336,49 +336,49 @@ while CONT                          % while energy balance does not close
     %%%%%%%
     if SoilHeatMethod==2
        G = 0.30*Rns;
-    else      
-       G = GAM/sqrt(pi)*2*sum(([Ts'; Tsold(1:end-1,:)] - Tsold)/Deltat .* (sqrt(x) - sqrt(x-Deltat)));
+    else
+       G = GAM/sqrt(pi)*2*sum(([Ts'; Tsold(1:end-1,:)] - Tsold)./Deltat .* (sqrt(x) - sqrt(x-Deltat)));
        G = G';
     end
     % 2.5. Monin-Obukhov length L
     L           = -rhoa*cp*ustar.^3.*(Ta+273.15)./(kappa*g*Htot);           % [1]
-    L(L<-1E3)   = -1E3;                                                     % [1] 
-    L(L>1E2)    =  1E2;                                                     % [1]      
-    L(isnan(L)) = -1;                                                       % [1] 
-    
+    L(L<-1E3)   = -1E3;                                                     % [1]
+    L(L>1E2)    =  1E2;                                                     % [1]
+    L(isnan(L)) = -1;                                                       % [1]
+
     % 2.6. energy balance errors, continue criterion and iteration counter
     EBerch      = Rnch -lEch -Hch;
     EBercu      = Rncu -lEcu -Hcu;
     EBers       = Rns  -lEs  -Hs - G;
-    
+
     counter     = counter+1;                   %        Number of iterations
     maxEBercu   = max(max(max(abs(EBercu))));
     maxEBerch   = max(abs(EBerch));
     maxEBers    = max(abs(EBers));
-     
-    CONT        = ( maxEBercu >   maxEBer    |...  
+
+    CONT        = ( maxEBercu >   maxEBer    |...
                     maxEBerch >   maxEBer    |...
                    maxEBers  >   maxEBer)    &...
                     counter   <   maxit+1;%        Continue iteration?
     if counter==5, Wc = 0.6;  end
     if counter==10; Wc = 0.4;  end
-    if counter==30; Wc = 0.1;  end   
-         
-    % 2.7. New estimates of soil (s) and leaf (c) temperatures, shaded (h) and sunlit (1) 
+    if counter==30; Wc = 0.1;  end
+
+    % 2.7. New estimates of soil (s) and leaf (c) temperatures, shaded (h) and sunlit (1)
     Tch         = Tch + Wc*EBerch./((rhoa*cp)./rac + rhoa*lambdah*e_to_q.*sh./(rac+rcwh)+ 4*leafbio.emis*sigmaSB*(Tch+273.15).^3);
     Tcu         = Tcu + Wc*EBercu./((rhoa*cp)./rac + rhoa*lambdau*e_to_q.*su./(rac+rcwu)+ 4*leafbio.emis*sigmaSB*(Tcu+273.15).^3);
-    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3); % Ts contains shaded soil temperature and sunlit soil temperature 
+    Ts          = Ts + Wc*EBers./(rhoa*cp./ras + rhoa*lambdas*e_to_q.*ss/(ras+rss)+ 4*(1-soil.rs_thermal)*sigmaSB*(Ts+273.15).^3); % Ts contains shaded soil temperature and sunlit soil temperature
     Tch(abs(Tch)>100) = Ta;
     Tcu(abs(Tcu)>100) = Ta;
     Ts(abs(Ts)>100) = Ta;
     if (any(isnan(Tch)) || any(isnan(Tcu(:)))), warning('Canopy temperature gives NaNs'), end
     if any(isnan(Ts)), warning('Soil temperature gives NaNs'), end
-  
+
 end
 
 iter.counter = counter;
 profiles.etah = Fh;
-profiles.etau = Fu; 
+profiles.etau = Fu;
 
 if SoilHeatMethod<2
     Tsold(2:end,:) = soil.Tsold(1:end-1,:);
@@ -402,11 +402,11 @@ if counter>=maxit
         '\n Energy balance error sunlit vegetation = %4.2f W m-2 ', ...
         '\n Energy balance error shaded vegetation = %4.2f W m-2 ', ...
         '\n Energy balance error soil              = %4.2f W m-2 '],maxEBercu, maxEBerch, maxEBers);
-    
+
 end
 
 %% 4. Calculate the output per layer
-if options.calc_vert_profiles   
+if options.calc_vert_profiles
     [Hcu1d  ]           = equations.meanleaf(canopy,Hcu,          'angles');   % [nli,nlo,nl]      mean sens heat sunlit leaves
     [lEcu1d ]           = equations.meanleaf(canopy,lEcu,         'angles');   % [nli,nlo,nl]      mean latent sunlit leaves
     [Au1d   ]           = equations.meanleaf(canopy,Au,           'angles');   % [nli,nlo,nl]      mean phots sunlit leaves
@@ -416,7 +416,7 @@ if options.calc_vert_profiles
     %[Pnu1d_Cab  ]       = equations.meanleaf(canopy,Pinu_Cab,     'angles');   % [nli,nlo,nl]      mean net radiation sunlit leaves
     [Rnu1d  ]           = equations.meanleaf(canopy,Rncu,         'angles');   % [nli,nlo,nl]      mean net PAR sunlit leaves
     [Tcu1d  ]           = equations.meanleaf(canopy,Tcu,          'angles');   % [nli,nlo,nl]      mean temp sunlit leaves
-    
+
     profiles.Tchave     = mean(Tch);                                           % [1]               mean temp shaded leaves
     profiles.Tch        = Tch;                                                 % [nl]
     profiles.Tcu1d      = Tcu1d;                                               % [nl]
@@ -430,10 +430,10 @@ if options.calc_vert_profiles
     %profiles.Pn1d_Cab   = ((1-Ps(1:nl)).*Pinh_Cab + Ps(1:nl).*(Pnu1d_Cab));        %[nl]           mean photos leaves, per layer
     profiles.Rn1d       = ((1-Ps(1:nl)).*Rnch     + Ps(1:nl).*(Rnu1d));        %[nl]
 end
-        
+
 
 %% 5. Calculate spectrally integrated energy, water and CO2 fluxes
-% sum of all leaves, and average leaf temperature 
+% sum of all leaves, and average leaf temperature
 %     (note that averaging temperature is physically not correct...)
 
 Rnctot          = LAI*(Fc*Rnch + equations.meanleaf(canopy,Rncu,'angles_and_layers',Ps)); % net radiation leaves
@@ -445,7 +445,7 @@ Tcave           =     (Fc*Tch  + equations.meanleaf(canopy,Tcu ,'angles_and_laye
 Pntot           = LAI*(Fc*Pinh + equations.meanleaf(canopy,Pinu,'angles_and_layers',Ps)); % net PAR leaves
 Pntot_Cab       = LAI*(Fc*Pinh_Cab + equations.meanleaf(canopy,Pinu_Cab,'angles_and_layers',Ps)); % net PAR leaves
 Rntot_PAR       = LAI*(Fc*Rnh_PAR  + equations.meanleaf(canopy,Rnu_PAR, 'angles_and_layers',Ps));% net PAR leaves
-aPAR_Cab_eta        = LAI*(Fc*(profiles.etah .* Rnh_PAR) + equations.meanleaf(canopy,(profiles.etau .* Rnu_PAR), 'angles_and_layers',Ps)); 
+aPAR_Cab_eta        = LAI*(Fc*(profiles.etah .* Rnh_PAR) + equations.meanleaf(canopy,(profiles.etau .* Rnu_PAR), 'angles_and_layers',Ps));
 % ... green ePAR * relative fluorescence emission efficiency
 %%%%%%%%%%%%%%%%%%% [Delta_Rltot] = Root_properties(Actot,rroot);
 %%%%%%%%%%%%%%%%%%% Delta_Rl = fc*Delta_Rltot;
@@ -506,7 +506,7 @@ thermal.Tcave = Tcave;    % [oC]                weighted average canopy temperat
 thermal.Tsave = Tsave;    % [oC]                weighted average soil temperature
 thermal.raa   = raa;      % [s m-1]             total aerodynamic resistance above canopy
 thermal.rawc  = rawc;     % [s m-1]             aerodynamic resistance below canopy for canopy
-thermal.raws  = raws;     % [s m-1]             aerodynamic resistance below canopy for soil 
+thermal.raws  = raws;     % [s m-1]             aerodynamic resistance below canopy for soil
 thermal.ustar = ustar;    % [m s-1]             friction velocity
 thermal.Tcu   = Tcu;
 thermal.Tch   = Tch;

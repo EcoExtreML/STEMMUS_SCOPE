@@ -44,9 +44,9 @@ Start the debugger to run (and debug) the model.
 
 In the `run_Octave.m` file you can set the config file that should be used.
 
-### Dev container
+### VS Code + Dev container
 
 If you have Docker installed you can use a dev containers to do development.
 
-Simply install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and reopen the folder.
+Simply install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS code extension and reopen the folder.
 It will then start a Docker container with your code, Octave and the VS Code Octave extensions.

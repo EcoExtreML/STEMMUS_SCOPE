@@ -46,7 +46,8 @@ In the `run_Octave.m` file you can set the config file that should be used.
 
 ### VS Code + Dev container
 
-If you have Docker installed you can use a dev containers to do development.
+If you have Docker installed and running you can use a container to do development.
 
-Simply install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS code extension and reopen the folder.
+Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS code extension and reopen the folder in VS Code.
+
 It will then start a Docker container with your code, Octave and the VS Code Octave extensions.

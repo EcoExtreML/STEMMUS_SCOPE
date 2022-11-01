@@ -50,5 +50,3 @@ If you have Docker installed you can use a dev containers to do development.
 
 Simply install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and reopen the folder.
 It will then start a Docker container with your code, Octave and the VS Code Octave extensions.
-
-[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/vscode-remote-try-java)

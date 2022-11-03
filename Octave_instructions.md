@@ -7,7 +7,7 @@
     - [Octave GUI](#octave-gui)
     - [VS Code](#vs-code)
   - [VS Code + Dev container](#vs-code--dev-container)
-  - [Linux](#linux)
+  - [Linux from source](#linux-from-source)
 
 The downloads can be found here
 https://octave.org/download
@@ -62,15 +62,17 @@ Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName
 
 It will then start a Docker container with your code, Octave and the VS Code Octave extensions.
 
-## Linux
+## Linux from source
 
 Octave on many Linux distributions is too old so we need to compile it ourselves.
 See [https://wiki.octave.org/Building](https://wiki.octave.org/Building).
-Below are build instructions for Ubuntu 22.04
+
+<details>
+<summary>Here are build instructions for Ubuntu 22.04</summary>
 
 ```shell
 sudo apt update
-# install minimal deps
+# install minimal deps, see https://wiki.octave.org/Octave_for_Debian_systems#The_right_way for all dependencies
 sudo apt install -yq wget build-essential gfortran liblapack-dev libblas-dev libpcre3-dev libreadline-dev libnetcdf-dev
 wget https://mirror.serverion.com/gnu/octave/octave-7.2.0.tar.gz  # or download from local mirror at https://ftpmirror.gnu.org/octave
 tar -zxf octave-7.2.0.tar.gz
@@ -82,9 +84,14 @@ sudo make install
 
 Add `/opt/octave/bin` to PATH environment variable.
 
+```shell
+export PATH=$PATH:/opt/octave/bin
+```
+
 Install Octave dependencies with
 
 ```shell
 octave --eval 'pkg install -forge statistics'
 octave --eval 'pkg install -forge netcdf'
 ```
+</details>

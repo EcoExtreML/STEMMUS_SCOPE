@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Octave: Execute selected m-file",
             "program": "${file}",
-            "octave": "octave.bat --no-gui --interactive --silent",
+            "octave": "octave --no-gui --interactive --silent",
             "autoTerminate": true,
             "sourceFolder": "${workspaceFolder}/src"
         },
@@ -18,7 +18,7 @@
             "request": "launch",
             "name": "Octave: Debug STEMMUS-SCOPE",
             "program": "debug_Octave.m",
-            "octave": "octave.bat --no-gui --interactive --silent",
+            "octave": "octave --no-gui --interactive --silent",
             "autoTerminate": true,
             "sourceFolder": "${workspaceFolder}/src"
         },
@@ -27,36 +27,9 @@
             "request": "launch",
             "name": "Octave: Interactive",
             "program": "",
-            "octave": "octave.bat --no-gui --interactive --silent",
-            "autoTerminate": false,
-            "sourceFolder": "${workspaceFolder}"
-        },
-        {
-            "type": "OctaveDebugger",
-            "request": "launch",
-            "name": "Octave Linux: Execute selected m-file",
-            "program": "${file}",
-            "octave": "octave --no-gui --interactive --silent",
-            "autoTerminate": true,
-            "sourceFolder": "${workspaceFolder}/src"
-        },
-        {
-            "type": "OctaveDebugger",
-            "request": "launch",
-            "name": "Octave Linux: Debug STEMMUS-SCOPE",
-            "program": "debug_Octave.m",
-            "octave": "octave --no-gui --interactive --silent",
-            "autoTerminate": true,
-            "sourceFolder": "${workspaceFolder}/src"
-        },
-        {
-            "type": "OctaveDebugger",
-            "request": "launch",
-            "name": "Octave Linux: Interactive",
-            "program": "",
             "octave": "octave --no-gui --interactive --silent",
             "autoTerminate": false,
             "sourceFolder": "${workspaceFolder}"
-        },
+        }
     ]
 }

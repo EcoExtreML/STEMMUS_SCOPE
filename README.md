@@ -1,8 +1,9 @@
 # STEMMUS_SCOPE
 
-`STEMMUS_SCOPE` serves as an integrated code of SCOPE and STEMMUS.
+Integrated code of SCOPE and STEMMUS.
 
-SCOPE is a radiative transfer and energy balance model, and STEMMUS model is a two-phase mass and heat transfer model. For more information about the coupling between these two models, please check [this reference](https://gmd.copernicus.org/articles/14/1379/2021/).
+SCOPE is a radiative transfer and energy balance model, and STEMMUS model is a two-phase mass and heat transfer model. For more information about the coupling between these two models, please check [this reference](https://gmd.copernicus.org/articles/14/1379/2021/). Before running the model, you need to prepare input data and a configuration file. This can be done using the python package
+[PyStemmusScope](https://pystemmusscope.readthedocs.io).  
 
 <img width="500" alt="Logo" src=./docs/assets/imgs/coupling_scheme.png>
 (by Zeng & Su, 2021)
@@ -41,6 +42,3 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
 ## How to cite us
 [![RSD](https://img.shields.io/badge/rsd-ecoextreml-00a3e3.svg)](https://research-software-directory.org/projects/ecoextreml)
 <!-- [![DOI](https://zenodo.org/badge/DOI/<replace-with-created-DOI>.svg)](https://doi.org/<replace-with-created-DOI>) -->
-
-<!--TODO: add links to zenodo. -->
-More information will follow soon.

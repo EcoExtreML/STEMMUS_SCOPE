@@ -1,7 +1,7 @@
 WorkDir=/scratch-shared/ecoextreml/stemmus_scope/
 SoilPropertyPath=/projects/0/einf2480/model_parameters/soil_property/
 ForcingPath=/projects/0/einf2480/forcing/plumber2_data/
-ForcingFileName=FI-Hyy_1996-2014_FLUXNET2015_Met.nc
+Location=FI-Hyy
 directional=/projects/0/einf2480/model_parameters/vegetation_property/directional/
 fluspect_parameters=/projects/0/einf2480/model_parameters/vegetation_property/fluspect_parameters/
 leafangles=/projects/0/einf2480/model_parameters/vegetation_property/leafangles/
@@ -9,6 +9,7 @@ radiationdata=/projects/0/einf2480/model_parameters/vegetation_property/radiatio
 soil_spectrum=/projects/0/einf2480/model_parameters/vegetation_property/soil_spectrum/
 input_data=/projects/0/einf2480/model_parameters/vegetation_property/input_data.xlsx
 InitialConditionPath=/projects/0/einf2480/soil_initialcondition/
-NumberOfTimeSteps=17520
+StartTime=2001-01-01T00:00
+EndTime=2001-01-02T00:00
 InputPath=
 OutputPath=

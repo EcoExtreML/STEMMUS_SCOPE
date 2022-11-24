@@ -1,0 +1,14 @@
+WorkDir=/path_to_working_directory/
+SoilPropertyPath=/path_to_soil_property_data/
+ForcingPath=/path_to_forcing_data/
+ForcingFileName=AU-DaS_2010-2017_OzFlux_Met.nc
+directional=/path_to_directional_data/
+fluspect_parameters=/path_to_fluspect_parameters_data/
+leafangles=/path_to_leafangles_data/
+radiationdata=/path_to_radiation_data/
+soil_spectrum=/path_to_soil_spectra_data/
+InitialConditionPath=/path_to_soil_initial_condition_data/
+input_data=/path_to_input_data.xlsx_file/
+NumberOfTimeSteps=NA
+InputPath=will_be_created_under_WorkDir
+OutputPath=will_be_created_under_WorkDir

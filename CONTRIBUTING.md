@@ -1,15 +1,17 @@
 # Contributing guidelines
 
-We welcome any kind of contributions to our software, from simple
-comment or question to a full [pull
-request](https://help.github.com/articles/about-pull-requests/). Please
+This repository includes the MATLAB source code of the STEMMUS-SCOPE model. We welcome any
+kind of contributions to our software, from simple comments or questions to a full
+[pull request](https://help.github.com/articles/about-pull-requests/). Please
 read and follow our contributing guidelines.
 
 ## Contributing via GitHub
 
-Note when we want to work with `STEMMUS_SCOPE` repository on a new computer for
-the first time, we need to configure a few things following steps 1 to 4 below.
+If you want to work with the `STEMMUS_SCOPE` repository for the first time, or on a new computer, 
+you need to configure a few things following steps 1 through 5 below.
 
+<details>
+  <summary>Steps 1 to 5 </summary>
 ### 1. Enable two-factor authentication
 
 It is strongly recommended using two-factor authentication. Here is the link of
@@ -132,10 +134,24 @@ git clone git@github.com:EcoExtreML/STEMMUS_SCOPE.git
 Now a new GitHub folder `STEMMUS_SCOPE` is created in your `HOME` directory.
 
 > In this command, we clone the repository using `ssh` option. As we set the ssh
-connection in [**Step 2**](#2-set-ssh-connection), this command here does not ask for our user name and
-password.
+connection in [**Step 2**](#2-set-ssh-connection), this command here does not
+ask for our user name and password.
 
 ### 5. Collaborate using GitHub
 
 To know about the most common Git commands, follow the guides
 [here](https://hackmd.io/B4v6KwsBRzG-akLDF8e5pg).
+</details>
+
+## Development of the MATLAB source of STEMMUS_SCOPE model
+
+To contribute to the STEMMUS_SCOPE model, you need access to the model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. MATLAB `2021a` is installed on
+[Snellius]((https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius)) and [CRIB](https://crib.utwente.nl/), see [this instruction](https://pystemmusscope.readthedocs.io/en/latest/contributing_link.html#development-of-stemmus-scope-model).
+
+## Create an executable file of STEMMUS_SCOPE
+
+See the [exe readme](./exe/README.md).
+
+## Follow MATLAB style guidelines
+
+Please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).

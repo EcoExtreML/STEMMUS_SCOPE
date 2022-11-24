@@ -1,12 +1,12 @@
  %% STEMMUS-SCOPE.m (script)
 
-%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence, 
-%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum 
+%     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
+%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum
 %
 %     Version: 1.0.1
 %
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
-%     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl 
+%     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl
 %
 %     This program is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
@@ -20,10 +20,58 @@
 %
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-%%
 
 %% 0. globals
-run filesread %get paths and prepare input files
+% We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
+% but there still global variables here, because we not sure which
+% progresses related to these global variables.
+
+% Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
+if exist('OCTAVE_VERSION', 'builtin') ~= 0
+    pkg load netcdf
+    pkg load statistics
+end
+
+% Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
+global CFG
+if isempty(CFG)
+    CFG = '../config_file_crib.txt';
+end
+disp (['Reading config from ', CFG])
+global InputPath OutputPath InitialConditionPath
+[InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
+
+% Prepare forcing and soil data
+global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+[SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
+IGBP_veg_long        = SiteProperties.IGBP_veg_long;
+latitude             = SiteProperties.latitude;
+longitude            = SiteProperties.longitude;
+reference_height     = SiteProperties.reference_height;
+canopy_height        = SiteProperties.canopy_height;
+sitename             = SiteProperties.sitename;
+
+DELT = TimeProperties.DELT;
+Dur_tot = TimeProperties.Dur_tot;
+
+global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha
+global porosity FOC FOS MSOC Coef_Lamda fieldMC fmax theta_s0 Ks0
+SaturatedK = SoilProperties.SaturatedK;
+SaturatedMC = SoilProperties.SaturatedMC;
+ResidualMC = SoilProperties.ResidualMC;
+Coefficient_n = SoilProperties.Coefficient_n;
+Coefficient_Alpha = SoilProperties.Coefficient_Alpha;
+porosity = SoilProperties.porosity;
+FOC = SoilProperties.FOC;
+FOS = SoilProperties.FOS;
+MSOC = SoilProperties.MSOC;
+Coef_Lamda = SoilProperties.Coef_Lamda;
+fieldMC = SoilProperties.fieldMC;
+fmax = SoilProperties.fmax;
+theta_s0 = SoilProperties.theta_s0;
+Ks0 = SoilProperties.Ks0;
+
+%%
 run Constants %input soil parameters
 global i tS KT Delt_t TEND TIME MN NN NL ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
 global KIT NIT TimeStep Processing
@@ -37,8 +85,8 @@ global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT 
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
 global Theta_g MU_a DeltZ Alpha_Lg
 global Beta_g KaT_Switch
-global D_V D_A fc Eta nD POR  
-global ThmrlCondCap ZETA XK DVT_Switch 
+global D_V D_A fc Eta nD POR
+global ThmrlCondCap ZETA XK DVT_Switch
 global MU_W Ks RHOL
 global Lambda1 Lambda2 Lambda3 RHO_bulk
 global RHODA RHOV c_a c_V c_L
@@ -48,7 +96,7 @@ global DRHOVT DRHOVh DRHODAt DRHODAz
 global hThmrl Tr COR IS Hystrs XWRE
 global Theta_V IH CORh XCAP Phi_s RHOI Lamda
 global W WW D_Ta SSUR
-global W_Chg SWCC Imped Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR 
+global W_Chg SWCC Imped Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
 global KLT_Switch xERR hERR TERR NBChB NBCT uERR
 global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
@@ -62,45 +110,26 @@ global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
 path_of_code                = cd;
-run set_parameter_filenames; 
 
-if length(parameter_file)>1, useXLSX = 0; else useXLSX = 1; end
-
-if ~useXLSX
-    run([path_input parameter_file{1}])
-    
-    options.calc_ebal           = N(1);    % calculate the energy balance (default). If 0, then only SAIL is executed!
-    options.calc_vert_profiles  = N(2);    % calculate vertical profiles of fluxes
-    options.calc_fluor          = N(3);    % calculate chlorophyll fluorescence in observation direction
-    options.calc_planck         = N(4);    % calculate spectrum of thermal radiation
-    options.calc_directional    = N(5);    % calculate BRDF and directional temperature
-    options.calc_xanthophyllabs = N(6);    % include simulation of reflectance dependence on de-epoxydation state
-    options.calc_PSI            = N(7);    % 0: optipar 2017 file with only one fluorescence spectrum vs 1: Franck et al spectra for PSI and PSII
-    options.rt_thermal          = N(8);    % 1: use given values under 10 (default). 2: use values from fluspect and soil at 2400 nm for the TIR range
-    options.calc_zo             = N(9);
-    options.soilspectrum        = N(10);    %0: use soil spectrum from a file, 1: simulate soil spectrum with the BSM model
-    options.soil_heat_method    = N(11);    % 0: calculated from specific heat and conductivity (default), 1: empiricaly calibrated, 2: G as constant fraction of soil net radiation
-    options.Fluorescence_model  = N(12);     %0: empirical, with sustained NPQ (fit to Flexas' data); 1: empirical, with sigmoid for Kn; 2: Magnani 2012 model
-    options.calc_rss_rbs        = N(13);    % 0: calculated from specific heat and conductivity (default), 1: empiricaly calibrated, 2: G as constant fraction of soil net radiation
-    options.apply_T_corr        = N(14);    % correct Vcmax and rate constants for temperature in biochemical.m
-    options.verify              = N(15);
-    options.save_headers        = N(16);    % write headers in output files
-    options.makeplots           = N(17);
-    options.simulation          = N(18);    % 0: individual runs (specify all input in a this file)
-    % 1: time series (uses text files with meteo input as time series)
-    % 2: Lookup-Table (specify the values to be included)
-    % 3: Lookup-Table with random input (specify the ranges of values)
+useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
+if useXLSX == 0
+    % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
+    % Read parameter file which is 'input_data.xlsx' and return it as options.
+%     options = io.setOptions(parameter_file,path_input);
+    warning("the current stemmus-scope does not support useXLSX=0");
 else
-    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 3, 1);
+    parameter_file = {'input_data.xlsx'};
+    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
 end
 
 if options.simulation>2 || options.simulation<0, fprintf('\n simulation option should be between 0 and 2 \r'); return, end
 
 %% 3. file names
-if ~useXLSX
+% the current stemmus-scope does not support useXLSX=0
+if useXLSX==0
     run([path_input parameter_file{2}])
 else
-    [dummy,X]                       = xlsread([path_input char(parameter_file)],'filenames');
+    [dummy,X] = xlsread([path_input char(parameter_file)],'filenames');
     j = find(~strcmp(X(:,2),{''}));
     X = X(j,(1:end));
 end
@@ -117,8 +146,8 @@ for i = 1:length(F)
 end
 
 %% 4. input data
-
-if ~useXLSX
+% the current stemmus-scope does not support useXLSX=0
+if useXLSX==0
     X                           = textread([path_input parameter_file{3}],'%s'); %#ok<DTXTRD>
     N                           = str2double(X);
 else
@@ -126,7 +155,7 @@ else
     X                           = X(9:end,1);
 end
 ScopeParameters = io.assignvarnames();
-[ScopeParameters,options] = loadParameters(ScopeParameters,options,useXLSX,X,F,N);
+[ScopeParameters,options] = parameters.loadParameters(ScopeParameters,options,useXLSX,X,F,N);
 
 % Define the location information
 ScopeParameters(48).Val=latitude; %latitude
@@ -236,16 +265,16 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
 %% 13. create output files
-[Output_dir, f, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
+[Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
 
 
 %% 14. Run the model
-fprintf('\n The calculations start now \r')
+disp('The calculations start now')
 calculate = 1;
 TIMEOLD=0;SAVEhh_frez=zeros(NN+1,1);FCHK=zeros(1,NN);KCHK=zeros(1,NN);hCHK=zeros(1,NN);
 TIMELAST=0;
-SAVEtS=tS; kk=0;   %DELT=Delt_t; 
+SAVEtS=tS; kk=0;   %DELT=Delt_t;
 for i = 1:1:Dur_tot
     KT=KT+1;                         % Counting Number of timesteps
     if KT>1 && Delt_t>(TEND-TIME)
@@ -273,7 +302,7 @@ for i = 1:1:Dur_tot
             TOLD_CRIT(MN)=T_CRIT(MN);
             T_CRIT(MN)=TT_CRIT(MN);
             %TTT_CRIT(MN,KT)=TT_CRIT(MN);
-            
+
             hOLD(MN)=h(MN);
             h(MN)=hh(MN);
             %hhh(MN,KT)=hh(MN);
@@ -322,20 +351,20 @@ for i = 1:1:Dur_tot
     else
         calculate = 1;
     end
-    
+
     if calculate
-        
+
         iter.counter = 0;
-        
+
         LIDF_file            = char(F(22).FileName);
         if  ~isempty(LIDF_file)
             canopy.lidf     = dlmread([path_input,'leafangles/',LIDF_file],'',3,0);
         else
             canopy.lidf     = equations.leafangles(canopy.LIDFa,canopy.LIDFb);    % This is 'ladgen' in the original SAIL model,
         end
-        
-        leafbio.emis        = 1-leafbio.rho_thermal-leafbio.tau_thermal; 
-        
+
+        leafbio.emis        = 1-leafbio.rho_thermal-leafbio.tau_thermal;
+
         if options.calc_PSI
             fversion = @fluspect_B_CX;
         else
@@ -345,15 +374,15 @@ for i = 1:1:Dur_tot
         leafopt  = fversion(spectral,leafbio,optipar);
         leafbio.V2Z = 1;
         leafoptZ = fversion(spectral,leafbio,optipar);
-        
+
         IwlP     = spectral.IwlP;
         IwlT     = spectral.IwlT;
-        
+
         rho(IwlP)  = leafopt.refl;
         tau(IwlP)  = leafopt.tran;
         rlast    = rho(nwlP);
         tlast    = tau(nwlP);
-        
+
         if options.soilspectrum == 0
             rs(IwlP) = rsfile(:,soil.spectrum+1);
         else
@@ -362,7 +391,7 @@ for i = 1:1:Dur_tot
             rs(IwlP) = BSM(soil,optipar,soilemp);
         end
         rslast   = rs(nwlP);
-        
+
         switch options.rt_thermal
             case 0
                 rho(IwlT) = ones(nwlT,1) * leafbio.rho_thermal;
@@ -375,26 +404,26 @@ for i = 1:1:Dur_tot
         end
         leafopt.refl = rho;     % extended wavelength ranges are stored in structures
         leafopt.tran = tau;
-        
+
         reflZ = leafopt.refl;
         tranZ = leafopt.tran;
         reflZ(1:300) = leafoptZ.refl(1:300);
         tranZ(1:300) = leafoptZ.tran(1:300);
         leafopt.reflZ = reflZ;
         leafopt.tranZ = tranZ;
-        
+
         soil.refl    = rs;
-        
+
         soil.Ts     = meteo.Ta * ones(2,1);       % initial soil surface temperature
-        
+
         if length(F(4).FileName)>1 && options.simulation==0
             atmfile     = [path_input 'radiationdata/' char(F(4).FileName(k))];
             atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
         end
         atmo.Ta     = meteo.Ta;
-        
+
         [rad,gap,profiles]   = RTMo(spectral,atmo,soil,leafopt,canopy,angles,meteo,rad,options);
-        
+
         switch options.calc_ebal
             case 1
                 [iter,fluxes,rad,thermal,profiles,soil,RWU,frac]                          ...
@@ -410,15 +439,15 @@ for i = 1:1:Dur_tot
                 if options.calc_xanthophyllabs
                     [rad] = RTMz(spectral,rad,soil,leafopt,canopy,gap,angles,profiles);
                 end
-                
+
                 if options.calc_planck
                     rad         = RTMt_planck(spectral,rad,soil,leafopt,canopy,gap,angles,thermal.Tcu,thermal.Tch,thermal.Ts(2),thermal.Ts(1),1);
                 end
-                
+
                 if options.calc_directional
                     directional = calc_brdf(options,directional,spectral,angles,rad,atmo,soil,leafopt,canopy,meteo,profiles,thermal);
                 end
-                
+
             otherwise
                 Fc              = (1-gap.Ps(1:end-1))'/nl;      %           Matrix containing values for Ps of canopy
                 fluxes.aPAR     = canopy.LAI*(Fc*rad.Pnh        + equations.meanleaf(canopy,rad.Pnu    , 'angles_and_layers',gap.Ps));% net PAR leaves
@@ -440,42 +469,42 @@ for i = 1:1:Dur_tot
             else
                 rad.Femtot = 1E3*leafbio.fqe* optipar.phi(spectral.IwlF) * fluxes.aPAR_Cab_eta;
             end
-        end           
+        end
     end
     if options.simulation==2 && telmax>1, vi  = helpers.count(nvars,vi,vmax,1); end
-     if KT==1 
+     if KT==1
         if isreal(fluxes.Actot)&&isreal(thermal.Tsave)&&isreal(fluxes.lEstot)&&isreal(fluxes.lEctot)
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tss=thermal.Tsave; 
+           Tss=thermal.Tsave;
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tss=Ta_msr(KT); 
+           Tss=Ta_msr(KT);
         end
     elseif NoTime(KT)>NoTime(KT-1)
         if isreal(fluxes.Actot)&&isreal(thermal.Tsave)&&isreal(fluxes.lEstot)&&isreal(fluxes.lEctot)
            Acc=fluxes.Actot;
            lEstot =fluxes.lEstot;
            lEctot =fluxes.lEctot;
-           Tss=thermal.Tsave; 
+           Tss=thermal.Tsave;
         else
            Acc=0;
            lEstot =0;
            lEctot =0;
-           Tss=Ta_msr(KT); 
+           Tss=Ta_msr(KT);
         end
     end
- 
+
     sfactortot(KT)=sfactor;
-    DSTOR0=DSTOR; 
-    
+    DSTOR0=DSTOR;
+
       if KT>1
           run SOIL1
       end
-        
+
       for ML=1:NL
             %QVV(ML,KT)=QV(ML);
             %QLL(ML,KT)=QL(ML,1);
@@ -548,7 +577,7 @@ for i = 1:1:Dur_tot
         end
     end
     run Forcing_PARM
-    
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT=1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT,hh_frez]=HT_frez(hh,T0,g,L_f,TT,NN,hd,Tmin);
@@ -579,15 +608,15 @@ for i = 1:1:Dur_tot
             DSTOR=min(EXCESS,DSTMAX);
             RS(KT)=(EXCESS-DSTOR)/Delt_t;
         end
-        
+
         if Soilairefc==1
             run Air_sub;
         end
-        
+
         if Thmrlefc==1
             run Enrgy_sub;
         end
-        
+
         if max(CHK)<0.1 %&& max(FCHK)<0.001 %&& max(hCHK)<0.001 %&& min(KCHK)>0.001
             break
         end
@@ -625,7 +654,7 @@ for i = 1:1:Dur_tot
                 hOLD(MN)=h(MN);
                 h(MN)=hh(MN);
                 %hhh(MN,KT)=hh(MN);
-                %HRA(MN,KT)=HR(MN);               
+                %HRA(MN,KT)=HR(MN);
                 if Thmrlefc==1
                     TOLD(MN)=T(MN);
                     T(MN)=TT(MN);
@@ -657,9 +686,14 @@ for i = 1:1:Dur_tot
         %SAVEDSTOR(KT)=DSTOR;
     end
     kk=k;
-    n_col = io.output_data_binary(f, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+
+    % Open files for writing
+    file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput',false);
+    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    fclose("all");
 end
-fprintf('\n The calculations end now \r')
+
+disp('The calculations end now')
 if options.verify
     io.output_verification(Output_dir)
 end
@@ -674,5 +708,5 @@ io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)
-%end  
+%end
 

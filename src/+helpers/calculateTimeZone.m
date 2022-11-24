@@ -6,15 +6,15 @@ function [ScopeParameters] = calculateTimeZone(ScopeParameters, longitude)
     timeZone=fix(longitude/15);
     if longitude>0
         if abs(mod(longitude,15))>7.5
-            ScopeParameters(50).Val= timeZone+1;
+            ScopeParameters.timezn= timeZone+1;
         else
-            ScopeParameters(50).Val= timeZone;
+            ScopeParameters.timezn= timeZone;
         end
     else
         if abs(mod(longitude,15))>7.5
-            ScopeParameters(50).Val= timeZone-1;
+            ScopeParameters.timezn= timeZone-1;
         else
-            ScopeParameters(50).Val= timeZone;
+            ScopeParameters.timezn= timeZone;
         end
     end
 end

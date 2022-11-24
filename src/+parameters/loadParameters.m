@@ -1,27 +1,46 @@
-function [ScopeParameters,Options] = loadParameters(ScopeParameters,Options,use_xlsx,ExcelData,ForcingData,N)
+function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,ForcingData,N)
     Options.Cca_function_of_Cab = 0;
-    for i = 1:length(ScopeParameters)
-        j = find(strcmp(strtok(ExcelData(:,1)),ScopeParameters(i).Name));
+
+    % for 'm', see # 64, below for intercept: 'BallBerry0'
+    % 'Cant' Added March 2017
+    % 'BallBerry0' acccidentally left out of v1.7
+    ScopeParametersNames = {
+        'Cab','Cca','Cdm','Cw','Cs','N','rho_thermal','tau_thermal',...
+        'Vcmo','m','Type','kV','Rdparam','Tparam','fqe','spectrum',...
+        'rss','rs_thermal','cs','rhos','lambdas','LAI','hc','zo','d',...
+        'LIDFa','LIDFb','leafwidth','z','Rin','Ta','Rli','p','ea','u',...
+        'Ca','Oa','rb','Cd','CR','CD1','Psicor','CSSOIL','rbs','rwc',...
+        'startDOY','endDOY','LAT','LON','timezn','tts','tto','psi','SMC',...
+        'Tyear','beta','kNPQs','qLs','stressfactor','Cant','BSMBrightness',...
+        'BSMlat','BSMlon','BallBerry0'
+    }
+
+    # create an empty structure with field names of ScopeParametersNames
+    ScopeParameters = cell2struct(cell(1, length(ScopeParametersNames)), ScopeParametersNames, 2);
+
+    for i = 1:length(ScopeParametersNames)
+        name = ScopeParametersNames{i};
+        j = find(strcmp(strtok(ExcelData(:,1)),name));
         if ~use_xlsx, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
         if isempty(j) || cond
-            if i==2
-                warning('warning: input "', ScopeParameters(i).Name, '" not provided in input spreadsheet...', ...
+            if name=='Cab'
+                warning('warning: input "', name, '" not provided in input spreadsheet...', ...
                         'I will use 0.25*Cab instead');
                 Options.Cca_function_of_Cab = 1;
-            elseif ~(Options.simulation==1) && (i==30 || i==32)
-                        warning('warning: input "', ScopeParameters(i).Name, '" not provided in input spreadsheet...', ...
+            elseif ~(Options.simulation==1) && (name=='Rin' || name=='Rli')
+                        warning('warning: input "', name, '" not provided in input spreadsheet...', ...
                             'I will use the MODTRAN spectrum as it is');
             elseif (Options.simulation == 1 || (Options.simulation~=1 && (i<46 || i>50)))
-                warning('warning: input "', ScopeParameters(i).Name, '" not provided in input spreadsheet');
-                if (Options.simulation ==1 && (i==1 ||i==9||i==22||i==23||i==54 || (i>29 && i<37)))
+                warning('warning: input "', name, '" not provided in input spreadsheet');
+                if (Options.simulation ==1 && (name=='Cab' ||name=='Vcmo'||name=='LAI'||name=='hc'||name=='SMC' || (i>29 && i<37)))
                     fprintf(1,'%s %s %s\n', 'I will look for the values in Dataset Directory "',char(ForcingData(5).FileName),'"');
-                elseif (i== 24 || i==25)
+                elseif (name=='zo' || name=='d')
                         fprintf(1,'%s %s %s\n', 'will estimate it from LAI, CR, CD1, Psicor, and CSSOIL');
                         Options.calc_zo = 1;
                 elseif (i>38 && i<44)
                             fprintf(1,'%s %s %s\n', 'will use the provided zo and d');
                             oOptions.calc_zo = 0;
-                elseif ~(Options.simulation ==1 && (i==30 ||i==32))
+                elseif ~(Options.simulation ==1 && (name=='Rin' ||name=='Rli'))
                                 fprintf(1,'%s \n', 'this input is required: SCOPE ends');
                                 return
                 else
@@ -37,15 +56,15 @@ function [ScopeParameters,Options] = loadParameters(ScopeParameters,Options,use_
                 j1 = j1+1;
             end
             if isempty(j2)
-                ScopeParameters(i).Val            = -999;
+                ScopeParameters.(name)            = -999;
             else
-                ScopeParameters(i).Val            = N(j2);
+                ScopeParameters.(name)            = N(j2);
             end               
         else
             if sum(~isnan(N(j,:)))<1
-                ScopeParameters(i).Val            = -999;
+                ScopeParameters.(name)            = -999;
             else
-                ScopeParameters(i).Val            = N(j,~isnan(N(j,:)));
+                ScopeParameters.(name)           = N(j,~isnan(N(j,:)));
             end
         end
     end

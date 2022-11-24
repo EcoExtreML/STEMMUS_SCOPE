@@ -79,7 +79,7 @@ After editing file you can restart the editor to get the extra directory inside 
 
 See [dev container docs](https://code.visualstudio.com/remote/advancedcontainers/add-local-file-mount) for more info.
 
-With WSL2 mounting a Windows directory inside the dev container is not possible.
+To mount Windows directory inside the dev container you have to start the container in WSL2 and use unix paths like `/mnt/c/...`.
 
 ## Linux from source
 

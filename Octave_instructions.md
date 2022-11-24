@@ -7,6 +7,7 @@
     - [Octave GUI](#octave-gui)
     - [VS Code](#vs-code)
   - [VS Code + Dev container](#vs-code--dev-container)
+    - [Mount extra directory](#mount-extra-directory)
   - [Linux from source](#linux-from-source)
 
 The downloads can be found here
@@ -61,6 +62,24 @@ If you have Docker installed and running you can use a container to do developme
 Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS code extension and reopen the folder in VS Code.
 
 It will then start a Docker container with your code, Octave and the VS Code Octave extensions.
+
+### Mount extra directory
+
+By default a Dev container only has the current VS code folder mounted inside the container.
+
+To add additional directories like directory with model input files to the container you will need to edit the [.devcontainer/decontainer.json](.devcontainer/decontainer.json) and add
+
+```json
+"mounts": [
+  "source=/local/source/path/goes/here,target=/target/path/in/container/goes/here,type=bind,consistency=cached"
+]
+```
+
+After editing file you can restart the editor to get the extra directory inside the dev container.
+
+See [dev container docs](https://code.visualstudio.com/remote/advancedcontainers/add-local-file-mount) for more info.
+
+With WSL2 mounting a Windows directory inside the dev container is not possible.
 
 ## Linux from source
 

@@ -67,7 +67,7 @@ It will then start a Docker container with your code, Octave and the VS Code Oct
 
 By default a Dev container only has the current VS code folder mounted inside the container.
 
-To add additional directories like directory with model input files to the container you will need to edit the [..devcontainer/devcontainer.json](.devcontainer/devcontainer.json) and add
+To add additional directories like directory with model input files to the container you will need to edit the [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) and add
 
 ```json
 "mounts": [

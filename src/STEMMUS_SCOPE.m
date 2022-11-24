@@ -154,17 +154,18 @@ else
     [N,X]                       = xlsread([path_input char(parameter_file)],'inputdata', '');
     X                           = X(9:end,1);
 end
-ScopeParameters = io.assignvarnames();
-[ScopeParameters,options] = parameters.loadParameters(ScopeParameters,options,useXLSX,X,F,N);
+
+# Create a structure holding Scope parameters
+[ScopeParameters,options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
 % Define the location information
-ScopeParameters(48).Val=latitude; %latitude
-ScopeParameters(49).Val=longitude; %longitude
-ScopeParameters(62).Val=latitude; %latitude of BSM model
-ScopeParameters(63).Val=longitude; %longitude of BSM model
-ScopeParameters(29).Val=reference_height;   %reference height
-ScopeParameters(23).Val=canopy_height;  %canopy height
-ScopeParameters(55).Val=mean(Ta_msr); %calculate mean air temperature
+ScopeParameters.LAT = latitude; %latitude
+ScopeParameters.LON = longitude; %longitude
+ScopeParameters.BSMlat = latitude; %latitude of BSM model
+ScopeParameters.BSMlon = longitude; %longitude of BSM model
+ScopeParameters.z = reference_height;   %reference height
+ScopeParameters.hc = canopy_height;  %canopy height
+ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature
 
 % calculate the time zone based on longitude
 [ScopeParameters] = helpers.calculateTimeZone(ScopeParameters,longitude);

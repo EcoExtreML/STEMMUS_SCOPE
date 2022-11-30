@@ -1,6 +1,6 @@
 function [soil,leafbio,canopy,meteo,angles,xyt] = select_input(ScopeParameters,vi,canopy,options,xyt,soil)
 global Theta_LL theta_s0
-soil.spectrum      = ScopeParameters(16).Val(vi(16));
+soil.spectrum      = ScopeParameters.spectrum(1);
 soil.rss           = ScopeParameters(17).Val(vi(17));
 soil.rs_thermal    = ScopeParameters(18).Val(vi(18));
 soil.cs            = ScopeParameters(19).Val(vi(19));

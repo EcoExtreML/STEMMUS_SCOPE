@@ -71,15 +71,17 @@ end
       fwrite(f.reflectance_file,reflectance_out,'double');
 %% input and parameter values (added June 2012)
 
-for i = 1:length(ScopeParameters)
-pars_and_input_out =  [ScopeParameters(i).Val(vi(i))];
-fwrite(f.pars_and_input_file,pars_and_input_out,'double');
+for i = 1:length(length(fieldnames(ScopeParameters)))
+    name = ScopeParametersNames{i};
+    pars_and_input_out =  [ScopeParameters.(name)(vi(i))];
+    fwrite(f.pars_and_input_file,pars_and_input_out,'double');
 end
 
 k2 = find(vmax>1);
 for i = 1:length(k2)
-pars_and_input_short_out =  [ScopeParameters(k2(i)).Val(vi(k2(i)))];
-fwrite(f.pars_and_input_short_file,pars_and_input_short_out,'double');
+    name = ScopeParametersNames{k2(i)};
+    pars_and_input_short_out =  [ScopeParameters.(name)(vi(k2(i)))];
+    fwrite(f.pars_and_input_short_file,pars_and_input_short_out,'double');
 end
 
 %% Optional Output

@@ -248,11 +248,12 @@ if options.simulation==1
         soil.Tsold = meteo.Ta*ones(12,2);
     end
 end
-
-nvars = length(ScopeParameters);
+ScopeParametersNames = fieldnames(ScopeParameters)
+nvars = length(ScopeParametersNames);
 vmax = ones(nvars,1);
 for i = 1:nvars
-    vmax(i) = length(ScopeParameters(i).Val);
+    name = ScopeParametersNames{i};
+    vmax(i) = length(ScopeParameters.(name));
 end
 vmax([14,27],1) = 1; % these are Tparam and LIDFb
 vi      = ones(nvars,1);

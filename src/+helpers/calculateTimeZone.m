@@ -4,7 +4,6 @@ function [timeZone] = calculateTimeZone(longitude)
 
     %}
     timeZone_init = fix(longitude/15);
-    timeZone = timeZone_init;
     if longitude>0
         if abs(mod(longitude, 15)) > 7.5
             timeZone = timeZone_init + 1;

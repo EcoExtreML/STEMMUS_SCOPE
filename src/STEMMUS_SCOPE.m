@@ -166,7 +166,7 @@ ScopeParameters.BSMlat = SiteProperties.latitude; %latitude of BSM model
 ScopeParameters.BSMlon = SiteProperties.longitude; %longitude of BSM model
 ScopeParameters.z =  SiteProperties.reference_height;   %reference height
 ScopeParameters.hc =  SiteProperties.canopy_height;  %canopy height
-ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature; Ta_msr is defined in of Constant.m
+ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature; Ta_msr is defined in Constant.m
 
 % calculate the time zone based on longitude
 ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);

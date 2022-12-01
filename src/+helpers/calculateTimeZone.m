@@ -1,20 +1,21 @@
-function [ScopeParameters] = calculateTimeZone(ScopeParameters, longitude)
+function [timeZone] = calculateTimeZone(longitude)
     %{
         This function calculate the time zone based on longitude.
 
     %}
-    timeZone=fix(longitude/15);
+    timeZone_init = fix(longitude/15);
+    timeZone = timeZone_init;
     if longitude>0
-        if abs(mod(longitude,15))>7.5
-            ScopeParameters.timezn= timeZone+1;
+        if abs(mod(longitude, 15)) > 7.5
+            timeZone = timeZone_init + 1;
         else
-            ScopeParameters.timezn= timeZone;
+            timeZone = timeZone_init;
         end
     else
-        if abs(mod(longitude,15))>7.5
-            ScopeParameters.timezn= timeZone-1;
+        if abs(mod(longitude, 15)) > 7.5
+            timeZone = timeZone_init - 1;
         else
-            ScopeParameters.timezn= timeZone;
+            timeZone = timeZone_init;
         end
     end
 end

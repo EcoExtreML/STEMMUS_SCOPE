@@ -1,4 +1,4 @@
-function [ScopeParameters] = setTempParameters(ScopeParameters,Sitename,Vege_type)
+function [ScopeParameters] = setTempParameters(ScopeParameters, Sitename, Vege_type)
     %{
         %Set temperature parameters for different vegetation type.
     %}

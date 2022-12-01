@@ -13,7 +13,7 @@ function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,F
         'startDOY','endDOY','LAT','LON','timezn','tts','tto','psi','SMC',...
         'Tyear','beta','kNPQs','qLs','stressfactor','Cant','BSMBrightness',...
         'BSMlat','BSMlon','BallBerry0'
-    }
+    };
 
     # create an empty structure with field names of ScopeParametersNames
     ScopeParameters = cell2struct(cell(1, length(ScopeParametersNames)), ScopeParametersNames, 2);

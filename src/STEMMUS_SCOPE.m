@@ -156,7 +156,7 @@ else
     X                           = X(9:end,1);
 end
 
-# Create a structure holding Scope parameters
+% Create a structure holding Scope parameters
 [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
 % Define the location information

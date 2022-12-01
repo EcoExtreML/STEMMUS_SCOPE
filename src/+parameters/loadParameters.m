@@ -15,7 +15,7 @@ function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,F
         'BSMlat','BSMlon','BallBerry0'
     };
 
-    # create an empty structure with field names of ScopeParametersNames
+    % create an empty structure with field names of ScopeParametersNames
     ScopeParameters = cell2struct(cell(1, length(ScopeParametersNames)), ScopeParametersNames, 2);
 
     for i = 1:length(ScopeParametersNames)

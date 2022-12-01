@@ -102,14 +102,15 @@ global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
 global constants
 global RWU EVAP theta_s0 Ks0
-global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
+global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
 %% 1. define constants
 [constants] = io.define_constants();
 [Rl] = Initial_root_biomass(RTB,DeltZ_R,rroot,ML);
+
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
-path_of_code                = cd;
+path_of_code = cd;
 
 useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
 if useXLSX == 0
@@ -156,22 +157,22 @@ else
 end
 
 # Create a structure holding Scope parameters
-[ScopeParameters,options] = parameters.loadParameters(options, useXLSX, X, F, N);
+[ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
 % Define the location information
-ScopeParameters.LAT = latitude; %latitude
-ScopeParameters.LON = longitude; %longitude
-ScopeParameters.BSMlat = latitude; %latitude of BSM model
-ScopeParameters.BSMlon = longitude; %longitude of BSM model
-ScopeParameters.z = reference_height;   %reference height
-ScopeParameters.hc = canopy_height;  %canopy height
-ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature
+ScopeParameters.LAT = SiteProperties.latitude; %latitude
+ScopeParameters.LON = SiteProperties.longitude; %longitude
+ScopeParameters.BSMlat = SiteProperties.latitude; %latitude of BSM model
+ScopeParameters.BSMlon = SiteProperties.longitude; %longitude of BSM model
+ScopeParameters.z =  SiteProperties.reference_height;   %reference height
+ScopeParameters.hc =  SiteProperties.canopy_height;  %canopy height
+ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature; Ta_msr is defined in of Constant.m
 
 % calculate the time zone based on longitude
-[ScopeParameters] = helpers.calculateTimeZone(ScopeParameters,longitude);
+ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);
 
 %Input T parameters for different vegetation type
-[ScopeParameters] = parameters.setTempParameters(ScopeParameters,sitename,IGBP_veg_long);
+[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.IGBP_veg_long);
 
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
@@ -229,10 +230,11 @@ spectral.IwlF = (640:850)-399;
 [rho,tau,rs] = deal(zeros(nwlP + nwlT,1));
 
 %% 11. load time series data
+ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
-    vi = ones(length(ScopeParameters),1);
-    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(ScopeParameters,vi,canopy,options);
-    [ScopeParameters,xyt,canopy]  = io.loadTimeSeries(ScopeParameters,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
+    vi = ones(length(ScopeParametersNames), 1);
+    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
+    [ScopeParameters,xyt,canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options);
 else
     soil = struct;
 end
@@ -248,7 +250,7 @@ if options.simulation==1
         soil.Tsold = meteo.Ta*ones(12,2);
     end
 end
-ScopeParametersNames = fieldnames(ScopeParameters)
+ScopeParametersNames = fieldnames(ScopeParameters);
 nvars = length(ScopeParametersNames);
 vmax = ones(nvars,1);
 for i = 1:nvars
@@ -691,7 +693,7 @@ for i = 1:1:Dur_tot
 
     % Open files for writing
     file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput',false);
-    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
     fclose("all");
 end
 
@@ -706,7 +708,7 @@ end
 SoilLayer.thickness = DeltZ_R;
 SoilLayer.depth = Ztot';
 
-io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
+io.bin_to_csv(fnames, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)

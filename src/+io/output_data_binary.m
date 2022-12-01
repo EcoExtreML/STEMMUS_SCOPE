@@ -70,8 +70,8 @@ end
       n_col.reflectance = length(reflectance_out);
       fwrite(f.reflectance_file,reflectance_out,'double');
 %% input and parameter values (added June 2012)
-ScopeParametersNames = fieldnames(ScopeParameters)
-for i = 1:length(length(ScopeParametersNames))
+ScopeParametersNames = fieldnames(ScopeParameters);
+for i = 1:length(ScopeParametersNames)
     name = ScopeParametersNames{i};
     pars_and_input_out =  [ScopeParameters.(name)(vi(i))];
     fwrite(f.pars_and_input_file,pars_and_input_out,'double');

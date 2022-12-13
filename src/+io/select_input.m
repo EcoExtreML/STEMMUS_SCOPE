@@ -1,79 +1,79 @@
-function [soil,leafbio,canopy,meteo,angles,xyt] = select_input(ScopeParameters,vi,canopy,options,xyt,soil)
+function [soil,leafbio,canopy,meteo,angles,xyt] = select_input(ScopeParameters, digitsVector, canopy, options, xyt, soil)
 global Theta_LL theta_s0
-soil.spectrum      = ScopeParameters.spectrum(vi(16));
-soil.rss           = ScopeParameters.rss(vi(17));
-soil.rs_thermal    = ScopeParameters.rs_thermal(vi(18));
-soil.cs            = ScopeParameters.cs(vi(19));
-soil.rhos          = ScopeParameters.rhos(vi(20));
-soil.CSSOIL        = ScopeParameters.CSSOIL(vi(43));
-soil.lambdas       = ScopeParameters.lambdas(vi(21));
-soil.rbs           = ScopeParameters.rbs(vi(44));
+soil.spectrum      = ScopeParameters.spectrum(digitsVector(16));
+soil.rss           = ScopeParameters.rss(digitsVector(17));
+soil.rs_thermal    = ScopeParameters.rs_thermal(digitsVector(18));
+soil.cs            = ScopeParameters.cs(digitsVector(19));
+soil.rhos          = ScopeParameters.rhos(digitsVector(20));
+soil.CSSOIL        = ScopeParameters.CSSOIL(digitsVector(43));
+soil.lambdas       = ScopeParameters.lambdas(digitsVector(21));
+soil.rbs           = ScopeParameters.rbs(digitsVector(44));
 soil.SMC           = Theta_LL(54,1); %%%%%%% soil.SMC = flip£¨Theta_LL£©£¨:,1£©
-soil.BSMBrightness = ScopeParameters.BSMBrightness(vi(61));
-soil.BSMlat	       = ScopeParameters.BSMlat(vi(62));
-soil.BSMlon	       = ScopeParameters.BSMlon(vi(63));
+soil.BSMBrightness = ScopeParameters.BSMBrightness(digitsVector(61));
+soil.BSMlat	       = ScopeParameters.BSMlat(digitsVector(62));
+soil.BSMlon	       = ScopeParameters.BSMlon(digitsVector(63));
 
-leafbio.Cab     = ScopeParameters.Cab(vi(1));
-leafbio.Cca     = ScopeParameters.Cca(vi(2));
+leafbio.Cab     = ScopeParameters.Cab(digitsVector(1));
+leafbio.Cca     = ScopeParameters.Cca(digitsVector(2));
 if options.Cca_function_of_Cab
-    leafbio.Cca = 0.25*ScopeParameters.Cab(vi(1));
+    leafbio.Cca = 0.25*ScopeParameters.Cab(digitsVector(1));
 end
-leafbio.Cdm     = ScopeParameters.Cdm(vi(3));
-leafbio.Cw      = ScopeParameters.Cw(vi(4));
-leafbio.Cs      = ScopeParameters.Cs(vi(5));
-leafbio.Cant    = ScopeParameters.Cant(vi(60));
-leafbio.N       = ScopeParameters.N(vi(6));
-leafbio.Vcmo    = ScopeParameters.Vcmo(vi(9));
-leafbio.m       = ScopeParameters.m(vi(10));
-leafbio.BallBerry0 = ScopeParameters.BallBerry0(vi(64)); % JAK 2016-10. Accidentally left out of v1.70
-leafbio.Type    = ScopeParameters.Type(vi(11));
+leafbio.Cdm     = ScopeParameters.Cdm(digitsVector(3));
+leafbio.Cw      = ScopeParameters.Cw(digitsVector(4));
+leafbio.Cs      = ScopeParameters.Cs(digitsVector(5));
+leafbio.Cant    = ScopeParameters.Cant(digitsVector(60));
+leafbio.N       = ScopeParameters.N(digitsVector(6));
+leafbio.Vcmo    = ScopeParameters.Vcmo(digitsVector(9));
+leafbio.m       = ScopeParameters.m(digitsVector(10));
+leafbio.BallBerry0 = ScopeParameters.BallBerry0(digitsVector(64)); % JAK 2016-10. Accidentally left out of v1.70
+leafbio.Type    = ScopeParameters.Type(digitsVector(11));
 leafbio.Tparam  = ScopeParameters.Tparam; % this is correct (: instead of 14)
-fqe             = ScopeParameters.fqe(vi(15));
-leafbio.Rdparam = ScopeParameters.Rdparam(vi(13));
+fqe             = ScopeParameters.fqe(digitsVector(15));
+leafbio.Rdparam = ScopeParameters.Rdparam(digitsVector(13));
 
-leafbio.rho_thermal = ScopeParameters.rho_thermal(vi(7));
-leafbio.tau_thermal = ScopeParameters.tau_thermal(vi(8));
+leafbio.rho_thermal = ScopeParameters.rho_thermal(digitsVector(7));
+leafbio.tau_thermal = ScopeParameters.tau_thermal(digitsVector(8));
 
-leafbio.Tyear         = ScopeParameters.Tyear(vi(55));
-leafbio.beta          = ScopeParameters.beta(vi(56));
-leafbio.kNPQs         = ScopeParameters.kNPQs(vi(57));
-leafbio.qLs           = ScopeParameters.qLs(vi(58));
-leafbio.stressfactor  = ScopeParameters.stressfactor(vi(59));
+leafbio.Tyear         = ScopeParameters.Tyear(digitsVector(55));
+leafbio.beta          = ScopeParameters.beta(digitsVector(56));
+leafbio.kNPQs         = ScopeParameters.kNPQs(digitsVector(57));
+leafbio.qLs           = ScopeParameters.qLs(digitsVector(58));
+leafbio.stressfactor  = ScopeParameters.stressfactor(digitsVector(59));
 
-canopy.LAI  = ScopeParameters.LAI(vi(22));
-canopy.hc  = ScopeParameters.hc(vi(23));
-canopy.LIDFa = ScopeParameters.LIDFa(vi(26));
-canopy.LIDFb  = ScopeParameters.LIDFb(vi(26)); % this is correct (26 instead of 27)
-canopy.leafwidth  = ScopeParameters.leafwidth(vi(28));
-canopy.rb   = ScopeParameters.rb(vi(38));
-canopy.Cd  = ScopeParameters.Cd(vi(39));
-canopy.CR = ScopeParameters.CR(vi(40));
-canopy.CD1  = ScopeParameters.CD1(vi(41));
-canopy.Psicor  = ScopeParameters.Psicor(vi(42));
-canopy.rwc  = ScopeParameters.rwc(vi(45));
-canopy.kV = ScopeParameters.kV(vi(12));
-canopy.zo  = ScopeParameters.zo(vi(24));
-canopy.d = ScopeParameters.d(vi(25));
+canopy.LAI  = ScopeParameters.LAI(digitsVector(22));
+canopy.hc  = ScopeParameters.hc(digitsVector(23));
+canopy.LIDFa = ScopeParameters.LIDFa(digitsVector(26));
+canopy.LIDFb  = ScopeParameters.LIDFb(digitsVector(26)); % this is correct (26 instead of 27)
+canopy.leafwidth  = ScopeParameters.leafwidth(digitsVector(28));
+canopy.rb   = ScopeParameters.rb(digitsVector(38));
+canopy.Cd  = ScopeParameters.Cd(digitsVector(39));
+canopy.CR = ScopeParameters.CR(digitsVector(40));
+canopy.CD1  = ScopeParameters.CD1(digitsVector(41));
+canopy.Psicor  = ScopeParameters.Psicor(digitsVector(42));
+canopy.rwc  = ScopeParameters.rwc(digitsVector(45));
+canopy.kV = ScopeParameters.kV(digitsVector(12));
+canopy.zo  = ScopeParameters.zo(digitsVector(24));
+canopy.d = ScopeParameters.d(digitsVector(25));
 
-meteo.z  = ScopeParameters.z(vi(29));
-meteo.Rin   = ScopeParameters.Rin(vi(30));
-meteo.Ta = ScopeParameters.Ta(vi(31));
-meteo.Rli  = ScopeParameters.Rli(vi(32));
-meteo.p  = ScopeParameters.p(vi(33));
-meteo.ea  = ScopeParameters.ea(vi(34));
-meteo.u   = ScopeParameters.u(vi(35));
-meteo.Ca = ScopeParameters.Ca(vi(36));
-meteo.Oa  = ScopeParameters.Oa(vi(37));
+meteo.z  = ScopeParameters.z(digitsVector(29));
+meteo.Rin   = ScopeParameters.Rin(digitsVector(30));
+meteo.Ta = ScopeParameters.Ta(digitsVector(31));
+meteo.Rli  = ScopeParameters.Rli(digitsVector(32));
+meteo.p  = ScopeParameters.p(digitsVector(33));
+meteo.ea  = ScopeParameters.ea(digitsVector(34));
+meteo.u   = ScopeParameters.u(digitsVector(35));
+meteo.Ca = ScopeParameters.Ca(digitsVector(36));
+meteo.Oa  = ScopeParameters.Oa(digitsVector(37));
 
-xyt.startDOY = ScopeParameters.startDOY(vi(46));
-xyt.endDOY = ScopeParameters.endDOY(vi(47));
-xyt.LAT = ScopeParameters.LAT(vi(48));
-xyt.LON = ScopeParameters.LON(vi(49));
-xyt.timezn = ScopeParameters.timezn(vi(50));
+xyt.startDOY = ScopeParameters.startDOY(digitsVector(46));
+xyt.endDOY = ScopeParameters.endDOY(digitsVector(47));
+xyt.LAT = ScopeParameters.LAT(digitsVector(48));
+xyt.LON = ScopeParameters.LON(digitsVector(49));
+xyt.timezn = ScopeParameters.timezn(digitsVector(50));
 
-angles.tts = ScopeParameters.tts(vi(51));
-angles.tto = ScopeParameters.tto(vi(52));
-angles.psi = ScopeParameters.psi(vi(53));
+angles.tts = ScopeParameters.tts(digitsVector(51));
+angles.tto = ScopeParameters.tto(digitsVector(52));
+angles.psi = ScopeParameters.psi(digitsVector(53));
 
 %% derived input
 if options.soil_heat_method ==1

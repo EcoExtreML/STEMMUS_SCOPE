@@ -1,4 +1,4 @@
-function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,ForcingData,N)
+function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,ForcingData,scopeInput)
     Options.Cca_function_of_Cab = 0;
 
     % for 'm', see # 64, below for intercept: 'BallBerry0'
@@ -21,7 +21,7 @@ function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,F
     for i = 1:length(ScopeParametersNames)
         name = ScopeParametersNames{i};
         j = find(strcmp(strtok(ExcelData(:,1)),name));
-        if ~use_xlsx, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
+        if ~use_xlsx, cond = isnan(scopeInput(j+1)); else cond = sum(~isnan(scopeInput(j,:)))<1; end
         if isempty(j) || cond
             if name=='Cab'
                 warning('warning: input "', name, '" not provided in input spreadsheet...', ...
@@ -51,20 +51,20 @@ function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,F
         if ~use_xlsx
             j2 = []; j1 = j+1;
             while 1
-                if isnan(N(j1)), break, end
+                if isnan(scopeInput(j1)), break, end
                 j2 = [j2; j1]; %#ok<AGROW>
                 j1 = j1+1;
             end
             if isempty(j2)
                 ScopeParameters.(name)            = -999;
             else
-                ScopeParameters.(name)            = N(j2);
+                ScopeParameters.(name)            = scopeInput(j2);
             end               
         else
-            if sum(~isnan(N(j,:)))<1
+            if sum(~isnan(scopeInput(j,:)))<1
                 ScopeParameters.(name)            = -999;
             else
-                ScopeParameters.(name)           = N(j,~isnan(N(j,:)));
+                ScopeParameters.(name)           = scopeInput(j,~isnan(scopeInput(j,:)));
             end
         end
     end

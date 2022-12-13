@@ -19,7 +19,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if NBCT==1
     if isreal(Tss)
-        RHS(NN)=Ta(KT);%BCT;%30;
+        RHS(NN)=Tss;%BCT;%30;
     else
         RHS(NN)=Ta(KT);
     end

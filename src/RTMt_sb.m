@@ -49,8 +49,8 @@ function [rad] = RTMt_sb(spectral,rad,soil,leafopt,canopy,gap,angles,Tcu,Tch,Tsu
 %   canopy      canopy properties (such as LAI and height)
 %   gap         probabilities of direct light penetration and viewing
 %   angles      viewing and observation angles
-%   Tcu         Temperature of sunlit leaves    (oC), [13x36x60]
-%   Tch         Temperature of shaded leaves    (oC), [13x36x60]
+%   Tcu         Temperature of sunlit leaves    (oC), [13x36xnl]
+%   Tch         Temperature of shaded leaves    (oC), [13x36xnl]
 %   Tsu         Temperature of sunlit soil      (oC), [1]
 %   Tsh         Temperature of shaded soil      (oC), [1]
 %

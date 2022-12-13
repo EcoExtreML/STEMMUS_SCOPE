@@ -17,8 +17,8 @@ for MN=1:NN
 end
 
 if isnan(SAVEhh)==1
-    keyboard
+    warning('\n Warning: FIX warning message \r')
 end
 if ~isreal(SAVEhh)
-    keyboard
+    warning('\n Warning: FIX warning message \r')
 end

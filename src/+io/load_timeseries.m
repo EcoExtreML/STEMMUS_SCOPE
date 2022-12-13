@@ -23,8 +23,8 @@ xyt.t               = load([path_input,Dataset_dir,'/' ,t_file] );
 xyt.year            = load([path_input,Dataset_dir,'/',year_file]);
 t_                  = xyt.t;
 
-DOY_                = floor(t_);
-time_               = 24*(t_-DOY_);
+DOY_                = floor(t_)+1;
+time_               = 24*(t_-floor(t_));
 
 if ~isempty(tts_file)
     V(51).Val      = load([path_input,Dataset_dir,'/',tts_file]);

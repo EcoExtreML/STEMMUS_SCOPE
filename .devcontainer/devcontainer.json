@@ -1,0 +1,10 @@
+{
+    "name": "Octave",
+    "dockerFile": "Dockerfile",
+    "customizations": {
+        "vscode": {
+            "extensions": ["paulosilva.vsc-octave-debugger", "apjanke.octave-hacking"]
+        }
+    },
+    "remoteUser": "octave"
+}

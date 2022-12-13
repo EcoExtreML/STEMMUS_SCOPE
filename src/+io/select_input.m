@@ -1,4 +1,4 @@
-function [soil,leafbio,canopy,meteo,angles,xyt] = select_input(ScopeParameters, digitsVector, canopy, options, xyt, soil)
+function [soil,leafbio,canopy,meteo,angles,SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, soil)
 global Theta_LL theta_s0
 soil.spectrum      = ScopeParameters.spectrum(digitsVector(16));
 soil.rss           = ScopeParameters.rss(digitsVector(17));
@@ -65,11 +65,11 @@ meteo.u   = ScopeParameters.u(digitsVector(35));
 meteo.Ca = ScopeParameters.Ca(digitsVector(36));
 meteo.Oa  = ScopeParameters.Oa(digitsVector(37));
 
-xyt.startDOY = ScopeParameters.startDOY(digitsVector(46));
-xyt.endDOY = ScopeParameters.endDOY(digitsVector(47));
-xyt.LAT = ScopeParameters.LAT(digitsVector(48));
-xyt.LON = ScopeParameters.LON(digitsVector(49));
-xyt.timezn = ScopeParameters.timezn(digitsVector(50));
+SpaceTimeInfo.startDOY = ScopeParameters.startDOY(digitsVector(46));
+SpaceTimeInfo.endDOY = ScopeParameters.endDOY(digitsVector(47));
+SpaceTimeInfo.LAT = ScopeParameters.LAT(digitsVector(48));
+SpaceTimeInfo.LON = ScopeParameters.LON(digitsVector(49));
+SpaceTimeInfo.timezn = ScopeParameters.timezn(digitsVector(50));
 
 angles.tts = ScopeParameters.tts(digitsVector(51));
 angles.tto = ScopeParameters.tto(digitsVector(52));

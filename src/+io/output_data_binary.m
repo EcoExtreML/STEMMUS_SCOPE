@@ -73,7 +73,7 @@ end
 ScopeParametersNames = fieldnames(ScopeParameters);
 for i = 1:length(ScopeParametersNames)
     name = ScopeParametersNames{i};
-    pars_and_input_out =  [ScopeParameters.(name)(vi(i))];
+    pars_and_input_out = [ScopeParameters.(name)(vi(i))];
     fwrite(f.pars_and_input_file,pars_and_input_out,'double');
 end
 

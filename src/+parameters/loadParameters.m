@@ -28,8 +28,8 @@ function [ScopeParameters,Options] = loadParameters(Options,use_xlsx,ExcelData,F
                         'I will use 0.25*Cab instead');
                 Options.Cca_function_of_Cab = 1;
             elseif ~(Options.simulation==1) && (name=='Rin' || name=='Rli')
-                        warning('warning: input "', name, '" not provided in input spreadsheet...', ...
-                            'I will use the MODTRAN spectrum as it is');
+                warning('warning: input "', name, '" not provided in input spreadsheet...', ...
+                        'I will use the MODTRAN spectrum as it is');
             elseif (Options.simulation == 1 || (Options.simulation~=1 && (i<46 || i>50)))
                 warning('warning: input "', name, '" not provided in input spreadsheet');
                 if (Options.simulation ==1 && (name=='Cab' ||name=='Vcmo'||name=='LAI'||name=='hc'||name=='SMC' || (i>29 && i<37)))

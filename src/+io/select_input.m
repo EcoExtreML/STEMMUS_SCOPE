@@ -1,17 +1,17 @@
-function [soil,leafbio,canopy,meteo,angles,SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, soil)
+function [SoilProperties,leafbio,canopy,meteo,angles,SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
 global Theta_LL theta_s0
-soil.spectrum      = ScopeParameters.spectrum(digitsVector(16));
-soil.rss           = ScopeParameters.rss(digitsVector(17));
-soil.rs_thermal    = ScopeParameters.rs_thermal(digitsVector(18));
-soil.cs            = ScopeParameters.cs(digitsVector(19));
-soil.rhos          = ScopeParameters.rhos(digitsVector(20));
-soil.CSSOIL        = ScopeParameters.CSSOIL(digitsVector(43));
-soil.lambdas       = ScopeParameters.lambdas(digitsVector(21));
-soil.rbs           = ScopeParameters.rbs(digitsVector(44));
-soil.SMC           = Theta_LL(54,1); %%%%%%% soil.SMC = flip£¨Theta_LL£©£¨:,1£©
-soil.BSMBrightness = ScopeParameters.BSMBrightness(digitsVector(61));
-soil.BSMlat	       = ScopeParameters.BSMlat(digitsVector(62));
-soil.BSMlon	       = ScopeParameters.BSMlon(digitsVector(63));
+SoilProperties.spectrum      = ScopeParameters.spectrum(digitsVector(16));
+SoilProperties.rss           = ScopeParameters.rss(digitsVector(17));
+SoilProperties.rs_thermal    = ScopeParameters.rs_thermal(digitsVector(18));
+SoilProperties.cs            = ScopeParameters.cs(digitsVector(19));
+SoilProperties.rhos          = ScopeParameters.rhos(digitsVector(20));
+SoilProperties.CSSOIL        = ScopeParameters.CSSOIL(digitsVector(43));
+SoilProperties.lambdas       = ScopeParameters.lambdas(digitsVector(21));
+SoilProperties.rbs           = ScopeParameters.rbs(digitsVector(44));
+SoilProperties.SMC           = Theta_LL(54,1); %%%%%%% SoilProperties.SMC = flip£¨Theta_LL£©£¨:,1£©
+SoilProperties.BSMBrightness = ScopeParameters.BSMBrightness(digitsVector(61));
+SoilProperties.BSMlat	       = ScopeParameters.BSMlat(digitsVector(62));
+SoilProperties.BSMlon	       = ScopeParameters.BSMlon(digitsVector(63));
 
 leafbio.Cab     = ScopeParameters.Cab(digitsVector(1));
 leafbio.Cca     = ScopeParameters.Cca(digitsVector(2));
@@ -77,12 +77,12 @@ angles.psi = ScopeParameters.psi(digitsVector(53));
 
 %% derived input
 if options.soil_heat_method ==1
-    soil.GAM =  equations.Soil_Inertia1(soil.SMC);
+    SoilProperties.GAM =  equations.Soil_Inertia1(SoilProperties.SMC);
 else
-    soil.GAM  = equations.Soil_Inertia0(soil.cs,soil.rhos,soil.lambdas);
+    SoilProperties.GAM  = equations.Soil_Inertia0(SoilProperties.cs,SoilProperties.rhos,SoilProperties.lambdas);
 end
 if options.calc_rss_rbs
-    [soil.rss,soil.rbs] = equations.calc_rssrbs(soil.SMC,canopy.LAI,soil.rbs);
+    [SoilProperties.rss,SoilProperties.rbs] = equations.calc_rssrbs(SoilProperties.SMC,canopy.LAI,SoilProperties.rbs);
 end
 
 if leafbio.Type
@@ -92,7 +92,7 @@ else
 end
 canopy.hot  = canopy.leafwidth/canopy.hc;
 if options.calc_zo
-    [canopy.zo,canopy.d ]  = equations.zo_and_d(soil,canopy);
+    [canopy.zo,canopy.d ]  = equations.zo_and_d(SoilProperties,canopy);
 end
 
 if options.calc_PSI == 1

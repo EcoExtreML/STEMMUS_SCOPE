@@ -80,7 +80,7 @@ end
 k2 = find(vmax>1);
 for i = 1:length(k2)
     name = ScopeParametersNames{k2(i)};
-    pars_and_input_short_out =  [ScopeParameters.(name)(vi(k2(i)))];
+    pars_and_input_short_out = [ScopeParameters.(name)(vi(k2(i)))];
     fwrite(f.pars_and_input_short_file,pars_and_input_short_out,'double');
 end
 

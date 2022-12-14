@@ -1,4 +1,4 @@
-function n_col = output_data_binary(f, k, xyt, rad,  canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal,spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap)
+function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal,spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap)
 %% OUTPUT DATA
 % author C. Van der Tol
 % date:      30 Nov 2019
@@ -70,16 +70,18 @@ end
       n_col.reflectance = length(reflectance_out);
       fwrite(f.reflectance_file,reflectance_out,'double');
 %% input and parameter values (added June 2012)
-
-for i = 1:length(V)
-pars_and_input_out =  [V(i).Val(vi(i))];
-fwrite(f.pars_and_input_file,pars_and_input_out,'double');
+ScopeParametersNames = fieldnames(ScopeParameters);
+for i = 1:length(ScopeParametersNames)
+    name = ScopeParametersNames{i};
+    pars_and_input_out = [ScopeParameters.(name)(vi(i))];
+    fwrite(f.pars_and_input_file,pars_and_input_out,'double');
 end
 
 k2 = find(vmax>1);
 for i = 1:length(k2)
-pars_and_input_short_out =  [V(k2(i)).Val(vi(k2(i)))];
-fwrite(f.pars_and_input_short_file,pars_and_input_short_out,'double');
+    name = ScopeParametersNames{k2(i)};
+    pars_and_input_short_out = [ScopeParameters.(name)(vi(k2(i)))];
+    fwrite(f.pars_and_input_short_file,pars_and_input_short_out,'double');
 end
 
 %% Optional Output

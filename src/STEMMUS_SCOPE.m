@@ -102,14 +102,15 @@ global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
 global constants
 global RWU EVAP theta_s0 Ks0
-global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime DELT IGBP_veg_long latitude longitude reference_height canopy_height sitename Dur_tot Tmin fmax
+global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
 %% 1. define constants
 [constants] = io.define_constants();
 [Rl] = Initial_root_biomass(RTB,DeltZ_R,rroot,ML);
+
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
-path_of_code                = cd;
+path_of_code = cd;
 
 useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
 if useXLSX == 0
@@ -154,189 +155,25 @@ else
     [N,X]                       = xlsread([path_input char(parameter_file)],'inputdata', '');
     X                           = X(9:end,1);
 end
-V                           = io.assignvarnames();
-options.Cca_function_of_Cab = 0;
 
-for i = 1:length(V)
-    j = find(strcmp(strtok(X(:,1)),V(i).Name));
-    % the current stemmus-scope does not support useXLSX=0
-    if useXLSX==0, cond = isnan(N(j+1)); else cond = sum(~isnan(N(j,:)))<1; end
-    if isempty(j) || cond
-        if i==2
-            warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
-                'I will use 0.25*Cab instead');
-            options.Cca_function_of_Cab = 1;
-        else
+% Create a structure holding Scope parameters
+[ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
-            if ~(options.simulation==1) && (i==30 || i==32)
-                warning('warning: input "', V(i).Name, '" not provided in input spreadsheet...', ...
-                    'I will use the MODTRAN spectrum as it is');
-            else
-                if (options.simulation == 1 || (options.simulation~=1 && (i<46 || i>50)))
-                    warning('warning: input "', V(i).Name, '" not provided in input spreadsheet');
-                    if (options.simulation ==1 && (i==1 ||i==9||i==22||i==23||i==54 || (i>29 && i<37)))
-                        fprintf(1,'%s %s %s\n', 'I will look for the values in Dataset Directory "',char(F(5).FileName),'"');
-                    else
-                        if (i== 24 || i==25)
-                            fprintf(1,'%s %s %s\n', 'will estimate it from LAI, CR, CD1, Psicor, and CSSOIL');
-                            options.calc_zo = 1;
-                        else
-                            if (i>38 && i<44)
-                                fprintf(1,'%s %s %s\n', 'will use the provided zo and d');
-                                options.calc_zo = 0;
-                            else
-                                if ~(options.simulation ==1 && (i==30 ||i==32))
-                                    fprintf(1,'%s \n', 'this input is required: SCOPE ends');
-                                    return
-                                else
-                                    fprintf(1,'%s %s %s\n', '... no problem, I will find it in Dataset Directory "',char(F(5).FileName), '"');
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
+% Define the location information
+ScopeParameters.LAT = SiteProperties.latitude; %latitude
+ScopeParameters.LON = SiteProperties.longitude; %longitude
+ScopeParameters.BSMlat = SiteProperties.latitude; %latitude of BSM model
+ScopeParameters.BSMlon = SiteProperties.longitude; %longitude of BSM model
+ScopeParameters.z =  SiteProperties.reference_height;   %reference height
+ScopeParameters.hc =  SiteProperties.canopy_height;  %canopy height
+ScopeParameters.Tyear = mean(Ta_msr); %calculate mean air temperature; Ta_msr is defined in Constant.m
 
-    % the current stemmus-scope does not support useXLSX=0
-    if useXLSX==0
-        j2 = []; j1 = j+1;
-        while 1
-            if isnan(N(j1)), break, end
-            j2 = [j2; j1]; %#ok<AGROW>
-            j1 = j1+1;
-        end
-        if isempty(j2)
-            V(i).Val            = -999;
-        else
-            V(i).Val            = N(j2);
-        end
+% calculate the time zone based on longitude
+ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);
 
-
-    else
-        if sum(~isnan(N(j,:)))<1
-            V(i).Val            = -999;
-        else
-            V(i).Val            = N(j,~isnan(N(j,:)));
-        end
-    end
-end
-V(48).Val=latitude;
-V(49).Val=longitude;
-V(62).Val=latitude;
-V(63).Val=longitude;
-V(29).Val=reference_height;
-V(23).Val=canopy_height;
-V(55).Val=mean(Ta_msr);
 %Input T parameters for different vegetation type
-    sitename1=cellstr(sitename);
-if strcmp(IGBP_veg_long(1:18)', 'Permanent Wetlands')
-    V(14).Val= [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
-    V(9).Val= [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
-    V(10).Val= [9]; % Ball-Berry stomatal conductance parameter
-    V(11).Val= [0]; % Photochemical pathway: 0=C3, 1=C4
-    V(28).Val= [0.05]; % leaf width
-elseif strcmp(IGBP_veg_long(1:19)', 'Evergreen Broadleaf')
-    V(14).Val= [0.2 0.3 283 311 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:19)', 'Deciduous Broadleaf')
-    V(14).Val= [0.2 0.3 283 311 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:13)', 'Mixed Forests')
-    V(14).Val= [0.2 0.3 281 307 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.04];
-elseif strcmp(IGBP_veg_long(1:20)', 'Evergreen Needleleaf')
-    V(14).Val= [0.2 0.3 278 303 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.01];
-elseif strcmp(IGBP_veg_long(1:9)', 'Croplands')
-    if isequal(sitename1,{'ES-ES2'})||isequal(sitename1,{'FR-Gri'})||isequal(sitename1,{'US-ARM'})||isequal(sitename1,{'US-Ne1'})
-        V(14).Val= [0.2 0.3 278 303 328];
-        V(9).Val= [50];
-        V(10).Val= [4];
-        V(11).Val= [1];
-        V(13).Val= [0.025]; % Respiration = Rdparam*Vcmcax
-        V(28).Val= [0.03];
-    else
-        V(14).Val= [0.2 0.3 278 303 328];
-        V(9).Val= [120];
-        V(10).Val= [9];
-        V(11).Val= [0];
-        V(28).Val= [0.03];
-    end
-elseif strcmp(IGBP_veg_long(1:15)', 'Open Shrublands')
-    V(14).Val= [0.2 0.3 288 313 328];
-    V(9).Val= [120];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:17)', 'Closed Shrublands')
-    V(14).Val= [0.2 0.3 288 313 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:8)', 'Savannas')
-    V(14).Val= [0.2 0.3 278 313 328];
-    V(9).Val= [120];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-elseif strcmp(IGBP_veg_long(1:14)', 'Woody Savannas')
-    V(14).Val= [0.2 0.3 278 313 328];
-    V(9).Val= [120];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.03];
-elseif strcmp(IGBP_veg_long(1:9)', 'Grassland')
-    V(14).Val= [0.2 0.3 288 303 328];
-    if isequal(sitename1,{'AR-SLu'})||isequal(sitename1,{'AU-Ync'})||isequal(sitename1,{'CH-Oe1'})||isequal(sitename1,{'DK-Lva'})||isequal(sitename1,{'US-AR1'})||isequal(sitename1,{'US-AR2'})||isequal(sitename1,{'US-Aud'})||isequal(sitename1,{'US-SRG'})
-        V(9).Val= [120];
-        V(10).Val= [4];
-        V(11).Val= [1];
-        V(13).Val= [0.025];
-    else
-        V(9).Val= [120];
-        V(10).Val= [9];
-        V(11).Val= [0];
-    end
-    V(28).Val= [0.02];
-else
-    V(14).Val= [0.2 0.3 288 313 328];
-    V(9).Val= [80];
-    V(10).Val= [9];
-    V(11).Val= [0];
-    V(28).Val= [0.05];
-    warning('IGBP vegetation name unknown, "%s" is not recognized. ', IGBP_veg_long)
-end
+[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.IGBP_veg_long);
 
-TZ=fix(longitude/15);
-TZZ=mod(longitude,15);
-if longitude>0
-    if abs(TZZ)>7.5
-        V(50).Val= TZ+1;
-    else
-        V(50).Val= TZ;
-    end
-else
-    if abs(TZZ)>7.5
-        V(50).Val= TZ-1;
-    else
-        V(50).Val= TZ;
-    end
-end
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
 path_output     = OutputPath;
@@ -393,10 +230,11 @@ spectral.IwlF = (640:850)-399;
 [rho,tau,rs] = deal(zeros(nwlP + nwlT,1));
 
 %% 11. load time series data
+ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
-    vi = ones(length(V),1);
-    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(V,vi,canopy,options);
-    [V,xyt,canopy]  = io.load_timeseries(V,leafbio,soil,canopy,meteo,constants,F,xyt,path_input,options);
+    vi = ones(length(ScopeParametersNames), 1);
+    [soil,leafbio,canopy,meteo,angles,xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
+    [ScopeParameters,xyt,canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options);
 else
     soil = struct;
 end
@@ -412,11 +250,12 @@ if options.simulation==1
         soil.Tsold = meteo.Ta*ones(12,2);
     end
 end
-
-nvars = length(V);
+ScopeParametersNames = fieldnames(ScopeParameters);
+nvars = length(ScopeParametersNames);
 vmax = ones(nvars,1);
 for i = 1:nvars
-    vmax(i) = length(V(i).Val);
+    name = ScopeParametersNames{i};
+    vmax(i) = length(ScopeParameters.(name));
 end
 vmax([14,27],1) = 1; % these are Tparam and LIDFb
 vi      = ones(nvars,1);
@@ -509,7 +348,7 @@ for i = 1:1:Dur_tot
          end
     if options.simulation == 1, vi(vmax>1) = k; end
     if options.simulation == 0, vi(vmax==telmax) = k; end
-    [soil,leafbio,canopy,meteo,angles,xyt] = io.select_input(V,vi,canopy,options,xyt,soil);
+    [soil,leafbio,canopy,meteo,angles,xyt] = io.select_input(ScopeParameters,vi,canopy,options,xyt,soil);
     if options.simulation ~=1
         fprintf('simulation %i ', k );
         fprintf('of %i \n', telmax);
@@ -854,7 +693,7 @@ for i = 1:1:Dur_tot
 
     % Open files for writing
     file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput',false);
-    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, V, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+    n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
     fclose("all");
 end
 
@@ -869,7 +708,7 @@ end
 SoilLayer.thickness = DeltZ_R;
 SoilLayer.depth = Ztot';
 
-io.bin_to_csv(fnames, V, vmax, n_col, k, options, SoilLayer)
+io.bin_to_csv(fnames, n_col, k, options, SoilLayer)
 save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)

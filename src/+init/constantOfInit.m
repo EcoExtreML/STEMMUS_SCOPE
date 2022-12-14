@@ -1,4 +1,4 @@
-function [Constant] = ConstantOfInit(MSOC, FOC, FOS)
+function Constant = ConstantOfInit(MSOC, FOC, FOS)
 %myFun - Description
 %
 % Syntax: output = myFun(input)

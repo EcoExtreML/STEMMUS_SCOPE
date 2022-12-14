@@ -1,8 +1,0 @@
----
-name: stemmus
-channels:
-  - conda-forge
-dependencies:
-  - python=3.9
-  - netcdf4>=1.5.8,<2
-  - pandas

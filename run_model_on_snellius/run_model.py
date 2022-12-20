@@ -38,7 +38,7 @@ def run_model(ncfile_index, job_id):
 
     # save output in netcdf format
     required_netcdf_variables = "../utils/csv_to_nc/required_netcdf_variables.csv"
-    netcdf_file_name = save.to_netcdf(config_path, nc_file, required_netcdf_variables)
+    netcdf_file_name = save.to_netcdf(config_path, required_netcdf_variables)
 
     slurm_log_msg = [
         f"Input path is {model.config['InputPath']}",

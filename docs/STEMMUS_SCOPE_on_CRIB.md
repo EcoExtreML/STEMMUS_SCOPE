@@ -8,8 +8,8 @@
     directory on CRIB. This folder includes:
 
     - Plumber2_data: the forcing/driving data provided by PLUMBER2.
-    - SoilProperty: the soil texture data and soil hydraulic parameters. 
-    
+    - SoilProperty: the soil texture data and soil hydraulic parameters.
+
     Below the directory explanations are from [SCOPE
     documentation](https://scope-model.readthedocs.io/en/latest/directories.html):
 
@@ -36,8 +36,8 @@
       functional parameters, etc.
 
 2. Config file: it is a text file that sets the paths **required** by the
-    model. For example, see [config_file_crib.txt](../config_file_crib.txt) in this repository. This file
-    includes:
+    model. For example, see [config_file_crib.txt](../config_file_crib.txt) in this
+    repository. This file includes:
 
     - SoilPropertyPath: a path to soil texture data and soil hydraulic
       parameters.
@@ -47,14 +47,17 @@
     - OutputPath: this is the base path to store outputs of the model. When the
     model runs, it creates `sitename_timestamped` directories under this
     path.
-    - ForcingPath: a path to the forcing/driving data.
-    - ForcingFileName: name of the forcing file in a netcdf format. Currently,
-    the model runs at the site scale. For example, if we put the
-    `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
-    site.
-    - DurationSize: total number of time steps in which model runs. It can be
-      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
-      half-hour time step i.e. `365*24*2=17520`.
+    - ForcingPath: a path to the forcing/driving data. I.e. the Plumber2 dataset.
+    - Location: Location where the model should be run. Currently,
+    the model runs at the site scale. For example, if we put `FI-Hyy` here, the model
+    runs at the `FI-Hyy` site.
+    - StartTime: The start time of the model, in the ISO 8601 format. For example:
+    `2001-01-01T00:00`. Note that the time can only be defined in half hour increments.
+    If you want the start time to be the first available data point of the forcing data,
+    you can set StartTime to `NA`.
+    - EndTime: The end time of the model. Formatted the same way as the StartTime.
+    For example: `2001-12-31T23:30`. If you want the end time to be the last available
+    data point of the forcing data, you can set EndTime to `NA`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The variable names e.g. `SoilPropertyPath` should not be changed.
@@ -72,17 +75,18 @@ working/running directory.
 
 ### Workflow of STEMMUS_SCOPE on CRIB:
 
-1. The model reads the `ForcingFile` e.g. `FI-Hyy_1996-2014_FLUXNET2015_Met.nc`
-  from "ForcingPath" and extracts forcing variables in `.dat` format using
-  `filesread.m`. The `.dat` files are stored in the "InputPath" directory. In
+1. The model reads the forcing file associated with the specified location,
+  e.g., `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` from "ForcingPath" and
+  extracts forcing variables in `.dat` format using `filesread.m`.
+  The `.dat` files are stored in the "InputPath" directory. In
   addition, the model reads the site information i.e. the location and
   vegetation parameters.
-2. The model reads the soil parameters from "SoilPropertyPath" using
+1. The model reads the soil parameters from "SoilPropertyPath" using
     `soilpropertyread.m`.
-3. Some constants are loaded using `Constant.m`.
-4. The model runs step by step until the whole simulation period  is completed
+2. Some constants are loaded using `Constant.m`.
+3. The model runs step by step until the whole simulation period  is completed
     i.e till the last time step of the forcing data.
-5. The results are saved as binary files temporarily. Then, the binary files are
+4. The results are saved as binary files temporarily. Then, the binary files are
     converted to `.csv` files and stored in a `sitename_timestamped` output
     directory under "OutputPath".
 
@@ -91,9 +95,9 @@ working/running directory.
 1. Log in CRIB with your username and password and select a proper compute unit.
 2. Download the source code from this repository or get it using `git clone` in
   a terminal:
-  
+
   ` git clone https://github.com/EcoExtreML/STEMMUS_SCOPE.git `
-  
+
   All the codes can be found in the folder `src` whereas the executable file in
   the folder `exe`.
 
@@ -107,7 +111,7 @@ If you want to use MATLAB desktop,
 
 1. click on the `Remote Desktop` in the
 Launcher. Click on the `Applications`. You will find the 'MATLAB' software under
-the `Research`. 
+the `Research`.
 2. After clicking on 'MATLAB', it asks for your account information that is
 connected to a MATLAB license.
 3. Open the file `filesread.m` and set the

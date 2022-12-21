@@ -20,7 +20,7 @@ def run_model(ncfile_index, job_id):
     path_to_exe_file = "./exe/STEMMUS_SCOPE"
 
     # create an instance of the model
-    model = StemmusScope(config_file=path_to_config_file, exe_file=path_to_exe_file)
+    model = StemmusScope(config_file=path_to_config_file, model_src_path=path_to_exe_file)
 
     # get the forcing file
     forcing_filenames_list = [
@@ -31,7 +31,7 @@ def run_model(ncfile_index, job_id):
     station_name = nc_file.split("_")[0]
 
     # feed model with the correct forcing file
-    config_path = model.setup(ForcingFileName=nc_file)
+    config_path = model.setup(Location=station_name)
 
     # run model
     model_log = model.run()

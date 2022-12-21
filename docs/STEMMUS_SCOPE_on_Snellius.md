@@ -18,7 +18,7 @@ Dutch National supercomputer hosted at SURF.
       - soil_spectra
       - input_data.xlsx
 
-    For the explanation of the directories see 
+    For the explanation of the directories see
   [Dataflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#dataflow-of-stemmus_scope-on-crib).
 
 2. Config file: it is a text file that sets the paths **required** by the model.
@@ -30,18 +30,20 @@ Dutch National supercomputer hosted at SURF.
     - InputPath: this is the working/running directory of the model and should
       include the data of `directional`, `fluspect_parameters`, `leafangles`,
       `radiationdata`, `soil_spectra`, and `input_data.xlsx`.
-    - OutputPath: this is the base path to store outputs of the model. When
-    the model runs, it creates `sitename_timestamped` directories under
-    this path.
-    - ForcingPath: a path to the forcing/driving data.
-    - ForcingFileName: name of the forcing file in a netcdf format. Currently,
-    the model runs at the site scale. For example, if we put the
-    `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` here, the model runs at the `FI-Hyy`
-    site.
-    - VegetationPropertyPath: path to required data except `Plumber2_data` and `SoilProperty`. 
-    - DurationSize: total number of time steps in which model runs. It can be
-      `NA` or a number. Example `DurationSize=17520` runs the model for one year a
-      half-hour time step i.e. `365*24*2=17520`.
+    - OutputPath: this is the base path to store outputs of the model. When the
+    model runs, it creates `sitename_timestamped` directories under this
+    path.
+    - ForcingPath: a path to the forcing/driving data. I.e. the Plumber2 dataset.
+    - Location: Location where the model should be run. Currently,
+    the model runs at the site scale. For example, if we put `FI-Hyy` here, the model
+    runs at the `FI-Hyy` site.
+    - StartTime: The start time of the model, in the ISO 8601 format. For example:
+    `2001-01-01T00:00`. Note that the time can only be defined in half hour increments.
+    If you want the start time to be the first available data point of the forcing data,
+    you can set StartTime to `NA`.
+    - EndTime: The end time of the model. Formatted the same way as the StartTime.
+    For example: `2001-12-31T23:30`. If you want the end time to be the last available
+    data point of the forcing data, you can set EndTime to `NA`.
 
     To edit the config file, open the file with a text editor and change the
     paths. The `InputPath` and `OutputPath` are user-defined directories, make
@@ -65,11 +67,11 @@ input_data.xlsx` to the working/running directory. For example:
 ### Workflow of STEMMUS_SCOPE on Snellius:
 
 This is the same as the workflow of STEMMUS_SCOPE on crib, see section
-[Workflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#workflow-of-stemmus_scope-on-crib). 
+[Workflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#workflow-of-stemmus_scope-on-crib).
 
 ### How to run STEMMUS_SCOPE on Snellius:
 
-1. Log in to Snellius. 
+1. Log in to Snellius.
 2. Download the source code from this repository or get it using `git clone` in
    a terminal:
 
@@ -80,7 +82,7 @@ This is the same as the workflow of STEMMUS_SCOPE on crib, see section
 
 3. Check `config_file_snellius.txt` and change the paths if needed,
    specifically "InputPath" and "OutputPath".
-4. Follow one of the instructions below: 
+4. Follow one of the instructions below:
 
 #### Run using MATLAB that requires a license
 

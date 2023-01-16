@@ -116,6 +116,11 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         end
     end
 
+    ThermalConductivity.HCAP = HCAP;
+    ThermalConductivity.SF = SF;
+    ThermalConductivity.TCA =TCA;
+    ThermalConductivity.GA1 = GA1;
+    ThermalConductivity.GA2 = GA2;
     ThermalConductivity.GB1 = GB1;
     ThermalConductivity.GB2 = GB2;
     ThermalConductivity.RHo_bulk = RHo_bulk;

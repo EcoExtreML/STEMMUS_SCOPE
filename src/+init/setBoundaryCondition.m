@@ -72,15 +72,15 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
 
     BoundaryCondition.NBCh = NBCh;
     BoundaryCondition.NBCT = NBCT;
-    NBChB = NBChB;
-    NBCTB = NBCTB;
-    BCh = BCh;
-    DSTOR = DSTOR;
-    DSTOR0 = DSTOR0;
-    RS = RS;
-    NBChh = NBChh;
-    DSTMAX = DSTMAX;
-    IRPT1 = IRPT1;
-    IRPT2 = IRPT2;
+    BoundaryCondition.NBChB = NBChB;
+    BoundaryCondition.NBCTB = NBCTB;
+    BoundaryCondition.BCh = BCh;
+    BoundaryCondition.DSTOR = DSTOR;
+    BoundaryCondition.DSTOR0 = DSTOR0;
+    BoundaryCondition.RS = RS;
+    BoundaryCondition.NBChh = NBChh;
+    BoundaryCondition.DSTMAX = DSTMAX;
+    BoundaryCondition.IRPT1 = IRPT1;
+    BoundaryCondition.IRPT2 = IRPT2;
 
 end

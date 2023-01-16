@@ -1,4 +1,5 @@
-function setBoundaryCondition
+function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
+    global NBCP BChB BCTB BCPB BCT BCP BtmPg% unused! in main
 
     IRPT1 = 0;
     IRPT2 = 0;
@@ -11,29 +12,29 @@ function setBoundaryCondition
 
     BCh = -20/3600;
     if strcmp(IGBP_veg_long(1:9)', 'Croplands')  % ['Croplands']
-        % NBChB: Moisture Bottom B.C.: 
-        % 1 --> Specified matric head (BChB); 
-        % 2 --> Specified flux(BChB); 
+        % NBChB: Moisture Bottom B.C.:
+        % 1 --> Specified matric head (BChB);
+        % 2 --> Specified flux(BChB);
         % 3 --> Zero matric head gradient (Gravitiy drainage);
-        NBChB = 1;  
+        NBChB = 1;
     else
-        NBChB = 3; 
+        NBChB = 3;
     end
     BChB = -9e-10;
-    if Thmrlefc==1
-        % NBCT: Energy Surface B.C.: 
-        % 1 --> Specified temperature (BCT); 
-        % 2 --> Specified heat flux (BCT); 
+    if SoilConstants.Thmrlefc==1
+        % NBCT: Energy Surface B.C.:
+        % 1 --> Specified temperature (BCT);
+        % 2 --> Specified heat flux (BCT);
         % 3 --> Atmospheric forcing;
         NBCT = 1;
 
         BCT = Ta_msr(1);  % surface temperature
 
-        % NBCTB: Energy Bottom B.C.: 
-        % 1 --> Specified temperature (BCTB); 
-        % 2 --> Specified heat flux (BCTB); 
+        % NBCTB: Energy Bottom B.C.:
+        % 1 --> Specified temperature (BCTB);
+        % 2 --> Specified heat flux (BCTB);
         % 3 --> Zero temperature gradient;
-        NBCTB = 1; 
+        NBCTB = 1;
 
         if nanmean(Ta_msr)<0
             BCTB = 0;  %9 8.1
@@ -41,7 +42,7 @@ function setBoundaryCondition
             BCTB = nanmean(Ta_msr);
         end
     end
-    if Soilairefc==1
+    if SoilConstants.Soilairefc==1
         % NBCP: Soil air pressure B.C.:
         % 1 --> Ponded infiltration caused a specified pressure value;
         % 2 --> The soil air pressure is allowed to escape after beyond the threshold value;
@@ -50,8 +51,8 @@ function setBoundaryCondition
 
         BCP = 0;
 
-        % NBCPB: Soil air Bottom B.C.: 
-        % 1 --> Bounded bottom with specified air pressure; 
+        % NBCPB: Soil air Bottom B.C.:
+        % 1 --> Bounded bottom with specified air pressure;
         % 2 --> Soil air is allowed to escape from bottom;
         NBCPB = 2;
 
@@ -68,5 +69,18 @@ function setBoundaryCondition
     DSTOR0 = DSTOR; % Dept of depression storage at start of current time step;
     RS = 0; % Rate of surface runoff;
     DSTMAX = 0; % Depression storage capacity;
+
+    BoundaryCondition.NBCh = NBCh;
+    BoundaryCondition.NBCT = NBCT;
+    NBChB = NBChB;
+    NBCTB = NBCTB;
+    BCh = BCh;
+    DSTOR = DSTOR;
+    DSTOR0 = DSTOR0;
+    RS = RS;
+    NBChh = NBChh;
+    DSTMAX = DSTMAX;
+    IRPT1 = IRPT1;
+    IRPT2 = IRPT2;
 
 end

@@ -1,4 +1,4 @@
-function SoilVariables = updateSoilVariables(Genuchten, SoilVariables, SoilConstants, i, j)
+function SoilVariables = updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, i, j)
     if SoilConstants.SWCC==1   % VG soil water retention model
         SoilVariables.XK(i) = SoilProperties.ResidualMC(j) + 0.02;
         SoilVariables.XWILT(i) = equations.van_genuchten(Genuchten.Theta_s(i), Genuchten.Theta_r(i), Genuchten.Alpha(i), -1.5e4, Genuchten.n(i), Genuchten.m(i));

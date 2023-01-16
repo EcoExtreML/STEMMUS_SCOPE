@@ -1,6 +1,6 @@
-function [SoilVariables, Genuchten, initH] = runSubroutine2(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF)
+function [SoilVariables, Genuchten, initH] = runSubroutine2(Dmark, SoilConstants, SoilProperties, SoilVariables, Genuchten, initT, initH, initX, ImpedF, ML)
 
-    for i = Dmark:(SoilConstants.numberOfElements+1) % ML
+    for i = Dmark:(ML+1) % ML
         j = i - 1;
         SoilVariables.IS(j) = 3;
         J = SoilVariables.IS(j);
@@ -15,10 +15,10 @@ function [SoilVariables, Genuchten, initH] = runSubroutine2(Dmark, SoilConstants
         SoilVariables.XK(j) = 0.11; %0.0490.11 This is for silt loam; For sand XK=0.025
 
         Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, j, J);
-        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, i, j);
+        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, i, j);
         initH(2) = init.updateInith(initX(2), Genuchten, SoilConstants, SoilVariables, j);
 
-        delta = SoilConstants.numberOfElements + 2 - Dmark;
+        delta = ML + 2 - Dmark;
         domainZ = i - Dmark + 1;
         SoilVariables.T(i) = init.calcSoilTemp(initT(2), initT(3), delta, domainZ);
         SoilVariables.h(i) = init.calcSoilMatricHead(initH(2), initH(3), delta, domainZ);

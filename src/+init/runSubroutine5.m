@@ -1,6 +1,6 @@
-function [SoilVariables, Genuchten, initH, Btmh] = runSubroutine5(SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF)
+function [SoilVariables, Genuchten, initH, Btmh] = runSubroutine5(SoilConstants, SoilProperties, SoilVariables, Genuchten, initT, initH, initX, ImpedF, ML)
 
-    for i=1:(SoilConstants.numberOfElements+1) % ML
+    for i=1:(ML+1) % ML
         SoilVariables.IS(i) = 6; % Index of soil type
         J = SoilVariables.IS(i);
         SoilVariables.POR(i) = SoilProperties.porosity(J);
@@ -14,12 +14,12 @@ function [SoilVariables, Genuchten, initH, Btmh] = runSubroutine5(SoilConstants,
         SoilVariables.XK(i) = 0.11; %0.11 This is for silt loam; For sand XK=0.025
 
         Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, i, J);
-        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, i, J);
+        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, i, J);
         initH(5) = init.updateInith(initX(5), Genuchten, SoilConstants, SoilVariables, i);
         Btmh = init.updateBtmh(Genuchten, SoilConstants, SoilVariables, i);
 
-        SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(5) - SoilConstants.BtmT) / numberOfElements;
-        SoilVariables.h(i) = Btmh + (i-1) * (initH(5) - Btmh) / numberOfElements;
+        SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(5) - SoilConstants.BtmT) / ML;
+        SoilVariables.h(i) = Btmh + (i-1) * (initH(5) - Btmh) / ML;
         SoilVariables.IH(i) = 1;   % Index of wetting history of soil which would be assumed as dry at the first with the value of 1
     end
 end

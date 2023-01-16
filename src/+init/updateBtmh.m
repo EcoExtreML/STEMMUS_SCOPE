@@ -1,8 +1,8 @@
-function Btmh = updateBtmh(Genuchten, SoilConstants, Coefficients, i)
+function Btmh = updateBtmh(Genuchten, SoilConstants, SoilVariables, i)
 
     if SoilConstants.SWCC==1   % VG soil water retention model
-            Btmh = init.calcinitH(Genuchten.Theta_s(i), Genuchten.Theta_r(i), SoilConstants.BtmX, Genuchten.n(i), Genuchten.m(i), Genuchten.Alpha(i));
+            Btmh = init.calcInitH(Genuchten.Theta_s(i), Genuchten.Theta_r(i), SoilConstants.BtmX, Genuchten.n(i), Genuchten.m(i), Genuchten.Alpha(i));
         else
-            Btmh = Coefficients.Phi_s(i)*(SoilConstants.BtmX/Genuchten.Theta_s(i))^(-1/Coefficients.Lamda(i));
+            Btmh = SoilVariables.Phi_s(i)*(SoilConstants.BtmX/Genuchten.Theta_s(i))^(-1/SoilVariables.Lamda(i));
         end
 end

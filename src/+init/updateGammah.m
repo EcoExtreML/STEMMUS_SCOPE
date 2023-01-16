@@ -1,4 +1,8 @@
-function [Gama_h, Gama_hh] = updateGmmah(i)
+function [Gama_h, Gama_hh] = updateGmmah(i, SoilConstants, SoilVariables)
+
+    hd = SoilConstants.hd;
+    hm = SoilConstants.hm;
+    hh = SoilVariables.hh;
 
     if abs(hh(i))>=abs(hd)
         Gama_h(i)=0;

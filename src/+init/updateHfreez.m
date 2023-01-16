@@ -1,6 +1,13 @@
-function h_frez = updateHfreez(i)
+function h_frez = updateHfreez(i, SoilVariables)
+    L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
+    T0=273.15; % unit K
 
-    
+    T = SoilVariables.T;
+    h_frez = SoilVariables.h_frez;
+    SWCC = SoilConstants.SWCC;
+    h = SoilVariables.h;
+    Phi_s = SoilVariables.Phi_s;
+
     if T(i)<=0
         h_frez(i)=L_f*1e4*(T(i))/g/T0;
     else

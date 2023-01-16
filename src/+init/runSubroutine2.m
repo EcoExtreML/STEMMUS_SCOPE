@@ -1,5 +1,5 @@
-function [SoilVariables, initH] = runSubroutine2(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF)
-    
+function [SoilVariables, Genuchten, initH] = runSubroutine2(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF)
+
     for i = Dmark:(SoilConstants.numberOfElements+1) % ML
         j = i - 1;
         SoilVariables.IS(j) = 3;
@@ -14,8 +14,8 @@ function [SoilVariables, initH] = runSubroutine2(Dmark, SoilConstants, SoilPrope
         SoilVariables.Imped(i) = SoilConstants.ImpedF(J);
         SoilVariables.XK(j) = 0.11; %0.0490.11 This is for silt loam; For sand XK=0.025
 
-        Genuchten = updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, j, J);
-        Coefficients = updateSoilVariables(Genuchten, SoilConstants, i, j);
+        Genuchten = updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, j, J);
+        SoilVariables = updateSoilVariables(Genuchten, SoilConstants, i, j);
         initH(2) = updateInith(initX(2), Genuchten, SoilConstants, SoilVariables, j);
 
         delta = SoilConstants.numberOfElements + 2 - Dmark;

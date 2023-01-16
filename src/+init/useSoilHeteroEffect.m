@@ -1,6 +1,6 @@
-function [SoilVariables, initH, Btmh] = useSoilHeteroEffect(SoilProperties, SoilConstants, initX, initND, initT)
+function [SoilVariables, initH, Btmh] = useSoilHeteroEffect(SoilProperties, SoilConstants, initX, initND, initT, Eqlspace)
 
-    ImpedF=[3 3 3 3 3 3 3];
+    ImpedF = repelem(3, 6);
     Genuchten = init.setGenuchtenParameters(SoilProperties);
     SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten)
 
@@ -29,27 +29,27 @@ function [SoilVariables, initH, Btmh] = useSoilHeteroEffect(SoilProperties, Soil
 
             if abs(InitLnth(i)-initND(5))<1e-10
                 % TODO check if Btmh needed here
-                [SoilVariables, initH, Btmh] = init.runSubroutine5(SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH, Btmh] = init.runSubroutine5(SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
                 Dmark = i + 2;
             end
             if abs(InitLnth(i)-initND(4))<1e-10
-                [SoilVariables, initH] = init.runSubroutine4(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH] = init.runSubroutine4(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
                 Dmark = i + 2;
             end
             if abs(InitLnth(i)-initND(3))<1e-10
-                [SoilVariables, initH] = init.runSubroutine3(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH] = init.runSubroutine3(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
                 Dmark = i + 2;
             end
             if abs(InitLnth(i)-initND(2))<1e-10
-                [SoilVariables, initH] = init.runSubroutine2(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH] = init.runSubroutine2(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
                 Dmark = i + 2;
             end
             if abs(InitLnth(i)-initND(1))<1e-10
-                [SoilVariables, initH] = init.runSubroutine1(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH] = init.runSubroutine1(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
                 Dmark = i + 2;
             end
             if abs(InitLnth(i))<1e-10
-                [SoilVariables, initH] = init.runSubroutine0(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
+                [SoilVariables, Genuchten, initH] = init.runSubroutine0(Dmark, SoilConstants, SoilProperties, Genuchten, initT, initH, ImpedF);
             end
         end
     else

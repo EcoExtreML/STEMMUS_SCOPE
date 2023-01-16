@@ -1,10 +1,11 @@
-function [SoilConstants, SoilVariables, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties)
 
 %%% SoilConstants for init
 SoilConstants = init.setSoilConstants(SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
 
-% thsese extra vars are set in script Constants.m
+% these extra vars are set in script Constants.m
 global ML NL NN DeltZ Tot_Depth SWCC BtmX BtmT Thmrlefc J Soilairefc P_g P_gg
+global h T TT h_frez
 SoilConstants.SWCC = SWCC; %
 SoilConstants.J = J;
 SoilConstants.totalNumberOfElements = NL;
@@ -18,6 +19,10 @@ SoilConstants.Thmrlefc = Thmrlefc;
 SoilConstants.Soilairefc = Soilairefc;
 SoilConstants.P_g = P_g;
 SoilConstants.P_gg = P_gg;
+SoilConstants.h = h;
+SoilConstants.T = T;
+SoilConstants.TT = TT;
+SoilConstants.h_frez = h_frez;
 
 Ksh= repelem(18/(3600*24), 6);
 BtmKsh=Ksh(6);
@@ -35,14 +40,17 @@ global Eqlspace
 initX = [InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6];
 initND = [InitND1 InitND2 InitND3 InitND4 InitND5 InitND6];
 initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
-[SoilVariables, initH, Btmh] = init.useSoilHeteroEffect(SoilProperties, SoilConstants, initX, initND, initT, Eqlspace);
+
+Genuchten = init.setGenuchtenParameters(SoilProperties);
+SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
+[SoilVariables, Genuchten, initH, Btmh] = init.useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, initX, initND, initT, Eqlspace);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
 %%%%%% Perform initial freezing temperature for each soil type.%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[SoilVariables] = init.useSoilHeteroWithInitialFreezing(SoilConstants, SoilVariables.XWRE);
+SoilVariables = init.useSoilHeteroWithInitialFreezing(SoilConstants, SoilVariables);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Perform initial thermal calculations for each soil type.%%%%%%%%%
@@ -124,12 +132,17 @@ SoilConstants.Theta_U = Theta_U;
 SoilVariables.hh_frez = hh_frez;
 SoilVariables.hh = hh;
 SoilVariables.COR = COR;
+SoilVariables.CORh = CORh;
 SoilVariables.Se = Se;
 SoilVariables.KL_h = KL_h;
+SoilVariables.Theta_L = Theta_L;
 SoilVariables.Theta_LL = Theta_LL;
 SoilVariables.DTheta_LLh = DTheta_LLh;
 SoilVariables.KfL_h = KfL_h;
 SoilVariables.KfL_T = KfL_T;
+SoilVariables.Theta_V = Theta_V;
+SoilVariables.Theta_g = Theta_g;
+SoilVariables.DTheta_UUh = DTheta_UUh;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% The boundary condition information settings.%%%%%%%%%%%%%%%%%%%%

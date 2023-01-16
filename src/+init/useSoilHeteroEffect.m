@@ -1,8 +1,6 @@
-function [SoilVariables, initH, Btmh] = useSoilHeteroEffect(SoilProperties, SoilConstants, initX, initND, initT, Eqlspace)
+function [SoilVariables, Genuchten, initH, Btmh] = useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, initX, initND, initT, Eqlspace)
 
     ImpedF = repelem(3, 6);
-    Genuchten = init.setGenuchtenParameters(SoilProperties);
-    SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten)
 
     for i=1:6
         if SoilConstants.SWCC==0
@@ -19,7 +17,7 @@ function [SoilVariables, initH, Btmh] = useSoilHeteroEffect(SoilProperties, Soil
         for i = 1:length(initX)
             initH(i) = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), initX(i), Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
         end
-        Btmh = equations.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), BtmX, Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
+        Btmh = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), SoilConstants.BtmX, Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
         if Btmh==-inf
             Btmh = -1e7;
         end

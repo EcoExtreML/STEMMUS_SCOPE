@@ -13,10 +13,10 @@ function [SoilVariables, Genuchten, initH, Btmh] = runSubroutine5(SoilConstants,
         SoilVariables.Imped(i) = ImpedF(J);
         SoilVariables.XK(i) = 0.11; %0.11 This is for silt loam; For sand XK=0.025
 
-        Genuchten = updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, i, J);
-        SoilVariables = updateSoilVariables(Genuchten, SoilConstants, i, J);
-        initH(5) = updateInith(initX(5), Genuchten, SoilConstants, SoilVariables, i);
-        Btmh = updateBtmh(Genuchten, SoilConstants, SoilVariables, i);
+        Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, i, J);
+        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, i, J);
+        initH(5) = init.updateInith(initX(5), Genuchten, SoilConstants, SoilVariables, i);
+        Btmh = init.updateBtmh(Genuchten, SoilConstants, SoilVariables, i);
 
         SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(5) - SoilConstants.BtmT) / numberOfElements;
         SoilVariables.h(i) = Btmh + (i-1) * (initH(5) - Btmh) / numberOfElements;

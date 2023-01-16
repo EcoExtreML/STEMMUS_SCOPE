@@ -15,14 +15,14 @@ function [SoilVariables, Genuchten, initH] = runSubroutine4(Dmark, SoilConstants
         SoilVariables.Imped(i) = ImpedF(J);
         SoilVariables.XK(j) = 0.11; %0.11 This is for silt loam; For sand XK=0.025
 
-        Genuchten = updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, j, J);
-        SoilVariables = updateSoilVariables(Genuchten, SoilConstants, j, J);
-        initH(4) = updateInith(initX(4), Genuchten, SoilConstants, SoilVariables, j);
+        Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, j, J);
+        SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, j, J);
+        initH(4) = init.updateInith(initX(4), Genuchten, SoilConstants, SoilVariables, j);
 
         delta = SoilConstants.numberOfElements + 2 - Dmark;
         domainZ = i - Dmark + 1;
-        SoilVariables.T(i) = calcSoilTemp(initT(4), initT(5), delta, domainZ);
-        SoilVariables.h(i) = calcSoilMatricHead(initH(4), initH(5), delta, domainZ);
+        SoilVariables.T(i) = init.calcSoilTemp(initT(4), initT(5), delta, domainZ);
+        SoilVariables.h(i) = init.calcSoilMatricHead(initH(4), initH(5), delta, domainZ);
         SoilVariables.IH(j) = 1;
     end
 end

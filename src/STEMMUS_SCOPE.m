@@ -35,7 +35,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txt';
+    CFG = '/home/sarah/temp/ecoextreml/test/input/ZA-Kru_2022-11-30-1528/ZA-Kru_2022-11-30-1528_config.txt';
 end
 disp (['Reading config from ', CFG])
 global InputPath OutputPath InitialConditionPath
@@ -268,10 +268,105 @@ end
 atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 
-%% 13. create output files
+%% 13. create output files and
+%% Initialize Temperature, Matric potential and soil air pressure.
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
-run StartInit;   % Initialize Temperature, Matric potential and soil air pressure.
+[SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties);
 
+%% get variables that are defined global and are used by other scripts
+% MN undefined
+ML = SoilConstants.numberOfElements;
+NL = SoilConstants.totalNumberOfElements;
+NN = SoilConstants.numberOfNodes;
+DeltZ = SoilConstants.DeltZ;
+P_g = SoilConstants.P_g;
+P_gg = SoilConstants.P_gg;
+Thmrlefc = SoilConstants.Thmrlefc;
+Soilairefc = SoilConstants.Soilairefc;
+hm = SoilConstants.hm;
+hd = SoilConstants.hd;
+KfL_T = SoilConstants.KfL_T;
+Theta_II = SoilConstants.Theta_II;
+Theta_I = SoilConstants.Theta_I;
+Theta_UU = SoilConstants.Theta_UU;
+Theta_U = SoilConstants.Theta_U;
+
+T = SoilVariables.T;
+h = SoilVariables.h;
+TT = SoilVariables.TT;
+hh = SoilVariables.hh;
+Ks = SoilVariables.Ks;
+h_frez = SoilVariables.h_frez;
+hh_frez = SoilVariables.hh_frez;
+XWRE = SoilVariables.XWRE;
+POR = SoilVariables.POR;
+IH = SoilVariables.IH;
+IS = SoilVariables.IS;
+Theta_L = SoilVariables.Theta_L;
+Theta_LL = SoilVariables.Theta_LL;
+XK = SoilVariables.XK;
+XWILT = SoilVariables.XWILT;
+KLT_Switch = SoilVariables.KLT_Switch;
+DVT_Switch = SoilVariables.DVT_Switch;
+KaT_Switch = SoilVariables.KaT_Switch;
+ISFT = SoilVariables.ISFT;
+Imped = SoilVariables.Imped;
+XSOC = SoilVariables.XSOC;
+Lamda = SoilVariables.Lamda;
+Phi_s = SoilVariables.Phi_s;
+SWCC = SoilConstants.SWCC;
+XCAP = SoilVariables.XCAP;
+Gama_hh = SoilVariables.Gama_hh;
+Gama_h = SoilVariables.Gama_h;
+SAVEhh = SoilVariables.SAVEhh;
+COR = SoilVariables.COR;
+CORh = SoilVariables.CORh;
+Theta_V = SoilVariables.Theta_V;
+Theta_g = SoilVariables.Theta_g;
+Se = SoilVariables.Se;
+KL_h = SoilVariables.KL_h;
+DTheta_LLh = SoilVariables.DTheta_LLh;
+KfL_h = SoilVariables.KfL_h;
+DTheta_UUh = SoilVariables.DTheta_UUh;
+
+Theta_s = Genuchten.Theta_s;
+Theta_r = Genuchten.Theta_r;
+Alpha = Genuchten.Alpha;
+n = Genuchten.n;
+m = Genuchten.m;
+
+NBCh = BoundaryCondition.NBCh;
+NBCT = BoundaryCondition.NBCT;
+NBChB = BoundaryCondition.NBChB;
+NBCTB = BoundaryCondition.NBCTB;
+BCh = BoundaryCondition.BCh;
+DSTOR = BoundaryCondition.DSTOR;
+DSTOR0 = BoundaryCondition.DSTOR0;
+RS = BoundaryCondition.RS;
+NBChh = BoundaryCondition.NBChh;
+DSTMAX = BoundaryCondition.DSTMAX;
+IRPT1 = BoundaryCondition.IRPT1;
+IRPT2 = BoundaryCondition.IRPT2;
+
+HCAP = ThermalConductivity.HCAP;
+SF = ThermalConductivity.SF;
+TCA = ThermalConductivity.TCA;
+GA1 = ThermalConductivity.GA1;
+GA2 = ThermalConductivity.GA2;
+GB1 = ThermalConductivity.GB1;
+GB2 = ThermalConductivity.GB2;
+HCD = ThermalConductivity.HCD;
+ZETA0 = ThermalConductivity.ZETA0;
+CON0 = ThermalConductivity.CON0;
+PS1 = ThermalConductivity.PS1;
+PS2 = ThermalConductivity.PS2;
+TCON_s = ThermalConductivity.TCON_s;
+TCON_dry = ThermalConductivity.TCON_dry;
+RHo_bulk = ThermalConductivity.RHo_bulk;
+TPS1 = ThermalConductivity.TPS1;
+TPS2 = ThermalConductivity.TPS2;
+FEHCAP = ThermalConductivity.FEHCAP;
+TCON0 = ThermalConductivity.TCON0;
 
 %% 14. Run the model
 disp('The calculations start now')
@@ -713,4 +808,3 @@ save([Output_dir,'output.mat'])
 %if options.makeplots
 %  plot.plots(Output_dir)
 %end
-

@@ -5,7 +5,7 @@ SoilConstants = init.setSoilConstants(SoilProperties.MSOC, SoilProperties.FOC, S
 
 % these extra vars are set in script Constants.m
 global ML NL NN DeltZ Tot_Depth SWCC BtmX BtmT Thmrlefc J Soilairefc P_g P_gg
-global h T TT h_frez
+global h T TT h_frez g
 SoilConstants.SWCC = SWCC; %
 SoilConstants.J = J;
 SoilConstants.totalNumberOfElements = NL;
@@ -23,6 +23,7 @@ SoilConstants.h = h;
 SoilConstants.T = T;
 SoilConstants.TT = TT;
 SoilConstants.h_frez = h_frez;
+SoilConstants.g = g;
 
 Ksh= repelem(18/(3600*24), 6);
 BtmKsh=Ksh(6);
@@ -57,14 +58,14 @@ SoilVariables = init.useSoilHeteroWithInitialFreezing(SoilConstants, SoilVariabl
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % this is defined in script Constants.m
 global ThermCond
-ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, Genuchten, ThermCond);
+ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, Genuchten, ThermCond);
 
 % According to hh value get the Theta_LL
 % run SOIL2;   % For calculating Theta_LL,used in first Balance calculation.
 
 % these are defined in script Constants.m
 global Theta_L Theta_LL Theta_V Theta_g Se KL_h DTheta_LLh
-global KfL_T Theta_II Theta_I Theta_UU Theta_U g T0 TT_CRIT
+global KfL_T Theta_II Theta_I Theta_UU Theta_U T0 TT_CRIT
 global KfL_h DTheta_UUh hThmrl Tr
 global Hystrs KIT RHOI RHOL
 
@@ -151,4 +152,4 @@ SoilVariables.DTheta_UUh = DTheta_UUh;
 global Ta_msr
 
 IGBP_veg_long = SiteProperties.IGBP_veg_long;
-BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)

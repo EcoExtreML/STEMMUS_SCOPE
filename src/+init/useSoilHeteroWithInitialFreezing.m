@@ -3,7 +3,7 @@ function [SoilVariables] = useSoilHeteroWithInitialFreezing(SoilConstants, SoilV
     SoilVariables.ISFT = 0;
 
     for i=1:SoilConstants.numberOfNodes
-        SoilVariables.h_frez = init.updateHfreez(i, SoilVariables);
+        SoilVariables.h_frez = init.updateHfreez(i, SoilVariables, SoilConstants);
 
         SoilVariables.h_frez(i) = SoilVariables.h_frez(i); % TODO check if it is a mistake
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
@@ -12,7 +12,7 @@ function [SoilVariables] = useSoilHeteroWithInitialFreezing(SoilConstants, SoilV
         SoilVariables.SAVEh(i) = SoilVariables.h(i);
         SoilVariables.SAVEhh(i) = SoilVariables.hh(i);
 
-        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGmmah(i, SoilConstants, SoilVariables);
+        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGammah(i, SoilConstants, SoilVariables);
 
         if SoilConstants.Thmrlefc==1
             SoilVariables.TT(i) = SoilVariables.T(i);

@@ -18,5 +18,4 @@ function SoilVariables = setSoilVariables(SoilProperties, SoilConstants, Genucht
     SoilVariables.TT = SoilConstants.TT;
     SoilVariables.h_frez = SoilConstants.h_frez;
 
-
 end

@@ -2,7 +2,7 @@ function [SoilVariables, Genuchten, initH] = runSubroutine1(Dmark, SoilConstants
 
     for i = Dmark:(ML+1) % ML
         j = i - 1;
-        SoilVariables.IS(j) = 3;
+        SoilVariables.IS(j) = 2;
         J=SoilVariables.IS(j);
         SoilVariables.POR(j) = SoilProperties.porosity(J);
         SoilVariables.Ks(j) = SoilProperties.SaturatedK(J);
@@ -17,7 +17,6 @@ function [SoilVariables, Genuchten, initH] = runSubroutine1(Dmark, SoilConstants
         Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, j, J);
         SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, j, J);
         initH(2) = init.updateInith(initX(2), Genuchten, SoilConstants, SoilVariables, j);
-
         delta = ML + 2 - Dmark;
         domainZ = i - Dmark + 1;
         SoilVariables.T(i) = init.calcSoilTemp(initT(2), initT(3), delta, domainZ);

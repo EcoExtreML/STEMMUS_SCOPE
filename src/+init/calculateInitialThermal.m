@@ -1,4 +1,5 @@
 function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, Genuchten, ThermCond)
+    global FEHCAP % TODO this should be checked
     HCAP(1)=0.998*4.182;
     HCAP(2)=0.0003*4.182;
     HCAP(3)=0.46*4.182;

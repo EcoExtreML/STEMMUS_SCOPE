@@ -81,7 +81,7 @@ global TSAVE IRPT1 IRPT2 AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL
 global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhh SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
 global h_frez hh_frez hhh_frez hOLD_frez ISFT L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON NBCTB Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
 global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
-global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A Theta_r Theta_s m n Alpha SAVETheta_UU  Gama_hh Theta_a Gama_h hm hd
+global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A Theta_r Theta_s Theta_f m n Alpha SAVETheta_UU  Gama_hh Theta_a Gama_h hm hd
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
 global Theta_g MU_a DeltZ Alpha_Lg
 global Beta_g KaT_Switch
@@ -331,6 +331,7 @@ DTheta_UUh = SoilVariables.DTheta_UUh;
 
 Theta_s = Genuchten.Theta_s;
 Theta_r = Genuchten.Theta_r;
+Theta_f = Genuchten.Theta_f;
 Alpha = Genuchten.Alpha;
 n = Genuchten.n;
 m = Genuchten.m;
@@ -367,6 +368,9 @@ TPS1 = ThermalConductivity.TPS1;
 TPS2 = ThermalConductivity.TPS2;
 FEHCAP = ThermalConductivity.FEHCAP;
 TCON0 = ThermalConductivity.TCON0;
+
+global XOLD % used in SOIL1
+XOLD = SoilVariables.XOLD;
 
 %% 14. Run the model
 disp('The calculations start now')

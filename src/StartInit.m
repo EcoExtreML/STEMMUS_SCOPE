@@ -95,6 +95,11 @@ SWCC = SoilConstants.SWCC;
 Imped = SoilVariables.Imped;
 XCAP = SoilVariables.XCAP;
 
+global hd hm Gama_hh % these are used in CondL_h.m
+hd = SoilConstants.hd;
+hm = SoilConstants.hm;
+Gama_hh = SoilVariables.Gama_hh;
+
 L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
 T0=273.15; % unit K
 
@@ -104,7 +109,7 @@ global COR CORh  % defined inside SOIL2
 for i=1:SoilConstants.totalNumberOfElements % NL
     Theta_L(i,1)=Theta_LL(i,1);
     Theta_L(i,2)=Theta_LL(i,2);
-    XOLD(i)=(Theta_L(i,1)+Theta_L(i,2))/2; % unused!
+    XOLD(i)=(Theta_L(i,1)+Theta_L(i,2))/2; % used in SOIL1!
     Theta_U(i,1)=Theta_UU(i,1);
     Theta_U(i,2)=Theta_UU(i,2);
     XUOLD(i)=(Theta_U(i,1)+Theta_U(i,2))/2;
@@ -112,6 +117,7 @@ for i=1:SoilConstants.totalNumberOfElements % NL
     Theta_I(i,2)=Theta_II(i,2);
     XIOLD(i)=(Theta_I(i,1)+Theta_I(i,2))/2; % unused!
 end
+SoilVariables.XOLD = XOLD;
 % Using the initial condition to get the initial balance
 % information---Initial heat storage and initial moisture storage.
 SoilVariables.KLT_Switch=1;

@@ -116,6 +116,7 @@ end
 % information---Initial heat storage and initial moisture storage.
 SoilVariables.KLT_Switch=1;
 SoilVariables.DVT_Switch=1;
+SoilVariables.KaT_Switch = [];
 if SoilConstants.Soilairefc
     SoilVariables.KaT_Switch=1;
     % these vars are not used in the main script!
@@ -153,4 +154,4 @@ SoilVariables.DTheta_UUh = DTheta_UUh;
 global Ta_msr
 
 IGBP_veg_long = SiteProperties.IGBP_veg_long;
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long);

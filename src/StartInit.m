@@ -38,8 +38,8 @@ global InitND1 InitND2 InitND3 InitND4 InitND5 BtmT BtmX Btmh InitND6% Preset th
 global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
 global Eqlspace
 
-initX = [InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6];
-initND = [InitND1 InitND2 InitND3 InitND4 InitND5 InitND6];
+initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
+initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
 initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
 
 Genuchten = init.setGenuchtenParameters(SoilProperties);
@@ -83,6 +83,7 @@ POR = SoilVariables.POR;
 h = SoilVariables.h;
 Lamda = SoilVariables.Lamda;
 Phi_s = SoilVariables.Phi_s;
+
 h_frez = SoilVariables.h_frez;
 hh_frez = SoilVariables.hh_frez;
 TT = SoilVariables.TT;

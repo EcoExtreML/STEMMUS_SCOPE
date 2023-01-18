@@ -9,6 +9,7 @@ function SoilVariables = setSoilVariables(SoilProperties, SoilConstants, Genucht
     SoilVariables.VPERS = SoilProperties.FOC.*(1-SoilVariables.POR);
     SoilVariables.VPERSL = SoilConstants.FOSL.*(1-SoilVariables.POR);
     SoilVariables.VPERC = SoilProperties.FOC.*(1-SoilVariables.POR);
+    SoilVariables.VPERSOC = SoilConstants.VPERSOC;
 
     SoilVariables.Ks = SoilProperties.SaturatedK;
 
@@ -16,5 +17,6 @@ function SoilVariables = setSoilVariables(SoilProperties, SoilConstants, Genucht
     SoilVariables.T = SoilConstants.T;
     SoilVariables.TT = SoilConstants.TT;
     SoilVariables.h_frez = SoilConstants.h_frez;
+
 
 end

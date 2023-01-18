@@ -15,11 +15,11 @@ function [SoilVariables, Genuchten, initH, Btmh] = runSubroutine5(SoilConstants,
 
         Genuchten = init.updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, i, J);
         SoilVariables = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, i, J);
-        initH(5) = init.updateInith(initX(5), Genuchten, SoilConstants, SoilVariables, i);
+        initH(6) = init.updateInith(initX(6), Genuchten, SoilConstants, SoilVariables, i);
         Btmh = init.updateBtmh(Genuchten, SoilConstants, SoilVariables, i);
 
-        SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(5) - SoilConstants.BtmT) / ML;
-        SoilVariables.h(i) = Btmh + (i-1) * (initH(5) - Btmh) / ML;
+        SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(6) - SoilConstants.BtmT) / ML;
+        SoilVariables.h(i) = Btmh + (i-1) * (initH(6) - Btmh) / ML;
         SoilVariables.IH(i) = 1;   % Index of wetting history of soil which would be assumed as dry at the first with the value of 1
     end
 end

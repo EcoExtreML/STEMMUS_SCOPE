@@ -1,6 +1,12 @@
 function Genuchten = updateGenuchtenParameters(Genuchten, SoilConstants, SoilVariables, SoilProperties, i, j)
+
     if SoilConstants.SWCC==1   % VG soil water retention model
-            Genuchten = init.setGenuchtenParameters(SoilProperties);
+        Genuchten.Theta_s(i) = SoilProperties.SaturatedMC(j);
+        Genuchten.Theta_r(i) = SoilProperties.ResidualMC(j);
+        Genuchten.Theta_f(i) = SoilProperties.fieldMC(j);
+        Genuchten.Alpha(i) = SoilProperties.Coefficient_Alpha(j);
+        Genuchten.n(i) = SoilProperties.Coefficient_n(j);
+        Genuchten.m(i) = 1-1./Genuchten.n(i);
     else
         Genuchten.Theta_s(i) = Theta_s_ch(j); % TODO check undefined Theta_s_ch
         Genuchten.Theta_r(i) = SoilProperties.ResidualMC(j);

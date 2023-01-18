@@ -396,7 +396,7 @@ for i = 1:1:Dur_tot
      %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     L_f=0; %latent heat of freezing fusion J Kg-1
-    T0=273.15; TT_CRIT(MN)=T0;% unit K
+    T0=273.15; TT_CRIT(NN)=T0;% unit K
     if IRPT1==0 && IRPT2==0 && ISFT==0
          for MN=1:NN
             hOLD_frez(MN)=h_frez(MN);

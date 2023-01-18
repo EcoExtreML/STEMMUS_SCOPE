@@ -1,5 +1,7 @@
 function [SoilVariables, Genuchten, initH, Btmh] = useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, initX, initND, initT, Eqlspace)
-
+    % TODO check
+    SoilVariables.Phi_s = [];
+    SoilVariables.Lamda = [];
     ImpedF = repelem(3, 6);
 
     for i=1:6

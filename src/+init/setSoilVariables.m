@@ -6,9 +6,9 @@ function SoilVariables = setSoilVariables(SoilProperties, SoilConstants, Genucht
     SoilVariables.XCAP = equations.van_genuchten(Genuchten.Theta_s, Genuchten.Theta_r, Genuchten.Alpha, -336, Genuchten.n, Genuchten.m);
 
     SoilVariables.POR = SoilProperties.porosity;
-    SoilVariables.VPERS = SoilProperties.FOC.*(1-SoilVariables.POR);
-    SoilVariables.VPERSL = SoilConstants.FOSL.*(1-SoilVariables.POR);
-    SoilVariables.VPERC = SoilProperties.FOC.*(1-SoilVariables.POR);
+    SoilVariables.VPERS = SoilProperties.FOS'.*(1-SoilVariables.POR);
+    SoilVariables.VPERSL = SoilConstants.FOSL'.*(1-SoilVariables.POR);
+    SoilVariables.VPERC = SoilProperties.FOC'.*(1-SoilVariables.POR);
     SoilVariables.VPERSOC = SoilConstants.VPERSOC;
 
     SoilVariables.Ks = SoilProperties.SaturatedK;

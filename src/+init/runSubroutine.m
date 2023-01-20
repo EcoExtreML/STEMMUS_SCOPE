@@ -1,4 +1,8 @@
-function [SoilVariables, Genuchten, initH] = runSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, initT, initH, initX, ImpedF, Dmark, ML)
+function [SoilVariables, Genuchten, initH] = runSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, InitialValues, ImpedF, Dmark, ML)
+
+    initX = InitialValues.initX;
+    initT = InitialValues.initT;
+    initH = InitialValues.initH;
 
     switch subRoutine
         case 'subRoutine5'

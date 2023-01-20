@@ -1,6 +1,7 @@
 function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties)
 
 %%% SoilConstants for init
+% TODO this can be moved ouside StartInit function, see issue 96
 SoilConstants = init.setSoilConstants(SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
 
 % these extra vars are set in script Constants.m
@@ -38,13 +39,14 @@ global InitND1 InitND2 InitND3 InitND4 InitND5 BtmT BtmX Btmh InitND6% Preset th
 global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
 global Eqlspace
 
-initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
-initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
-initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
+
+InitialValues.initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
+InitialValues.initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
+InitialValues.initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
 
 Genuchten = init.setGenuchtenParameters(SoilProperties);
 SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
-[SoilVariables, Genuchten, initH, Btmh] = init.useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, initX, initND, initT, Eqlspace);
+[SoilVariables, Genuchten] = init.useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, InitialValues, Eqlspace);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
@@ -69,7 +71,7 @@ global KfL_T Theta_II Theta_I Theta_UU Theta_U T0 TT_CRIT
 global KfL_h DTheta_UUh hThmrl Tr
 global Hystrs KIT RHOI RHOL
 
-% after refatoring SOIL2, these lines can be removed!
+% after refatoring SOIL2, these lines can be removed later, see issue 95!
 NN = SoilConstants.numberOfNodes;
 NL = SoilConstants.totalNumberOfElements;
 
@@ -103,7 +105,7 @@ Gama_hh = SoilVariables.Gama_hh;
 L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
 T0=273.15; % unit K
 
-global COR CORh  % defined inside SOIL2
+global COR CORh  % TODO defined inside SOIL2, see issue 95
 [hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
 
 for i=1:SoilConstants.totalNumberOfElements % NL
@@ -131,7 +133,7 @@ if SoilConstants.Soilairefc
     KLa_Switch=1;
 end
 
-% after refatoring SOIL2, these two lines can be removed!
+% TODO after refatoring SOIL2, these two lines can be removed! see issue 95!
 SoilConstants.KfL_T = KfL_T;
 SoilConstants.Theta_II = Theta_II;
 SoilConstants.Theta_I = Theta_I;
@@ -156,7 +158,7 @@ SoilVariables.DTheta_UUh = DTheta_UUh;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% The boundary condition information settings.%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this is defined in Constants.m
+% TODO this is defined in Constants.m, see issue 96!
 global Ta_msr
 
 IGBP_veg_long = SiteProperties.IGBP_veg_long;

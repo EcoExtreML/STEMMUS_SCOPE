@@ -1,5 +1,11 @@
 function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
 
+    NBCP = [];
+    BCTB = [];
+    BCPB = [];
+    BCT = [];
+    BCP = [];
+
     IRPT1 = 0;
     IRPT2 = 0;
 

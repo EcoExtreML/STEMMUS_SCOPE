@@ -1,4 +1,4 @@
-function [SoilVariables, Genuchten] = updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, i, j)
+function [SoilVariables, Genuchten] = updateSoilVariables(SoilVariables, Genuchten, SoilConstants, SoilProperties, i, j)
 
     SoilVariables.POR(i) = SoilProperties.porosity(j);
     SoilVariables.Ks(i) = SoilProperties.SaturatedK(j);

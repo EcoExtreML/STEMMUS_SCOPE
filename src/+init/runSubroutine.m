@@ -51,7 +51,7 @@ function [SoilVariables, Genuchten, initH] = runSubroutine(subRoutine, SoilConst
         end
 
         J = SoilVariables.IS(i);
-        [SoilVariables, Genuchten] = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, j, J);
+        [SoilVariables, Genuchten] = init.updateSoilVariables(SoilVariables, Genuchten, SoilConstants, SoilProperties, j, J);
         SoilVariables.Imped(i) = ImpedF(J);
 
         initH(indexOfInit) = init.updateInitH(initX(indexOfInit), Genuchten, SoilConstants, SoilVariables, j);

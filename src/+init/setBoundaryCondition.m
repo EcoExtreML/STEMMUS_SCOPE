@@ -1,5 +1,4 @@
 function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
-    global NBCP BChB BCTB BCPB BCT BCP BtmPg% unused! in main
 
     IRPT1 = 0;
     IRPT2 = 0;
@@ -70,6 +69,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     RS = 0; % Rate of surface runoff;
     DSTMAX = 0; % Depression storage capacity;
 
+    % used in main script
     BoundaryCondition.NBCh = NBCh;
     BoundaryCondition.NBCT = NBCT;
     BoundaryCondition.NBChB = NBChB;
@@ -82,5 +82,14 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     BoundaryCondition.DSTMAX = DSTMAX;
     BoundaryCondition.IRPT1 = IRPT1;
     BoundaryCondition.IRPT2 = IRPT2;
+
+    % used by other scripts
+    BoundaryCondition.NBCP = NBCP;
+    BoundaryCondition.BChB = BChB;
+    BoundaryCondition.BCTB = BCTB;
+    BoundaryCondition.BCPB = BCPB;
+    BoundaryCondition.BCT = BCT;
+    BoundaryCondition.BCP = BCP;
+    BoundaryCondition.BtmPg = BtmPg;
 
 end

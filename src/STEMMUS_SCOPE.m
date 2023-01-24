@@ -35,7 +35,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txt';
+    CFG = '/home/sarah/temp/ecoextreml/test/input/ZA-Kru_2022-11-30-1528/ZA-Kru_2022-11-30-1528_config.txt';
 end
 disp (['Reading config from ', CFG])
 global InputPath OutputPath InitialConditionPath
@@ -348,6 +348,16 @@ NBChh = BoundaryCondition.NBChh;
 DSTMAX = BoundaryCondition.DSTMAX;
 IRPT1 = BoundaryCondition.IRPT1;
 IRPT2 = BoundaryCondition.IRPT2;
+
+% unused in STEMMUS_SCOPE.m, but used in other scripts
+global NBCP BChB BCTB BCPB BCT BCP BtmPg
+NBCP = BoundaryCondition.NBCP;
+BChB = BoundaryCondition.BChB;
+BCTB = BoundaryCondition.BCTB;
+BCPB = BoundaryCondition.BCPB;
+BCT = BoundaryCondition.BCT;
+BCP = BoundaryCondition.BCP;
+BtmPg = BoundaryCondition.BtmPg;
 
 HCAP = ThermalConductivity.HCAP;
 SF = ThermalConductivity.SF;

@@ -1,5 +1,5 @@
 function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, Genuchten, ThermCond)
-    FEHCAP = []; % TODO this should be checked
+    FEHCAP = []; % see issue 139
 
     HCAP(1)=0.998*4.182;
     HCAP(2)=0.0003*4.182;
@@ -7,11 +7,6 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     HCAP(4)=0.46*4.182;
     HCAP(5)=0.6*4.182;
     HCAP(6)=0.45*4.182;
-    % HCAP(3)=2.66;
-    % HCAP(4)=2.66;
-    % HCAP(5)=1.3; % ZENG origial HCAP(3)=0.46*4.182;
-    % HCAP(4)=0.46*4.182;
-    % HCAP(5)=0.6*4.182; % J cm^-3 Cels^-1 / g.cm-3---> J g-1 Cels-1;
 
     TCON(1)=1.37e-3*4.182;
     TCON(2)=6e-5*4.182;
@@ -19,10 +14,6 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     TCON(4)=7e-3*4.182;
     TCON(5)=6e-4*4.182;
     TCON(6)=5.2e-3*4.182;
-    % TCON(3)=8.8e-2;
-    % TCON(4)=2.9e-2;TCON(5)=2.5e-3;% ZENG origial TCON(3)=2.1e-2*4.182;
-    % TCON(4)=7e-3*4.182;
-    % TCON(5)=6e-4*4.182; % J cm^-1 s^-1 Cels^-1;
 
     SF(1)=0;
     SF(2)=0;
@@ -33,13 +24,6 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     TCA=6e-5*4.182;
     GA1=0.035;
     GA2=0.013;
-    % VPER(1)=0.25;
-    % VPER(2)=0.23;
-    % VPER(3)=0.01;% for sand VPER(1)=0.65;
-    % VPER(2)=0;VPER(3)=0; % For Silt Loam; % VPER(1)=0.16;
-    % VPER(2)=0.33;VPER(3)=0.05;
-    % VPER(1)=0.41;
-    % VPER(2)=0.06;
 
     % Sum over all phases of dry porous media to find the dry heat capacity
     for j=1:SoilConstants.totalNumberOfElements % NL

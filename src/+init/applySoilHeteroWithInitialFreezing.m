@@ -12,7 +12,7 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
         SoilVariables.SAVEh(i) = SoilVariables.h(i);
         SoilVariables.SAVEhh(i) = SoilVariables.hh(i);
 
-        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGammaH(i, SoilConstants, SoilVariables);
+        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGamaH(i, SoilConstants, SoilVariables);
 
         if SoilConstants.Thmrlefc==1
             SoilVariables.TT(i) = SoilVariables.T(i);

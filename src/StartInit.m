@@ -53,7 +53,7 @@ SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
 %%%%%% Perform initial freezing temperature for each soil type.%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-SoilVariables = init.useSoilHeteroWithInitialFreezing(SoilConstants, SoilVariables);
+SoilVariables = init.applySoilHeteroWithInitialFreezing(SoilConstants, SoilVariables);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Perform initial thermal calculations for each soil type.%%%%%%%%%

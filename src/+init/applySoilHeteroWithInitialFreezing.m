@@ -1,4 +1,4 @@
-function [SoilVariables] = useSoilHeteroWithInitialFreezing(SoilConstants, SoilVariables)
+function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, SoilVariables)
 
     SoilVariables.ISFT = 0;
 

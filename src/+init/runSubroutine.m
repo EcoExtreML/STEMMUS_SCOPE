@@ -54,7 +54,7 @@ function [SoilVariables, Genuchten, initH] = runSubroutine(subRoutine, SoilConst
         [SoilVariables, Genuchten] = init.updateSoilVariables(Genuchten, SoilVariables, SoilConstants, SoilProperties, j, J);
         SoilVariables.Imped(i) = ImpedF(J);
 
-        initH(indexOfInit) = init.updateInith(initX(indexOfInit), Genuchten, SoilConstants, SoilVariables, j);
+        initH(indexOfInit) = init.updateInitH(initX(indexOfInit), Genuchten, SoilConstants, SoilVariables, j);
 
         if subRoutine=='subRoutine5'
             Btmh = init.updateBtmh(Genuchten, SoilConstants, SoilVariables, i);

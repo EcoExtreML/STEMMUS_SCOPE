@@ -1,4 +1,4 @@
-function [Gama_h, Gama_hh] = updateGammah(i, SoilConstants, SoilVariables)
+function [Gama_h, Gama_hh] = updateGammaH(i, SoilConstants, SoilVariables)
 
     hd = SoilConstants.hd;
     hm = SoilConstants.hm;

@@ -46,7 +46,7 @@ InitialValues.initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
 
 Genuchten = init.setGenuchtenParameters(SoilProperties);
 SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
-[SoilVariables, Genuchten] = init.useSoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, InitialValues, Eqlspace);
+[SoilVariables, Genuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, InitialValues, Eqlspace);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%

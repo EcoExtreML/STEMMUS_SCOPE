@@ -1,11 +1,11 @@
 function h_frez = updateHfreez(i, SoilVariables, SoilConstants)
-    global Phi_s % this is due to a bug
     L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
     T0=273.15; % unit K
 
     T = SoilVariables.T;
     h_frez = SoilVariables.h_frez;
     h = SoilVariables.h;
+    Phi_s = SoilVariables.Phi_s;
 
     SWCC = SoilConstants.SWCC;
 

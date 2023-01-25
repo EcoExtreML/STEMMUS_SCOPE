@@ -35,7 +35,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '/home/sarah/temp/ecoextreml/test/input/ZA-Kru_2022-11-30-1528/ZA-Kru_2022-11-30-1528_config.txt';
+    CFG = '../config_file_crib.txt';
 end
 disp (['Reading config from ', CFG])
 global InputPath OutputPath InitialConditionPath
@@ -73,36 +73,22 @@ Ks0 = SoilProperties.Ks0;
 
 %%
 run Constants %input soil parameters
-global i tS KT Delt_t TEND TIME MN NN NL ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
+global i tS KT Delt_t TEND TIME MN NN ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
 global KIT NIT TimeStep Processing
-global SUMTIME hhh TTT P_ggg Theta_LLL DSTOR Thmrlefc CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
-global NBCh AVAIL Evap DSTOR0 EXCESS QMT RS BCh hN hSAVE NBChh DSTMAX Soilairefc Trap sumTRAP_dir sumEVAP_dir
-global TSAVE IRPT1 IRPT2 AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CTT_PH CTT_LT CTT_g CTT_Lg CCTT_PH CCTT_LT CCTT_g CCTT_Lg C_unsat c_unsat
-global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhh SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
-global h_frez hh_frez hhh_frez hOLD_frez ISFT L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON NBCTB Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
+global SUMTIME hhh TTT P_ggg Theta_LLL Thmrlefc CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
+global AVAIL Evap EXCESS QMT hN hSAVE Soilairefc Trap sumTRAP_dir sumEVAP_dir
+global TSAVE AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CTT_PH CTT_LT CTT_g CTT_Lg CCTT_PH CCTT_LT CCTT_g CCTT_Lg C_unsat c_unsat
+global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
+global h_frez hhh_frez hOLD_frez L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
 global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
-global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A Theta_r Theta_s Theta_f m n Alpha SAVETheta_UU  Gama_hh Theta_a Gama_h hm hd
+global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A SAVETheta_UU Theta_a
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
-global Theta_g MU_a DeltZ Alpha_Lg
-global Beta_g KaT_Switch
-global D_V D_A fc Eta nD POR
-global ThmrlCondCap ZETA XK DVT_Switch
-global MU_W Ks RHOL
-global Lambda1 Lambda2 Lambda3 RHO_bulk
-global RHODA RHOV c_a c_V c_L
-global ETCON EHCAP
-global Xaa XaT Xah RDA Rv KL_T
-global DRHOVT DRHOVh DRHODAt DRHODAz
-global hThmrl Tr COR IS Hystrs XWRE
-global Theta_V IH CORh XCAP Phi_s RHOI Lamda
-global W WW D_Ta SSUR
-global W_Chg SWCC Imped Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
-global KLT_Switch xERR hERR TERR NBChB NBCT uERR
-global L TCON_dry TPS1 TPS2 TCON0 XSOC TCON_s
-global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 XWILT FEHCAP QMTT QMBB Evapo trap RnSOIL PrecipO
-global constants
-global RWU EVAP theta_s0 Ks0
-global HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
+global Theta_g MU_a DeltZ Alpha_Lg Beta_g D_V D_A fc Eta nD ThmrlCondCap ZETA
+global MU_W Ks RHOL Lambda1 Lambda2 Lambda3 RHODA RHOV c_a c_V c_L ETCON EHCAP
+global Xaa XaT Xah RDA Rv KL_T DRHOVT DRHOVh DRHODAt DRHODAz hThmrl Tr Hystrs
+global Theta_V RHOI W WW D_Ta SSUR W_Chg SWCC Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
+global xERR hERR TERR uERR L QMTT QMBB Evapo trap RnSOIL PrecipO constants
+global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
 %% 1. define constants
 [constants] = io.define_constants();
@@ -271,39 +257,86 @@ atmo.M      = helpers.aggreg(atmfile,spectral.SCOPEspec);
 %% 13. create output files and
 %% Initialize Temperature, Matric potential and soil air pressure.
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
-[SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties);
+
+% these extra vars are set in script Constants.m
+% used in init.applySoilHeteroEffect in StartInit.m
+global Tot_Depth BtmX BtmT J Eqlspace
+global InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6
+global InitND1 InitND2 InitND3 InitND4 InitND5 InitND6
+global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
+
+SoilConstants.SWCC = SWCC;
+SoilConstants.J = J;
+SoilConstants.totalNumberOfElements = NL;
+SoilConstants.numberOfElements = ML;
+SoilConstants.DeltZ = DeltZ;
+SoilConstants.numberOfNodes = NN;
+SoilConstants.BtmX = BtmX;
+SoilConstants.BtmT = BtmT;
+SoilConstants.Tot_Depth = Tot_Depth;
+SoilConstants.Thmrlefc = Thmrlefc;
+SoilConstants.Soilairefc = Soilairefc;
+SoilConstants.P_g = P_g;
+SoilConstants.P_gg = P_gg;
+SoilConstants.h = h;
+SoilConstants.T = T;
+SoilConstants.TT = TT;
+SoilConstants.h_frez = h_frez;
+SoilConstants.g = g;
+SoilConstants.Eqlspace = Eqlspace;
+SoilConstants.ThermCond = ThermCond;
+
+SoilConstants.InitialValues.initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
+SoilConstants.InitialValues.initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
+SoilConstants.InitialValues.initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
+
+% these are defined in script Constants.m
+% these are used in SOIL2 inside StartInit.m
+SoilConstants.Theta_L = Theta_L;
+SoilConstants.Theta_LL = Theta_LL;
+SoilConstants.Theta_V = Theta_V;
+SoilConstants.Theta_g = Theta_g;
+SoilConstants.Se = Se;
+SoilConstants.KL_h = KL_h;
+SoilConstants.DTheta_LLh = DTheta_LLh;
+SoilConstants.KfL_T = KfL_T;
+SoilConstants.Theta_II = Theta_II;
+SoilConstants.Theta_I = Theta_I;
+SoilConstants.Theta_UU = Theta_UU;
+SoilConstants.Theta_U = Theta_U;
+SoilConstants.T0 = T0;
+SoilConstants.TT_CRIT = TT_CRIT;
+SoilConstants.KfL_h = KfL_h;
+SoilConstants.DTheta_UUh = DTheta_UUh;
+SoilConstants.hThmrl = hThmrl;
+SoilConstants.Tr = Tr;
+SoilConstants.Hystrs = Hystrs;
+SoilConstants.KIT = KIT;
+SoilConstants.RHOI = RHOI;
+SoilConstants.RHOL = RHOL;
+
+% this is defined in Constants.m, see issue 96!
+% used in init.setBoundaryCondition
+SoilConstants.Ta_msr = Ta_msr;
+
+[SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
-% MN undefined
-ML = SoilConstants.numberOfElements;
-NL = SoilConstants.totalNumberOfElements;
-NN = SoilConstants.numberOfNodes;
-DeltZ = SoilConstants.DeltZ;
-P_g = SoilConstants.P_g;
-P_gg = SoilConstants.P_gg;
-Thmrlefc = SoilConstants.Thmrlefc;
-Soilairefc = SoilConstants.Soilairefc;
+global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
+global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
+global Theta_s Theta_r Theta_f m n Alpha
+global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
+global NBCP BChB BCTB BCPB BCT BCP BtmPg
+global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
+global TCON_dry TPS1 TPS2 TCON0 TCON_s RHO_bulk XOLD
+
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
-KfL_T = SoilConstants.KfL_T;
-Theta_II = SoilConstants.Theta_II;
-Theta_I = SoilConstants.Theta_I;
-Theta_UU = SoilConstants.Theta_UU;
-Theta_U = SoilConstants.Theta_U;
-
-T = SoilVariables.T;
-h = SoilVariables.h;
-TT = SoilVariables.TT;
-hh = SoilVariables.hh;
-Ks = SoilVariables.Ks;
-h_frez = SoilVariables.h_frez;
 hh_frez = SoilVariables.hh_frez;
 XWRE = SoilVariables.XWRE;
 POR = SoilVariables.POR;
 IH = SoilVariables.IH;
 IS = SoilVariables.IS;
-Theta_L = SoilVariables.Theta_L;
-Theta_LL = SoilVariables.Theta_LL;
 XK = SoilVariables.XK;
 XWILT = SoilVariables.XWILT;
 KLT_Switch = SoilVariables.KLT_Switch;
@@ -314,28 +347,18 @@ Imped = SoilVariables.Imped;
 XSOC = SoilVariables.XSOC;
 Lamda = SoilVariables.Lamda;
 Phi_s = SoilVariables.Phi_s;
-SWCC = SoilConstants.SWCC;
 XCAP = SoilVariables.XCAP;
 Gama_hh = SoilVariables.Gama_hh;
 Gama_h = SoilVariables.Gama_h;
 SAVEhh = SoilVariables.SAVEhh;
 COR = SoilVariables.COR;
 CORh = SoilVariables.CORh;
-Theta_V = SoilVariables.Theta_V;
-Theta_g = SoilVariables.Theta_g;
-Se = SoilVariables.Se;
-KL_h = SoilVariables.KL_h;
-DTheta_LLh = SoilVariables.DTheta_LLh;
-KfL_h = SoilVariables.KfL_h;
-DTheta_UUh = SoilVariables.DTheta_UUh;
-
 Theta_s = Genuchten.Theta_s;
 Theta_r = Genuchten.Theta_r;
 Theta_f = Genuchten.Theta_f;
 Alpha = Genuchten.Alpha;
 n = Genuchten.n;
 m = Genuchten.m;
-
 NBCh = BoundaryCondition.NBCh;
 NBCT = BoundaryCondition.NBCT;
 NBChB = BoundaryCondition.NBChB;
@@ -348,9 +371,6 @@ NBChh = BoundaryCondition.NBChh;
 DSTMAX = BoundaryCondition.DSTMAX;
 IRPT1 = BoundaryCondition.IRPT1;
 IRPT2 = BoundaryCondition.IRPT2;
-
-% unused in STEMMUS_SCOPE.m, but used in other scripts
-global NBCP BChB BCTB BCPB BCT BCP BtmPg
 NBCP = BoundaryCondition.NBCP;
 BChB = BoundaryCondition.BChB;
 BCTB = BoundaryCondition.BCTB;
@@ -358,7 +378,6 @@ BCPB = BoundaryCondition.BCPB;
 BCT = BoundaryCondition.BCT;
 BCP = BoundaryCondition.BCP;
 BtmPg = BoundaryCondition.BtmPg;
-
 HCAP = ThermalConductivity.HCAP;
 SF = ThermalConductivity.SF;
 TCA = ThermalConductivity.TCA;
@@ -378,9 +397,30 @@ TPS1 = ThermalConductivity.TPS1;
 TPS2 = ThermalConductivity.TPS2;
 FEHCAP = ThermalConductivity.FEHCAP;
 TCON0 = ThermalConductivity.TCON0;
+XOLD = SoilVariables.XOLD; % used in SOIL1
 
-global XOLD % used in SOIL1
-XOLD = SoilVariables.XOLD;
+%% these vars are both input and output of StartInit
+KfL_T = SoilConstants.KfL_T;
+Theta_II = SoilConstants.Theta_II;
+Theta_I = SoilConstants.Theta_I;
+Theta_UU = SoilConstants.Theta_UU;
+Theta_U = SoilConstants.Theta_U;
+T = SoilVariables.T;
+h = SoilVariables.h;
+TT = SoilVariables.TT;
+hh = SoilVariables.hh;
+Ks = SoilVariables.Ks;
+h_frez = SoilVariables.h_frez;
+Theta_L = SoilVariables.Theta_L;
+Theta_LL = SoilVariables.Theta_LL;
+SWCC = SoilConstants.SWCC;
+Theta_V = SoilVariables.Theta_V;
+Theta_g = SoilVariables.Theta_g;
+Se = SoilVariables.Se;
+KL_h = SoilVariables.KL_h;
+DTheta_LLh = SoilVariables.DTheta_LLh;
+KfL_h = SoilVariables.KfL_h;
+DTheta_UUh = SoilVariables.DTheta_UUh;
 
 %% 14. Run the model
 disp('The calculations start now')

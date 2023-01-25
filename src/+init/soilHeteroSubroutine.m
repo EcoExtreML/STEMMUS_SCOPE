@@ -1,11 +1,11 @@
-function [SoilVariables, Genuchten, initH] = soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, InitialValues, ImpedF, Dmark, ML)
+function [SoilVariables, Genuchten, initH] = soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, ImpedF, Dmark, ML)
     %{
         considering soil heterogeneity effect
     %}
 
-    initX = InitialValues.initX;
-    initT = InitialValues.initT;
-    initH = InitialValues.initH;
+    initX = SoilConstants.InitialValues.initX;
+    initT = SoilConstants.InitialValues.initT;
+    initH = SoilConstants.InitialValues.initH;
 
     switch subRoutine
         case 0

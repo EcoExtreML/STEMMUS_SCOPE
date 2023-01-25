@@ -1,4 +1,4 @@
-function SoilConstants = setSoilConstants(MSOC, FOC, FOS)
+function SoilConstants = setSoilConstants(SoilConstants, MSOC, FOC, FOS)
 
     SoilConstants.hd = -1e7;
     SoilConstants.hm = -9899;

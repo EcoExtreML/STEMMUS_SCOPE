@@ -1,4 +1,4 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long)
 
     NBCP = [];
     BCTB = [];
@@ -8,6 +8,8 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
 
     IRPT1 = 0;
     IRPT2 = 0;
+
+    Ta_msr = SoilConstants.Ta_msr;
 
     % NBCh: Moisture Surface B.C.:
     % 1 --> Specified matric head(BCh);

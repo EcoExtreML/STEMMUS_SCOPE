@@ -1,30 +1,8 @@
-function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilConstants, SoilProperties, SiteProperties)
 
 %%% SoilConstants for init
 % TODO this can be moved ouside StartInit function, see issue 96
-SoilConstants = init.setSoilConstants(SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
-
-% these extra vars are set in script Constants.m
-global ML NL NN DeltZ Tot_Depth SWCC BtmX BtmT Thmrlefc J Soilairefc P_g P_gg
-global h T TT h_frez g
-SoilConstants.SWCC = SWCC; %
-SoilConstants.J = J;
-SoilConstants.totalNumberOfElements = NL;
-SoilConstants.numberOfElements = ML;
-SoilConstants.DeltZ = DeltZ;
-SoilConstants.numberOfNodes = NN;
-SoilConstants.BtmX = BtmX;
-SoilConstants.BtmT = BtmT;
-SoilConstants.Tot_Depth = Tot_Depth;
-SoilConstants.Thmrlefc = Thmrlefc;
-SoilConstants.Soilairefc = Soilairefc;
-SoilConstants.P_g = P_g;
-SoilConstants.P_gg = P_gg;
-SoilConstants.h = h;
-SoilConstants.T = T;
-SoilConstants.TT = TT;
-SoilConstants.h_frez = h_frez;
-SoilConstants.g = g;
+SoilConstants = init.setSoilConstants(SoilConstants, SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
 
 Ksh= repelem(18/(3600*24), 6);
 BtmKsh=Ksh(6);
@@ -33,20 +11,9 @@ Ksh0=Ksh(1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% these are defined in script Constants.m
-global InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6
-global InitND1 InitND2 InitND3 InitND4 InitND5 BtmT BtmX Btmh InitND6% Preset the measured depth to get the initial T, h by interpolation method.
-global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
-global Eqlspace
-
-
-InitialValues.initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
-InitialValues.initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
-InitialValues.initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
-
 Genuchten = init.setGenuchtenParameters(SoilProperties);
 SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
-[SoilVariables, Genuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten, InitialValues, Eqlspace);
+[SoilVariables, Genuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
@@ -58,18 +25,36 @@ SoilVariables = init.applySoilHeteroWithInitialFreezing(SoilConstants, SoilVaria
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Perform initial thermal calculations for each soil type.%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this is defined in script Constants.m
-global ThermCond
-ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, Genuchten, ThermCond);
+ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, Genuchten);
 
 % According to hh value get the Theta_LL
 % run SOIL2;   % For calculating Theta_LL,used in first Balance calculation.
 
 % these are defined in script Constants.m
-global Theta_L Theta_LL Theta_V Theta_g Se KL_h DTheta_LLh
-global KfL_T Theta_II Theta_I Theta_UU Theta_U T0 TT_CRIT
-global KfL_h DTheta_UUh hThmrl Tr
-global Hystrs KIT RHOI RHOL
+Theta_L = SoilConstants.Theta_L;
+Theta_LL = SoilConstants.Theta_LL;
+Theta_V = SoilConstants.Theta_V;
+Theta_g = SoilConstants.Theta_g;
+Se = SoilConstants.Se;
+KL_h = SoilConstants.KL_h;
+DTheta_LLh = SoilConstants.DTheta_LLh;
+KfL_T = SoilConstants.KfL_T;
+Theta_II = SoilConstants.Theta_II;
+Theta_I = SoilConstants.Theta_I;
+Theta_UU = SoilConstants.Theta_UU;
+Theta_U = SoilConstants.Theta_U;
+T0 = SoilConstants.T0;
+TT_CRIT = SoilConstants.TT_CRIT;
+KfL_h = SoilConstants.KfL_h;
+DTheta_UUh = SoilConstants.DTheta_UUh;
+hThmrl = SoilConstants.hThmrl;
+Tr = SoilConstants.Tr;
+Hystrs = SoilConstants.Hystrs;
+KIT = SoilConstants.KIT;
+RHOI = SoilConstants.RHOI;
+RHOL = SoilConstants.RHOL;
+Thmrlefc = SoilConstants.Thmrlefc;
+g = SoilConstants.g;
 
 % after refatoring SOIL2, these lines can be removed later, see issue 95!
 NN = SoilConstants.numberOfNodes;
@@ -105,7 +90,9 @@ Gama_hh = SoilVariables.Gama_hh;
 L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
 T0=273.15; % unit K
 
-global COR CORh  % TODO defined inside SOIL2, see issue 95
+% these two are defined inside SOIL2, see issue 95
+COR = [];
+CORh = [];
 [hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
 
 for i=1:SoilConstants.totalNumberOfElements % NL
@@ -158,8 +145,5 @@ SoilVariables.DTheta_UUh = DTheta_UUh;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% The boundary condition information settings.%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO this is defined in Constants.m, see issue 96!
-global Ta_msr
-
 IGBP_veg_long = SiteProperties.IGBP_veg_long;
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, Ta_msr, IGBP_veg_long);
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);

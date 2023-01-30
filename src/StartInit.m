@@ -82,18 +82,13 @@ SWCC = SoilConstants.SWCC;
 Imped = SoilVariables.Imped;
 XCAP = SoilVariables.XCAP;
 
-global hd hm Gama_hh % these are used in CondL_h.m
-hd = SoilConstants.hd;
-hm = SoilConstants.hm;
-Gama_hh = SoilVariables.Gama_hh;
-
 L_f=3.34*1e5; %latent heat of freezing fusion J Kg-1
 T0=273.15; % unit K
 
 % these two are defined inside SOIL2, see issue 95
 COR = [];
 CORh = [];
-[hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
+[hh,COR,CORh,Theta_V,Theta_g,Se,KL_h,Theta_LL,DTheta_LLh,KfL_h,KfL_T,hh_frez,Theta_UU,DTheta_UUh,Theta_II]=SOIL2(SoilConstants, SoilVariables, hh,COR,hThmrl,NN,NL,TT,Tr,Hystrs,XWRE,Theta_s,IH,KIT,Theta_r,Alpha,n,m,Ks,Theta_L,h,Thmrlefc,POR,Theta_II,CORh,hh_frez,h_frez,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se);
 
 for i=1:SoilConstants.totalNumberOfElements % NL
     Theta_L(i,1)=Theta_LL(i,1);

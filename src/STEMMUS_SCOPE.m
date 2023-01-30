@@ -54,18 +54,9 @@ sitename             = SiteProperties.sitename;
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;
 
-global SaturatedK SaturatedMC ResidualMC Coefficient_n Coefficient_Alpha
-global porosity FOC FOS MSOC Coef_Lamda fieldMC fmax theta_s0 Ks0
-SaturatedK = SoilProperties.SaturatedK;
+global SaturatedMC ResidualMC fieldMC fmax theta_s0 Ks0
 SaturatedMC = SoilProperties.SaturatedMC;
 ResidualMC = SoilProperties.ResidualMC;
-Coefficient_n = SoilProperties.Coefficient_n;
-Coefficient_Alpha = SoilProperties.Coefficient_Alpha;
-porosity = SoilProperties.porosity;
-FOC = SoilProperties.FOC;
-FOS = SoilProperties.FOS;
-MSOC = SoilProperties.MSOC;
-Coef_Lamda = SoilProperties.Coef_Lamda;
 fieldMC = SoilProperties.fieldMC;
 fmax = SoilProperties.fmax;
 theta_s0 = SoilProperties.theta_s0;
@@ -403,7 +394,6 @@ KfL_h = SoilVariables.KfL_h;
 DTheta_UUh = SoilVariables.DTheta_UUh;
 
 %% The boundary condition information settings
-IGBP_veg_long = SiteProperties.IGBP_veg_long;
 BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);
 
 %% get global vars

@@ -1,4 +1,4 @@
-function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilConstants, SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
 
 %%% SoilConstants for init
 % TODO this can be moved ouside StartInit function, see issue 96
@@ -136,9 +136,3 @@ SoilVariables.KfL_T = KfL_T;
 SoilVariables.Theta_V = Theta_V;
 SoilVariables.Theta_g = Theta_g;
 SoilVariables.DTheta_UUh = DTheta_UUh;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%% The boundary condition information settings.%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IGBP_veg_long = SiteProperties.IGBP_veg_long;
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);

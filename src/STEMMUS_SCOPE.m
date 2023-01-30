@@ -319,14 +319,12 @@ SoilConstants.RHOL = RHOL;
 % used in init.setBoundaryCondition
 SoilConstants.Ta_msr = Ta_msr;
 
-[SoilConstants, SoilVariables, Genuchten, ThermalConductivity, BoundaryCondition] = StartInit(SoilConstants, SoilProperties, SiteProperties);
+[SoilConstants, SoilVariables, Genuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
 global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
 global Theta_s Theta_r Theta_f m n Alpha
-global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
-global NBCP BChB BCTB BCPB BCT BCP BtmPg
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
 global TCON_dry TPS1 TPS2 TCON0 TCON_s RHO_bulk XOLD
 
@@ -359,25 +357,6 @@ Theta_f = Genuchten.Theta_f;
 Alpha = Genuchten.Alpha;
 n = Genuchten.n;
 m = Genuchten.m;
-NBCh = BoundaryCondition.NBCh;
-NBCT = BoundaryCondition.NBCT;
-NBChB = BoundaryCondition.NBChB;
-NBCTB = BoundaryCondition.NBCTB;
-BCh = BoundaryCondition.BCh;
-DSTOR = BoundaryCondition.DSTOR;
-DSTOR0 = BoundaryCondition.DSTOR0;
-RS = BoundaryCondition.RS;
-NBChh = BoundaryCondition.NBChh;
-DSTMAX = BoundaryCondition.DSTMAX;
-IRPT1 = BoundaryCondition.IRPT1;
-IRPT2 = BoundaryCondition.IRPT2;
-NBCP = BoundaryCondition.NBCP;
-BChB = BoundaryCondition.BChB;
-BCTB = BoundaryCondition.BCTB;
-BCPB = BoundaryCondition.BCPB;
-BCT = BoundaryCondition.BCT;
-BCP = BoundaryCondition.BCP;
-BtmPg = BoundaryCondition.BtmPg;
 HCAP = ThermalConductivity.HCAP;
 SF = ThermalConductivity.SF;
 TCA = ThermalConductivity.TCA;
@@ -399,7 +378,8 @@ FEHCAP = ThermalConductivity.FEHCAP;
 TCON0 = ThermalConductivity.TCON0;
 XOLD = SoilVariables.XOLD; % used in SOIL1
 
-%% these vars are both input and output of StartInit
+%% these vars are defined as global at the begining of this script
+%% because they are both input and output of StartInit
 KfL_T = SoilConstants.KfL_T;
 Theta_II = SoilConstants.Theta_II;
 Theta_I = SoilConstants.Theta_I;
@@ -421,6 +401,34 @@ KL_h = SoilVariables.KL_h;
 DTheta_LLh = SoilVariables.DTheta_LLh;
 KfL_h = SoilVariables.KfL_h;
 DTheta_UUh = SoilVariables.DTheta_UUh;
+
+%% The boundary condition information settings
+IGBP_veg_long = SiteProperties.IGBP_veg_long;
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);
+
+%% get global vars
+global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
+global NBCP BChB BCTB BCPB BCT BCP BtmPg
+
+NBCh = BoundaryCondition.NBCh;
+NBCT = BoundaryCondition.NBCT;
+NBChB = BoundaryCondition.NBChB;
+NBCTB = BoundaryCondition.NBCTB;
+BCh = BoundaryCondition.BCh;
+DSTOR = BoundaryCondition.DSTOR;
+DSTOR0 = BoundaryCondition.DSTOR0;
+RS = BoundaryCondition.RS;
+NBChh = BoundaryCondition.NBChh;
+DSTMAX = BoundaryCondition.DSTMAX;
+IRPT1 = BoundaryCondition.IRPT1;
+IRPT2 = BoundaryCondition.IRPT2;
+NBCP = BoundaryCondition.NBCP;
+BChB = BoundaryCondition.BChB;
+BCTB = BoundaryCondition.BCTB;
+BCPB = BoundaryCondition.BCPB;
+BCT = BoundaryCondition.BCT;
+BCP = BoundaryCondition.BCP;
+BtmPg = BoundaryCondition.BtmPg;
 
 %% 14. Run the model
 disp('The calculations start now')

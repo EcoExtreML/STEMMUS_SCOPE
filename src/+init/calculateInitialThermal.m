@@ -60,12 +60,12 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         TCON_dry(j)=(0.135*RHo_bulk(j)+64.7)/(2700-0.947*RHo_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
 
         %%%%%%%% organic thermal conductivity method %%%%%%%
-        TCON_Soc=0.05; %RHo_SOC=130;
+        TCON_Soc=0.05;
         TCON_dry(j)=TCON_dry(j)*(1-SoilVariables.XSOC(j))+SoilVariables.XSOC(j)*TCON_Soc;
 
         TCON_qtz=7.7;
         TCON_o=2.0;
-        TCON_L=0.57;%Theta_qtz(j)=0.47;     % thermal conductivities of soil quartz, other soil particles and water; unit  W m-1 K-1
+        TCON_L=0.57; % thermal conductivities of soil quartz, other soil particles and water; unit  W m-1 K-1
         TCON_s(j)=TCON_qtz^(SoilVariables.Theta_qtz(j))*TCON_o^(1-SoilVariables.Theta_qtz(j)); % Johansen solid soil thermal conductivity Unit W m-1 K-1
         TCON_sa=7.7;
         Theta_sa(j)=SoilVariables.VPER(j,1)/(1-SoilVariables.POR(j));
@@ -77,14 +77,14 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         SF_cl=0.00775;
         TCON_min(j)=(TCON_sa^(Theta_sa(j))*TCON_slt^(Theta_slt(j))*TCON_cl^(Theta_cl(j)))/100;
         SF_min(j)=SF_sa*Theta_sa(j)+SF_slt*Theta_slt(j)+SF_cl*Theta_cl(j);
-        TS1(j)=SoilVariables.POR(j)*TCA;  %-------> and the sums in the dry thermal conductivity;
+        TS1(j)=SoilVariables.POR(j)*TCA;  % and the sums in the dry thermal conductivity;
         TS2(j)=SoilVariables.POR(j);
         TTARG1(j)=TCON_min(j)/TCA-1;
         TGRAT(j)=0.667/(1+TTARG1(j)*SF_min(j))+0.333/(1+TTARG1(j)*(1-2*SF_min(j)));
         TS1(j)=TS1(j)+TGRAT(j)*TCON_min(j)*(1-SoilVariables.POR(j));
         TS2(j)=TS2(j)+TGRAT(j)*(1-SoilVariables.POR(j));
         TZETA0(j)=1/TS2(j);
-        TCON0(j)=1.25*TS1(j)/TS2(j);      % dry thermal conductivity
+        TCON0(j)=1.25*TS1(j)/TS2(j); % dry thermal conductivity
         TPS1(j)=0;
         TPS2(j)=0;
         TTARG2(j)=TCON_min(j)/TCON(1)-1;
@@ -97,7 +97,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         if SoilConstants.ThermCond==4
             FEHCAP(j)=(2.128*Theta_sa(j)+2.385*Theta_cl(j))/(Theta_sa(j)+Theta_cl(j))*1e6;  %j m-3 K-1
             FEHCAP(j)=FEHCAP(j)*(1-SoilVariables.XSOC(j))+SoilVariables.XSOC(j)*2.5*1e6;  % organic effect j m-3 K-1
-            TCON_s(j)=(8.8*Theta_sa(j)+2.92*Theta_cl(j))/(Theta_sa(j)+Theta_cl(j)); %  W m-1 K-1
+            TCON_s(j)=(8.8*Theta_sa(j)+2.92*Theta_cl(j))/(Theta_sa(j)+Theta_cl(j)); % W m-1 K-1
             TCON_s(j)=TCON_s(j)*(1-SoilVariables.XSOC(j))+SoilVariables.XSOC(j)*0.25;  % consider organic effect W m-1 K-1
         end
     end

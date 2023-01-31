@@ -5,7 +5,7 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
     for i=1:SoilConstants.numberOfNodes
         SoilVariables.h_frez = init.updateHfreez(i, SoilVariables, SoilConstants);
 
-        SoilVariables.h_frez(i) = SoilVariables.h_frez(i); % TODO check if it is a mistake
+        SoilVariables.h_frez(i) = SoilVariables.h_frez(i); % see issue 139, item 2
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
         SoilVariables.h(i) = SoilVariables.h(i) - SoilVariables.h_frez(i);
         SoilVariables.hh(i) = SoilVariables.h(i);
@@ -22,10 +22,9 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
             SoilConstants.P_gg(i) = SoilConstants.P_g(i);
         end
         if i<SoilConstants.numberOfNodes
-            SoilVariables.XWRE(i,1)=0; % TODO check it is set in SOIL1
+            SoilVariables.XWRE(i,1)=0;
             SoilVariables.XWRE(i,2)=0;
         end
-    %     SoilVariables.XK(i)=0.0425;
     end
 
 end

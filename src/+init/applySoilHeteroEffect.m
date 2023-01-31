@@ -3,9 +3,9 @@ function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, Soil
     initX = SoilConstants.InitialValues.initX;
     initND = SoilConstants.InitialValues.initND;
     Eqlspace = SoilConstants.Eqlspace;
-    % TODO check
-    SoilVariables.Phi_s = [];
-    SoilVariables.Lamda = [];
+
+    SoilVariables.Phi_s = []; % see issue 139, item 5
+    SoilVariables.Lamda = []; % see issue 139, item 5
     ImpedF = repelem(3, 6);
 
     for i=1:6
@@ -14,7 +14,7 @@ function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, Soil
                 SoilVariables.Phi_s(i) = SoilConstants.Phi_S(i);
                 SoilVariables.Lamda(i) = SoilProperties.Coef_Lamda(i);
             end
-            Genuchten.Theta_s(i) = Theta_s_ch(i); %TODO undefined var Theta_s_ch
+            Genuchten.Theta_s(i) = Theta_s_ch(i); % see issue 139, item 3
         end
     end
 
@@ -23,7 +23,7 @@ function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, Soil
         for i = 1:length(initX)
             SoilConstants.InitialValues.initH(i) = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), initX(i), Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
         end
-        % TODO check if this Btmh is used somewhere
+        % see issue 139, item 11
         Btmh = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), SoilConstants.BtmX, Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
         if Btmh==-inf
             Btmh = -1e7;

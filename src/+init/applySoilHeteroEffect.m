@@ -1,4 +1,4 @@
-function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten)
+function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, VanGenuchten)
 
     initX = SoilConstants.InitialValues.initX;
     initND = SoilConstants.InitialValues.initND;
@@ -14,17 +14,17 @@ function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, Soil
                 SoilVariables.Phi_s(i) = SoilConstants.Phi_S(i);
                 SoilVariables.Lamda(i) = SoilProperties.Coef_Lamda(i);
             end
-            Genuchten.Theta_s(i) = Theta_s_ch(i); % see issue 139, item 3
+            VanGenuchten.Theta_s(i) = Theta_s_ch(i); % see issue 139, item 3
         end
     end
 
     if ~Eqlspace
         j = SoilConstants.J;
         for i = 1:length(initX)
-            SoilConstants.InitialValues.initH(i) = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), initX(i), Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
+            SoilConstants.InitialValues.initH(i) = init.calcInitH(VanGenuchten.Theta_s(j), VanGenuchten.Theta_r(j), initX(i), VanGenuchten.n(j), VanGenuchten.m(j), VanGenuchten.Alpha(j));
         end
         % see issue 139, item 11
-        Btmh = init.calcInitH(Genuchten.Theta_s(j), Genuchten.Theta_r(j), SoilConstants.BtmX, Genuchten.n(j), Genuchten.m(j), Genuchten.Alpha(j));
+        Btmh = init.calcInitH(VanGenuchten.Theta_s(j), VanGenuchten.Theta_r(j), SoilConstants.BtmX, VanGenuchten.n(j), VanGenuchten.m(j), VanGenuchten.Alpha(j));
         if Btmh==-inf
             Btmh = -1e7;
         end
@@ -34,14 +34,14 @@ function [SoilVariables, Genuchten] = applySoilHeteroEffect(SoilProperties, Soil
             InitLnth(i) = SoilConstants.Tot_Depth - SoilConstants.Elmn_Lnth;
             for subRoutine=5:-1:1
                 if abs(InitLnth(i)-initND(subRoutine))<1e-10
-                    [SoilVariables, Genuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, ImpedF, Dmark, i);
+                    [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, i);
                     SoilConstants.InitialValues.initH = initH;
                     Dmark = i + 2;
                 end
             end
             if abs(InitLnth(i))<1e-10
                 subRoutine = 0;
-                [SoilVariables, Genuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, Genuchten, ImpedF, Dmark, i);
+                [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilConstants, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, i);
                 SoilConstants.InitialValues.initH = initH;
             end
         end

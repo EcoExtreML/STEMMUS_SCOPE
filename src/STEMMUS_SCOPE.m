@@ -310,7 +310,7 @@ SoilConstants.RHOL = RHOL;
 % used in init.setBoundaryCondition
 SoilConstants.Ta_msr = Ta_msr;
 
-[SoilConstants, SoilVariables, Genuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
+[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
@@ -342,12 +342,12 @@ Gama_h = SoilVariables.Gama_h;
 SAVEhh = SoilVariables.SAVEhh;
 COR = SoilVariables.COR;
 CORh = SoilVariables.CORh;
-Theta_s = Genuchten.Theta_s;
-Theta_r = Genuchten.Theta_r;
-Theta_f = Genuchten.Theta_f;
-Alpha = Genuchten.Alpha;
-n = Genuchten.n;
-m = Genuchten.m;
+Theta_s = VanGenuchten.Theta_s;
+Theta_r = VanGenuchten.Theta_r;
+Theta_f = VanGenuchten.Theta_f;
+Alpha = VanGenuchten.Alpha;
+n = VanGenuchten.n;
+m = VanGenuchten.m;
 HCAP = ThermalConductivity.HCAP;
 SF = ThermalConductivity.SF;
 TCA = ThermalConductivity.TCA;

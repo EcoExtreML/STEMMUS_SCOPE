@@ -1,4 +1,4 @@
-function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, Genuchten)
+function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, VanGenuchten)
     FEHCAP = []; % see issue 139
 
     HCAP(1)=0.998*4.182;
@@ -56,7 +56,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         GB2(j)=(GA1-GA2)/SoilVariables.XWILT(j)+GB1(j);
 
         %%%%%%%% Johansen thermal conductivity method %%%%%%%
-        RHo_bulk(j)=(1-Genuchten.Theta_s(j))*2.7*1000;         % Unit g.cm^-3
+        RHo_bulk(j)=(1-VanGenuchten.Theta_s(j))*2.7*1000;         % Unit g.cm^-3
         TCON_dry(j)=(0.135*RHo_bulk(j)+64.7)/(2700-0.947*RHo_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
 
         %%%%%%%% organic thermal conductivity method %%%%%%%

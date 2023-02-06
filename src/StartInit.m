@@ -1,4 +1,4 @@
-function [SoilConstants, SoilVariables, Genuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
 
 %%% SoilConstants for init
 % TODO this can be moved ouside StartInit function, see issue 96
@@ -11,9 +11,9 @@ Ksh0=Ksh(1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Genuchten = init.setGenuchtenParameters(SoilProperties);
-SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, Genuchten);
-[SoilVariables, Genuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, Genuchten);
+VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
+SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, VanGenuchten);
+[SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, VanGenuchten);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
@@ -25,7 +25,7 @@ SoilVariables = init.applySoilHeteroWithInitialFreezing(SoilConstants, SoilVaria
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%% Perform initial thermal calculations for each soil type.%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, Genuchten);
+ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, VanGenuchten);
 
 % According to hh value get the Theta_LL
 % run SOIL2;   % For calculating Theta_LL,used in first Balance calculation.
@@ -60,11 +60,11 @@ g = SoilConstants.g;
 NN = SoilConstants.numberOfNodes;
 NL = SoilConstants.totalNumberOfElements;
 
-Theta_s = Genuchten.Theta_s;
-Theta_r = Genuchten.Theta_r;
-Alpha = Genuchten.Alpha;
-n = Genuchten.n;
-m = Genuchten.m;
+Theta_s = VanGenuchten.Theta_s;
+Theta_r = VanGenuchten.Theta_r;
+Alpha = VanGenuchten.Alpha;
+n = VanGenuchten.n;
+m = VanGenuchten.m;
 
 POR = SoilVariables.POR;
 h = SoilVariables.h;

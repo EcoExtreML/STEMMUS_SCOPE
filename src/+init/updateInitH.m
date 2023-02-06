@@ -1,7 +1,7 @@
-function initH = updateInitH(initX, Genuchten, SoilConstants, SoilVariables, i)
+function initH = updateInitH(initX, VanGenuchten, SoilConstants, SoilVariables, i)
     if SoilConstants.SWCC==1   % VG soil water retention model
-            initH = init.calcInitH(Genuchten.Theta_s(i), Genuchten.Theta_r(i), initX, Genuchten.n(i), Genuchten.m(i), Genuchten.Alpha(i));
+            initH = init.calcInitH(VanGenuchten.Theta_s(i), VanGenuchten.Theta_r(i), initX, VanGenuchten.n(i), VanGenuchten.m(i), VanGenuchten.Alpha(i));
         else
-            initH = SoilVariables.Phi_s(i)*(InitX/Genuchten.Theta_s(i))^(-1/SoilVariables.Lamda(i));
+            initH = SoilVariables.Phi_s(i)*(InitX/VanGenuchten.Theta_s(i))^(-1/SoilVariables.Lamda(i));
     end
 end

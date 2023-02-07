@@ -63,13 +63,6 @@ function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine,
             SoilVariables.T(i) = SoilConstants.BtmT + (i-1) * (initT(indexOfInit) - SoilConstants.BtmT) / ML;
             SoilVariables.h(i) = Btmh + (i-1) * (initH(indexOfInit) - Btmh) / ML;
             SoilVariables.IH(i) = 1;   % Index of wetting history of soil which would be assumed as dry at the first with the value of 1
-        elseif subRoutine==0
-            delta1 = SoilConstants.totalNumberOfElements + 2 - Dmark; % see issue 139
-            delta2 = ML + 2 - Dmark;
-            domainZ = i - Dmark + 1;
-            SoilVariables.T(i) = init.calcSoilTemp(initT(indexOfInit), initT((indexOfInit+1)), delta1, domainZ);
-            SoilVariables.h(i) = init.calcSoilTemp(initH(indexOfInit), initH((indexOfInit+1)), delta2, domainZ);
-            SoilVariables.IH(j) = 1;
         else
             delta = ML + 2 - Dmark;
             domainZ = i - Dmark + 1;

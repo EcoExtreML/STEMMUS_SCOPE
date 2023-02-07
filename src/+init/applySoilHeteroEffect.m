@@ -22,11 +22,6 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
         for i = 1:length(initX)
             SoilConstants.InitialValues.initH(i) = init.calcInitH(VanGenuchten.Theta_s(j), VanGenuchten.Theta_r(j), initX(i), VanGenuchten.n(j), VanGenuchten.m(j), VanGenuchten.Alpha(j));
         end
-        % see issue 139, item 11
-        Btmh = init.calcInitH(VanGenuchten.Theta_s(j), VanGenuchten.Theta_r(j), SoilConstants.BtmX, VanGenuchten.n(j), VanGenuchten.m(j), VanGenuchten.Alpha(j));
-        if Btmh==-inf
-            Btmh = -1e7;
-        end
         Dmark = [];
         for i=1:SoilConstants.totalNumberOfElements % NL
             SoilConstants.Elmn_Lnth = SoilConstants.Elmn_Lnth + SoilConstants.DeltZ(i);

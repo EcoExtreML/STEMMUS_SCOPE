@@ -29,8 +29,7 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
             SoilVariables.Lamda(i) = SoilProperties.Coef_Lamda(j);
         else
             VanGenuchten.Theta_s_min(i)=0.489-0.00126*SoilVariables.VPER(i,1)/(1-SoilVariables.POR(i))*100;
-            VanGenuchten.Theta_s(i) = VanGenuchten.Theta_s_min(i)*(1-SoilVariables.XSOC(i))+SoilVariables.XSOC(i)*SoilConstants.Theta_soc;
-            VanGenuchten.Theta_s(i) = VanGenuchten.Theta_s_min(i); % TODO check repeated lines
+            VanGenuchten.Theta_s(i) = VanGenuchten.Theta_s_min(i);
 
             SoilVariables.Phi_s(i) = init.calcPhi_s(SoilVariables.VPER(i,1), SoilVariables.POR, SoilConstants.Phi_soc, SoilVariables.XSOC);
             SoilVariables.Lamda(i) = init.calcLambda(SoilVariables.VPER(i,3), SoilVariables.POR, SoilVariables.Lamda_soc, SoilVariables.XSOC);

@@ -14,7 +14,6 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
                 SoilVariables.Phi_s(i) = SoilConstants.Phi_S(i);
                 SoilVariables.Lamda(i) = SoilProperties.Coef_Lamda(i);
             end
-            VanGenuchten.Theta_s(i) = Theta_s_ch(i); % see issue 139, item 3
         end
     end
 

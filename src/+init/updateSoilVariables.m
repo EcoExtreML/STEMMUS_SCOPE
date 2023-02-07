@@ -21,7 +21,6 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
         SoilVariables.XWILT(i) = equations.van_genuchten(VanGenuchten.Theta_s(i), VanGenuchten.Theta_r(i), VanGenuchten.Alpha(i), -1.5e4, VanGenuchten.n(i), VanGenuchten.m(i));
         SoilVariables.XCAP(i) = equations.van_genuchten(VanGenuchten.Theta_s(i), VanGenuchten.Theta_r(i), VanGenuchten.Alpha(i), -336, VanGenuchten.n(i), VanGenuchten.m(i));
     else
-        VanGenuchten.Theta_s(i) = Theta_s_ch(j); % TODO check undefined Theta_s_ch
         VanGenuchten.Theta_r(i) = SoilProperties.ResidualMC(j);
 
         if SoilConstants.CHST==0  % Indicator of parameters derivation using soil texture or not. CHST=1, use; CHST=0 not use

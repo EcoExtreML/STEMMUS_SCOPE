@@ -4,8 +4,6 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
 
     for i=1:SoilConstants.numberOfNodes
         SoilVariables.h_frez = init.updateHfreez(i, SoilVariables, SoilConstants);
-
-        SoilVariables.h_frez(i) = SoilVariables.h_frez(i); % see issue 139, item 2
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
         SoilVariables.h(i) = SoilVariables.h(i) - SoilVariables.h_frez(i);
         SoilVariables.hh(i) = SoilVariables.h(i);

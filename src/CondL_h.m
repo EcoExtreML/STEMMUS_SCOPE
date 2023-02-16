@@ -1,5 +1,10 @@
-function [Theta_LL,Se,KfL_h,KfL_T,DTheta_LLh,hh,hh_frez,Theta_UU,DTheta_UUh,Theta_II,KL_h]=CondL_h(Theta_r,Theta_s,Alpha,hh,hh_frez,h_frez,n,m,Ks,NL,Theta_L,h,KIT,TT,Thmrlefc,POR,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,Theta_II,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se)
-global hd hm Theta_m Gama_hh
+function [Theta_LL,Se,KfL_h,KfL_T,DTheta_LLh,hh,hh_frez,Theta_UU,DTheta_UUh,Theta_II,KL_h]=CondL_h(SoilConstants, SoilVariables, Theta_r,Theta_s,Alpha,hh,hh_frez,h_frez,n,m,Ks,NL,Theta_L,h,KIT,TT,Thmrlefc,POR,SWCC,Theta_U,XCAP,Phi_s,RHOI,RHOL,Lamda,Imped,L_f,g,T0,TT_CRIT,Theta_II,KfL_h,KfL_T,KL_h,Theta_UU,Theta_LL,DTheta_LLh,DTheta_UUh,Se)
+global Theta_m
+
+hd = SoilConstants.hd;
+hm = SoilConstants.hm;
+Gama_hh = SoilVariables.Gama_hh;
+
 SFCC=1;
 MN=0;
 for ML=1:NL
@@ -22,7 +27,7 @@ for ML=1:NL
                 elseif Theta_m(ML)<=Theta_s(J)
                     Theta_m(ML)=Theta_s(J);
                 end
-                 
+
                 if hh(MN)>=-1
                     Theta_UU(ML,ND)=Theta_s(J);
                     DTheta_LLh(ML,ND)=0;%hh_frez(MN)=h_frez(MN);
@@ -41,7 +46,7 @@ for ML=1:NL
                                 DTheta_UUh(ML,ND)=(-Theta_r(J))/(abs((hh(MN)+hh_frez(MN)))*log(abs(hd/hm)))*(1-(1+abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^n(J))^(-m(J)))-Alpha(J)*n(J)*m(J)*(Theta_m(ML)-Gama_hh(MN)*Theta_r(J))*((1+abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^n(J))^(-m(J)-1))*(abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^(n(J)-1));  %(Theta_s(J)-Gama_hh(MN)*Theta_a(J))*Alpha(J)*n(J)*abs(Alpha(J)*hh(MN))^(n(J)-1)*(-m(J))*(1+abs(Alpha(J)*hh(MN))^n(J))^(-m(J)-1);
                                 Se(ML,ND)=Theta_LL(ML,ND)/POR(J);
                             end
-                            
+
                         else
                             if abs(hh(MN)-h(MN))<1e-3
                                 DTheta_UUh(ML,ND)=(Theta_m(ML)-Theta_r(J))*Alpha(J)*n(J)*abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^(n(J)-1)*(-m(J))*(1+abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^n(J))^(-m(J)-1);
@@ -93,15 +98,15 @@ for ML=1:NL
                     hh(MN)=-1e-6;
                     DTheta_UUh(ML,ND)=0;
                     if TT(MN)+273.15>Tf1
-                        Theta_II(ML,ND)=0;         
+                        Theta_II(ML,ND)=0;
                         Theta_LL(ML,ND)=Theta_s(J);
 
                     elseif TT(MN)+273.15>=Tf2
-                        Theta_II(ML,ND)=0.5*(1-sin(pi()*(TT(MN)+273.15-0.5*Tf1-0.5*Tf2)/(Tf1-Tf2)))*XCAP(J);  
+                        Theta_II(ML,ND)=0.5*(1-sin(pi()*(TT(MN)+273.15-0.5*Tf1-0.5*Tf2)/(Tf1-Tf2)))*XCAP(J);
                         Theta_LL(ML,ND)=Theta_UU(ML,ND)-Theta_II(ML,ND)*RHOI/RHOL;
 
                     else
-                        Theta_II(ML,ND)=XCAP(J);   
+                        Theta_II(ML,ND)=XCAP(J);
                         Theta_LL(ML,ND)=Theta_UU(ML,ND)-Theta_II(ML,ND)*RHOI/RHOL;
 
                     end
@@ -124,7 +129,7 @@ for ML=1:NL
                     DTheta_LLh(ML,ND)=0;
                 else
                     Theta_UU(ML,ND)=Theta_r(J)+(Theta_s(J)-Theta_r(J))/(1+abs(Alpha(J)*hh(MN))^n(J))^m(J);
-                    
+
                     if Thmrlefc
                         DTheta_UUh(ML,ND)=(Theta_s(J)-Theta_r(J))*Alpha(J)*n(J)*abs(Alpha(J)*hh(MN))^(n(J)-1)*(-m(J))*(1+abs(Alpha(J)*hh(MN))^n(J))^(-m(J)-1);
                     else
@@ -135,15 +140,15 @@ for ML=1:NL
                         end
                     end
                     if TT(MN)+273.15>Tf1
-                        Theta_II(ML,ND)=0;   
+                        Theta_II(ML,ND)=0;
                         Theta_LL(ML,ND)=Theta_r(J)+(Theta_s(J)-Theta_r(J))/(1+abs(Alpha(J)*(hh(MN)+hh_frez(MN)))^n(J))^m(J);  %Theta_UU==>Theta_LL   Theta_LL==>Theta_UU
 
                     elseif TT(MN)+273.15>=Tf2
-                        Theta_II(ML,ND)=0.5*(1-sin(pi()*(TT(MN)+273.15-0.5*Tf1-0.5*Tf2)/(Tf1-Tf2)))*XCAP(J);  
+                        Theta_II(ML,ND)=0.5*(1-sin(pi()*(TT(MN)+273.15-0.5*Tf1-0.5*Tf2)/(Tf1-Tf2)))*XCAP(J);
                         Theta_LL(ML,ND)=Theta_UU(ML,ND)-Theta_II(ML,ND)*RHOI/RHOL;%Theta_UU(ML,ND)
 
                     else
-                        Theta_II(ML,ND)=XCAP(J); 
+                        Theta_II(ML,ND)=XCAP(J);
                         Theta_LL(ML,ND)=Theta_UU(ML,ND)-Theta_II(ML,ND)*RHOI/RHOL;%Theta_UU(ML,ND)
 
                     end
@@ -205,7 +210,7 @@ for ML=1:NL
                         DTheta_UUh(ML,ND)=(Theta_UU(ML,ND)-Theta_U(ML,ND))/(hh(MN)-h(MN));
                     end
                 end
-                
+
                 if hh(MN)+hh_frez(MN)<=-1e7
                     Theta_LL(ML,ND)=Theta_r(J);
                     DTheta_LLh(ML,ND)=0;
@@ -226,7 +231,7 @@ for ML=1:NL
                         end
                     end
                     Se(ML,ND)=Theta_LL(ML,ND)/POR(J);
-                    
+
                 end
             end
         end
@@ -256,7 +261,7 @@ for ML=1:NL
                 %CKT(MN)=5.5151;   % kg��m^-1��s^-1 --> 10 g.cm^-1.s^-1; J.cm^-2---> kg.m^2.s^-2.cm^-2--> 1e7g.cm^2.s^-2.cm^-2
             else
                 MU_W(ML,ND)=MU_W0*exp(MU1/(8.31441*(TT(MN)+133.3)));
-                
+
             end
                 % CKT(MN)=CKTN/(50+2.575*TT(MN));
                 CKT(MN)=MU_WN/MU_W(ML,ND);
@@ -279,7 +284,7 @@ for ML=1:NL
                 R=8.314472; % J mol-1 K-1
                 e=78.54;
                 e0=8.85e-12;
-                B_sig=235.8E-3; 
+                B_sig=235.8E-3;
                 Tc=647.15;
                 e_sig=1.256;
                 c_sig=-0.625;
@@ -288,8 +293,8 @@ for ML=1:NL
                 uw=uw0*exp(u1/R/(TT(MN)+133.3));
                 sigma=B_sig*((Tc-(TT(MN)+273.15))/Tc)^e_sig*(1+c_sig*(Tc-(TT(MN)+273.15))/Tc);
                 B(J)=2^0.5*pi()^2*RHOW0*GVA/uw*(e*e0/2/sigma)^1.5*(kb*(TT(MN)+273.15)/(Bi*Ba))^3;
-                
-                
+
+
                 Coef_f=0.0373*(2*AGR(J))^3.109;
                 Ks_flm(ML,ND)=B(J)*(1-POR(J))*(2*AGR(J))^0.5; %m2
                 if hh(MN)<-1

@@ -453,24 +453,24 @@ Tmin=min(Ts_msr);
 Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
 
 % load initial soil moisture and soil temperature from ERA5
-load(fullfile(InputPath, "soil_init.mat"),
-    "Tss",
-    "InitT0",
-    "InitT1",
-    "InitT2",
-    "InitT3",
-    "InitT4",
-    "InitT5",
-    "InitT6",
-    "InitX0",
-    "InitX1",
-    "InitX2",
-    "InitX3",
-    "InitX4",
-    "InitX5",
-    "InitX6",
-    "BtmX"
-);
+load(fullfile(InputPath, "soil_init.mat"));
+% The following parameters are loaded:
+%   Tss
+%   InitT0
+%   InitT1
+%   InitT2
+%   InitT3
+%   InitT4
+%   InitT5
+%   InitT6
+%   InitX0
+%   InitX1
+%   InitX2
+%   InitX3
+%   InitX4
+%   InitX5
+%   InitX6
+%   BtmX
 
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
 InitND2=15;

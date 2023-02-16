@@ -109,6 +109,5 @@ Install Octave dependencies with
 
 ```shell
 octave --eval 'pkg install -forge statistics'
-octave --eval 'pkg install -forge netcdf'
 ```
 </details>

@@ -1,0 +1,15 @@
+WorkDir=/scratch-shared/ecoextreml/stemmus_scope/
+SoilPropertyPath=/projects/0/einf2480/model_parameters/soil_property/
+ForcingPath=/projects/0/einf2480/global_data/
+Location=(61.8474, 24.2948)
+directional=/projects/0/einf2480/model_parameters/vegetation_property/directional/
+fluspect_parameters=/projects/0/einf2480/model_parameters/vegetation_property/fluspect_parameters/
+leafangles=/projects/0/einf2480/model_parameters/vegetation_property/leafangles/
+radiationdata=/projects/0/einf2480/model_parameters/vegetation_property/radiationdata/
+soil_spectrum=/projects/0/einf2480/model_parameters/vegetation_property/soil_spectrum/
+input_data=/projects/0/einf2480/model_parameters/vegetation_property/input_data.xlsx
+InitialConditionPath=/projects/0/einf2480/global_data/soil_initial/
+StartTime=2014-01-01T00:00
+EndTime=2014-02-01T00:00
+InputPath=
+OutputPath=

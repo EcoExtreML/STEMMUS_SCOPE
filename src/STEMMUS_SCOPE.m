@@ -28,7 +28,6 @@
 
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load netcdf
     pkg load statistics
 end
 

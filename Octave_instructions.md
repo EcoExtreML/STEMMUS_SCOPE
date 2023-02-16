@@ -14,13 +14,11 @@ The downloads can be found here
 https://octave.org/download
 
 TODO: installation of octave on linux
-After installation, launch octave and install the following Octave packages:
-`pkg install -forge netcdf`
+After installation, launch octave and install the following Octave package:
 `pkg install -forge statistics`
 
-For off-line installation, first, download the packages [netcdf](https://octave.sourceforge.io/netcdf/index.html), [io](https://octave.sourceforge.io/io/index.html) and [statistics](https://octave.sourceforge.io/statistics/index.html). Then, launch octave and run:
+For off-line installation, first, download the package [io](https://octave.sourceforge.io/io/index.html) and [statistics](https://octave.sourceforge.io/statistics/index.html). Then, launch octave and run:
 
-`pkg install netcdf-1.0.16.tar.gz`
 `pkg install io-2.6.4.tar.gz`
 `pkg install statistics-1.4.3.tar.gz`
 

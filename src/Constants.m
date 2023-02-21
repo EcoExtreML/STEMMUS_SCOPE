@@ -453,7 +453,25 @@ Tmin=min(Ts_msr);
 Precip_msr=Precip_msr.*(1-fmax.*exp(-0.5*0.5*Tot_Depth/100));
 
 % load initial soil moisture and soil temperature from ERA5
-Initial_path=dir(fullfile(InitialConditionPath,[sitename,'*.nc']));
+load(fullfile(InputPath, "soil_init.mat"));
+% The following parameters are loaded:
+%   Tss
+%   InitT0
+%   InitT1
+%   InitT2
+%   InitT3
+%   InitT4
+%   InitT5
+%   InitT6
+%   InitX0
+%   InitX1
+%   InitX2
+%   InitX3
+%   InitX4
+%   InitX5
+%   InitX6
+%   BtmX
+
 InitND1=5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
 InitND2=15;
 InitND3=60;
@@ -461,63 +479,47 @@ InitND4=100;
 InitND5=200;
 InitND6=300;
 if SWCC==0
-InitT0=	-1.762;  %-1.75estimated soil surface temperature-1.762
-InitT1=	-0.662;
-InitT2=	0.264;
-InitT3=	0.905;
-InitT4=	4.29;
-InitT5=	3.657;%;
-InitT6=	6.033;
-BtmT=6.62;  %9 8.1
-InitX0=	0.088;
-InitX1=	0.095; % Measured soil liquid moisture content
-InitX2=	0.180; %0.169
-InitX3=	0.213; %0.205
-InitX4=	0.184; %0.114
-InitX5=	0.0845;
-InitX6=	0.078;
-BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
+    InitT0=	-1.762;  %-1.75estimated soil surface temperature-1.762
+    InitT1=	-0.662;
+    InitT2=	0.264;
+    InitT3=	0.905;
+    InitT4=	4.29;
+    InitT5=	3.657;%;
+    InitT6=	6.033;
+    BtmT=6.62;  %9 8.1
+    InitX0=	0.088;
+    InitX1=	0.095; % Measured soil liquid moisture content
+    InitX2=	0.180; %0.169
+    InitX3=	0.213; %0.205
+    InitX4=	0.184; %0.114
+    InitX5=	0.0845;
+    InitX6=	0.078;
+    BtmX=0.078;%0.078 0.05;    % The initial moisture content at the bottom of the column.
 else
-      InitT0=   ncread([InitialConditionPath,Initial_path(1).name],'skt')-273.15;  %-1.75estimated soil surface temperature-1.762
-      InitT1=	ncread([InitialConditionPath,Initial_path(2).name],'stl1')-273.15;
-      InitT2=	ncread([InitialConditionPath,Initial_path(3).name],'stl2')-273.15;
-      InitT3=	ncread([InitialConditionPath,Initial_path(4).name],'stl3')-273.15;
-      InitT4=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
-      InitT5=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
-      InitT6=	ncread([InitialConditionPath,Initial_path(5).name],'stl4')-273.15;
-      Tss = InitT0;
     if InitT0 < 0 || InitT1 < 0 || InitT2 < 0 || InitT3 < 0 || InitT4 < 0 || InitT5 < 0 || InitT6 < 0
-      InitT0=   0;
-      InitT1=	0;
-      InitT2=	0;
-      InitT3=	0;
-      InitT4=	0;
-      InitT5=	0;
-      InitT6=	0;
-      Tss = InitT0;
+        InitT0 = 0;
+        InitT1 = 0;
+        InitT2 = 0;
+        InitT3 = 0;
+        InitT4 = 0;
+        InitT5 = 0;
+        InitT6 = 0;
+        Tss = InitT0;
     end
-if nanmean(Ta_msr)<0
-    BtmT  = 0;  %9 8.1
-else
-    BtmT  =  nanmean(Ta_msr);
-end
-InitX0=	ncread([InitialConditionPath,Initial_path(6).name],'swvl1');  %0.0793
-InitX1=	ncread([InitialConditionPath,Initial_path(6).name],'swvl1'); % Measured soil liquid moisture content
-InitX2=	ncread([InitialConditionPath,Initial_path(7).name],'swvl2'); %0.182
-InitX3=	ncread([InitialConditionPath,Initial_path(8).name],'swvl3');
-InitX4= ncread([InitialConditionPath,Initial_path(9).name],'swvl4'); %0.14335
-InitX5=	ncread([InitialConditionPath,Initial_path(9).name],'swvl4');
-InitX6=	ncread([InitialConditionPath,Initial_path(9).name],'swvl4');
-BtmX  = ncread([InitialConditionPath,Initial_path(9).name],'swvl4');%0.05;    % The initial moisture content at the bottom of the column.
-if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(2) ||...
-InitX3 > SaturatedMC(3) || InitX4 > SaturatedMC(4) || InitX5 > SaturatedMC(5) || InitX6 > SaturatedMC(6)
-InitX0=	fieldMC(1);  %0.0793
-InitX1=	fieldMC(1); % Measured soil liquid moisture content
-InitX2=	fieldMC(2); %0.182
-InitX3=	fieldMC(3);
-InitX4= fieldMC(4); %0.14335
-InitX5=	fieldMC(5);
-InitX6=	fieldMC(6);
-BtmX  = fieldMC(6);
-end
+    if nanmean(Ta_msr)<0
+        BtmT  = 0;  %9 8.1
+    else
+        BtmT  =  nanmean(Ta_msr);
+    end
+    if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) ||InitX2 > SaturatedMC(2) ||...
+        InitX3 > SaturatedMC(3) || InitX4 > SaturatedMC(4) || InitX5 > SaturatedMC(5) || InitX6 > SaturatedMC(6)
+        InitX0=	fieldMC(1);  %0.0793
+        InitX1=	fieldMC(1); % Measured soil liquid moisture content
+        InitX2=	fieldMC(2); %0.182
+        InitX3=	fieldMC(3);
+        InitX4= fieldMC(4); %0.14335
+        InitX5=	fieldMC(5);
+        InitX6=	fieldMC(6);
+        BtmX  = fieldMC(6);
+    end
 end

@@ -6,6 +6,6 @@ function matricHead = calcSoilMatricHead(H01, H02, delta, domainZ)
         of Water Resources, ITC Faculty of Geo-Information Science and Earth
         Observation, University of Twente ISBN: 978–90–6164–351–7
     %}
-    matricHead = H02 + domainZ * (H01-H02) / delta;
+    matricHead = H02 + domainZ * (H01 - H02) / delta;
 
 end

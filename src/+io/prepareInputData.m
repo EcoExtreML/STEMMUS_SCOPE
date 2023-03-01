@@ -1,5 +1,5 @@
 function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(InputPath)
-    %{ 
+    %{
     This function is used to read forcing data and site properties.
 
     Input:
@@ -8,7 +8,7 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
     Output:
         SiteProperties： A structure containing site properties variables.
         SoilProperties: A structure containing soil variables.
-        TimeProperties: A structure containing time variables like time interval in seconds, normal is 1800 s in STEMMUS-SCOPE 
+        TimeProperties: A structure containing time variables like time interval in seconds, normal is 1800 s in STEMMUS-SCOPE
             and the total number of time steps.
     %}
 
@@ -22,7 +22,7 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
     SiteProperties = load(forcing_global_path, 'IGBP_veg_long', 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename');
 
     SoilProperties = load(soil_global_path, 'SaturatedK', 'SaturatedMC', 'ResidualMC', 'Coefficient_n', 'Coefficient_Alpha', ...
-        'porosity', 'FOC', 'FOS', 'MSOC', 'Coef_Lamda', 'fieldMC', 'fmax', 'theta_s0', 'Ks0');
+                          'porosity', 'FOC', 'FOS', 'MSOC', 'Coef_Lamda', 'fieldMC', 'fmax', 'theta_s0', 'Ks0');
 
     % Convert the int vectors back to strings
     SiteProperties.sitename = char(SiteProperties.sitename);

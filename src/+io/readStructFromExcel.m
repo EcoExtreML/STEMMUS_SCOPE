@@ -23,7 +23,7 @@ function data = readStructFromExcel(filename, sheetName, headerIdx, dataIdx, dat
     % general note: work with all_as_cell to keep rows & columns in sync; MATLAB does NOT keep data and texts aligned
     %   (readtable only slightly better - it works but will convert mixed columns to string)
     if data_in_rows
-        %NOTE: 'basic' is compatible with Mac but MATLAB (2013b) complains it can't read Unicode '.xls' in basic mode
+        % NOTE: 'basic' is compatible with Mac but MATLAB (2013b) complains it can't read Unicode '.xls' in basic mode
         %  Solution: save as xlsx ?!
         [~, ~, allCells] = xlsread(filename, sheetName);  % = [data, texts, allCells]
     else
@@ -46,7 +46,7 @@ function data = readStructFromExcel(filename, sheetName, headerIdx, dataIdx, dat
 
     dataCells = allCells([headerIdx, dataIdx], validHeaders & validData);
 
-    for idx = 1:size(dataCells,2)
+    for idx = 1:size(dataCells, 2)
         varName = strrep(dataCells{1, idx}, ' ', '');
         data.(varName) = dataCells{2, idx};
     end

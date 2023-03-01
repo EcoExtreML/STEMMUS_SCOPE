@@ -7,5 +7,5 @@ function volumetricWaterContent = van_genuchten(Theta_s, Theta_r, alpha, hParame
 
     %}
 
-    volumetricWaterContent = Theta_r+(Theta_s-Theta_r)./(1+abs(alpha.*hParameter).^nParameter).^mParameter;
+    volumetricWaterContent = Theta_r + (Theta_s - Theta_r) ./ (1 + abs(alpha .* hParameter).^nParameter).^mParameter;
 end

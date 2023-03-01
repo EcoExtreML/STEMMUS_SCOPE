@@ -6,5 +6,5 @@ function initH = calcInitH(Theta_s, Theta_r, initX, nParameter, mParameter, alph
         America Journal, 44: 892-898.
         https://doi.org/10.2136/sssaj1980.03615995004400050002x
     %}
-    initH = -(((Theta_s-Theta_r)/(initX-Theta_r))^(1/mParameter)-1)^(1/nParameter)/alphaParameter;
+    initH = -(((Theta_s - Theta_r) / (initX - Theta_r))^(1 / mParameter) - 1)^(1 / nParameter) / alphaParameter;
 end

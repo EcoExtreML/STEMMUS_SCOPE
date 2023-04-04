@@ -1,4 +1,4 @@
-function [const]=define_constants()
+function [const] = define_constants()
 
     const.A         = 6.02214E23; % [mol-1]       Constant of Avogadro
     const.h         = 6.6262E-34; % [J s]         Planck's constant
@@ -11,8 +11,8 @@ function [const]=define_constants()
     const.MH2O      = 18;         % [g mol-1]     Molecular mass of water
     const.Mair      = 28.96;      % [g mol-1]     Molecular mass of dry air
     const.MCO2      = 44;         % [g mol-1]     Molecular mass of carbon dioxide
-    const.sigmaSB   = 5.67E-8;    % [W m-2 K-4]   Stefan Boltzman constant  
-    const.deg2rad   = pi/180;     % [rad]         Conversion from deg to rad
+    const.sigmaSB   = 5.67E-8;    % [W m-2 K-4]   Stefan Boltzman constant
+    const.deg2rad   = pi / 180;     % [rad]         Conversion from deg to rad
     const.C2K       = 273.15;     % [K]           Melting point of water
-    
+
 end

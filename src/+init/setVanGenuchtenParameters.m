@@ -14,6 +14,6 @@ function VanGenuchten = setVanGenuchtenParameters(SoilProperties)
     VanGenuchten.Theta_f = SoilProperties.fieldMC;
     VanGenuchten.Alpha = SoilProperties.Coefficient_Alpha;
     VanGenuchten.n = SoilProperties.Coefficient_n;
-    VanGenuchten.m = 1-1./VanGenuchten.n;
+    VanGenuchten.m = 1 - 1 ./ VanGenuchten.n;
 
 end

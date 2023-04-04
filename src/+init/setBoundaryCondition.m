@@ -17,7 +17,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     % 3 --> Atmospheric forcing;
     NBCh = 3;
 
-    BCh = -20/3600;
+    BCh = -20 / 3600;
     if strcmp(IGBP_veg_long(1:9)', 'Croplands')  % ['Croplands']
         % NBChB: Moisture Bottom B.C.:
         % 1 --> Specified matric head (BChB);
@@ -28,7 +28,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
         NBChB = 3;
     end
     BChB = -9e-10;
-    if SoilConstants.Thmrlefc==1
+    if SoilConstants.Thmrlefc == 1
         % NBCT: Energy Surface B.C.:
         % 1 --> Specified temperature (BCT);
         % 2 --> Specified heat flux (BCT);
@@ -43,13 +43,13 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
         % 3 --> Zero temperature gradient;
         NBCTB = 1;
 
-        if nanmean(Ta_msr)<0
-            BCTB = 0;  %9 8.1
+        if nanmean(Ta_msr) < 0
+            BCTB = 0;  % 9 8.1
         else
             BCTB = nanmean(Ta_msr);
         end
     end
-    if SoilConstants.Soilairefc==1
+    if SoilConstants.Soilairefc == 1
         % NBCP: Soil air pressure B.C.:
         % 1 --> Ponded infiltration caused a specified pressure value;
         % 2 --> The soil air pressure is allowed to escape after beyond the threshold value;
@@ -66,7 +66,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
         BCPB = 0;
     end
 
-    if NBCh~=1
+    if NBCh ~= 1
         NBChh = 2; % Assume the NBChh=2 firstly;
     end
 

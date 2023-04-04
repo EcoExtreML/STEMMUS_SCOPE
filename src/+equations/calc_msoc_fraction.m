@@ -5,5 +5,5 @@ function fraction = calc_msoc_fraction(MSOC)
         and the particle density of mineral material is 2700 kg m-3.
     %}
 
-    fraction = MSOC.*2700./((MSOC.*2700)+(1-MSOC).*1300);
+    fraction = MSOC .* 2700 ./ ((MSOC .* 2700) + (1 - MSOC) .* 1300);
 end

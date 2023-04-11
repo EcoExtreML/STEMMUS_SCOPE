@@ -1,7 +1,7 @@
 %% STEMMUS-SCOPE.m (script)
 
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
-%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum
+%     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
 %
 %     Version: 1.0.1
 %

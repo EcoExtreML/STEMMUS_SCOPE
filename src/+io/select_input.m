@@ -8,7 +8,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     SoilProperties.CSSOIL        = ScopeParameters.CSSOIL(digitsVector(43));
     SoilProperties.lambdas       = ScopeParameters.lambdas(digitsVector(21));
     SoilProperties.rbs           = ScopeParameters.rbs(digitsVector(44));
-    SoilProperties.SMC           = Theta_LL(54, 1); %%%%%%% SoilProperties.SMC = flip£¨Theta_LL£©£¨:,1£©
+    SoilProperties.SMC           = Theta_LL(54, 1);
     SoilProperties.BSMBrightness = ScopeParameters.BSMBrightness(digitsVector(61));
     SoilProperties.BSMlat          = ScopeParameters.BSMlat(digitsVector(62));
     SoilProperties.BSMlon          = ScopeParameters.BSMlon(digitsVector(63));

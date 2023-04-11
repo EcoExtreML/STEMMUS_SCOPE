@@ -17,5 +17,5 @@ function [k_g] = Condg_k_g(POR, NL, m, Theta_g, g, MU_W, Ks, RHOL, SWCC, Imped, 
         end
     end
 
-    %%%%%% Unit of k_g is m^2 , with UnitC^2, unit has been converted as cm^2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%% 10^(-12)is used to convert the micrometer(¦Ìm) to meter(m)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Unit of k_g is m^2 , with UnitC^2, unit has been converted as cm^2 %
+    %%% 10^(-12)is used to convert the micrometer to meter %

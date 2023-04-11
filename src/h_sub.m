@@ -19,7 +19,7 @@ function h_sub
     global Precip Evap CHK EVAP
     global NBCh NBChB BCh BChB hN KT DSTOR0 NBChh TIME h_SUR AVAIL0
     global QMT QMB QMTT QMBB Evapo trap RnSOIL PrecipO
-    global Ta U Ts Rv g HR_a Srt C9    % U_wind is the mean wind speed at height z_ref (m¡¤s^-1), U is the wind speed at each time step.
+    global Ta U Ts Rv g HR_a Srt C9    % U_wind is the mean wind speed at height z_ref (m/s^-1), U is the wind speed at each time step.
     global rwuef Trap Rn_SOIL hOLD
     global TT_CRIT T0 h_frez hh_frez Theta_UU Theta_U DTheta_UUh KfL_h Rn SAVEhh CORh r_a_SOIL Resis_a Precip_msr SUMTIME Gvc SAVEDTheta_UUh SAVEDTheta_LLh Rns
 

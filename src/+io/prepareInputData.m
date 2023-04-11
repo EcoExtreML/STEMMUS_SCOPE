@@ -6,7 +6,7 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
         InputPath: path of input data.
 
     Output:
-        SiteProperties： A structure containing site properties variables.
+        SiteProperties: A structure containing site properties variables.
         SoilProperties: A structure containing soil variables.
         TimeProperties: A structure containing time variables like time interval in seconds, normal is 1800 s in STEMMUS-SCOPE
             and the total number of time steps.

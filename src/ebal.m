@@ -380,7 +380,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         Tch(abs(Tch) > 100) = Ta;
         Tcu(abs(Tcu) > 100) = Ta;
         Ts(abs(Ts) > 100) = Ta;
-        if any(isnan(Tch)) || any(isnan(Tcu(:))) warning('Canopy temperature gives NaNs');
+        if any(isnan(Tch)) || any(isnan(Tcu(:)))
+            warning('Canopy temperature gives NaNs');
         end
         if any(isnan(Ts))
             warning('Soil temperature gives NaNs');

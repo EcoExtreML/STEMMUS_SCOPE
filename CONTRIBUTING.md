@@ -12,6 +12,7 @@ you need to configure a few things following steps 1 through 5 below.
 
 <details>
   <summary>Steps 1 to 5 </summary>
+
 ### 1. Enable two-factor authentication
 
 It is strongly recommended using two-factor authentication. Here is the link of
@@ -154,4 +155,54 @@ See the [exe readme](./exe/README.md).
 
 ## Follow MATLAB style guidelines
 
-Please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
+When you are introducing new changes to the codes, please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
+
+When you submit a pull request, the code is also [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker. 
+The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. 
+MISS_HIT is configured in [`miss_hit.cfg`](./miss_hit.cfg).
+
+### Installing MISS_HIT
+It is best practice to install packages in environments. See the dropdown menu for instructions.
+However, you can also continue below to install MISS_HIT without these steps.
+
+<details><summary>Python environment / conda instructions</summary>
+
+You need to have a valid python installation on your system.
+
+Create an enviroment with `venv` or conda:
+
+### **Venv**
+```bash
+python3 -m venv misshit # python on windows.
+```
+Activate this environment
+```bash
+source misshit/bin/activate
+```
+
+Or on Windows:
+```pwsh
+./misshit/Scripts/Activate.ps1
+```
+
+### **conda**
+```bash
+conda env create --name misshit
+conda activate misshit
+```
+
+</details>
+
+Install miss hit (optionally in the conda or venv environment) with:
+```bash
+pip install miss-hit
+```
+
+To run the style checker or linter, navigate to the STEMMUS_SCOPE repository, and run the following commands:
+
+```
+mh_style
+mh_lint
+```
+
+For more information on installing and using MISS_HIT, look at [MISS_HIT's readme](https://github.com/florianschanda/miss_hit#installation-via-pip).

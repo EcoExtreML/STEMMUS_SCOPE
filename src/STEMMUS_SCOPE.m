@@ -1,7 +1,7 @@
 %% STEMMUS-SCOPE.m (script)
 
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
-%     and the transfer of energy, mass, and momentum in the soil–plant–atmosphere continuum
+%     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
 %
 %     Version: 1.0.1
 %
@@ -115,9 +115,9 @@ else
 end
 
 F = struct('FileID', {'Simulation_Name', 'soil_file', 'leaf_file', 'atmos_file'...
-                     'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
-                     , 'p_file', 'Ta_file', 'ea_file', 'u_file', 'CO2_file', 'z_file', 'tts_file' ...
-                     , 'LAI_file', 'hc_file', 'SMC_file', 'Vcmax_file', 'Cab_file', 'LIDF_file'});
+                      'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
+                      , 'p_file', 'Ta_file', 'ea_file', 'u_file', 'CO2_file', 'z_file', 'tts_file' ...
+                      , 'LAI_file', 'hc_file', 'SMC_file', 'Vcmax_file', 'Cab_file', 'LIDF_file'});
 for i = 1:length(F)
     k = find(strcmp(F(i).FileID, strtok(X(:, 1))));
     if ~isempty(k)

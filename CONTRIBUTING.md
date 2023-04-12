@@ -155,11 +155,11 @@ See the [exe readme](./exe/README.md).
 
 ## Follow MATLAB style guidelines
 
-Please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
+When you are introducing new changes to the codes, please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
 
-When making a pull request, the code is [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker. 
-Any PR needs to pass this check before merging. 
-MISS_HIT is configured in `miss_hit.cfg`.
+When you submit a pull request, the code is also [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker. 
+The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. 
+MISS_HIT is configured in [`miss_hit.cfg`](./miss_hit.cfg).
 
 For more details see the following instructions: 
 <details><summary>Installation instructions</summary>

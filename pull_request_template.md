@@ -9,6 +9,6 @@ Please re-generate exe file if matlab codes are changed. About how to create an 
 - [ ] @mentions of the person or team responsible for reviewing proposed changes.
 - [ ] This pull request has a descriptive title.
 - [ ] Code is written according to the [guidelines](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
-- [ ] The code complies with the [MISS_HIT style checker and linter](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CONTRIBUTING.md#follow-matlab-style-guidelines)
+- [ ] The checks by [MISS_HIT style checker and linter](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CONTRIBUTING.md#follow-matlab-style-guidelines), below the pull request, are successful (green).
 - [ ] Documentation is available.
 - [ ] Model runs successfully.

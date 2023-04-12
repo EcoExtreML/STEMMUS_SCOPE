@@ -161,8 +161,11 @@ When you submit a pull request, the code is also [checked](https://github.com/Ec
 The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. 
 MISS_HIT is configured in [`miss_hit.cfg`](./miss_hit.cfg).
 
-For more details see the following instructions: 
-<details><summary>Installation instructions</summary>
+### Installing MISS_HIT
+It is best practice to install packages in environments. See the dropdown menu for instructions.
+However, you can also continue below to install MISS_HIT without these steps.
+
+<details><summary>Python environment / conda instructions</summary>
 
 You need to have a valid python installation on your system.
 
@@ -188,8 +191,9 @@ conda env create --name misshit
 conda activate misshit
 ```
 
-### **Install miss_hit**
-Install miss hit in the (conda or venv) environment with:
+</details>
+
+Install miss hit (optionally in the conda or venv environment) with:
 ```bash
 pip install miss-hit
 ```
@@ -200,4 +204,5 @@ To run the style checker or linter, navigate to the STEMMUS_SCOPE repository, an
 mh_style
 mh_lint
 ```
-</details>
+
+For more information on installing and using MISS_HIT, look at [MISS_HIT's readme](https://github.com/florianschanda/miss_hit#installation-via-pip).

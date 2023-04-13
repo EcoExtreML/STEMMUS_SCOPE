@@ -44,7 +44,8 @@ global InputPath OutputPath InitialConditionPath
 % Prepare forcing and soil data
 global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
-IGBP_veg_long        = SiteProperties.IGBP_veg_long;
+SiteProperties.IGBP_veg_long(:,2)=SiteProperties.IGBP_veg_long(:,1);
+IGBP_veg_long        = SiteProperties.IGBP_veg_long(:,1);
 latitude             = SiteProperties.latitude;
 longitude            = SiteProperties.longitude;
 reference_height     = SiteProperties.reference_height;

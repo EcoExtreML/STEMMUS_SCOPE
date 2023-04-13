@@ -26,7 +26,7 @@ function [ScopeParameters,xyt,canopy] = loadTimeSeries(ScopeParameters,leafbio,s
     xyt.t = load(fullfile(path_input, t_file));
     xyt.year = load(fullfile(path_input, year_file));
     t_ = xyt.t;
-
+    year=unique(xyt.year);
     DOY_ = floor(t_)+1;
     time_ = 24*(t_-floor(t_));
 
@@ -126,7 +126,10 @@ function [ScopeParameters,xyt,canopy] = loadTimeSeries(ScopeParameters,leafbio,s
         Vcmaxtable = load(fullfile(path_input, Vcmax_file));
         ScopeParameters.Vcmo  = interp1(Vcmaxtable(:,1),Vcmaxtable(:,2),t_);
     else
-        ScopeParameters.Vcmo = leafbio.Vcmo*ones(size(t_));
+        for ii=1:length(xyt.year)   
+            index  = find(xyt.year(ii)==year,1);
+            ScopeParameters.leafwidth (ii,:)  = ScopeParameters.Vcmo1 (index,:); 
+        end
     end
 
     if ~isempty(Cab_file)
@@ -135,4 +138,35 @@ function [ScopeParameters,xyt,canopy] = loadTimeSeries(ScopeParameters,leafbio,s
     else
         ScopeParameters.Cab = leafbio.Cab*ones(size(t_));
     end
+    
+    %% 8. Temperature parameters
+    for ii=1:length(xyt.year)   
+    index  = find(xyt.year(ii)==year,1);
+    ScopeParameters.Tparam (ii,:)  = ScopeParameters.Tparam1 (index,:); 
+    end
+    
+    %% 9. m parameters
+    for ii=1:length(xyt.year)   
+    index  = find(xyt.year(ii)==year,1);
+    ScopeParameters.m (ii,:)  = ScopeParameters.m1 (index,:); 
+    end
+    
+    %% 10. Phototype parameters
+    for ii=1:length(xyt.year)   
+    index  = find(xyt.year(ii)==year,1);
+    ScopeParameters.Type (ii,:)  = ScopeParameters.Type1 (index,:); 
+    end
+    
+    %% 11. Dark respiration parameters
+    for ii=1:length(xyt.year)   
+    index  = find(xyt.year(ii)==year,1);
+    ScopeParameters.Rdparam (ii,:)  = ScopeParameters.Rdparam1 (index,:); 
+    end
+    
+    %% 12. Leafwidth parameters
+    for ii=1:length(xyt.year)   
+    index  = find(xyt.year(ii)==year,1);
+    ScopeParameters.leafwidth (ii,:)  = ScopeParameters.leafwidth1 (index,:); 
+    end
+    ScopeParameters=rmfield(ScopeParameters,{'Vcmo1','Tparam1','m1','Type1','Rdparam1','leafwidth1'});
 end

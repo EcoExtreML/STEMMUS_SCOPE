@@ -22,7 +22,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% 0. globals
-% We replaced the filereads (old) script with a function named prepareForcingData, see issue #86,
+% We replaced the filereads (old) script with a function named prepareForcingData, see issue %86,
 % but there still global variables here, because we not sure which
 % progresses related to these global variables.
 
@@ -63,7 +63,7 @@ Ks0 = SoilProperties.Ks0;
 
 %%
 run Constants; % input soil parameters
-global i tS KT Delt_t TEND TIME MN NN ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0 g
+global i tS KT Delt_t TEND TIME MN NN ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0
 global KIT NIT TimeStep Processing
 global SUMTIME hhh TTT P_ggg Theta_LLL Thmrlefc CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
 global AVAIL Evap EXCESS QMT hN hSAVE Soilairefc Trap sumTRAP_dir sumEVAP_dir
@@ -73,15 +73,37 @@ global h_frez hhh_frez hOLD_frez L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTh
 global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
 global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A SAVETheta_UU Theta_a
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
-global Theta_g MU_a DeltZ Alpha_Lg Beta_g D_V D_A fc Eta nD ThmrlCondCap ZETA
-global MU_W Ks RHOL Lambda1 Lambda2 Lambda3 RHODA RHOV c_a c_V c_L ETCON EHCAP
-global Xaa XaT Xah RDA Rv KL_T DRHOVT DRHOVh DRHODAt DRHODAz hThmrl Tr Hystrs
-global Theta_V RHOI W WW D_Ta SSUR W_Chg SWCC Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
-global xERR hERR TERR uERR L QMTT QMBB Evapo trap RnSOIL PrecipO constants
+global Theta_g DeltZ Alpha_Lg Beta_g D_V D_A fc Eta nD ThmrlCondCap ZETA
+global MU_W Ks RHODA RHOV ETCON EHCAP
+global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz hThmrl Tr Hystrs
+global Theta_V W WW D_Ta SSUR W_Chg SWCC Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
+global xERR hERR TERR uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
-%% 1. define constants
-[constants] = io.define_constants();
+%% 1. define Constants
+[Constants] = io.define_constants();
+global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L
+g = Constants.g;
+RHOL = Constants.RHOL;
+RHOI = Constants.RHOI;
+Rv = Constants.Rv;
+RDA = Constants.RDA;
+MU_a = Constants.MU_a;
+Lambda1 = Constants.Lambda1;
+Lambda2 = Constants.Lambda2;
+Lambda3 = Constants.Lambda3;
+c_L = Constants.c_L;
+c_V = Constants.c_V;
+c_a = Constants.c_a;
+
+% used in other scripts not here!
+global GWT c_i Gamma0 Gamma_w
+GWT = Constants.GWT; % used in CondL_T
+Gamma0 = Constants.Gamma0; % used in other scripts!
+Gamma_w = Constants.Gamma_w; % used in other scripts!
+c_i = Constants.c_i; % used in EnrgyPARM!
+RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
+
 [Rl] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML);
 
 %% 2. simulation options
@@ -128,7 +150,7 @@ end
 %% 4. input data
 % the current stemmus-scope does not support useXLSX=0
 if useXLSX == 0
-    X                           = textread([path_input parameter_file{3}], '%s'); %#ok<DTXTRD>
+    X                           = textread([path_input parameter_file{3}], '%s'); %%ok<DTXTRD>
     N                           = str2double(X);
 else
     [N, X]                       = xlsread([path_input char(parameter_file)], 'inputdata', '');
@@ -213,7 +235,7 @@ ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
     [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
-    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options);
+    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, Constants, F, xyt, path_input, options);
 else
     soil = struct;
 end
@@ -754,7 +776,7 @@ for i = 1:1:Dur_tot
         [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
-        [W, WW, MU_W, D_Ta] = CondL_Tdisp(POR, Theta_LL, Theta_L, SSUR, RHO_bulk, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
+        [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
         [L] = Latent(TT, NN);
         [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(T, RDA, P_g, Rv, DeltZ, h, hh, TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
         [c_unsat, Lambda_eff, ZETA, ETCON, EHCAP, TETCON, EfTCON] = CondT_coeff(Theta_LL, Lambda1, Lambda2, Lambda3, RHO_bulk, Theta_g, RHODA, RHOV, c_a, c_V, c_L, NL, nD, ThmrlCondCap, ThermCond, HCAP, SF, TCA, GA1, GA2, GB1, GB2, HCD, ZETA0, CON0, PS1, PS2, XWILT, XK, TT, POR, DRHOVT, L, D_A, Theta_V, Theta_II, TCON_dry, Theta_s, XSOC, TPS1, TPS2, TCON0, TCON_s, FEHCAP, RHOI, RHOL, c_unsat, Lambda_eff, ETCON, EHCAP, TETCON, EfTCON, ZETA);

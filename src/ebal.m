@@ -133,7 +133,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Mair  = constants.Mair;
     rhoa  = constants.rhoa;
     cp    = constants.cp;
-    g     = constants.g;
+    g     = constants.g / 100; % [m s-2] Gravity acceleration
     kappa = constants.kappa;
     sigmaSB = constants.sigmaSB;
     Ps    = gap.Ps;
@@ -169,7 +169,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     PSI = 0;
     % [bbx]=Max_Rootdepth(bbx,TIME,NL,KT);
     [bbx] = Max_Rootdepth(bbx, NL, KT, TT);
-    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha);
+    [PSIs, rsss, rrr, rxx] = calc_rsoil(Constants, Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha);
     [sfactor] = calc_sfactor(Rl, Theta_s, Theta_r, Theta_LL, bbx, Ta, Theta_f);
     PSIss = PSIs(NL, 1);
     %% 2. Energy balance iteration loop

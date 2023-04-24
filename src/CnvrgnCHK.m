@@ -2,9 +2,14 @@
 % xERR,hERR,TERR,Theta_LL,Theta_L,Theta_UU,Theta_U,hh,h,TT,T,KT,TIME,Delt_t,NL,NN,Thmrlefc,NBCh,NBChB,NBCT,NBCTB,tS,uERR
 %%%%%%%% outputs %%%%%%%%%%
 % KT,TIME,Delt_t,IRPT1,IRPT2,tS
-function [KT, TIME, Delt_t, IRPT1, IRPT2, tS] = CnvrgnCHK(xERR, hERR, TERR, Theta_LL, Theta_L, Theta_UU, Theta_U, hh, h, TT, T, KT, TIME, Delt_t, NL, NN, Thmrlefc, NBCh, NBChB, NBCT, NBCTB, tS, uERR)
+function [KT, TIME, Delt_t, IRPT1, IRPT2, tS] = CnvrgnCHK(Theta_LL, Theta_L, Theta_UU, Theta_U, hh, h, TT, T, KT, TIME, Delt_t, NL, NN, Thmrlefc, NBCh, NBChB, NBCT, NBCTB, tS)
     global Delt_t0
     global ISFT TT_CRIT T_CRIT T0 EPCT
+    xERR = 0.02; % Maximum desirable change of moisture content;
+    hERR = 0.1e08; % Maximum desirable change of matric potential;
+    TERR = 2; % Maximum desirable change of temperature;
+    uERR = 0.02;                  % Maximum desirable change of total water content;
+
     IRPT1 = 0;
     DxMAX = 0;
     for ML = 1:NL

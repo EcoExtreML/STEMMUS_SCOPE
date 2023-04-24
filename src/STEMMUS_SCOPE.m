@@ -61,23 +61,80 @@ fmax = SoilProperties.fmax;
 theta_s0 = SoilProperties.theta_s0;
 Ks0 = SoilProperties.Ks0;
 
-%%
-run Constants; % input soil parameters
+%% replacing run Constants
+% TODO issue: function CnvrgnCHK is unused!
+% R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
+
+global NL DeltZ
+Tot_Depth = 500; % Unit is cm. it should be usually bigger than 0.5m. Otherwise,
+% the DeltZ would be reset in 50cm by hand;
+[NL, DeltZ] = setNumberOfElements(Tot_Depth)
+
+global NS % TODO used only in BSM.m
+NS = 1; % Number of soil types;
+
+global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl
+global W_Chg ThmrlCondCap ThermCond SSUR fc Tr rroot
+% Indicator denotes the index of soil type for choosing soil physical parameters
+J = 1;
+
+% indicator for choose the soil water characteristic curve, =0, Clapp and
+% Hornberger; =1, Van Gen
+SWCC = 1;
+
+% If the value of Hystrs is 1, then the hysteresis is considered, otherwise 0;
+Hystrs = 0;
+
+% Consider the isothermal water flow if the value is 0, otherwise 1;
+Thmrlefc = 1;
+
+% The dry air transport is considered with the value of 1,otherwise 0;
+Soilairefc = 0;
+
+% Value of 1, the special calculation of water capacity is used, otherwise 0;
+hThmrl = 1;
+
+% Value of 0 means that the heat of wetting would be calculated by Milly's
+% method/Otherwise,1. The method of Lyle Prunty would be used;
+W_Chg = 1;
+
+% The indicator for choosing Milly's effective thermal capacity and conductivity
+% formulation to verify the vapor and heat transport in extremly dry soil.
+ThmrlCondCap = 1;
+
+% The indicator for choosing effective thermal conductivity methods, 1= de vries
+% method;2= Jonhansen methods;3= Simplified de vries method(Tian 2016);4=
+% Farouki methods
+ThermCond = 1;
+
+% Surface area for loam,for sand 10^2 (cm^-1)
+SSUR = 10^5;
+
+% The fraction of clay,for loam,0.036; for sand,0.02
+fc = 0.022;
+
+% Reference temperature
+Tr = 20;
+
+% Other settings
+rwuef = 1;
+rroot = 1.5 * 1e-3;
+
 global i tS KT Delt_t TEND TIME MN NN ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0
 global KIT NIT TimeStep Processing
-global SUMTIME hhh TTT P_ggg Theta_LLL Thmrlefc CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
-global AVAIL Evap EXCESS QMT hN hSAVE Soilairefc Trap sumTRAP_dir sumEVAP_dir
+global SUMTIME hhh TTT P_ggg Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
+global AVAIL Evap EXCESS QMT hN hSAVE Trap sumTRAP_dir sumEVAP_dir
 global TSAVE AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CTT_PH CTT_LT CTT_g CTT_Lg CCTT_PH CCTT_LT CCTT_g CCTT_Lg C_unsat c_unsat
 global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
 global h_frez hhh_frez hOLD_frez L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
 global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
-global  QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A SAVETheta_UU Theta_a
+global QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A SAVETheta_UU Theta_a
 global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
-global Theta_g DeltZ Alpha_Lg Beta_g D_V D_A fc Eta nD ThmrlCondCap ZETA
+global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA
 global MU_W Ks RHODA RHOV ETCON EHCAP
-global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz hThmrl Tr Hystrs
-global Theta_V W WW D_Ta SSUR W_Chg SWCC Ratio_ice ThermCond Beta_gBAR Alpha_LgBAR
-global xERR hERR TERR uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
+global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
+global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
+global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
 %% 1. define Constants
@@ -150,7 +207,7 @@ end
 %% 4. input data
 % the current stemmus-scope does not support useXLSX=0
 if useXLSX == 0
-    X                           = textread([path_input parameter_file{3}], '%s'); %%ok<DTXTRD>
+    X                           = textread([path_input parameter_file{3}], '%s'); % ok<DTXTRD>
     N                           = str2double(X);
 else
     [N, X]                       = xlsread([path_input char(parameter_file)], 'inputdata', '');
@@ -280,7 +337,7 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
 % these extra vars are set in script Constants.m
 % used in init.applySoilHeteroEffect in StartInit.m
-global Tot_Depth BtmX BtmT J Eqlspace
+global Tot_Depth BtmX BtmT Eqlspace
 global InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6
 global InitND1 InitND2 InitND3 InitND4 InitND5 InitND6
 global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
@@ -294,6 +351,7 @@ SoilConstants.numberOfNodes = NN;
 SoilConstants.BtmX = BtmX;
 SoilConstants.BtmT = BtmT;
 SoilConstants.Tot_Depth = Tot_Depth;
+
 SoilConstants.Thmrlefc = Thmrlefc;
 SoilConstants.Soilairefc = Soilairefc;
 SoilConstants.P_g = P_g;
@@ -303,7 +361,10 @@ SoilConstants.T = T;
 SoilConstants.TT = TT;
 SoilConstants.h_frez = h_frez;
 SoilConstants.g = g;
+
+Eqlspace = 0; % Indicator for deciding is the space step equal or not;
 SoilConstants.Eqlspace = Eqlspace;
+
 SoilConstants.ThermCond = ThermCond;
 
 SoilConstants.InitialValues.initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
@@ -458,6 +519,20 @@ FCHK = zeros(1, NN);
 KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
+
+% The time and domain information setting
+KIT = 0; % KIT is used to count the number of iteration in a time step;
+NIT = 30; % Desirable number of iterations in a time step;
+DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
+KT = 0; % Number of time steps;
+TIME = 0 * TimeProperties.DELT; % Time of simulation released;
+TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
+Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
+Delt_t0 = Delt_t; % Duration of last time step;
+
+% Is the tS(time step) needed to be added with 1?
+% Cause the start of simulation period is from 0mins, while the input data start from 30mins.
+tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
 for i = 1:1:Dur_tot

@@ -151,7 +151,7 @@ ScopeParameters.Tyear = mean(Ta_msr); % calculate mean air temperature; Ta_msr i
 ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);
 
 % Input T parameters for different vegetation type
-[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.IGBP_veg_long);
+[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, landcoverClass);
 
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
@@ -213,7 +213,7 @@ ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
     [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
-    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options);
+    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options,landcoverClass);
 else
     soil = struct;
 end

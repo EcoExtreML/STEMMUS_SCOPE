@@ -12,7 +12,7 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
         ScopeParameters.lcType(ii) = Type;
         ScopeParameters.lcRdparam(ii) = Rdparam;
         ScopeParameters.lcleafwidth(ii) = leafwidth;
-    end    
+    end
 end
 
 %% lookup table for Vcmo, Tparam, m, Type, Rdparam, and leafwidth

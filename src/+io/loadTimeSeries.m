@@ -1,4 +1,4 @@
-function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options,landcoverClass)
+function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options, landcoverClass)
 
     %{
         This function loads time series data.
@@ -121,10 +121,8 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
     end
 
     %% 7. Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth parameters
-    
-    landcovers = unique(landcoverClass) % where landcoverClass is an array like ["forest", "forest", "forest", "shrubland", ...]
-    
-    for ii=(1:length(xyt.time))
+    landcovers = unique(landcoverClass); % where landcoverClass is an array like ["forest", "forest", "forest", "shrubland", ...]
+    for ii = 1:length(xyt.time)
         landcoverIndex = find(landcoverClass(ii), landcovers);
         ScopeParameters.Vcmo(ii) = ScopeParameters.lcVcmo(landcoverIndex);
         ScopeParameters.Tparam(ii) = ScopeParameters.lcTparam(landcoverIndex);
@@ -133,7 +131,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.Rdparam(ii) = ScopeParameters.lcRdparam(landcoverIndex);
         ScopeParameters.leafwidth(ii) = ScopeParameters.lcleafwidth(landcoverIndex);
     end
-    ScopeParameters=rmfield(ScopeParameters,{'lcVcmo','lcTparam','lcm','lcType','lcRdparam','lcleafwidth'});
+    ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
 
     if ~isempty(Cab_file)
         Cabtable = load(fullfile(path_input, Cab_file));

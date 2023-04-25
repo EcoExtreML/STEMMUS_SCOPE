@@ -3,17 +3,16 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
         %Set temperature parameters for different landcover type.
     %}
     siteName = cellstr(siteName);
-    landcovers = unique(landcoverClass) % where landcoverClass is an array like ["forest", "forest", "forest", "shrubland", ...]
-    for ii=1:length(landcovers)
-        Vcmo, Tparam, m, Type, Rdparam, leafwidth = landcover_variables(landcovers(ii));
+    landcovers = unique(landcoverClass); % where landcoverClass is an array like ["forest", "forest", "forest", "shrubland", ...]
+    for ii = 1:length(landcovers)
+        [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(ii));
         ScopeParameters.lcVcmo(ii) = Vcmo;
         ScopeParameters.lcTparam(ii) = Tparam;
         ScopeParameters.lcm(ii) = m;
         ScopeParameters.lcType(ii) = Type;
         ScopeParameters.lcRdparam(ii) = Rdparam;
         ScopeParameters.lcleafwidth(ii) = leafwidth;
-    end
-    
+    end    
 end
 
 %% lookup table for Vcmo, Tparam, m, Type, Rdparam, and leafwidth

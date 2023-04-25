@@ -7,7 +7,7 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
     SoilVariables.VPER(i, 2) = SoilVariables.VPERSL(j);
     SoilVariables.VPER(i, 3) = SoilVariables.VPERC(j);
     SoilVariables.XSOC(i) = SoilConstants.VPERSOC(j);
-    SoilVariables.XK(i) = 0.11; % 0.11 This is for silt loam; For sand XK=0.025
+    SoilVariables.XK(i) = SoilConstants.XK;
 
     if SoilConstants.SWCC == 1   % VG soil water retention model
         VanGenuchten.Theta_s(i) = SoilProperties.SaturatedMC(j);

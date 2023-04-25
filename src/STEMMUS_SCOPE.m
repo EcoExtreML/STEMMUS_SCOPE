@@ -61,81 +61,108 @@ fmax = SoilProperties.fmax;
 theta_s0 = SoilProperties.theta_s0;
 Ks0 = SoilProperties.Ks0;
 
-%% replacing run Constants
+%% Model settings: replacing "run Constants"
 % TODO issue: function CnvrgnCHK is unused!
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
+% Load model settings
+ModelSettings = loadModelSettings(TimeProperties);
 
-global NL DeltZ
-Tot_Depth = 500; % Unit is cm. it should be usually bigger than 0.5m. Otherwise,
-% the DeltZ would be reset in 50cm by hand;
-[NL, DeltZ] = setNumberOfElements(Tot_Depth)
+global NL DeltZ Tot_Depth Eqlspace
+Tot_Depth = ModelSettings.Tot_Depth;
+Eqlspace = ModelSettings.Eqlspace;
+NL = ModelSettings.NL;
+DeltZ = ModelSettings.DeltZ;
 
 global NS % TODO used only in BSM.m
-NS = 1; % Number of soil types;
+NS = ModelSettings.NS;
 
 global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl
-global W_Chg ThmrlCondCap ThermCond SSUR fc Tr rroot
-% Indicator denotes the index of soil type for choosing soil physical parameters
-J = 1;
+global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE
+global KIT DURTN KT TIME Delt_t NN ML
+J = ModelSettings.J;
+SWCC = ModelSettings.SWCC;
+Hystrs = ModelSettings.Hystrs;
+Thmrlefc = ModelSettings.Thmrlefc;
+Soilairefc = ModelSettings.Soilairefc;
+hThmrl = ModelSettings.hThmrl;
+W_Chg = ModelSettings.W_Chg;
+ThmrlCondCap = ModelSettings.ThmrlCondCap;
+ThermCond = ModelSettings.ThermCond;
+SSUR = ModelSettings.SSUR;
+fc = ModelSettings.fc;
+Tr = ModelSettings.Tr;
+T0 = ModelSettings.T0;
+rwuef = ModelSettings.rwuef;
+rroot = ModelSettings.rroot;
+SAVE = ModelSettings.SAVE;
+KIT = ModelSettings.KIT;
+NIT = ModelSettings.NIT;
+DURTN = ModelSettings.DURTN;
+KT = ModelSettings.KT;
+TIME = ModelSettings.TIME;
+TEND = ModelSettings.TEND;
+Delt_t = ModelSettings.Delt_t;
+Delt_t0 = ModelSettings.Delt_t0;
+NN = ModelSettings.NN;
+ML = ModelSettings.ML;
 
-% indicator for choose the soil water characteristic curve, =0, Clapp and
-% Hornberger; =1, Van Gen
-SWCC = 1;
+% load forcing data
+ForcingData = io.loadForcingData(InputPath, DELT, fmax, Tot_Depth)
+% global vars used in Forcing_PARM
+global Ta_msr RH_msr WS_msr Pg_msr Rn_msr
+global Rns_msr VPD_msr LAI_msr G_msr Precip_msr
+Ta_msr = ForcingData.Ta_msr;
+RH_msr = ForcingData.RH_msr;
+WS_msr = ForcingData.WS_msr;
+Pg_msr = ForcingData.Pg_msr;
+Rn_msr = ForcingData.Rn_msr;
+Rns_msr = ForcingData.Rns_msr;
+VPD_msr = ForcingData.VPD_msr;
+LAI_msr = ForcingData.LAI_msr;
+G_msr = ForcingData.G_msr;
+Precip_msr = ForcingData.Precip_msr;
 
-% If the value of Hystrs is 1, then the hysteresis is considered, otherwise 0;
-Hystrs = 0;
+% load initial soil moisture and soil temperature
+SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC)
+% global vars used in Forcing_PARM
+global Tss
+Tss = SoilData.Tss;
 
-% Consider the isothermal water flow if the value is 0, otherwise 1;
-Thmrlefc = 1;
-
-% The dry air transport is considered with the value of 1,otherwise 0;
-Soilairefc = 0;
-
-% Value of 1, the special calculation of water capacity is used, otherwise 0;
-hThmrl = 1;
-
-% Value of 0 means that the heat of wetting would be calculated by Milly's
-% method/Otherwise,1. The method of Lyle Prunty would be used;
-W_Chg = 1;
-
-% The indicator for choosing Milly's effective thermal capacity and conductivity
-% formulation to verify the vapor and heat transport in extremly dry soil.
-ThmrlCondCap = 1;
-
-% The indicator for choosing effective thermal conductivity methods, 1= de vries
-% method;2= Jonhansen methods;3= Simplified de vries method(Tian 2016);4=
-% Farouki methods
-ThermCond = 1;
-
-% Surface area for loam,for sand 10^2 (cm^-1)
-SSUR = 10^5;
-
-% The fraction of clay,for loam,0.036; for sand,0.02
-fc = 0.022;
-
-% Reference temperature
-Tr = 20;
-
-% Other settings
-rwuef = 1;
-rroot = 1.5 * 1e-3;
-
-global i tS KT Delt_t TEND TIME MN NN ML ND hOLD TOLD h hh T TT P_gOLD P_g P_gg Delt_t0
-global KIT NIT TimeStep Processing
+global i tS TIME MN ND hOLD TOLD h hh T TT P_gOLD P_g P_gg
+global TimeStep Processing
 global SUMTIME hhh TTT P_ggg Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
 global AVAIL Evap EXCESS QMT hN hSAVE Trap sumTRAP_dir sumEVAP_dir
 global TSAVE AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CTT_PH CTT_LT CTT_g CTT_Lg CCTT_PH CCTT_LT CCTT_g CCTT_Lg C_unsat c_unsat
 global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
-global h_frez hhh_frez hOLD_frez L_f T0 CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
-global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLT SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
-global QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A SAVETheta_UU Theta_a
-global SAVEKfL_h KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
+global h_frez hhh_frez hOLD_frez L_f CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
+global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
+global QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A Theta_a
+global KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
 global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA
 global MU_W Ks RHODA RHOV ETCON EHCAP
 global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
 global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
 global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
+
+% TODO
+% only in main
+% P_gOLD TimeStep Processing hhh P_ggg hSAVE TSAVE TIMELAST hOLD_frez
+% % unused
+% sumTRAP_dir sumEVAP_dir BX KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CCTT_PH
+% CCTT_LT CCTT_g CCTT_Lg C_unsat SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh TTT_CRIT
+% hhh_frez EPCTT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff TTETCON
+% Tbtms Cor_TIME DDTDZ DDRHOVZ DDEhBAR DDRHOVhDz EEtaBAR DD_Vg DDRHOVTDz
+% KKLhBAR KKLTBAR DDTDBAR QVV QLL CChh DSAVEDTheta_LLT DSAVEDTheta_LLh
+% DSAVEDTheta_UUh QVTT QVHH SSa HRA QVAA QLHH QLTT DVHH DVTT
+% SSe QAA QAa QL_TT QL_HH QLAA DDPgDZ kk_g VV_A TKCHK TSAVEhh
+
+% Get initial values and some of the SoilConstants for SatartInit
+[InitialValues, SoilConstants] = getInitialValues(TimeProperties.Dur_tot, NL);
+% these are used by other scripts
+P_g = InitialValues.P_g;
+P_gg = InitialValues.P_gg;
+TT_CRIT = InitialValues.TT_CRIT;
 
 %% 1. define Constants
 [Constants] = io.define_constants();
@@ -161,6 +188,7 @@ Gamma_w = Constants.Gamma_w; % used in other scripts!
 c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
 
+RTB = 1000; % initial root total biomass (g m-2)
 [Rl] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML);
 
 %% 2. simulation options
@@ -335,71 +363,13 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 %% Initialize Temperature, Matric potential and soil air pressure.
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
-% these extra vars are set in script Constants.m
-% used in init.applySoilHeteroEffect in StartInit.m
-global Tot_Depth BtmX BtmT Eqlspace
-global InitX0 InitX1 InitX2 InitX3 InitX4 InitX5 InitX6
-global InitND1 InitND2 InitND3 InitND4 InitND5 InitND6
-global InitT0 InitT1 InitT2 InitT3 InitT4 InitT5 InitT6
+% Create SoilConstants and add variables from SoilData
+SoilConstants = struct();
+for field = fieldnames(SoilData)'
+    SoilConstants.(field{1}) = SoilData.(field{1});
+end
 
-SoilConstants.SWCC = SWCC;
-SoilConstants.J = J;
-SoilConstants.totalNumberOfElements = NL;
-SoilConstants.numberOfElements = ML;
-SoilConstants.DeltZ = DeltZ;
-SoilConstants.numberOfNodes = NN;
-SoilConstants.BtmX = BtmX;
-SoilConstants.BtmT = BtmT;
-SoilConstants.Tot_Depth = Tot_Depth;
-
-SoilConstants.Thmrlefc = Thmrlefc;
-SoilConstants.Soilairefc = Soilairefc;
-SoilConstants.P_g = P_g;
-SoilConstants.P_gg = P_gg;
-SoilConstants.h = h;
-SoilConstants.T = T;
-SoilConstants.TT = TT;
-SoilConstants.h_frez = h_frez;
-SoilConstants.g = g;
-
-Eqlspace = 0; % Indicator for deciding is the space step equal or not;
-SoilConstants.Eqlspace = Eqlspace;
-
-SoilConstants.ThermCond = ThermCond;
-
-SoilConstants.InitialValues.initX = [InitX0, InitX1, InitX2, InitX3, InitX4, InitX5, InitX6];
-SoilConstants.InitialValues.initND = [InitND1, InitND2, InitND3, InitND4, InitND5, InitND6];
-SoilConstants.InitialValues.initT = [InitT0, InitT1, InitT2, InitT3, InitT4, InitT5, InitT6];
-
-% these are defined in script Constants.m
-% these are used in SOIL2 inside StartInit.m
-SoilConstants.Theta_L = Theta_L;
-SoilConstants.Theta_LL = Theta_LL;
-SoilConstants.Theta_V = Theta_V;
-SoilConstants.Theta_g = Theta_g;
-SoilConstants.Se = Se;
-SoilConstants.KL_h = KL_h;
-SoilConstants.DTheta_LLh = DTheta_LLh;
-SoilConstants.KfL_T = KfL_T;
-SoilConstants.Theta_II = Theta_II;
-SoilConstants.Theta_I = Theta_I;
-SoilConstants.Theta_UU = Theta_UU;
-SoilConstants.Theta_U = Theta_U;
-SoilConstants.T0 = T0;
-SoilConstants.TT_CRIT = TT_CRIT;
-SoilConstants.KfL_h = KfL_h;
-SoilConstants.DTheta_UUh = DTheta_UUh;
-SoilConstants.hThmrl = hThmrl;
-SoilConstants.Tr = Tr;
-SoilConstants.Hystrs = Hystrs;
-SoilConstants.KIT = KIT;
-SoilConstants.RHOI = RHOI;
-SoilConstants.RHOL = RHOL;
-
-% this is defined in Constants.m, see issue 96!
-% used in init.setBoundaryCondition
-SoilConstants.Ta_msr = Ta_msr;
-
+SoilConstants.Ta_msr = ForcingData.Ta_msr;
 [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
@@ -519,16 +489,6 @@ FCHK = zeros(1, NN);
 KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
-
-% The time and domain information setting
-KIT = 0; % KIT is used to count the number of iteration in a time step;
-NIT = 30; % Desirable number of iterations in a time step;
-DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
-KT = 0; % Number of time steps;
-TIME = 0 * TimeProperties.DELT; % Time of simulation released;
-TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
-Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
-Delt_t0 = Delt_t; % Duration of last time step;
 
 % Is the tS(time step) needed to be added with 1?
 % Cause the start of simulation period is from 0mins, while the input data start from 30mins.
@@ -773,43 +733,7 @@ for i = 1:1:Dur_tot
         end
 
         for ML = 1:NL
-            % QVV(ML,KT)=QV(ML);
-            % QLL(ML,KT)=QL(ML,1);
-            % DDEhBAR(ML,KT)=DEhBAR(ML);
-            % DDRHOVhDz(ML,KT)=DRHOVhDz(ML);
             DDhDZ(ML, KT) = DhDZ(ML);
-            % EEtaBAR(ML,KT)=EtaBAR(ML);
-            % DD_Vg(ML,KT)=D_Vg(ML);
-            % DDRHOVTDz(ML,KT)=DRHOVTDz(ML);
-            % DDTDZ(ML,KT)=DTDZ(ML);
-            % DDPgDZ(ML,KT)=DPgDZ(ML);
-            % KKLhBAR(ML,KT)=KLhBAR(ML);
-            % KKLTBAR(ML,KT)=KLTBAR(ML);
-            % DDTDBAR(ML,KT)=DTDBAR(ML);
-            % QVAA(ML,KT)=QVa(ML);
-            % QAA(ML,KT)=Qa(ML);
-            if ~Soilairefc
-                % QLHH(ML,KT)=QLH(ML);
-                % QLTT(ML,KT)=QLT(ML);
-            else
-                % QLHH(ML,KT)=QL_h(ML);
-                % QLTT(ML,KT)=QL_T(ML);
-                % QLAA(ML,KT)=QL_a(ML);
-            end
-            % DVHH(ML,KT)=DVH(ML);
-            % DVTT(ML,KT)=DVT(ML);
-            % SSe(ML,KT)=Se(ML,1);
-            % SSa(ML,KT)=Sa(ML,1);
-            % DSAVEDTheta_LLh(ML,KT)=SAVEDTheta_LLh(ML,1);
-            % DSAVEDTheta_LLT(ML,KT)=SAVEDTheta_LLT(ML,1);
-            % DSAVEDTheta_UUh(ML,KT)=SAVEDTheta_UUh(ML,1);
-
-            % QVHH(ML,KT)=QVH(ML);
-            % QVTT(ML,KT)=QVT(ML);
-            % DDTheta_LLh(ML,KT)=DTheta_LLh(ML,1);
-            % CChh(ML,KT)=Chh(ML,1);
-            % kk_g(ML,KT)=k_g(ML,1);
-            % VV_A(ML,KT)=V_A(ML);
         end
     end
     if Delt_t ~= Delt_t0

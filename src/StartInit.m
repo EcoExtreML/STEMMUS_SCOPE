@@ -1,8 +1,8 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(Constants, ModelSettings, SoilConstants, SoilProperties, SiteProperties)
 
     %%% SoilConstants for init
     % TODO this can be moved ouside StartInit function, see issue 96
-    SoilConstants = init.setSoilConstants(SoilConstants, SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
+    SoilConstants = init.setSoilConstants(Constants, ModelSettings, SoilConstants, SoilProperties);
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);

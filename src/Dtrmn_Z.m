@@ -1,7 +1,7 @@
-function Dtrmn_Z
-    %  The determination of the element length
-    global Elmn_Lnth ML DeltZ NL Tot_Depth DeltZ_R MML
-
+function [DeltZ, DeltZ_R, ML] = Dtrmn_Z(NL, Tot_Depth)
+    %{
+        The determination of the element length
+    %}
     Elmn_Lnth = 0;
 
     for ML = 1:3
@@ -50,3 +50,4 @@ function Dtrmn_Z
             return
         end
     end
+end

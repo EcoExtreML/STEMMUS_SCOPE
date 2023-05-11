@@ -65,10 +65,18 @@ function ModelSettings = loadModelSettings(TimeProperties)
     ModelSettings.Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
     ModelSettings.Delt_t0 = Delt_t; % Duration of last time step;
 
-    [NL, ML, DeltZ] = setNumberOfElements(Tot_Depth, Eqlspace);
-    ModelSettings.NL = NL;
+    % Determination of NL, the number of elments
+    ModelSettings.NL = 100;
+    if ~ModelSettings.Eqlspace
+        [DeltZ, DeltZ_R, ML] = Dtrmn_Z(ModelSettings.NL, ModelSettings.Tot_Depth);
+    else
+        for ML = 1:ModelSettings.NL
+            ModelSettings.DeltZ(ML) = ModelSettings.Tot_Depth / ModelSettings.NL;
+        end
+    end
     ModelSettings.ML = ML;
     ModelSettings.DeltZ = DeltZ;
+    ModelSettings.DeltZ_R = DeltZ_R;
 
     ModelSettings.NN = ModelSettings.NL + 1; % Number of nodes;
     ModelSettings.mN = ModelSettings.NN + 1;

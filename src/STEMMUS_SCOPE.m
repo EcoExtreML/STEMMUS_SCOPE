@@ -72,6 +72,7 @@ Tot_Depth = ModelSettings.Tot_Depth;
 Eqlspace = ModelSettings.Eqlspace;
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
+DeltZ_R = ModelSettings.DeltZ_R;
 
 global NS % TODO used only in BSM.m
 NS = ModelSettings.NS;

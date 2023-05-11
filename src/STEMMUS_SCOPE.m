@@ -104,7 +104,7 @@ NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 
 % load forcing data
-ForcingData = io.loadForcingData(InputPath, DELT, fmax, Tot_Depth)
+ForcingData = io.loadForcingData(InputPath, DELT, fmax, Tot_Depth);
 
 % global vars used in Forcing_PARM
 global Ta_msr RH_msr WS_msr Pg_msr Rn_msr
@@ -121,7 +121,7 @@ G_msr = ForcingData.G_msr;
 Precip_msr = ForcingData.Precip_msr;
 
 % load initial soil moisture and soil temperature
-SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC)
+SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC);
 
 % global vars used in Forcing_PARM
 global Tss

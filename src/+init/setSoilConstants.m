@@ -3,11 +3,11 @@ function SoilConstants = setSoilConstants(Constants, ModelSettings, InitialValue
     % create SoilConstants structure holding initial values
     SoilConstants = struct();
     soil_fields = {
-        'P_g', 'P_gg', 'h', 'T', 'TT', 'h_frez', 'Theta_L',...
-        'Theta_LL', 'Theta_V', 'Theta_g', 'Se', 'KL_h',...
-        'DTheta_LLh', 'KfL_T', 'Theta_II', 'Theta_I',...
-        'Theta_UU', 'Theta_U', 'TT_CRIT', 'KfL_h', 'DTheta_UUh'
-    };
+                   'P_g', 'P_gg', 'h', 'T', 'TT', 'h_frez', 'Theta_L', ...
+                   'Theta_LL', 'Theta_V', 'Theta_g', 'Se', 'KL_h', ...
+                   'DTheta_LLh', 'KfL_T', 'Theta_II', 'Theta_I', ...
+                   'Theta_UU', 'Theta_U', 'TT_CRIT', 'KfL_h', 'DTheta_UUh'
+                  };
     for field = soil_fields
         SoilConstants.(field{1}) = InitialValues.(field{1});
     end
@@ -42,9 +42,9 @@ function SoilConstants = setSoilConstants(Constants, ModelSettings, InitialValue
     SoilConstants.numberOfElements = ModelSettings.ML;
 
     fields = {
-        'SWCC', 'J', 'DeltZ', 'Tot_Depth', 'Thmrlefc', 'Soilairefc',...
-        'T0', 'Tr', 'KIT', 'hThmrl', 'Hystrs', 'Eqlspace', 'ThermCond'
-    };
+              'SWCC', 'J', 'DeltZ', 'Tot_Depth', 'Thmrlefc', 'Soilairefc', ...
+              'T0', 'Tr', 'KIT', 'hThmrl', 'Hystrs', 'Eqlspace', 'ThermCond'
+             };
     for field = fields
         SoilConstants.(field{1}) = ModelSettings.(field{1});
     end

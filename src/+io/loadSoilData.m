@@ -1,6 +1,6 @@
 function [SoilData] = loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC)
-%{
-    Producing initial soil moisture and soil temperature profile
+    %{
+        Producing initial soil moisture and soil temperature profile
     %}
     SaturatedMC = SoilProperties.SaturatedMC;
     fieldMC = SoilProperties.fieldMC;

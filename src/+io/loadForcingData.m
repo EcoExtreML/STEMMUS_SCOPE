@@ -1,5 +1,5 @@
 function [ForcingData] = loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth)
-%{
+    %{
     %}
     DELT = TimeProperties.DELT;
     Dur_tot = TimeProperties.Dur_tot;

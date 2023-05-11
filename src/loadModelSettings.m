@@ -1,5 +1,5 @@
 function ModelSettings = loadModelSettings(TimeProperties)
-%{
+    %{
     %}
     % Indicator denotes the index of soil type for choosing soil physical parameters
     ModelSettings.J = 1;

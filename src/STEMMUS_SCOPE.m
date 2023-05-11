@@ -129,16 +129,15 @@ SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties,
 global Tss
 Tss = SoilData.Tss;
 
-global i tS TIME MN ND hOLD TOLD h hh T TT P_gOLD P_g P_gg
-global TimeStep Processing
-global SUMTIME hhh TTT P_ggg Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
-global AVAIL Evap EXCESS QMT hN hSAVE Trap sumTRAP_dir sumEVAP_dir
-global TSAVE AVAIL0 TIMEOLD TIMELAST SRT ALPHA BX alpha_h bx Srt KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CTT_PH CTT_LT CTT_g CTT_Lg CCTT_PH CCTT_LT CCTT_g CCTT_Lg C_unsat c_unsat
-global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh Resis_a KfL_h KfL_T TTT_CRIT TT_CRIT T_CRIT TOLD_CRIT
-global h_frez hhh_frez hOLD_frez L_f CTT EPCT EPCTT DTheta_LLh DTheta_LLT DTheta_UUh CKT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff Lambda_eff EfTCON TTETCON TETCON Tbtms Cor_TIME DDhDZ DhDZ DDTDZ DTDZ DDRHOVZ DRHOVZ
-global DDEhBAR DEhBAR DDRHOVhDz DRHOVhDz EEtaBAR EtaBAR DD_Vg D_Vg DDRHOVTDz DRHOVTDz KKLhBAR KLhBAR KKLTBAR KLTBAR DDTDBAR DTDBAR QVV QLL CChh SAVEDTheta_LLh SAVEDTheta_UUh DSAVEDTheta_LLT DSAVEDTheta_LLh DSAVEDTheta_UUh
-global QVT QVH QVTT QVHH SSa Sa HRA HR QVAA QVa QLH QLT QLHH QLTT DVH DVHH DVT DVTT SSe Se QAA QAa QL_TT QL_HH QLAA QL_a DPgDZ DDPgDZ k_g kk_g VV_A V_A Theta_a
-global KCHK FCHK TKCHK hCHK TSAVEhh SAVEhh_frez Precip SAVETT INDICATOR thermal
+global i tS TIME MN ND hOLD TOLD h hh T TT P_g P_gg
+global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
+global AVAIL Evap EXCESS QMT hN Trap
+global AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH CTT_LT CTT_g CTT_Lg c_unsat
+global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T  TT_CRIT T_CRIT TOLD_CRIT
+global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DhDZ DTDZ DRHOVZ
+global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
+global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a
+global KCHK FCHK hCHK SAVEhh_frez Precip SAVETT INDICATOR thermal
 global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA
 global MU_W Ks RHODA RHOV ETCON EHCAP
 global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
@@ -146,24 +145,13 @@ global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
 global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
-% TODO
-% only in main
-% P_gOLD TimeStep Processing hhh P_ggg hSAVE TSAVE TIMELAST hOLD_frez
-% % unused
-% sumTRAP_dir sumEVAP_dir BX KfL_hh KL_hh Chhh ChTT Khhh KhTT CTTT CCTT_PH
-% CCTT_LT CCTT_g CCTT_Lg C_unsat SAVEDSTOR TRAP_ind TRAP_dir SAVEhhh TTT_CRIT
-% hhh_frez EPCTT CKTT DDTheta_LLh DDTheta_LLT DDTheta_UUh Lambda_Eff TTETCON
-% Tbtms Cor_TIME DDTDZ DDRHOVZ DDEhBAR DDRHOVhDz EEtaBAR DD_Vg DDRHOVTDz
-% KKLhBAR KKLTBAR DDTDBAR QVV QLL CChh DSAVEDTheta_LLT DSAVEDTheta_LLh
-% DSAVEDTheta_UUh QVTT QVHH SSa HRA QVAA QLHH QLTT DVHH DVTT
-% SSe QAA QAa QL_TT QL_HH QLAA DDPgDZ kk_g VV_A TKCHK TSAVEhh
-
 % Get initial values and some of the SoilConstants for SatartInit
 [InitialValues, SoilConstants] = getInitialValues(TimeProperties.Dur_tot, NL);
 % these are used by other scripts
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
 TT_CRIT = InitialValues.TT_CRIT;
+P_gOLD = InitialValues.P_gOLD;
 
 %% 1. define Constants
 [Constants] = io.define_constants();
@@ -190,7 +178,7 @@ c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
 
 RTB = 1000; % initial root total biomass (g m-2)
-[Rl] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML);
+[Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);
 
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
@@ -496,6 +484,7 @@ TIMELAST = 0;
 tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
+TimeStep = [];
 for i = 1:1:Dur_tot
     KT = KT + 1;                         % Counting Number of timesteps
     if KT > 1 && Delt_t > (TEND - TIME)
@@ -516,38 +505,17 @@ for i = 1:1:Dur_tot
     L_f = 0; % latent heat of freezing fusion J Kg-1
     T0 = 273.15;
     TT_CRIT(NN) = T0; % unit K
+    hOLD_frez = [];
     if IRPT1 == 0 && IRPT2 == 0 && ISFT == 0
         for MN = 1:NN
             hOLD_frez(MN) = h_frez(MN);
             h_frez(MN) = hh_frez(MN);
-            % hhh_frez(MN,KT)=hh_frez(MN);
             TOLD_CRIT(MN) = T_CRIT(MN);
             T_CRIT(MN) = TT_CRIT(MN);
-            % TTT_CRIT(MN,KT)=TT_CRIT(MN);
 
             hOLD(MN) = h(MN);
             h(MN) = hh(MN);
-            % hhh(MN,KT)=hh(MN);
-            % KfL_hh(MN,KT)=KfL_h(MN,2);
-            % KL_hh(MN,KT)=KL_h(MN,2);
-            % Chhh(MN,KT)=Chh(MN,2);
-            % ChTT(MN,KT)=ChT(MN,2);
-            % Khhh(MN,KT)=Khh(MN,2);
-            % KhTT(MN,KT)=KhT(MN,2);
-            % CTTT(MN,KT)=CTT(MN,2);
-            % EPCTT(MN,KT)=EPCT(MN);
-            % C_unsat(MN,KT)=c_unsat(MN,2);
-            % CCTT_PH(MN,KT)=CTT_PH(MN,2);
-            % CCTT_Lg(MN,KT)=CTT_Lg(MN,2);
-            % CCTT_g(MN,KT)=CTT_g(MN,2);
-            % CCTT_LT(MN,KT)=CTT_LT(MN,2);
-            % Lambda_Eff(MN,KT)=Lambda_eff(MN,2);
-            % EfTCON(MN,KT)=EfTCON(MN,2);
-            % TTETCON(MN,KT)=TETCON(MN,2);
             DDhDZ(MN, KT) = DhDZ(MN);
-            % DDTDZ(MN,KT)=DTDZ(MN);
-            % DDRHOVZ(MN,KT)=DRHOVZ(MN);
-            % TKCHK(MN,KT)=KCHK(MN);
             if Thmrlefc == 1
                 TOLD(MN) = T(MN);
                 T(MN) = TT(MN);
@@ -556,12 +524,9 @@ for i = 1:1:Dur_tot
             if Soilairefc == 1
                 P_gOLD(MN) = P_g(MN);
                 P_g(MN) = P_gg(MN);
-                % P_ggg(MN,KT)=P_gg(MN);
             end
             if rwuef == 1
                 SRT(MN, KT) = Srt(MN, 1);
-                % ALPHA(MN,KT)=alpha_h(MN,1);
-                % BX(MN,KT)=bx(MN,1);
             end
         end
         if options.simulation == 1
@@ -838,9 +803,6 @@ for i = 1:1:Dur_tot
                     Theta_U(ML, ND) = Theta_UU(ML, ND);
                     Theta_III(ML, ND, KT) = Theta_II(ML, ND);
                     Theta_I(ML, ND) = Theta_II(ML, ND);
-                    % DDTheta_LLh(ML,KT)=DTheta_LLh(ML,2);
-                    % DDTheta_LLT(ML,KT)=DTheta_LLT(ML,2);
-                    % DDTheta_UUh(ML,KT)=DTheta_UUh(ML,2);
                 end
             end
             run ObservationPoints;
@@ -849,37 +811,21 @@ for i = 1:1:Dur_tot
             for MN = 1:NN
                 hOLD(MN) = h(MN);
                 h(MN) = hh(MN);
-                % hhh(MN,KT)=hh(MN);
-                % HRA(MN,KT)=HR(MN);
                 if Thmrlefc == 1
                     TOLD(MN) = T(MN);
                     T(MN) = TT(MN);
                     TTT(MN, KT) = TT(MN);
                     TOLD_CRIT(MN) = T_CRIT(MN);
                     T_CRIT(MN) = TT_CRIT(MN);
-                    % TTT_CRIT(MN,KT)=TT_CRIT(MN);
                     hOLD_frez(MN) = h_frez(MN);
                     h_frez(MN) = hh_frez(MN);
-                    % hhh_frez(MN,KT)=hh_frez(MN);
                 end
                 if Soilairefc == 1
                     P_gOLD(MN) = P_g(MN);
                     P_g(MN) = P_gg(MN);
-                    % P_ggg(MN,KT)=P_gg(MN);
                 end
             end
-            % break
         end
-    end
-    if KT > 0
-        for MN = 1:NN
-            % QL(MN,KT)=QL(MN);
-            % QL_HH(MN,KT)=QL_h(MN);
-            % QL_TT(MN,KT)=QL_T(MN);
-            % QV(MN,KT)=QV(MN);
-            % SAVEhhh(MN,KT)=SAVEhh(MN);
-        end
-        % SAVEDSTOR(KT)=DSTOR;
     end
     kk = k;
 
@@ -897,7 +843,7 @@ end
 %% soil layer information
 %% Ztot is defined as a global variable in Initial_root_biomass.m
 %% TODO avoid global variables
-SoilLayer.thickness = DeltZ_R;
+SoilLayer.thickness = ModelSettings.DeltZ_R;
 SoilLayer.depth = Ztot';
 
 io.bin_to_csv(fnames, n_col, k, options, SoilLayer);

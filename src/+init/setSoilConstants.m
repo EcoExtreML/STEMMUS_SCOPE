@@ -1,7 +1,18 @@
-function SoilConstants = setSoilConstants(Constants, ModelSettings, SoilData, SoilProperties, ForcingData)
+function SoilConstants = setSoilConstants(Constants, ModelSettings, InitialValues, SoilData, SoilProperties, ForcingData)
 
-    % Create SoilConstants and add variables from SoilData
+    % create SoilConstants structure holding initial values
     SoilConstants = struct();
+    soil_fields = {
+        'P_g', 'P_gg', 'h', 'T', 'TT', 'h_frez', 'Theta_L',...
+        'Theta_LL', 'Theta_V', 'Theta_g', 'Se', 'KL_h',...
+        'DTheta_LLh', 'KfL_T', 'Theta_II', 'Theta_I',...
+        'Theta_UU', 'Theta_U', 'TT_CRIT', 'KfL_h', 'DTheta_UUh'
+    };
+    for field = soil_fields
+        SoilConstants.(field{1}) = InitialValues.(field{1});
+    end
+
+    % Add variables from SoilData
     for field = fieldnames(SoilData)'
         SoilConstants.(field{1}) = SoilData.(field{1});
     end

@@ -1,4 +1,4 @@
-function [InitialValues, SoilConstants] = getInitialValues(Dur_tot, ModelSettings)
+function InitialValues = getInitialValues(Dur_tot, ModelSettings)
 %{
 
     %}
@@ -231,17 +231,5 @@ function [InitialValues, SoilConstants] = getInitialValues(Dur_tot, ModelSetting
         for field = fieldnames(structure)'
             InitialValues.(field{1}) = structure.(field{1});
         end
-    end
-
-    % create SoilConstants structure holding initial values
-    SoilConstants = struct();
-    soil_fields = {
-        'P_g', 'P_gg', 'h', 'T', 'TT', 'h_frez', 'Theta_L',...
-        'Theta_LL', 'Theta_V', 'Theta_g', 'Se', 'KL_h',...
-        'DTheta_LLh', 'KfL_T', 'Theta_II', 'Theta_I',...
-        'Theta_UU', 'Theta_U', 'TT_CRIT', 'KfL_h', 'DTheta_UUh'
-    };
-    for field = soil_fields
-        SoilConstants.(field{1}) = InitialValues.(field{1});
     end
 end

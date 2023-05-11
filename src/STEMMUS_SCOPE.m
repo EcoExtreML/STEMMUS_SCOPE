@@ -143,8 +143,8 @@ global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
 global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
-% Get initial values and some of the SoilConstants for SatartInit
-[InitialValues, SoilConstants] = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
+% Get initial values
+InitialValues = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
 % these are used by other scripts
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
@@ -351,7 +351,7 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
 % SoilConstants for init
-SoilConstants = init.setSoilConstants(Constants, ModelSettings, SoilData, SoilProperties, ForcingData);
+SoilConstants = init.setSoilConstants(Constants, ModelSettings, InitialValues, SoilData, SoilProperties, ForcingData);
 [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts

@@ -18,7 +18,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, fmax, Tot_De
     ForcingData.LAI_msr = Mdata{:, 10};
     ForcingData.G_msr = Mdata{:, 7} * 0.15;
     ForcingData.Precip_msr = Mdata{:, 6} * 10 * DELT;
-    ForcingData.Precip_msr = Precip_msr .* (1 - fmax .* exp(-0.5 * 0.5 * Tot_Depth / 100));
+    ForcingData.Precip_msr = ForcingData.Precip_msr .* (1 - fmax .* exp(-0.5 * 0.5 * Tot_Depth / 100));
     % replace negative values
     for jj = 1:Dur_tot
         if ForcingData.Ta_msr(jj) < -100

@@ -1,4 +1,4 @@
-function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles)
+function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants)
 
     % function 'RTMz' calculates the small modification of TOC outgoing
     % radiance due to the conversion of Violaxanthin into Zeaxanthin in leaves
@@ -24,8 +24,6 @@ function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angle
     %   rad         a large number of radiative fluxes: spectrally distributed
     %               and integrated, and canopy radiative transfer coefficients.
     %               Here, fluorescence fluxes are added
-    %% 0.0 globals
-    global constants
 
     %% initialisations
     wlS          = spectral.wlS';       % SCOPE wavelengths, make column vectors
@@ -78,7 +76,7 @@ function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angle
 
     % geometric factors
 
-    deg2rad      = constants.deg2rad;
+    deg2rad      = Constants.deg2rad;
     tto          = angles.tto;
     tts          = angles.tts;
     psi          = angles.psi;

@@ -1,4 +1,4 @@
-function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir)
+function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constant)
 
     % function 'RTMt_sb' calculates total outgoing radiation in hemispherical
     % direction and total absorbed radiation per leaf and soil component.
@@ -58,14 +58,12 @@ function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu,
     %   rad         a large number of radiative fluxes: spectrally distributed
     %               and integrated, and canopy radiative transfer coefficients.
     %               Here, thermal fluxes are added
-    %% 0.0 globals
-    global constants
 
     %% 0.1 parameters
 
     IT          = find(spectral.wlS == 10000);   % Take 10 microns as representative wavelength for the thermal
 
-    deg2rad     = constants.deg2rad;
+    deg2rad     = Constants.deg2rad;
     nl          = canopy.nlayers;
     lidf        = canopy.lidf;
     litab       = canopy.litab;
@@ -138,10 +136,12 @@ function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu,
     fbottom     = (rs - rinf) / (1 - rs * rinf);
 
     % 1.1 radiance by components
-    Hcsu3       = Stefan_Boltzmann(Tcu); %                   Radiance by sunlit leaves
-    Hcsh        = Stefan_Boltzmann(Tch); %                   Radiance by shaded leaves
-    Hssu        = Stefan_Boltzmann(Tsu); %                   Radiance by sunlit soil
-    Hssh        = Stefan_Boltzmann(Tsh); %                   Radiance by shaded soil
+    C2K = Constants.C2K;
+    sigmaSB = Constants.sigmaSB;
+    Hcsu3       = Stefan_Boltzmann(Tcu, C2K, sigmaSB); %                   Radiance by sunlit leaves
+    Hcsh        = Stefan_Boltzmann(Tch, C2K, sigmaSB); %                   Radiance by shaded leaves
+    Hssu        = Stefan_Boltzmann(Tsu, C2K, sigmaSB); %                   Radiance by sunlit soil
+    Hssh        = Stefan_Boltzmann(Tsh, C2K, sigmaSB); %                   Radiance by shaded soil
 
     % 1.2 radiance by leaf layers Hv and by soil Hs (modified by JAK 2015-01)
     v1 = repmat(1 / size(Hcsu3, 2), 1, size(Hcsu3, 2)); % vector for computing the mean
@@ -219,11 +219,7 @@ function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu,
     % has been taken care of in RTMo. Not ideal but otherwise radiation budget will not close!
 
     %% Appendix A. Stefan-Boltzmann
-function H      =   Stefan_Boltzmann(T_C)
-
-    global constants
-    C2K     = constants.C2K;
-    sigmaSB = constants.sigmaSB;
+function H      =   Stefan_Boltzmann(T_C, C2K, sigmaSB)
 
     H       = sigmaSB * (T_C + C2K).^4;
     return

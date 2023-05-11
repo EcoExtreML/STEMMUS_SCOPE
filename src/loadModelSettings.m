@@ -61,9 +61,9 @@ function ModelSettings = loadModelSettings(TimeProperties)
     ModelSettings.DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
     ModelSettings.KT = 0; % Number of time steps;
     ModelSettings.TIME = 0 * TimeProperties.DELT; % Time of simulation released;
-    ModelSettings.TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
+    ModelSettings.TEND = ModelSettings.TIME + ModelSettings.DURTN; % Time to be reached at the end of simulation period;
     ModelSettings.Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
-    ModelSettings.Delt_t0 = Delt_t; % Duration of last time step;
+    ModelSettings.Delt_t0 = ModelSettings.Delt_t; % Duration of last time step;
 
     % Determination of NL, the number of elments
     ModelSettings.NL = 100;

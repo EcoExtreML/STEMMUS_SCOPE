@@ -34,7 +34,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txt';
+    CFG = '/home/sarah/temp/ecoextreml/test/input/CA-NS1_2023-03-21-1752/CA-NS1_2023-03-21-1752_config.txt';
 end
 disp (['Reading config from ', CFG]);
 global InputPath OutputPath InitialConditionPath
@@ -104,7 +104,7 @@ NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 
 % load forcing data
-ForcingData = io.loadForcingData(InputPath, DELT, fmax, Tot_Depth);
+ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
 
 % global vars used in Forcing_PARM
 global Ta_msr RH_msr WS_msr Pg_msr Rn_msr
@@ -150,6 +150,7 @@ P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
 TT_CRIT = InitialValues.TT_CRIT;
 P_gOLD = InitialValues.P_gOLD;
+
 
 %% 1. define Constants
 [Constants] = io.define_constants();
@@ -303,10 +304,12 @@ spectral.IwlF = (640:850) - 399;
 [rho, tau, rs] = deal(zeros(nwlP + nwlT, 1));
 
 %% 11. load time series data
+Theta_LL = InitialValues.Theta_LL;
+kappa = Constants.kappa;
 ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
-    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
+    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options);
     [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, Constants, F, xyt, path_input, options);
 else
     soil = struct;
@@ -606,30 +609,30 @@ for i = 1:1:Dur_tot
             end
             atmo.Ta     = meteo.Ta;
 
-            [rad, gap, profiles]   = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options);
+            [rad, gap, profiles]   = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options, Constants);
 
             switch options.calc_ebal
                 case 1
                     [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]                          ...
                         = ebal(iter, options, spectral, rad, gap,                       ...
-                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t);
+                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, Constants);
                     if options.calc_fluor
                         if options.calc_vert_profiles
-                            [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
+                            [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants);
                         else
-                            [rad] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
+                            [rad] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constant);
                         end
                     end
                     if options.calc_xanthophyllabs
-                        [rad] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
+                        [rad] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants);
                     end
 
                     if options.calc_planck
-                        rad         = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, thermal.Tcu, thermal.Tch, thermal.Ts(2), thermal.Ts(1), 1);
+                        rad         = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, thermal.Tcu, thermal.Tch, thermal.Ts(2), thermal.Ts(1), 1, Constants);
                     end
 
                     if options.calc_directional
-                        directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal);
+                        directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal, Constants);
                     end
 
                 otherwise

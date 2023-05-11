@@ -8,6 +8,7 @@ function InitialValues = getInitialValues(Dur_tot, ModelSettings)
     nD = ModelSettings.nD;
     ML = ModelSettings.ML;
 
+    structures = {};
     %% Structure 1: variables with zeros(mL, nD)
     % alpha_h = root water uptake
     % bx
@@ -111,7 +112,7 @@ function InitialValues = getInitialValues(Dur_tot, ModelSettings)
               'KTa', 'VTT', 'VTh', 'VTa', 'CTg', 'Kcva', ...
               'Kcah', 'KcaT', 'Kcaa', 'Ccah', 'CcaT', 'Ccaa'
              };
-    structure = [helpers.createStructure(zeros(mL, nD), fields)];
+    structures{1} = helpers.createStructure(zeros(mL, nD), fields);
 
     %% Structure 2: variables with zeros(mL, 1)
     % DTDZ
@@ -143,14 +144,14 @@ function InitialValues = getInitialValues(Dur_tot, ModelSettings)
               'KLTBAR', 'DTDBAR', 'QLH', 'QLT', 'DVH', 'DVT', 'QVH', 'QVT', 'QV', ...
               'QVa', 'Qa', 'DPgDZ', 'QL_a'
              };
-    structures(2) = helpers.createStructure(zeros(mL, 1), fields);
+    structures{2} = helpers.createStructure(zeros(mL, 1), fields);
 
     %% Structure 3: variables with zeros(ML, 1)
     fields = {
               'Ksoil', 'SMC', 'bbx', 'frac', 'wfrac', 'Ztot'
              };
     % TODO issue: ML is index
-    structures(3) = helpers.createStructure(zeros(ML, 1), fields);
+    structures{3} = helpers.createStructure(zeros(ML, 1), fields);
 
     %% Structure 4: variables with zeros(Nmsrmn, 1)
     % Precip = Precipitation(m.s^-1);
@@ -172,14 +173,14 @@ function InitialValues = getInitialValues(Dur_tot, ModelSettings)
               'Precip', 'Ta', 'Ts', 'U', 'HR_a', 'Rns', 'Rnl', 'Rn', ...
               'h_SUR', 'SH', 'MO', 'Zeta_MO', 'TopPg'
              };
-    structures(4) = helpers.createStructure(zeros(Nmsrmn, 1), fields);
+    structures{4} = helpers.createStructure(zeros(Nmsrmn, 1), fields);
 
     %% Structure 5: variables with zeros(Nmsrmn / 10, 1)
     fields = {
               'Tp_t', 'Evap', 'Tbtm', 'r_a_SOIL', 'Rn_SOIL', 'EVAP', ...
               'PSItot', 'sfactortot', 'Tsur'
              };
-    structures(5) = helpers.createStructure(zeros(Dur_tot, 1), fields);
+    structures{5} = helpers.createStructure(zeros(Dur_tot, 1), fields);
 
     %% Structure 6: variables with zeros(mN, 1)
     % P_g = Soil air pressure at the start of current time step;
@@ -223,11 +224,12 @@ function InitialValues = getInitialValues(Dur_tot, ModelSettings)
               'DRHOVT', 'RHODA', 'DRHODAt', 'DRHODAz', 'Xaa', 'XaT', ...
               'Xah', 'D_A', 'L', 'LL', 'hOLD', 'TOLD', 'P_gOLD'
              };
-    structures(6) = helpers.createStructure(zeros(mN, 1), fields);
+    structures{6} = helpers.createStructure(zeros(mN, 1), fields);
 
     % merge all structures
     InitialValues = struct();
-    for structure = structures
+    for i = 1:numel(structures)
+        structure = structures{i};
         for field = fieldnames(structure)'
             InitialValues.(field{1}) = structure.(field{1});
         end

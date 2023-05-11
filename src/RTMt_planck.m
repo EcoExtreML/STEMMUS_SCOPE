@@ -1,4 +1,4 @@
-function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir)
+function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constants)
     % function 'RTMt_planck' calculates the spectrum of outgoing thermal
     % radiation in hemispherical and viewing direction
     %
@@ -58,16 +58,13 @@ function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tc
     %   nwl     number of wavelengths of input (net PAR)
     % '_'means: a flux at different wavelengths (a vertically oriented vector)
 
-    %% 0.0 globals
-    global constants
-
     %% 0.1 parameters
 
     % for speed-up the calculation only uses thermal part of the spectrum
     IT          = spectral.IwlT;   %
     wlt         = spectral.wlT;
 
-    deg2rad     = constants.deg2rad;
+    deg2rad     = Constants.deg2rad;
     nl          = canopy.nlayers;
     lidf        = canopy.lidf;
     litab       = canopy.litab;

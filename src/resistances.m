@@ -1,4 +1,4 @@
-function [resist_out] = resistances(resist_in)
+function [resist_out] = resistances(resist_in, kappa)
     %
     %   function resistances calculates aerodynamic and boundary resistances
     %   for soil and vegetation
@@ -70,8 +70,6 @@ function [resist_out] = resistances(resist_in)
     % Kh        =   Diffusivity for heat                                [m2s-1]
 
     %% parameters
-    global constants
-    kappa = constants. kappa;
 
     Cd        =  resist_in.Cd;
 

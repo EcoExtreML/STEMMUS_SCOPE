@@ -1,4 +1,4 @@
-function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options)
+function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options, Constants)
 
     %% function RTMo
     %
@@ -348,12 +348,11 @@ function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angl
     end
 
     % Incident and absorbed solar radiation
-    Psun        = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar)), wlPAR);   % Incident solar PAR in PAR units
-    % Psky        = 0.001 * helpers.Sint(e2phot(wlPAR*1E-9,Esky_(Ipar)),wlPAR);
+    Psun        = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar)), wlPAR, Constants);   % Incident solar PAR in PAR units
     Asun        = 0.001 * helpers.Sint(Esun_ .* epsc, wl);                         % Total absorbed solar radiation
-    Pnsun       = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar) .* epsc(Ipar)), wlPAR);  % Absorbed solar radiation  in PAR range in moles m-2 s-1
+    Pnsun       = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar) .* epsc(Ipar)), wlPAR, Constants);  % Absorbed solar radiation  in PAR range in moles m-2 s-1
     Rnsun_PAR   = 0.001 * helpers.Sint(Esun_(Ipar) .* epsc(Ipar), wlPAR);
-    Pnsun_Cab   = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, kChlrel(Ipar) .* Esun_(Ipar) .* epsc(Ipar)), wlPAR);
+    Pnsun_Cab   = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, kChlrel(Ipar) .* Esun_(Ipar) .* epsc(Ipar)), wlPAR, Constants);
     % Absorbed solar radiation by Cab in PAR range in moles m-2 s-1
 
     %% 3. outgoing fluxes, hemispherical and in viewing direction, spectrum
@@ -377,7 +376,7 @@ function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angl
 
     %% 4. net fluxes, spectral and total, and incoming fluxes
     % incident PAR at the top of canopy, spectral and spectrally integrated
-    P_          = e2phot(wl(Ipar) * 1E-9, Esun_(Ipar) + Esky_(Ipar));
+    P_          = e2phot(wl(Ipar) * 1E-9, Esun_(Ipar) + Esky_(Ipar), Constants);
     P           = .001 * helpers.Sint(P_, wlPAR);
 
     % total direct radiation (incident and net) per leaf area (W m-2 leaf)
@@ -393,12 +392,12 @@ function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angl
         E_         = .5 * (Emin_(j, :) + Emin_(j + 1, :) + Eplu_(j, :) + Eplu_(j + 1, :));
 
         % incident PAR flux, integrated over all wavelengths (moles m-2 s-1)
-        Pdif(j)    = .001 * helpers.Sint(e2phot(wlPAR * 1E-9, E_(Ipar)'), wlPAR);  % [nl] , including conversion mW >> W
+        Pdif(j)    = .001 * helpers.Sint(e2phot(wlPAR * 1E-9, E_(Ipar)'), wlPAR, Constants);  % [nl] , including conversion mW >> W
 
         % net radiation (mW m-2 um-1) and net PAR (moles m-2 s-1 um-1), per wavelength
         Rndif_(j, :)         = E_ .* epsc';                                                   % [nl,nwl]  Net (absorbed) radiation by leaves
-        Pndif_(j, :)         = .001 * (e2phot(wlPAR * 1E-9, Rndif_(j, Ipar)'))';                % [nl,nwl]  Net (absorbed) as PAR photons
-        Pndif_Cab_(j, :)     = .001 * (e2phot(wlPAR * 1E-9, kChlrel(Ipar) .* Rndif_(j, Ipar)'))';  % [nl,nwl]  Net (absorbed) as PAR photons by Cab
+        Pndif_(j, :)         = .001 * (e2phot(wlPAR * 1E-9, Rndif_(j, Ipar)'), Constants)';                % [nl,nwl]  Net (absorbed) as PAR photons
+        Pndif_Cab_(j, :)     = .001 * (e2phot(wlPAR * 1E-9, kChlrel(Ipar) .* Rndif_(j, Ipar)'), Constants)';  % [nl,nwl]  Net (absorbed) as PAR photons by Cab
         Rndif_PAR_(j, :)     = Rndif_(j, Ipar);  % [nl,nwlPAR]  Net (absorbed) as PAR energy
 
         % net radiation (W m-2) and net PAR (moles m-2 s-1), integrated over all wavelengths
@@ -566,25 +565,24 @@ function [chi_s, chi_o, frho, ftau]    =   volscat(tts, tto, psi, ttli)
 
     %% APPENDIX III function e2phot
 
-function molphotons = e2phot(lambda, E)
+function molphotons = e2phot(lambda, E, Constants)
     % molphotons = e2phot(lambda,E) calculates the number of moles of photons
     % corresponding to E Joules of energy of wavelength lambda (m)
 
-    global constants
-    A = constants.A;
+    A = Constants.A;
+    h = Constants.h;
+    c = Constants.c;
 
-    e           = ephoton(lambda);
+    e           = ephoton(lambda, h, c);
     photons     = E ./ e;
     molphotons  = photons ./ A;
     return
 
-function E = ephoton(lambda)
+function E = ephoton(lambda, h, c)
     % E = phot2e(lambda) calculates the energy content (J) of 1 photon of
     % wavelength lambda (m)
-
-    global constants
-    h       = constants.h;           % [J s]         Planck's constant
-    c       = constants.c;           % [m s-1]       speed of light
+    % h [J s]  Planck's constant
+    % c [m s-1] speed of light
     E       = h * c ./ lambda;           % [J]           energy of 1 photon
     return
 

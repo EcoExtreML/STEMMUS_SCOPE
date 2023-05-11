@@ -1,4 +1,4 @@
-function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles)
+function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants)
 
     % function 'RTMf' calculates the spectrum of fluorescent radiance in the
     % observer's direction in addition to the total TOC spectral hemispherical upward Fs flux
@@ -38,8 +38,6 @@ function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angle
     %   rad         a large number of radiative fluxes: spectrally distributed
     %               and integrated, and canopy radiative transfer coefficients.
     %               Here, fluorescence fluxes are added
-    %% 0.0 globals
-    global constants
 
     %% initialisations
     wlS          = spectral.wlS';       % SCOPE wavelengths, make column vectors
@@ -106,7 +104,7 @@ function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angle
 
     % geometric factors
 
-    deg2rad      = constants.deg2rad;
+    deg2rad      = Constants.deg2rad;
     tto          = angles.tto;
     tts          = angles.tts;
     psi          = angles.psi;

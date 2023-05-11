@@ -1,5 +1,4 @@
-function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
-    global Theta_LL theta_s0
+function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, Theta_LL, kappa, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
     SoilProperties.spectrum      = ScopeParameters.spectrum(digitsVector(16));
     SoilProperties.rss           = ScopeParameters.rss(digitsVector(17));
     SoilProperties.rs_thermal    = ScopeParameters.rs_thermal(digitsVector(18));
@@ -92,7 +91,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     end
     canopy.hot  = canopy.leafwidth / canopy.hc;
     if options.calc_zo
-        [canopy.zo, canopy.d]  = equations.zo_and_d(SoilProperties, canopy);
+        [canopy.zo, canopy.d]  = equations.zo_and_d(SoilProperties, canopy, kappa);
     end
 
     if options.calc_PSI == 1

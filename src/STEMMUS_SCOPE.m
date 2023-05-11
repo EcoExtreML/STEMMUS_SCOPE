@@ -62,7 +62,6 @@ theta_s0 = SoilProperties.theta_s0;
 Ks0 = SoilProperties.Ks0;
 
 %% Model settings: replacing "run Constants"
-% TODO issue: function CnvrgnCHK is unused!
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
 % Load model settings
 ModelSettings = loadModelSettings(TimeProperties);
@@ -73,9 +72,6 @@ Eqlspace = ModelSettings.Eqlspace;
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
 DeltZ_R = ModelSettings.DeltZ_R;
-
-global NS % TODO used only in BSM.m
-NS = ModelSettings.NS;
 
 global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE
@@ -109,6 +105,7 @@ ML = ModelSettings.ML;
 
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, DELT, fmax, Tot_Depth)
+
 % global vars used in Forcing_PARM
 global Ta_msr RH_msr WS_msr Pg_msr Rn_msr
 global Rns_msr VPD_msr LAI_msr G_msr Precip_msr
@@ -125,6 +122,7 @@ Precip_msr = ForcingData.Precip_msr;
 
 % load initial soil moisture and soil temperature
 SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC)
+
 % global vars used in Forcing_PARM
 global Tss
 Tss = SoilData.Tss;
@@ -146,7 +144,7 @@ global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
 global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
 
 % Get initial values and some of the SoilConstants for SatartInit
-[InitialValues, SoilConstants] = getInitialValues(TimeProperties.Dur_tot, NL);
+[InitialValues, SoilConstants] = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
 % these are used by other scripts
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
@@ -352,13 +350,8 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 %% Initialize Temperature, Matric potential and soil air pressure.
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
-% Create SoilConstants and add variables from SoilData
-SoilConstants = struct();
-for field = fieldnames(SoilData)'
-    SoilConstants.(field{1}) = SoilData.(field{1});
-end
-
-SoilConstants.Ta_msr = ForcingData.Ta_msr;
+% SoilConstants for init
+SoilConstants = init.setSoilConstants(Constants, ModelSettings, SoilData, SoilProperties, ForcingData);
 [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts

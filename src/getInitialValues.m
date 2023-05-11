@@ -6,6 +6,7 @@ function [InitialValues, SoilConstants] = getInitialValues(Dur_tot, ModelSetting
     mN = ModelSettings.mN;
     mL = ModelSettings.mL; % Number of elements. Prevending the exceeds of size of arraies;
     nD = ModelSettings.nD;
+    ML = ModelSettings.ML;
 
     %% Structure 1: variables with zeros(mL, nD)
     % alpha_h = root water uptake
@@ -148,7 +149,7 @@ function [InitialValues, SoilConstants] = getInitialValues(Dur_tot, ModelSetting
     fields = {
         'Ksoil', 'SMC', 'bbx', 'frac', 'wfrac', 'Ztot'
     };
-    # TODO issue: ML is index and global
+    # TODO issue: ML is index
     structures[3] = createStructure(zeros(ML, 1), fields);
 
     %% Structure 4: variables with zeros(Nmsrmn, 1)

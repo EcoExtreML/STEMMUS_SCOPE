@@ -1,4 +1,12 @@
-function SoilConstants = setSoilConstants(Constants, ModelSettings, SoilConstants, SoilProperties)
+function SoilConstants = setSoilConstants(Constants, ModelSettings, SoilData, SoilProperties, ForcingData)
+
+    % Create SoilConstants and add variables from SoilData
+    SoilConstants = struct();
+    for field = fieldnames(SoilData)'
+        SoilConstants.(field{1}) = SoilData.(field{1});
+    end
+
+    SoilConstants.Ta_msr = ForcingData.Ta_msr;
 
     SoilConstants.g = Constants.g;
     SoilConstants.RHOI = Constants.RHOI;

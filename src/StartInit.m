@@ -1,8 +1,4 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(Constants, ModelSettings, SoilConstants, SoilProperties, SiteProperties)
-
-    %%% SoilConstants for init
-    % TODO this can be moved ouside StartInit function, see issue 96
-    SoilConstants = init.setSoilConstants(Constants, ModelSettings, SoilConstants, SoilProperties);
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilConstants, SoilProperties, SiteProperties)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);
@@ -30,7 +26,6 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     % According to hh value get the Theta_LL
     % run SOIL2;   % For calculating Theta_LL,used in first Balance calculation.
 
-    % these are defined in script Constants.m
     Theta_L = SoilConstants.Theta_L;
     Theta_LL = SoilConstants.Theta_LL;
     Theta_V = SoilConstants.Theta_V;
@@ -115,7 +110,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
         KLa_Switch = 1;
     end
 
-    % TODO after refatoring SOIL2, these two lines can be removed! see issue 95!
+    % TODO after refatoring SOIL2, these two lines can be removed! see issue 96!
     SoilConstants.KfL_T = KfL_T;
     SoilConstants.Theta_II = Theta_II;
     SoilConstants.Theta_I = Theta_I;

@@ -1,5 +1,4 @@
 %% STEMMUS-SCOPE.m (script)
-
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
 %     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
 %
@@ -21,11 +20,6 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-%% 0. globals
-% We replaced the filereads (old) script with a function named prepareForcingData, see issue %86,
-% but there still global variables here, because we not sure which
-% progresses related to these global variables.
-
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
     pkg load statistics;
@@ -41,7 +35,7 @@ global InputPath OutputPath InitialConditionPath
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
 
 % Prepare forcing and soil data
-global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot SaturatedMC ResidualMC fieldMC fmax theta_s0 Ks0
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
 IGBP_veg_long        = SiteProperties.IGBP_veg_long;
 latitude             = SiteProperties.latitude;
@@ -49,33 +43,26 @@ longitude            = SiteProperties.longitude;
 reference_height     = SiteProperties.reference_height;
 canopy_height        = SiteProperties.canopy_height;
 sitename             = SiteProperties.sitename;
-
-DELT = TimeProperties.DELT;
-Dur_tot = TimeProperties.Dur_tot;
-
-global SaturatedMC ResidualMC fieldMC fmax theta_s0 Ks0
 SaturatedMC = SoilProperties.SaturatedMC;
 ResidualMC = SoilProperties.ResidualMC;
 fieldMC = SoilProperties.fieldMC;
 fmax = SoilProperties.fmax;
 theta_s0 = SoilProperties.theta_s0;
 Ks0 = SoilProperties.Ks0;
+DELT = TimeProperties.DELT;
+Dur_tot = TimeProperties.Dur_tot;
 
-%% Model settings: replacing "run Constants"
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
-% Load model settings
+% Load model settings: replacing "run Constants"
 ModelSettings = loadModelSettings(TimeProperties);
 
-global NL DeltZ Tot_Depth Eqlspace
+global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML
+global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
 Tot_Depth = ModelSettings.Tot_Depth;
 Eqlspace = ModelSettings.Eqlspace;
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
 DeltZ_R = ModelSettings.DeltZ_R;
-
-global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl
-global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE
-global KIT DURTN KT TIME Delt_t NN ML
 J = ModelSettings.J;
 SWCC = ModelSettings.SWCC;
 Hystrs = ModelSettings.Hystrs;
@@ -107,8 +94,7 @@ ML = ModelSettings.ML;
 ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
 
 % global vars used in Forcing_PARM
-global Ta_msr RH_msr WS_msr Pg_msr Rn_msr Tmin
-global Rns_msr VPD_msr LAI_msr G_msr Precip_msr
+global Ta_msr RH_msr WS_msr Pg_msr Rn_msr Tmin Rns_msr VPD_msr LAI_msr G_msr Precip_msr
 Ta_msr = ForcingData.Ta_msr;
 RH_msr = ForcingData.RH_msr;
 WS_msr = ForcingData.WS_msr;
@@ -123,30 +109,23 @@ Tmin = ForcingData.Tmin;
 
 % load initial soil moisture and soil temperature
 SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC);
-
-% global vars used in Forcing_PARM
 global Tss
-Tss = SoilData.Tss;
+Tss = SoilData.Tss; % global vars used in Forcing_PARM
 
-global i tS TIME MN ND hOLD TOLD h hh T TT P_g P_gg
+global i tS TIME MN ND hOLD TOLD h hh T TT P_g P_gg AVAIL Evap EXCESS QMT hN Trap
 global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
-global AVAIL Evap EXCESS QMT hN Trap
 global AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH CTT_LT CTT_g CTT_Lg c_unsat
 global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T  TT_CRIT T_CRIT TOLD_CRIT
 global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DhDZ DTDZ DRHOVZ
 global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
-global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a
-global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal
-global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA
-global MU_W Ks RHODA RHOV ETCON EHCAP
-global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
-global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
-global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
+global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a  Theta_V W WW D_Ta Ratio_ice
+global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
+global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA MU_W Ks RHODA RHOV ETCON EHCAP
+global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants Beta_gBAR Alpha_LgBAR
 global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 
 % Get initial values
 InitialValues = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
-% these are defined as global in main and other scripts
 alpha_h = InitialValues.alpha_h;
 bx = InitialValues.bx; % TODO redefined in src/Evap_Cal.m
 Srt = InitialValues.Srt;
@@ -168,17 +147,14 @@ Theta_II = InitialValues.Theta_II;
 Se = InitialValues.Se;
 Theta_V = InitialValues.Theta_V;
 Lambda_eff = InitialValues.Lambda_eff;
-
 W = InitialValues.W;
 WW = InitialValues.WW;
 MU_W = InitialValues.MU_W;
 D_Ta = InitialValues.D_Ta;
-
 D_V = InitialValues.D_V;
 Eta = InitialValues.Eta;
 D_A = InitialValues.D_A;
 Theta_g = InitialValues.Theta_g;
-
 EHCAP = InitialValues.EHCAP;
 Chh = InitialValues.Chh;
 ChT = InitialValues.ChT;
@@ -249,14 +225,9 @@ L = InitialValues.L;
 hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 
-% defined global in other scripts
-global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa
-global Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
-global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa
-global Ksoil SMC bbx wfrac Ztot Ta Ts U HR_a Rns Rnl Rn
-global SH MO Zeta_MO TopPg Tp_t DhT RHS C7 C9
-global RHOV_s DRHOV_sT LL P_gOLD hh_frez XCAP Tbtm r_a_SOIL Rn_SOIL PSItot Tsur
-
+global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ztot Ta Ts U HR_a Rns Rnl Rn
+global RHOV_s DRHOV_sT LL P_gOLD hh_frez XCAP Tbtm r_a_SOIL Rn_SOIL PSItot Tsur SH MO Zeta_MO TopPg Tp_t DhT RHS C7 C9
 f0 = InitialValues.f0;
 L_WT = InitialValues.L_WT;
 Kha = InitialValues.Kha;
@@ -330,7 +301,7 @@ Tsur = InitialValues.Tsur;
 
 %% 1. define Constants
 [Constants] = io.define_constants();
-global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc
+global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc GWT c_i Gamma0 Gamma_w RHO_bulk Rl
 g = Constants.g;
 RHOL = Constants.RHOL;
 RHOI = Constants.RHOI;
@@ -346,7 +317,6 @@ c_a = Constants.c_a;
 Hc = Constants.Hc;
 
 % used in other scripts not here!
-global GWT c_i Gamma0 Gamma_w RHO_bulk
 GWT = Constants.GWT; % used in CondL_T
 Gamma0 = Constants.Gamma0; % used in other scripts!
 Gamma_w = Constants.Gamma_w; % used in other scripts!
@@ -354,7 +324,7 @@ c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
 
 RTB = 1000; % initial root total biomass (g m-2)
-global Rl % used in ebal
+% Rl used in ebal
 [Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);
 
 %% 2. simulation options

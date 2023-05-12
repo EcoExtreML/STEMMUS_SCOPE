@@ -21,6 +21,7 @@ function [const] = define_constants()
     const.Rv = 461.5 * 1e4; % [cm2 s-2 Cels-1] Gas constant for vapor (original J.kg^-1.Cels^-1)
     const.RDA = 287.1 * 1e4; % [cm2 s-2 Cels-1] Gas constant for dry air (original J.kg^-1.Cels^-1)
     const.RHO_bulk = 1.25; % [g cm-3] Bulk density of sand
+    const.Hc = 0.02; % Henry's constant;
     const.GWT = 7; % The gain factor(dimensionless),which assesses the temperature % dependence of the soil water retention curve is set as 7 for % sand (Noborio et al, 1996)
     const.MU_a = 1.846 * 10^(-4); % [g cm-1 s-1] Viscosity of air (original 1.846*10^(-5)kg.m^-1.s^-1)
     const.Gamma0 = 71.89; % [g s-2] The surface tension of soil water at 25 Cels degree

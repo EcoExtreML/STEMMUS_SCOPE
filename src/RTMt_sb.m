@@ -1,4 +1,4 @@
-function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constant)
+function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constants)
 
     % function 'RTMt_sb' calculates total outgoing radiation in hemispherical
     % direction and total absorbed radiation per leaf and soil component.

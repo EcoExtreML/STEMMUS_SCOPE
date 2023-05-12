@@ -1,4 +1,8 @@
-function [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU)
+function [D_V, Eta, D_A] = CondV_DE(InitialValues, Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU)
+    D_V = InitialValues.D_V;
+    Eta = InitialValues.Eta;
+    D_A = InitialValues.D_A;
+    Theta_g = InitialValues.Theta_g;
 
     MN = 0;
     for ML = 1:NL

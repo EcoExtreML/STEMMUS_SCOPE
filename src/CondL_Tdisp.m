@@ -1,5 +1,10 @@
-function [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch)
+function [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch)
     %%
+
+    W = InitialValues.W;
+    WW = InitialValues.WW;
+    MU_W = InitialValues.MU_W;
+    D_Ta = InitialValues.D_Ta;
     MN = 0;
     for ML = 1:NL
         J = ML;

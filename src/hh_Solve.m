@@ -25,8 +25,8 @@ function [CHK, hh, C4, SAVEhh] = hh_Solve(C4, hh, NN, NL, C4_a, RHS)
     end
 
     if isnan(SAVEhh) == 1
-        warning('\n Warning: FIX warning message \r');
+        warning('\n case "isnan(SAVEhh) == 1" happens, dont know what to do!\r');
     end
     if ~isreal(SAVEhh)
-        warning('\n Warning: FIX warning message \r');
+        warning('\n case "~isreal(SAVEhh)" happens, dont know what to do! \r');
     end

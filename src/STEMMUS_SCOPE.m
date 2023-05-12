@@ -107,7 +107,7 @@ ML = ModelSettings.ML;
 ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
 
 % global vars used in Forcing_PARM
-global Ta_msr RH_msr WS_msr Pg_msr Rn_msr
+global Ta_msr RH_msr WS_msr Pg_msr Rn_msr Tmin
 global Rns_msr VPD_msr LAI_msr G_msr Precip_msr
 Ta_msr = ForcingData.Ta_msr;
 RH_msr = ForcingData.RH_msr;
@@ -119,6 +119,7 @@ VPD_msr = ForcingData.VPD_msr;
 LAI_msr = ForcingData.LAI_msr;
 G_msr = ForcingData.G_msr;
 Precip_msr = ForcingData.Precip_msr;
+Tmin = ForcingData.Tmin;
 
 % load initial soil moisture and soil temperature
 SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC);
@@ -135,26 +136,201 @@ global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T  TT_CRIT T_CR
 global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DhDZ DTDZ DRHOVZ
 global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
 global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a
-global KCHK FCHK hCHK SAVEhh_frez Precip SAVETT INDICATOR thermal
+global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal
 global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA
 global MU_W Ks RHODA RHOV ETCON EHCAP
 global Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
 global Theta_V W WW D_Ta Ratio_ice Beta_gBAR Alpha_LgBAR
 global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants
-global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime Tmin
+global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 
 % Get initial values
 InitialValues = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
-% these are used by other scripts
+% these are defined as global in main and other scripts
+alpha_h = InitialValues.alpha_h;
+bx = InitialValues.bx; % TODO redefined in src/Evap_Cal.m
+Srt = InitialValues.Srt;
+DTheta_LLh = InitialValues.DTheta_LLh;
+DTheta_UUh = InitialValues.DTheta_UUh;
+SAVEDTheta_UUh = InitialValues.SAVEDTheta_UUh;
+SAVEDTheta_LLh = InitialValues.SAVEDTheta_LLh;
+Ratio_ice = InitialValues.Ratio_ice;
+KL_h = InitialValues.KL_h;
+KfL_h = InitialValues.KfL_h;
+KfL_T = InitialValues.KfL_T;
+KL_T = InitialValues.KL_T;
+Theta_L = InitialValues.Theta_L;
+Theta_LL = InitialValues.Theta_LL;
+Theta_U = InitialValues.Theta_U;
+Theta_UU = InitialValues.Theta_UU;
+Theta_I = InitialValues.Theta_I;
+Theta_II = InitialValues.Theta_II;
+Se = InitialValues.Se;
+Theta_V = InitialValues.Theta_V;
+Lambda_eff = InitialValues.Lambda_eff;
+
+W = InitialValues.W;
+WW = InitialValues.WW;
+MU_W = InitialValues.MU_W;
+D_Ta = InitialValues.D_Ta;
+
+D_V = InitialValues.D_V;
+Eta = InitialValues.Eta;
+D_A = InitialValues.D_A;
+Theta_g = InitialValues.Theta_g;
+
+EHCAP = InitialValues.EHCAP;
+Chh = InitialValues.Chh;
+ChT = InitialValues.ChT;
+Khh = InitialValues.Khh;
+KhT = InitialValues.KhT;
+QL = InitialValues.QL;
+QL_h = InitialValues.QL_h;
+QL_T = InitialValues.QL_T;
+k_g = InitialValues.k_g;
+Sa = InitialValues.Sa;
+V_A = InitialValues.V_A;
+Alpha_Lg = InitialValues.Alpha_Lg;
+Beta_g = InitialValues.Beta_g;
+c_unsat = InitialValues.c_unsat;
+CTT_PH = InitialValues.CTT_PH;
+CTT_Lg = InitialValues.CTT_Lg;
+CTT_g = InitialValues.CTT_g;
+CTT_LT = InitialValues.CTT_LT;
+CTT = InitialValues.CTT;
+DhDZ = InitialValues.DhDZ;
+DTDZ = InitialValues.DTDZ;
+DRHOVZ = InitialValues.DRHOVZ;
+D_Vg = InitialValues.D_Vg;
+DRHOVhDz = InitialValues.DRHOVhDz;
+EtaBAR = InitialValues.EtaBAR;
+DRHOVTDz = InitialValues.DRHOVTDz;
+KLhBAR = InitialValues.KLhBAR;
+DEhBAR = InitialValues.DEhBAR;
+KLTBAR = InitialValues.KLTBAR;
+DTDBAR = InitialValues.DTDBAR;
+QLH = InitialValues.QLH;
+QLT = InitialValues.QLT;
+DVH = InitialValues.DVH;
+DVT = InitialValues.DVT;
+QVH = InitialValues.QVH;
+QVT = InitialValues.QVT;
+QV = InitialValues.QV;
+QVa = InitialValues.QVa;
+Qa = InitialValues.Qa;
+DPgDZ = InitialValues.DPgDZ;
+QL_a = InitialValues.QL_a;
+frac = InitialValues.frac;
+Precip = InitialValues.Precip;
+h_SUR = InitialValues.h_SUR;
+Evap = InitialValues.Evap;
+sfactortot = InitialValues.sfactortot;
+EVAP = InitialValues.EVAP;
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
+h = InitialValues.h;
+h_frez = InitialValues.h_frez;
+T = InitialValues.T;
+TT = InitialValues.TT;
+T_CRIT = InitialValues.T_CRIT;
 TT_CRIT = InitialValues.TT_CRIT;
-P_gOLD = InitialValues.P_gOLD;
+EPCT = InitialValues.EPCT;
+HR = InitialValues.HR;
+RHOV = InitialValues.RHOV;
+DRHOVh = InitialValues.DRHOVh;
+DRHOVT = InitialValues.DRHOVT;
+RHODA = InitialValues.RHODA;
+DRHODAt = InitialValues.DRHODAt;
+DRHODAz = InitialValues.DRHODAz;
+Xaa = InitialValues.Xaa;
+XaT = InitialValues.XaT;
+Xah = InitialValues.Xah;
+L = InitialValues.L;
+hOLD = InitialValues.hOLD;
+TOLD = InitialValues.TOLD;
 
+% defined global in other scripts
+global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa
+global Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa
+global Ksoil SMC bbx wfrac Ztot Ta Ts U HR_a Rns Rnl Rn
+global SH MO Zeta_MO TopPg Tp_t DhT RHS C7 C9
+global RHOV_s DRHOV_sT LL P_gOLD hh_frez XCAP Tbtm r_a_SOIL Rn_SOIL PSItot Tsur
+
+f0 = InitialValues.f0;
+L_WT = InitialValues.L_WT;
+Kha = InitialValues.Kha;
+Vvh = InitialValues.Vvh;
+VvT = InitialValues.VvT;
+Chg = InitialValues.Chg;
+C1 = InitialValues.C1;
+C2 = InitialValues.C2;
+C3 = InitialValues.C3;
+C4 = InitialValues.C4;
+C5 = InitialValues.C5;
+C6 = InitialValues.C6;
+Cah = InitialValues.Cah;
+CaT = InitialValues.CaT;
+Caa = InitialValues.Caa;
+Kah = InitialValues.Kah;
+KaT = InitialValues.KaT;
+Kaa = InitialValues.Kaa;
+Vah = InitialValues.Vah;
+VaT = InitialValues.VaT;
+Vaa = InitialValues.Vaa;
+Cag = InitialValues.Cag;
+CTh = InitialValues.CTh;
+CTa = InitialValues.CTa;
+KTh = InitialValues.KTh;
+KTT = InitialValues.KTT;
+KTa = InitialValues.KTa;
+VTT = InitialValues.VTT;
+VTh = InitialValues.VTh;
+VTa = InitialValues.VTa;
+CTg = InitialValues.CTg;
+Kcva = InitialValues.Kcva;
+Kcah = InitialValues.Kcah;
+KcaT = InitialValues.KcaT;
+Kcaa = InitialValues.Kcaa;
+Ccah = InitialValues.Ccah;
+CcaT = InitialValues.CcaT;
+Ccaa = InitialValues.Ccaa;
+Ksoil = InitialValues.Ksoil;
+SMC = InitialValues.SMC;
+bbx = InitialValues.bbx;
+wfrac = InitialValues.wfrac;
+Ztot = InitialValues.Ztot;
+Ta = InitialValues.Ta;
+Ts = InitialValues.Ts;
+U = InitialValues.U;
+HR_a = InitialValues.HR_a;
+Rns = InitialValues.Rns;
+Rnl = InitialValues.Rnl;
+Rn = InitialValues.Rn;
+SH = InitialValues.SH;
+MO = InitialValues.MO;
+Zeta_MO = InitialValues.Zeta_MO;
+TopPg = InitialValues.TopPg;
+Tp_t = InitialValues.Tp_t;
+DhT = InitialValues.DhT;
+RHS = InitialValues.RHS;
+C7 = InitialValues.C7;
+C9 = InitialValues.C9;
+RHOV_s = InitialValues.RHOV_s;
+DRHOV_sT = InitialValues.DRHOV_sT;
+LL = InitialValues.LL;
+P_gOLD = InitialValues.P_gOLD;
+hh_frez = InitialValues.hh_frez;
+XCAP = InitialValues.XCAP;
+Tbtm = InitialValues.Tbtm;
+r_a_SOIL = InitialValues.r_a_SOIL;
+Rn_SOIL = InitialValues.Rn_SOIL;
+PSItot = InitialValues.PSItot;
+Tsur = InitialValues.Tsur;
 
 %% 1. define Constants
 [Constants] = io.define_constants();
-global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L
+global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc
 g = Constants.g;
 RHOL = Constants.RHOL;
 RHOI = Constants.RHOI;
@@ -167,9 +343,10 @@ Lambda3 = Constants.Lambda3;
 c_L = Constants.c_L;
 c_V = Constants.c_V;
 c_a = Constants.c_a;
+Hc = Constants.Hc;
 
 % used in other scripts not here!
-global GWT c_i Gamma0 Gamma_w
+global GWT c_i Gamma0 Gamma_w RHO_bulk
 GWT = Constants.GWT; % used in CondL_T
 Gamma0 = Constants.Gamma0; % used in other scripts!
 Gamma_w = Constants.Gamma_w; % used in other scripts!
@@ -177,6 +354,7 @@ c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
 
 RTB = 1000; % initial root total biomass (g m-2)
+global Rl % used in ebal
 [Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);
 
 %% 2. simulation options
@@ -309,7 +487,7 @@ kappa = Constants.kappa;
 ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
-    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options);
+    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options, SiteProperties, SoilProperties);
     [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, Constants, F, xyt, path_input, options);
 else
     soil = struct;
@@ -356,14 +534,14 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 % SoilConstants for init
 % TODO fix SoilConstants
 SoilConstants = init.setSoilConstants(Constants, ModelSettings, InitialValues, SoilData, SoilProperties, ForcingData);
-[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilProperties, SiteProperties);
+[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilProperties, SiteProperties, Constants);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
 global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
 global Theta_s Theta_r Theta_f m n Alpha
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
-global TCON_dry TPS1 TPS2 TCON0 TCON_s RHO_bulk XOLD
+global TCON_dry TPS1 TPS2 TCON0 TCON_s RHo_bulk XOLD
 
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
@@ -532,7 +710,7 @@ for i = 1:1:Dur_tot
         if options.simulation == 0
             vi(vmax == telmax) = k;
         end
-        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, vi, canopy, options, xyt, soil);
+        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options, xyt, soil);
         if options.simulation ~= 1
             fprintf('simulation %i ', k);
             fprintf('of %i \n', telmax);
@@ -735,15 +913,15 @@ for i = 1:1:Dur_tot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, Constants, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
-        [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
+        [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
         [L] = Latent(TT, NN);
         [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(T, RDA, P_g, Rv, DeltZ, h, hh, TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
         [c_unsat, Lambda_eff, ZETA, ETCON, EHCAP, TETCON, EfTCON] = CondT_coeff(Theta_LL, Lambda1, Lambda2, Lambda3, RHO_bulk, Theta_g, RHODA, RHOV, c_a, c_V, c_L, NL, nD, ThmrlCondCap, ThermCond, HCAP, SF, TCA, GA1, GA2, GB1, GB2, HCD, ZETA0, CON0, PS1, PS2, XWILT, XK, TT, POR, DRHOVT, L, D_A, Theta_V, Theta_II, TCON_dry, Theta_s, XSOC, TPS1, TPS2, TCON0, TCON_s, FEHCAP, RHOI, RHOL, c_unsat, Lambda_eff, ETCON, EHCAP, TETCON, EfTCON, ZETA);
         [k_g] = Condg_k_g(POR, NL, m, Theta_g, g, MU_W, Ks, RHOL, SWCC, Imped, Ratio_ice, Soilairefc, MN);
-        [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU);
+        [D_V, Eta, D_A] = CondV_DE(InitialValues, Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU);
         [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g);
         run h_sub;
         if NBCh == 1
@@ -785,7 +963,7 @@ for i = 1:1:Dur_tot
     KIT;
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, Constants, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
 
     SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0

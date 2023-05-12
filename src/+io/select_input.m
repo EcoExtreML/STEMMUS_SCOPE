@@ -1,4 +1,5 @@
 function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, Theta_LL, kappa, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
+
     SoilProperties.spectrum      = ScopeParameters.spectrum(digitsVector(16));
     SoilProperties.rss           = ScopeParameters.rss(digitsVector(17));
     SoilProperties.rs_thermal    = ScopeParameters.rs_thermal(digitsVector(18));

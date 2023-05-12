@@ -68,12 +68,13 @@ function ModelSettings = loadModelSettings(TimeProperties)
     % Determination of NL, the number of elments
     ModelSettings.NL = 100;
     if ~ModelSettings.Eqlspace
-        [DeltZ, DeltZ_R, ML] = Dtrmn_Z(ModelSettings.NL, ModelSettings.Tot_Depth);
+        [DeltZ, DeltZ_R, NL, ML] = Dtrmn_Z(ModelSettings.NL, ModelSettings.Tot_Depth);
     else
-        for ML = 1:ModelSettings.NL
-            ModelSettings.DeltZ(ML) = ModelSettings.Tot_Depth / ModelSettings.NL;
+        for i = 1:ModelSettings.NL
+            DeltZ(i) = ModelSettings.Tot_Depth / ModelSettings.NL;
         end
     end
+    ModelSettings.NL = NL;
     ModelSettings.ML = ML;
     ModelSettings.DeltZ = DeltZ;
     ModelSettings.DeltZ_R = DeltZ_R;

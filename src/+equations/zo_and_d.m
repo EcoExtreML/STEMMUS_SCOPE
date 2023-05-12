@@ -33,8 +33,6 @@ function [zom, d] = zo_and_d(soil, canopy, kappa)
     %   d           zero plane displacement (m)
     %
 
-    kappa   = Constants.kappa;
-
     %% parameters
     CR      = canopy.CR;
     CSSOIL  = soil.CSSOIL;

@@ -1,4 +1,4 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilConstants, SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilProperties, SiteProperties)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);

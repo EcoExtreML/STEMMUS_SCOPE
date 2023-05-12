@@ -28,8 +28,14 @@
 
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load statistics;
+    disp('Loading Octave packages...');
+    pkg load statistics io;
 end
+
+disp('Create dummy landcover values...');
+ebf = repmat({'Evergreen Broadleaf Forest'}, 40, 1);
+crop = repmat({'Croplands'}, 97-40, 1);
+landcoverClass = cat(1, ebf, crop); % should be length 97.
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG

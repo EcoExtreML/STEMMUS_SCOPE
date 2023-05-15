@@ -127,7 +127,7 @@ global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes l
 % Get initial values
 InitialValues = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
 alpha_h = InitialValues.alpha_h;
-bx = InitialValues.bx; % TODO redefined in src/Evap_Cal.m
+bx = InitialValues.bx;
 Srt = InitialValues.Srt;
 DTheta_LLh = InitialValues.DTheta_LLh;
 DTheta_UUh = InitialValues.DTheta_UUh;
@@ -502,7 +502,6 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
 % SoilConstants for init
-% TODO fix SoilConstants
 SoilConstants = init.setSoilConstants(Constants, ModelSettings, InitialValues, SoilData, SoilProperties, ForcingData);
 [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilProperties, SiteProperties, Constants);
 

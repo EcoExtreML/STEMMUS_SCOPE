@@ -1,9 +1,4 @@
-function [D_V, Eta, D_A] = CondV_DE(InitialValues, Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU)
-    D_V = InitialValues.D_V;
-    Eta = InitialValues.Eta;
-    D_A = InitialValues.D_A;
-    Theta_g = InitialValues.Theta_g;
-
+function [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU)
     MN = 0;
     for ML = 1:NL
         J = ML;
@@ -36,5 +31,4 @@ function [D_V, Eta, D_A] = CondV_DE(InitialValues, Theta_LL, TT, fc, Theta_s, NL
 
         end
     end
-
     %%%%%%%%%%%%% With UnitC^2, m^2.s^-1 would be converted as cm^2.s^-1 %%%%%%%%%%%%%

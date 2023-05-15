@@ -56,7 +56,7 @@ Dur_tot = TimeProperties.Dur_tot;
 % Load model settings: replacing "run Constants"
 ModelSettings = loadModelSettings(TimeProperties);
 
-global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML
+global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
 Tot_Depth = ModelSettings.Tot_Depth;
 Eqlspace = ModelSettings.Eqlspace;
@@ -89,6 +89,7 @@ Delt_t = ModelSettings.Delt_t;
 Delt_t0 = ModelSettings.Delt_t0;
 NN = ModelSettings.NN;
 ML = ModelSettings.ML;
+nD = ModelSettings.nD;
 
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
@@ -120,7 +121,7 @@ global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCO
 global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
 global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a  Theta_V W WW D_Ta Ratio_ice
 global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
-global Theta_g Alpha_Lg Beta_g D_V D_A Eta nD ZETA MU_W Ks RHODA RHOV ETCON EHCAP
+global Theta_g Alpha_Lg Beta_g D_V D_A Eta ZETA MU_W Ks RHODA RHOV ETCON EHCAP
 global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants Beta_gBAR Alpha_LgBAR
 global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 

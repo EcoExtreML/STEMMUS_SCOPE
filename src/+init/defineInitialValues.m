@@ -1,4 +1,4 @@
-function InitialValues = definetInitialValues(Dur_tot, ModelSettings)
+function InitialValues = defineInitialValues(Dur_tot, ModelSettings)
     %{
 
     %}

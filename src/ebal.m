@@ -1,6 +1,6 @@
 function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
-                angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, Constants)
+                angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t)
     global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT sfactor   PSItot sfactortot Theta_f
     global  m n Alpha TT
     % function ebal.m calculates the energy balance of a vegetated surface
@@ -126,6 +126,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Ccu   = Ca * ones(size(Rnuc));      %           Leaf CO2 (sunlit leaves)
     % Tsold = Ts;                       %           Soil temperature of the previous time step
     L     = -1;                       %           Monin-Obukhov length
+    % load Constants
+    Constants = io.define_constants();
 
     MH2O  = Constants.MH2O;
     Mair  = Constants.Mair;
@@ -167,7 +169,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     PSI = 0;
     % [bbx]=Max_Rootdepth(bbx,TIME,NL,KT);
     [bbx] = Max_Rootdepth(bbx, NL, KT, TT);
-    [PSIs, rsss, rrr, rxx] = calc_rsoil(Constants, Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha);
+    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha);
     [sfactor] = calc_sfactor(Rl, Theta_s, Theta_r, Theta_LL, bbx, Ta, Theta_f);
     PSIss = PSIs(NL, 1);
     %% 2. Energy balance iteration loop
@@ -178,7 +180,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
 
         % 2.1. Net radiation of the components
         % Thermal radiative transfer model for vegetation emission (with Stefan-Boltzman's equation)
-        rad  = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Ts(2), Ts(1), 1, Constants);
+        rad  = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Ts(2), Ts(1), 1);
         % Add net radiation of (1) solar and sky and (2) thermal emission model
 
         Rnhct = rad.Rnhct;
@@ -213,7 +215,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         resist_in.w   = canopy.leafwidth;
         resist_in.Cd  = canopy.Cd;
 
-        [resist_out]  = resistances(resist_in, Constants.kappa);
+        [resist_out]  = resistances(resist_in);
 
         ustar = resist_out.ustar;
         raa   = resist_out.raa;
@@ -293,9 +295,9 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         rac     = (LAI + 1) * (raa + rawc);
         ras     = (LAI + 1) * (raa + raws);
         for i = 1:30
-            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, Constants, es_fun, s_fun);
-            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, Constants, es_fun, s_fun);
-            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, Constants, es_fun, s_fun);
+            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
+            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
+            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, es_fun, s_fun);
 
             % if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
             %  error('Heatfluxes produced complex values for CO2 concentration!')

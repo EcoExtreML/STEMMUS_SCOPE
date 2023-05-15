@@ -1,9 +1,12 @@
-function [lE, H, ec, Cc, lambda, s]  = heatfluxes(ra, rs, Tc, ea, Ta, e_to_q, PSI, Ca, Ci, constants, es_fun, s_fun)
+function [lE, H, ec, Cc, lambda, s]  = heatfluxes(ra, rs, Tc, ea, Ta, e_to_q, PSI, Ca, Ci, es_fun, s_fun)
 
-    rhoa = constants.rhoa;
-    cp   = constants.cp;
-    MH2O = constants.MH2O;
-    R    = constants.R;
+    % load Constants
+    Constants = io.define_constants();
+
+    rhoa = Constants.rhoa;
+    cp   = Constants.cp;
+    MH2O = Constants.MH2O;
+    R    = Constants.R;
 
     % author: Dr. ir. Christiaan van der Tol (tol@itc.nl)
     % date:     7 Dec 2007

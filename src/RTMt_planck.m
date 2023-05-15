@@ -1,4 +1,4 @@
-function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constants)
+function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir)
     % function 'RTMt_planck' calculates the spectrum of outgoing thermal
     % radiation in hemispherical and viewing direction
     %
@@ -63,6 +63,9 @@ function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tc
     % for speed-up the calculation only uses thermal part of the spectrum
     IT          = spectral.IwlT;   %
     wlt         = spectral.wlT;
+
+    % load Constants
+    Constants = io.define_constants();
 
     deg2rad     = Constants.deg2rad;
     nl          = canopy.nlayers;

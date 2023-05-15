@@ -1,4 +1,4 @@
-function [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, Constants, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se)
+function [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se)
 
     if hThmrl == 1
 
@@ -20,7 +20,7 @@ function [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h
         hhU(MN) = COR(MN) * hh(MN);
         hh(MN) = hhU(MN);
     end
-    [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Constants, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+    [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
     for MN = 1:NN
         hhU(MN) = hh(MN);
         hh(MN) = hhU(MN) / COR(MN);

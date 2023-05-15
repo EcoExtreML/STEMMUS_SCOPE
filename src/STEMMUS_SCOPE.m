@@ -28,7 +28,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txt';
+    CFG = '/home/sarah/temp/ecoextreml/test/input/CA-NS1_2023-03-21-1752/CA-NS1_2023-03-21-1752_config.txt';
 end
 disp (['Reading config from ', CFG]);
 global InputPath OutputPath InitialConditionPath
@@ -54,7 +54,7 @@ Dur_tot = TimeProperties.Dur_tot;
 
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
 % Load model settings: replacing "run Constants"
-ModelSettings = io.loadModelSettings(TimeProperties);
+ModelSettings = io.loadModelSettings();
 
 global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
@@ -81,15 +81,14 @@ rroot = ModelSettings.rroot;
 SAVE = ModelSettings.SAVE;
 KIT = ModelSettings.KIT;
 NIT = ModelSettings.NIT;
-DURTN = ModelSettings.DURTN;
 KT = ModelSettings.KT;
-TIME = ModelSettings.TIME;
-TEND = ModelSettings.TEND;
-Delt_t = ModelSettings.Delt_t;
-Delt_t0 = ModelSettings.Delt_t0;
 NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 nD = ModelSettings.nD;
+% defined as global, and used in other scripts
+DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
+TIME = 0 * TimeProperties.DELT; % Time of simulation released;
+Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
@@ -113,7 +112,7 @@ SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties,
 global Tss
 Tss = SoilData.Tss; % global vars used in Forcing_PARM
 
-global i tS TIME MN ND hOLD TOLD h hh T TT P_g P_gg AVAIL Evap EXCESS QMT hN Trap
+global i tS MN ND hOLD TOLD h hh T TT P_g P_gg AVAIL Evap EXCESS QMT hN Trap
 global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
 global AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH CTT_LT CTT_g CTT_Lg c_unsat
 global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T  TT_CRIT T_CRIT TOLD_CRIT
@@ -122,11 +121,11 @@ global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh 
 global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a  Theta_V W WW D_Ta Ratio_ice
 global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
 global Theta_g Alpha_Lg Beta_g D_V D_A Eta ZETA MU_W Ks RHODA RHOV ETCON EHCAP
-global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants Beta_gBAR Alpha_LgBAR
+global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Beta_gBAR Alpha_LgBAR
 global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 
 % Get initial values
-InitialValues = init.defineInitialValues(TimeProperties.Dur_tot, ModelSettings);
+InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
 alpha_h = InitialValues.alpha_h;
 bx = InitialValues.bx;
 Srt = InitialValues.Srt;
@@ -301,7 +300,7 @@ PSItot = InitialValues.PSItot;
 Tsur = InitialValues.Tsur;
 
 %% 1. define Constants
-[Constants] = io.define_constants();
+Constants = io.define_constants();
 global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc GWT c_i Gamma0 Gamma_w RHO_bulk Rl
 g = Constants.g;
 RHOL = Constants.RHOL;
@@ -454,12 +453,11 @@ spectral.IwlF = (640:850) - 399;
 
 %% 11. load time series data
 Theta_LL = InitialValues.Theta_LL;
-kappa = Constants.kappa;
 ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
-    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options, SiteProperties, SoilProperties);
-    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, Constants, F, xyt, path_input, options);
+    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, vi, canopy, options, SiteProperties, SoilProperties);
+    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options);
 else
     soil = struct;
 end
@@ -503,8 +501,8 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
 % SoilConstants for init
-SoilConstants = init.setSoilConstants(Constants, ModelSettings, InitialValues, SoilData, SoilProperties, ForcingData);
-[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, ModelSettings, SoilProperties, SiteProperties, Constants);
+SoilConstants = init.setSoilConstants(InitialValues, SoilData, SoilProperties, ForcingData);
+[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
@@ -630,6 +628,8 @@ tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
 TimeStep = [];
+TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
+Delt_t0 = Delt_t; % Duration of last time step;
 for i = 1:1:Dur_tot
     KT = KT + 1;                         % Counting Number of timesteps
     if KT > 1 && Delt_t > (TEND - TIME)
@@ -680,7 +680,7 @@ for i = 1:1:Dur_tot
         if options.simulation == 0
             vi(vmax == telmax) = k;
         end
-        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, Theta_LL, kappa, vi, canopy, options, xyt, soil);
+        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, Theta_LL, vi, canopy, options, xyt, soil);
         if options.simulation ~= 1
             fprintf('simulation %i ', k);
             fprintf('of %i \n', telmax);
@@ -758,30 +758,30 @@ for i = 1:1:Dur_tot
             end
             atmo.Ta     = meteo.Ta;
 
-            [rad, gap, profiles]   = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options, Constants);
+            [rad, gap, profiles]   = RTMo(spectral, atmo, soil, leafopt, canopy, angles, meteo, rad, options);
 
             switch options.calc_ebal
                 case 1
                     [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]                          ...
                         = ebal(iter, options, spectral, rad, gap,                       ...
-                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, Constants);
+                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t);
                     if options.calc_fluor
                         if options.calc_vert_profiles
-                            [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants);
+                            [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
                         else
-                            [rad] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constant);
+                            [rad] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
                         end
                     end
                     if options.calc_xanthophyllabs
-                        [rad] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants);
+                        [rad] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
                     end
 
                     if options.calc_planck
-                        rad         = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, thermal.Tcu, thermal.Tch, thermal.Ts(2), thermal.Ts(1), 1, Constants);
+                        rad         = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, thermal.Tcu, thermal.Tch, thermal.Ts(2), thermal.Ts(1), 1);
                     end
 
                     if options.calc_directional
-                        directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal, Constants);
+                        directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal);
                     end
 
                 otherwise
@@ -883,10 +883,10 @@ for i = 1:1:Dur_tot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, Constants, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
-        [W, WW, MU_W, D_Ta] = CondL_Tdisp(Constants, InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
+        [W, WW, MU_W, D_Ta] = CondL_Tdisp(InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
         [L] = Latent(TT, NN);
         [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(T, RDA, P_g, Rv, DeltZ, h, hh, TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
         [c_unsat, Lambda_eff, ZETA, ETCON, EHCAP, TETCON, EfTCON] = CondT_coeff(Theta_LL, Lambda1, Lambda2, Lambda3, RHO_bulk, Theta_g, RHODA, RHOV, c_a, c_V, c_L, NL, nD, ThmrlCondCap, ThermCond, HCAP, SF, TCA, GA1, GA2, GB1, GB2, HCD, ZETA0, CON0, PS1, PS2, XWILT, XK, TT, POR, DRHOVT, L, D_A, Theta_V, Theta_II, TCON_dry, Theta_s, XSOC, TPS1, TPS2, TCON0, TCON_s, FEHCAP, RHOI, RHOL, c_unsat, Lambda_eff, ETCON, EHCAP, TETCON, EfTCON, ZETA);
@@ -933,7 +933,7 @@ for i = 1:1:Dur_tot
     KIT;
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, Constants, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
 
     SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0

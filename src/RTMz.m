@@ -1,4 +1,4 @@
-function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants)
+function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angles, profiles)
 
     % function 'RTMz' calculates the small modification of TOC outgoing
     % radiance due to the conversion of Violaxanthin into Zeaxanthin in leaves
@@ -75,6 +75,8 @@ function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angle
     rs           = soil.refl(iwlfi);                  % [nf]     soil reflectance
 
     % geometric factors
+    % load Constants
+    Constants = io.define_constants();
 
     deg2rad      = Constants.deg2rad;
     tto          = angles.tto;

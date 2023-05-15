@@ -1,4 +1,4 @@
-function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles, Constants)
+function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles)
 
     % function 'RTMf' calculates the spectrum of fluorescent radiance in the
     % observer's direction in addition to the total TOC spectral hemispherical upward Fs flux
@@ -103,6 +103,9 @@ function [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angle
     rs           = soil.refl(spectral.IwlF);                  % [nf]     soil reflectance
 
     % geometric factors
+
+    % load Constants
+    Constants = io.define_constants();
 
     deg2rad      = Constants.deg2rad;
     tto          = angles.tto;

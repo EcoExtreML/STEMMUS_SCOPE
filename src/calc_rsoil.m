@@ -1,4 +1,7 @@
-function [PSIs, rsss, rrr, rxx] = calc_rsoil(Constants, Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha)
+function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha)
+    % load Constants
+    Constants = io.define_constants();
+
     DeltZ0 = DeltZ';
     SMC = Theta_LL(1:54, 2);
     Se  = (SMC - Theta_r') ./ (Theta_s' - Theta_r');

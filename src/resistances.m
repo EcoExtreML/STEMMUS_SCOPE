@@ -1,4 +1,4 @@
-function [resist_out] = resistances(resist_in, kappa)
+function [resist_out] = resistances(resist_in)
     %
     %   function resistances calculates aerodynamic and boundary resistances
     %   for soil and vegetation
@@ -68,6 +68,10 @@ function [resist_out] = resistances(resist_in, kappa)
 
     % uz0       =   windspeed at z0                                     [m s-1]
     % Kh        =   Diffusivity for heat                                [m2s-1]
+
+    % load Constants
+    Constants = io.define_constants();
+    kappa = Constants.kappa;
 
     %% parameters
 

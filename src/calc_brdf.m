@@ -1,4 +1,4 @@
-function directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal, Constants)
+function directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal)
 
     %% input
     tts                 = angles.tts;
@@ -28,19 +28,22 @@ function directional = calc_brdf(options, directional, spectral, angles, rad, at
     directional_angles = angles;
 
     %% loop over the angles
+    % load Constants
+    Constants = io.define_constants();
+
     for j = 1:(noa + noah_o + noap_o)
 
         % optical BRDF
         directional_angles.tto = directional.tto(j);
         directional_angles.psi = directional.psi(j);
-        [directional_rad, directional_gap] = RTMo(spectral, atmo, soil, leafopt, canopy, directional_angles, meteo, rad, options, Constants);
+        [directional_rad, directional_gap] = RTMo(spectral, atmo, soil, leafopt, canopy, directional_angles, meteo, rad, options);
         directional.brdf_(:, j)  = directional_rad.rso; % Lo_./E_tot;          % [nwl]            BRDF (spectral) (nm-1)
 
         % thermal directional brightness temperatures (Planck)
         if options.calc_planck
             directional_rad = RTMt_planck(spectral, directional_rad, ...
                                           soil, leafopt, canopy, directional_gap, directional_angles, ...
-                                          thermal.Tcu, thermal.Tch, thermal.Ts(1), thermal.Ts(1), 1, Constants);
+                                          thermal.Tcu, thermal.Tch, thermal.Ts(1), thermal.Ts(1), 1);
             directional.Lot_(:, j)      = directional_rad.Lot_(spectral.IwlT);        % [nwlt]           emitted diffuse     radiance at top
 
         else            % thermal directional brightness temperatures (Stefan-Boltzmann)
@@ -55,7 +58,7 @@ function directional = calc_brdf(options, directional, spectral, angles, rad, at
             directional.LoF_(:, j)              = directional_rad.LoF_;
         end % {if calcfluor}
         if options.calc_xanthophyllabs
-            [directional_rad] = RTMz(spectral, directional_rad, soil, leafopt, canopy, directional_gap, directional_angles, profiles, Constants);
+            [directional_rad] = RTMz(spectral, directional_rad, soil, leafopt, canopy, directional_gap, directional_angles, profiles);
         end
 
     end % {for wavelengths}

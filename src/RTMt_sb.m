@@ -1,4 +1,4 @@
-function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir, Constants)
+function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu, Tch, Tsu, Tsh, obsdir)
 
     % function 'RTMt_sb' calculates total outgoing radiation in hemispherical
     % direction and total absorbed radiation per leaf and soil component.
@@ -62,6 +62,9 @@ function [rad] = RTMt_sb(spectral, rad, soil, leafopt, canopy, gap, angles, Tcu,
     %% 0.1 parameters
 
     IT          = find(spectral.wlS == 10000);   % Take 10 microns as representative wavelength for the thermal
+
+    % load Constants
+    Constants = io.define_constants();
 
     deg2rad     = Constants.deg2rad;
     nl          = canopy.nlayers;

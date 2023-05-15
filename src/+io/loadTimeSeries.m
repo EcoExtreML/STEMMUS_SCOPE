@@ -1,9 +1,11 @@
-function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options)
+function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options)
 
     %{
         This function loads time series data.
 
     %}
+    % load Constants
+    Constants = io.define_constants();
 
     t_file = char(F(6).FileName);
     year_file = char(F(7).FileName);
@@ -34,7 +36,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.tts = load(fullfile(path_input, tts_file));
     else
         ttsR = equations.calczenithangle(DOY_, time_ - xyt.timezn, 0, 0, xyt.LON, xyt.LAT); % sun zenith angle in rad
-        ScopeParameters.tts = min(85, ttsR / constants.deg2rad); % sun zenith angle in deg
+        ScopeParameters.tts = min(85, ttsR / Constants.deg2rad); % sun zenith angle in deg
     end
 
     %% 2. Radiation
@@ -106,7 +108,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
 
     %% 5. Gas concentrations
     if ~isempty(CO2_file)
-        Ca_ = load(fullfile(path_input, CO2_file)) * constants.Mair / constants.MCO2 / constants.rhoa; % conversion from mg m-3 to ppm
+        Ca_ = load(fullfile(path_input, CO2_file)) * Constants.Mair / Constants.MCO2 / Constants.rhoa; % conversion from mg m-3 to ppm
         % mg(CO2)/m-3 * g(air)/mol(air) * mol(CO2)/g(CO2) * m3(air)/kg(air) * 10^-3 g(CO2)/mg(CO2) * 10^-3 kg(air)/g(air) * 10^6 ppm
         jj = isnan(Ca_); % find data with good quality  Ca data
         Ca_(jj) = 380;

@@ -1,4 +1,4 @@
-function [zom, d] = zo_and_d(soil, canopy, kappa)
+function [zom, d] = zo_and_d(soil, canopy)
 
     % function zom_and_d calculates roughness length for momentum and zero
     % plane displacement from vegetation height and LAI
@@ -32,6 +32,10 @@ function [zom, d] = zo_and_d(soil, canopy, kappa)
     %   zom         roughness lenght for momentum (m)
     %   d           zero plane displacement (m)
     %
+
+    % load Constantns
+    Constants = io.define_constants();
+    kappa = Constants.kappa;
 
     %% parameters
     CR      = canopy.CR;

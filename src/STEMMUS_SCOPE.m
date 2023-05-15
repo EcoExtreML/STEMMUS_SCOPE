@@ -54,7 +54,7 @@ Dur_tot = TimeProperties.Dur_tot;
 
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
 % Load model settings: replacing "run Constants"
-ModelSettings = loadModelSettings(TimeProperties);
+ModelSettings = io.loadModelSettings(TimeProperties);
 
 global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
@@ -126,7 +126,7 @@ global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Constants Beta_gBAR Alpha_LgBA
 global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 
 % Get initial values
-InitialValues = getInitialValues(TimeProperties.Dur_tot, ModelSettings);
+InitialValues = init.defineInitialValues(TimeProperties.Dur_tot, ModelSettings);
 alpha_h = InitialValues.alpha_h;
 bx = InitialValues.bx;
 Srt = InitialValues.Srt;

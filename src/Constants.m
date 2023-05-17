@@ -518,10 +518,10 @@ else
         InitT6 = 0;
         Tss = InitT0;
     end
-    if nanmean(Ta_msr) < 0
+    if mean(Ta_msr, "omitnan") < 0
         BtmT  = 0;  % 9 8.1
     else
-        BtmT  =  nanmean(Ta_msr);
+        BtmT  =  mean(Ta_msr, "omitnan");
     end
     if InitX0 > SaturatedMC(1) || InitX1 > SaturatedMC(1) || InitX2 > SaturatedMC(2) || ...
         InitX3 > SaturatedMC(3) || InitX4 > SaturatedMC(4) || InitX5 > SaturatedMC(5) || InitX6 > SaturatedMC(6)

@@ -1,6 +1,7 @@
-FROM gnuoctave/octave:7.2.0
+FROM gnuoctave/octave:8.1.0
 
-RUN octave --eval 'pkg install -forge statistics'
+RUN octave --eval 'pkg install -forge io'
+RUN octave --eval 'pkg install "https://octave.sourceforge.io/download.php?package=statistics-1.4.3.tar.gz"'
 RUN apt update && apt install -yq libnetcdf-dev && octave --eval 'pkg install -forge netcdf'
 
 ARG USERNAME=octave

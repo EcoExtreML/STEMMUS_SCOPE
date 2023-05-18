@@ -33,8 +33,8 @@ if exist('OCTAVE_VERSION', 'builtin') ~= 0
 end
 
 disp('Create dummy landcover values...');
-ebf = repmat({'Evergreen Broadleaf Forest'}, 40, 1);
-crop = repmat({'Croplands'}, 97-40, 1);
+ebf = repmat({'Mixed Forests'}, 10000, 1);
+crop = repmat({'Croplands'}, 17520-10000, 1);
 landcoverClass = cat(1, ebf, crop); % should be length 97.
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
@@ -242,7 +242,7 @@ for i = 1:nvars
     name = ScopeParametersNames{i};
     vmax(i) = length(ScopeParameters.(name));
 end
-vmax([14, 27], 1) = 1; % these are Tparam and LIDFb
+vmax(27, 1) = 1; % these are Tparam and LIDFb
 vi      = ones(nvars, 1);
 switch options.simulation
     case 0

@@ -8,7 +8,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     SoilProperties.CSSOIL        = ScopeParameters.CSSOIL(digitsVector(43));
     SoilProperties.lambdas       = ScopeParameters.lambdas(digitsVector(21));
     SoilProperties.rbs           = ScopeParameters.rbs(digitsVector(44));
-    SoilProperties.SMC           = Theta_LL(end-1, 1);
+    SoilProperties.SMC           = Theta_LL(end - 1, 1);
     SoilProperties.BSMBrightness = ScopeParameters.BSMBrightness(digitsVector(61));
     SoilProperties.BSMlat          = ScopeParameters.BSMlat(digitsVector(62));
     SoilProperties.BSMlon          = ScopeParameters.BSMlon(digitsVector(63));
@@ -27,7 +27,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     leafbio.m       = ScopeParameters.m(digitsVector(10));
     leafbio.BallBerry0 = ScopeParameters.BallBerry0(digitsVector(64)); % JAK 2016-10. Accidentally left out of v1.70
     leafbio.Type    = ScopeParameters.Type(digitsVector(11));
-    leafbio.Tparam  = ScopeParameters.Tparam(digitsVector(14),:); % this is correct (: instead of 14)
+    leafbio.Tparam  = ScopeParameters.Tparam(digitsVector(14), :); % this is correct (: instead of 14)
     fqe             = ScopeParameters.fqe(digitsVector(15));
     leafbio.Rdparam = ScopeParameters.Rdparam(digitsVector(13));
 

@@ -125,12 +125,12 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
     landcovers = unique(landcoverClass);
     for ii = 1:length(xyt.t)
         landcoverIndex = find(strcmp(landcoverClass(ii), landcovers));
-        ScopeParameters.Vcmo(ii,1) = ScopeParameters.lcVcmo(landcoverIndex,1);
-        ScopeParameters.Tparam(ii,:) = ScopeParameters.lcTparam(landcoverIndex,:);
-        ScopeParameters.m(ii,1) = ScopeParameters.lcm(landcoverIndex,1);
-        ScopeParameters.Type(ii,1) = ScopeParameters.lcType(landcoverIndex,1);
-        ScopeParameters.Rdparam(ii,1) = ScopeParameters.lcRdparam(landcoverIndex,1);
-        ScopeParameters.leafwidth(ii,1) = ScopeParameters.lcleafwidth(landcoverIndex,1);
+        ScopeParameters.Vcmo(ii, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);
+        ScopeParameters.Tparam(ii, :) = ScopeParameters.lcTparam(landcoverIndex, :);
+        ScopeParameters.m(ii, 1) = ScopeParameters.lcm(landcoverIndex, 1);
+        ScopeParameters.Type(ii, 1) = ScopeParameters.lcType(landcoverIndex, 1);
+        ScopeParameters.Rdparam(ii, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
+        ScopeParameters.leafwidth(ii, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
     end
     ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
 

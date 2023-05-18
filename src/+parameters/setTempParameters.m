@@ -7,12 +7,12 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
     landcovers = unique(landcoverClass);
     for ii = 1:length(landcovers)
         [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(ii), siteName);
-        ScopeParameters.lcVcmo(ii,1) = Vcmo;
-        ScopeParameters.lcTparam(ii,:) = Tparam;
-        ScopeParameters.lcm(ii,1) = m;
-        ScopeParameters.lcType(ii,1) = Type;
-        ScopeParameters.lcRdparam(ii,1) = Rdparam;
-        ScopeParameters.lcleafwidth(ii,1) = leafwidth;
+        ScopeParameters.lcVcmo(ii, 1) = Vcmo;
+        ScopeParameters.lcTparam(ii, :) = Tparam;
+        ScopeParameters.lcm(ii, 1) = m;
+        ScopeParameters.lcType(ii, 1) = Type;
+        ScopeParameters.lcRdparam(ii, 1) = Rdparam;
+        ScopeParameters.lcleafwidth(ii, 1) = leafwidth;
     end
 end
 

@@ -34,7 +34,7 @@ end
 
 disp('Create dummy landcover values...');
 ebf = repmat({'Mixed Forests'}, 10000, 1);
-crop = repmat({'Croplands'}, 17520-10000, 1);
+crop = repmat({'Croplands'}, 17520 - 10000, 1);
 landcoverClass = cat(1, ebf, crop); % should be length 97.
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)

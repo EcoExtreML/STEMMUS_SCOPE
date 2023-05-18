@@ -1,7 +1,11 @@
 FROM gnuoctave/octave:8.1.0
 
-RUN octave --eval 'pkg install -forge statistics io'
-RUN apt update && apt install -yq libnetcdf-dev && octave --eval 'pkg install -forge netcdf'
+# NOTE: all package version are pinned to avoid the container breaking with the 
+#     latest version on octave's forge.
+#
+# IO is a dependency of statistics, needs to be installed first.
+RUN octave --eval 'pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz"'
+RUN octave --eval 'pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz"'
 
 ARG USERNAME=octave
 ARG USER_UID=1000

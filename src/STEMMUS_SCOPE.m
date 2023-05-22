@@ -28,7 +28,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '/home/sarah/temp/ecoextreml/test/input/CA-NS1_2023-03-21-1752/CA-NS1_2023-03-21-1752_config.txt';
+    CFG = '../config_file_crib.txt';
 end
 disp (['Reading config from ', CFG]);
 global InputPath OutputPath InitialConditionPath

@@ -85,13 +85,7 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
             %%%%% Peters-Lidard et al. 1998 frozen soil thermal conductivity method %%%%%%%
             Satr(ML, ND) = (Theta_LL(ML, ND) + XII) / Theta_s(J);
             if Theta_II(ML, ND) <= 0
-                if Theta_LL(ML, ND) / POR(J) > 0.1
-                    K_e(ML, ND) = log10(Theta_LL(ML, ND) / POR(J)) + 1;  % Kersten coefficient, weighting dry and wet thermal conductivity
-                elseif Theta_LL(ML, ND) / POR(J) > 0.05
-                    K_e(ML, ND) = 0.7 * log10(Theta_LL(ML, ND) / POR(J)) + 1;  % Kersten coefficient, weighting dry and wet thermal conductivity
-                else
-                    K_e(ML, ND) = 0;
-                end
+                K_e(ML, ND) = calcKerstenCoef(Theta_LL(ML, ND), POR(J));
                 Coef_k = 1.9; % [4.6 3.55 1.9; 1.7 0.95 0.85];
                 TCON_sat(ML, ND) = TCON_s(J)^(1 - Theta_s(J)) * TCON_L^(Theta_s(J));  % saturated soil thermal conductivity Unit W m-1 K-1
                 EfTCON(ML, ND) = K_e(ML, ND) * (TCON_sat(ML, ND) - TCON_dry(J)) + TCON_dry(J);
@@ -102,3 +96,17 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
             end
         end
     end
+
+function kerstenCoef = calcKerstenCoef(theta, porosity)
+%{
+    Calculate the kersten coefficient, weighting dry and wet thermal conductivity
+    See Xyz (20xx), page 12.
+%}
+    if theta / porosity > 0.1
+        kerstenCoef = log10(theta / porosity) + 1;
+    elseif theta / porosity > 0.05
+        kerstenCoef = 0.7 * log10(theta / porosity) + 1;
+    else
+        kerstenCoef = 0;
+    end
+end

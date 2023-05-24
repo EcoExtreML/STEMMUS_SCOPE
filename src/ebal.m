@@ -461,11 +461,11 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Rntot_PAR       = LAI * (Fc * Rnh_PAR  + equations.meanleaf(canopy, Rnu_PAR, 'angles_and_layers', Ps)); % net PAR leaves
     aPAR_Cab_eta        = LAI * (Fc * (profiles.etah .* Rnh_PAR) + equations.meanleaf(canopy, profiles.etau .* Rnu_PAR, 'angles_and_layers', Ps));
     % ... green ePAR * relative fluorescence emission efficiency
-    %%%%%%%%%%%%%%%%%%% [Delta_Rltot] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LAI_msr);
-    %%%%%%%%%%%%%%%%%%% Delta_Rl = fc*Delta_Rltot;
-    %%%%%%%%%%%%%%%%%%% Rl = Rl + Delta_Rl;
-    %%%%%%%%%%%%%%%%%%% Rltot = sum(sum(Rl));
-    %%%%%%%%%%%%%%%%%%% fc = Rl./Rltot;
+    % [Delta_Rltot] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LAI_msr);
+    % Delta_Rl = fc*Delta_Rltot;
+    % Rl = Rl + Delta_Rl;
+    % Rltot = sum(sum(Rl));
+    % fc = Rl./Rltot;
     % sum of soil fluxes and average temperature
     %   (note that averaging temperature is physically not correct...)
     Rnstot          = Fs * Rns;           %                   Net radiation soil

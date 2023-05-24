@@ -93,9 +93,6 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
                     K_e(ML, ND) = 0;
                 end
                 Coef_k = 1.9; % [4.6 3.55 1.9; 1.7 0.95 0.85];
-                K_e1(ML, ND) = Coef_k * (Theta_LL(ML, ND) / POR(J)) / (1 + (Coef_k - 1) * (Theta_LL(ML, ND) / POR(J)));  % Kersten coefficient, weighting dry and wet thermal conductivity
-                ALPHA = 0.9; % [1.05,0.9,0.58];
-                K_e2(ML, ND) = exp(ALPHA * (1 - (Theta_LL(ML, ND) / POR(J))^(ALPHA - 1.33)));   % Lu and Ren 2007; ALPHA=1.05,0.9,0.58
                 TCON_sat(ML, ND) = TCON_s(J)^(1 - Theta_s(J)) * TCON_L^(Theta_s(J));  % saturated soil thermal conductivity Unit W m-1 K-1
                 EfTCON(ML, ND) = K_e(ML, ND) * (TCON_sat(ML, ND) - TCON_dry(J)) + TCON_dry(J);
             else

@@ -1,4 +1,4 @@
-function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
+function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SoilProperties, SpaceTimeInfo)
     global Theta_LL theta_s0
     SoilProperties.spectrum      = ScopeParameters.spectrum(digitsVector(16));
     SoilProperties.rss           = ScopeParameters.rss(digitsVector(17));

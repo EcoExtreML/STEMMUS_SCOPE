@@ -1,4 +1,6 @@
 function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, GA2, GB1, GB2, HCD, ZETA0, CON0, PS1, PS2, XWILT, XK, TT, NL, POR, Theta_LL, DRHOVT, L, D_A, RHOV, Theta_V, Theta_II, TCON_dry, Theta_s, XSOC, ThermCond, TPS1, TPS2, TCON0, TCON_s, FEHCAP, RHOI, RHOL, ETCON, EHCAP, TETCON, EfTCON, ZETA)
+    % EfeCapCond calculates ...?
+
     global TCON
     MN = 0;
     TCON(1) = 1.37e-3 * 4.182;
@@ -51,12 +53,15 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
             TTGRAT(2) = 0.667 / (1 + TARG(2) * TSF(2)) + 0.333 / (1 + TARG(2) * (1 - 2 * TSF(2)));
             TTGRAT(6) = 0.667 / (1 + TARG(6) * TSF(6)) + 0.333 / (1 + TARG(6) * (1 - 2 * TSF(6)));
             TTGRAT(7) = 0.667 / (1 + TARG(7) * TSF(7)) + 0.333 / (1 + TARG(7) * (1 - 2 * TSF(7)));
+
             if XSOC(J) == 0
                 TETCON(ML, ND) = (TPS1(J) + XXX * TCON(1) + (POR(J) - XXX - XII) * TTGRAT(2) * TCON(2) + XII * TTGRAT(6) * TCON(6)) / (TPS2(J) + XXX + (POR(J) - XXX - XII) * TTGRAT(2) + XII * TTGRAT(6));
             else
                 TETCON(ML, ND) = (TPS1(J) + XXX * TCON(1) + (POR(J) - XXX - XII) * TTGRAT(2) * TCON(2) + XII * TTGRAT(6) * TCON(6) + XSOC(J) * TTGRAT(7) * TCON(7)) / (TPS2(J) + XXX + (POR(J) - XXX - XII) * TTGRAT(2) + XII * TTGRAT(6) + XSOC(J) * TTGRAT(7));
             end
+
             TZETA(ML, ND) = TTGRAT(2) / (TTGRAT(2) * (POR(J) - XXX) + XXX + TPS2(J));  % ita_T enhancement factor
+
             if Theta_LL(ML, ND) == XXX
                 EHCAP(ML, ND) = HCD(J) + HCAP(1) * Theta_LL(ML, ND);
                 EHCAP(ML, ND) = EHCAP(ML, ND) + (0.448 * RHOV(MN) * 4.182 + HCAP(2)) * Theta_V(ML, ND) + HCAP(6) * XII; % The Calorie should be converted as J
@@ -86,7 +91,7 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
             Satr(ML, ND) = (Theta_LL(ML, ND) + XII) / Theta_s(J);
             if Theta_II(ML, ND) <= 0
                 K_e(ML, ND) = calcKerstenCoef(Theta_LL(ML, ND), POR(J));
-                Coef_k = 1.9; % [4.6 3.55 1.9; 1.7 0.95 0.85];
+
                 TCON_sat(ML, ND) = TCON_s(J)^(1 - Theta_s(J)) * TCON_L^(Theta_s(J));  % saturated soil thermal conductivity Unit W m-1 K-1
                 EfTCON(ML, ND) = K_e(ML, ND) * (TCON_sat(ML, ND) - TCON_dry(J)) + TCON_dry(J);
             else
@@ -96,6 +101,7 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(HCAP, SF, TCA, GA1, G
             end
         end
     end
+end
 
 function kerstenCoef = calcKerstenCoef(theta, porosity)
 %{

@@ -122,7 +122,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
 
     %% 7. Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth parameters
     % where landcoverClass is an vector like ["forest"; "forest"; "forest"; "shrubland"; ...]
-    landcovers = unique(landcoverClass);
+    landcovers = unique(landcoverClass, 'stable');
     for ii = 1:length(xyt.t)
         landcoverIndex = find(strcmp(landcoverClass(ii), landcovers));
         ScopeParameters.Vcmo(ii, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);

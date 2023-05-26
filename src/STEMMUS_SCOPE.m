@@ -52,9 +52,9 @@ canopy_height        = SiteProperties.canopy_height;
 sitename             = SiteProperties.sitename;
 
 disp('Create dummy landcover values...'); % Temporary, until PyStemmusScope catches up. 
-ebf = repmat({strtrim(IGBP_veg_long.')}, TimeProperties.Dur_tot - 10, 1);
+landcover_igbp = repmat({strtrim(IGBP_veg_long.')}, TimeProperties.Dur_tot - 10, 1);
 crop = repmat({'Croplands'}, 10, 1);
-landcoverClass = cat(1, ebf, crop);
+landcoverClass = cat(1, landcover_igbp, crop);
 
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;

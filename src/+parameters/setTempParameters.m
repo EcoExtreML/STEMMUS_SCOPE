@@ -4,7 +4,7 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
     %}
     siteName = cellstr(siteName);
     % where landcoverClass is an array like {"forest", "forest", "forest", "shrubland", ...}
-    landcovers = unique(landcoverClass);
+    landcovers = unique(landcoverClass, 'stable');
     for ii = 1:length(landcovers)
         [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(ii), siteName);
         ScopeParameters.lcVcmo(ii, 1) = Vcmo;

@@ -34,6 +34,7 @@ function [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landC
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Deciduous Broadleaf')
         Tparam = [0.2 0.3 283 311 328];
+        Vcmo = [80];
         m = [9];
         Type = [0];
         leafwidth = [0.05];

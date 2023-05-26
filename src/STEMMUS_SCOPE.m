@@ -32,11 +32,6 @@ if exist('OCTAVE_VERSION', 'builtin') ~= 0
     pkg load statistics io;
 end
 
-disp('Create dummy landcover values...');
-ebf = repmat({'Mixed Forests'}, 10000, 1);
-crop = repmat({'Croplands'}, 17520 - 10000, 1);
-landcoverClass = cat(1, ebf, crop); % should be length 97.
-
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
@@ -55,6 +50,11 @@ longitude            = SiteProperties.longitude;
 reference_height     = SiteProperties.reference_height;
 canopy_height        = SiteProperties.canopy_height;
 sitename             = SiteProperties.sitename;
+
+disp('Create dummy landcover values...'); % Temporary, until PyStemmusScope catches up. 
+ebf = repmat({strtrim(IGBP_veg_long.')}, TimeProperties.Dur_tot - 10, 1);
+crop = repmat({'Croplands'}, 10, 1);
+landcoverClass = cat(1, ebf, crop);
 
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;

@@ -19,7 +19,7 @@ end
 %% lookup table for Vcmo, Tparam, m, Type, Rdparam, and leafwidth
 
 function [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landCoverType, siteName)
-    Rdparam = [0.15]; % NOTE: Rdparam IS MISSING FOR MOST DEFINTIONS:
+    Rdparam = [0.015]; % NOTE: Rdparam IS MISSING FOR MOST DEFINTIONS:
     if startsWith(landCoverType, 'Permanent Wetlands')
         Tparam = [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
         Vcmo = [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)

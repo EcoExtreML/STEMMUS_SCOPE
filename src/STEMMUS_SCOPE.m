@@ -52,7 +52,6 @@ Ks0 = SoilProperties.Ks0;
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;
 
-% R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();
 

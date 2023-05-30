@@ -1,6 +1,9 @@
 function ModelSettings = getModelSettings()
     %{
     %}
+
+    ModelSettings.R_depth = 350;
+
     % Indicator denotes the index of soil type for choosing soil physical parameters
     ModelSettings.J = 1;
 

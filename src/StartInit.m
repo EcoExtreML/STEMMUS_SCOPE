@@ -1,8 +1,4 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
-
-    %%% SoilConstants for init
-    % TODO this can be moved ouside StartInit function, see issue 96
-    SoilConstants = init.setSoilConstants(SoilConstants, SoilProperties.MSOC, SoilProperties.FOC, SoilProperties.FOS);
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);
@@ -13,7 +9,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
     SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, VanGenuchten);
-    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, VanGenuchten);
+    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilData, SoilVariables, VanGenuchten);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
@@ -30,7 +26,6 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     % According to hh value get the Theta_LL
     % run SOIL2;   % For calculating Theta_LL,used in first Balance calculation.
 
-    % these are defined in script Constants.m
     Theta_L = SoilConstants.Theta_L;
     Theta_LL = SoilConstants.Theta_LL;
     Theta_V = SoilConstants.Theta_V;
@@ -43,22 +38,28 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     Theta_I = SoilConstants.Theta_I;
     Theta_UU = SoilConstants.Theta_UU;
     Theta_U = SoilConstants.Theta_U;
-    T0 = SoilConstants.T0;
     TT_CRIT = SoilConstants.TT_CRIT;
     KfL_h = SoilConstants.KfL_h;
     DTheta_UUh = SoilConstants.DTheta_UUh;
-    hThmrl = SoilConstants.hThmrl;
-    Tr = SoilConstants.Tr;
-    Hystrs = SoilConstants.Hystrs;
-    KIT = SoilConstants.KIT;
-    RHOI = SoilConstants.RHOI;
-    RHOL = SoilConstants.RHOL;
-    Thmrlefc = SoilConstants.Thmrlefc;
-    g = SoilConstants.g;
+
+    % get Constants
+    Constants = io.define_constants();
+    g = Constants.g;
+    RHOI = Constants.RHOI;
+    RHOL = Constants.RHOL;
 
     % after refatoring SOIL2, these lines can be removed later, see issue 95!
-    NN = SoilConstants.numberOfNodes;
-    NL = SoilConstants.totalNumberOfElements;
+    % get model settings
+    ModelSettings = io.getModelSettings();
+    NN = ModelSettings.NN;
+    NL = ModelSettings.NL;
+    SWCC = ModelSettings.SWCC;
+    Thmrlefc = ModelSettings.Thmrlefc;
+    T0 = ModelSettings.T0;
+    Tr = ModelSettings.Tr;
+    KIT = ModelSettings.KIT;
+    hThmrl = ModelSettings.hThmrl;
+    Hystrs = ModelSettings.Hystrs;
 
     Theta_s = VanGenuchten.Theta_s;
     Theta_r = VanGenuchten.Theta_r;
@@ -78,7 +79,6 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     XWRE = SoilVariables.XWRE;
     IH = SoilVariables.IH;
     Ks = SoilVariables.Ks;
-    SWCC = SoilConstants.SWCC;
     Imped = SoilVariables.Imped;
     XCAP = SoilVariables.XCAP;
 
@@ -90,7 +90,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     CORh = [];
     [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
 
-    for i = 1:SoilConstants.totalNumberOfElements % NL
+    for i = 1:ModelSettings.NL
         Theta_L(i, 1) = Theta_LL(i, 1);
         Theta_L(i, 2) = Theta_LL(i, 2);
         XOLD(i) = (Theta_L(i, 1) + Theta_L(i, 2)) / 2; % used in SOIL1!
@@ -107,7 +107,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     SoilVariables.KLT_Switch = 1;
     SoilVariables.DVT_Switch = 1;
     SoilVariables.KaT_Switch = [];
-    if SoilConstants.Soilairefc
+    if ModelSettings.Soilairefc
         SoilVariables.KaT_Switch = 1;
         % these vars are not used in the main script!
         Kaa_Switch = 1;
@@ -115,7 +115,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
         KLa_Switch = 1;
     end
 
-    % TODO after refatoring SOIL2, these two lines can be removed! see issue 95!
+    % TODO after refatoring SOIL2, these two lines can be removed! see issue 96!
     SoilConstants.KfL_T = KfL_T;
     SoilConstants.Theta_II = Theta_II;
     SoilConstants.Theta_I = Theta_I;

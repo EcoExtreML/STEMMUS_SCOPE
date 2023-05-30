@@ -89,8 +89,6 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     %   thermal     temperatures, aerodynamic resistances and friction velocity
 
     %% 1. initialisations and other preparations for the iteration loop
-    % initialisations
-    global constants
 
     counter         = 0;              %           Iteration counter of ebal
     maxit           = iter.maxit;
@@ -128,14 +126,16 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Ccu   = Ca * ones(size(Rnuc));      %           Leaf CO2 (sunlit leaves)
     % Tsold = Ts;                       %           Soil temperature of the previous time step
     L     = -1;                       %           Monin-Obukhov length
+    % load Constants
+    Constants = io.define_constants();
 
-    MH2O  = constants.MH2O;
-    Mair  = constants.Mair;
-    rhoa  = constants.rhoa;
-    cp    = constants.cp;
-    g     = constants.g;
-    kappa = constants.kappa;
-    sigmaSB = constants.sigmaSB;
+    MH2O  = Constants.MH2O;
+    Mair  = Constants.Mair;
+    rhoa  = Constants.rhoa;
+    cp    = Constants.cp;
+    g     = Constants.g / 100; % [m s-2] Gravity acceleration
+    kappa = Constants.kappa;
+    sigmaSB = Constants.sigmaSB;
     Ps    = gap.Ps;
     nl    = canopy.nlayers;
 
@@ -295,9 +295,9 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         rac     = (LAI + 1) * (raa + rawc);
         ras     = (LAI + 1) * (raa + raws);
         for i = 1:30
-            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, constants, es_fun, s_fun);
-            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, constants, es_fun, s_fun);
-            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, constants, es_fun, s_fun);
+            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
+            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
+            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, es_fun, s_fun);
 
             % if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
             %  error('Heatfluxes produced complex values for CO2 concentration!')
@@ -407,7 +407,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         end
     end
 
-    Tbr         = (rad.Eoutte / constants.sigmaSB)^0.25;
+    Tbr         = (rad.Eoutte / Constants.sigmaSB)^0.25;
     Lot_        = equations.Planck(spectral.wlS', Tbr);
     rad.LotBB_  = Lot_;           % Note that this is the blackbody radiance!
 

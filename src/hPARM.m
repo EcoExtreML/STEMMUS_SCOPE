@@ -1,10 +1,11 @@
 function [Chh, ChT, Khh, KhT, Kha, Vvh, VvT, Chg, DTheta_LLh, DTheta_LLT, DTheta_UUh, SAVEDTheta_UUh, SAVEDTheta_LLh] = hPARM(NL, hh, ...
                                                                                                                               h, TT, T, Theta_LL, Theta_L, DTheta_LLh, DTheta_LLT, RHOV, RHOL, Theta_V, V_A, Eta, DRHOVh, ...
-                                                                                                                              DRHOVT, KfL_h, D_Ta, KL_T, D_V, D_Vg, COR, Beta_g, Gamma0, Gamma_w, KLa_Switch, DVa_Switch, hThmrl, Thmrlefc, nD, TT_CRIT, T0, h_frez, hh_frez, Theta_UU, Theta_U, CORh, DTheta_UUh, Chh, ChT, Khh, KhT)
+                                                                                                                              DRHOVT, KfL_h, D_Ta, KL_T, D_V, D_Vg, COR, Beta_g, Gamma0, Gamma_w, KLa_Switch, DVa_Switch, ...
+                                                                                                                              hThmrl, Thmrlefc, nD, TT_CRIT, T0, h_frez, hh_frez, Theta_UU, Theta_U, CORh, DTheta_UUh, ...
+                                                                                                                              Chh, ChT, Khh, KhT, Kha, Vvh, VvT, Chg)
 
     % piecewise linear reduction function parameters of h;(Wesseling
     % 1991,Veenhof and McBride 1994)
-
     MN = 0;
     for ML = 1:NL
         for ND = 1:2

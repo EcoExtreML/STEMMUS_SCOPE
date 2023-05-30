@@ -25,8 +25,11 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     GA1 = 0.035;
     GA2 = 0.013;
 
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     % Sum over all phases of dry porous media to find the dry heat capacity
-    for j = 1:SoilConstants.totalNumberOfElements % NL
+    for j = 1:ModelSettings.NL
         % and the sums in the dry thermal conductivity;
         S1(j) = SoilVariables.POR(j) * TCA;
         S2(j) = SoilVariables.POR(j);
@@ -56,8 +59,8 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         GB2(j) = (GA1 - GA2) / SoilVariables.XWILT(j) + GB1(j);
 
         %%%%%%%% Johansen thermal conductivity method %%%%%%%
-        RHo_bulk(j) = (1 - VanGenuchten.Theta_s(j)) * 2.7 * 1000;         % Unit g.cm^-3
-        TCON_dry(j) = (0.135 * RHo_bulk(j) + 64.7) / (2700 - 0.947 * RHo_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
+        RHO_bulk(j) = (1 - VanGenuchten.Theta_s(j)) * 2.7 * 1000;         % Unit g.cm^-3
+        TCON_dry(j) = (0.135 * RHO_bulk(j) + 64.7) / (2700 - 0.947 * RHO_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
 
         %%%%%%%% organic thermal conductivity method %%%%%%%
         TCON_Soc = 0.05;
@@ -95,7 +98,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         TPS2(j) = TPS2(j) + TTERM(j);
 
         % Farouki thermal parameter method
-        if SoilConstants.ThermCond == 4
+        if ModelSettings.ThermCond == 4
             FEHCAP(j) = (2.128 * Theta_sa(j) + 2.385 * Theta_cl(j)) / (Theta_sa(j) + Theta_cl(j)) * 1e6;  % j m-3 K-1
             FEHCAP(j) = FEHCAP(j) * (1 - SoilVariables.XSOC(j)) + SoilVariables.XSOC(j) * 2.5 * 1e6;  % organic effect j m-3 K-1
             TCON_s(j) = (8.8 * Theta_sa(j) + 2.92 * Theta_cl(j)) / (Theta_sa(j) + Theta_cl(j)); % W m-1 K-1
@@ -110,7 +113,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     ThermalConductivity.GA2 = GA2;
     ThermalConductivity.GB1 = GB1;
     ThermalConductivity.GB2 = GB2;
-    ThermalConductivity.RHo_bulk = RHo_bulk;
+    ThermalConductivity.RHO_bulk = RHO_bulk;
     ThermalConductivity.TCON_dry = TCON_dry;
     ThermalConductivity.S1 = S1;
     ThermalConductivity.S2 = S2;

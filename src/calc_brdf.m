@@ -1,7 +1,5 @@
 function directional = calc_brdf(options, directional, spectral, angles, rad, atmo, soil, leafopt, canopy, meteo, profiles, thermal)
 
-    global constants
-
     %% input
     tts                 = angles.tts;
     noa                 = directional.noa;
@@ -30,6 +28,9 @@ function directional = calc_brdf(options, directional, spectral, angles, rad, at
     directional_angles = angles;
 
     %% loop over the angles
+    % load Constants
+    Constants = io.define_constants();
+
     for j = 1:(noa + noah_o + noap_o)
 
         % optical BRDF
@@ -49,7 +50,7 @@ function directional = calc_brdf(options, directional, spectral, angles, rad, at
             directional_rad                 = RTMt_sb(spectral, directional_rad, ...
                                                       soil, leafopt, canopy, directional_gap, directional_angles, thermal.Tcu, thermal.Tch, thermal.Ts(1), thermal.Ts(1), 1);
             directional.Lot(j)              = directional_rad.Eoutte;
-            directional.BrightnessT(j)      = (pi * rad.Lot / constants.sigmaSB)^0.25;
+            directional.BrightnessT(j)      = (pi * rad.Lot / Constants.sigmaSB)^0.25;
         end
 
         if options.calc_fluor

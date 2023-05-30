@@ -1,10 +1,10 @@
 function SoilConstants = setSoilConstants(InitialValues, SoilData, SoilProperties, ForcingData)
 
-    % load Constants
+    % get Constants
     Constants = io.define_constants();
 
-    % load model settings
-    ModelSettings = io.loadModelSettings();
+    % get model settings
+    ModelSettings = io.getModelSettings();
 
     % create SoilConstants structure holding initial values
     SoilConstants = struct();

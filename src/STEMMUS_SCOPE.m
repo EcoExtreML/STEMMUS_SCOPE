@@ -54,7 +54,7 @@ Dur_tot = TimeProperties.Dur_tot;
 
 % R_depth = 300; TODO issue: R_depth is redefined in Max_Rootdepth
 % Load model settings: replacing "run Constants"
-ModelSettings = io.loadModelSettings();
+ModelSettings = io.getModelSettings();
 
 global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace

@@ -1,4 +1,4 @@
-function ModelSettings = loadModelSettings()
+function ModelSettings = getModelSettings()
     %{
     %}
     % Indicator denotes the index of soil type for choosing soil physical parameters

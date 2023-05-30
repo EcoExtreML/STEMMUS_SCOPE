@@ -371,7 +371,7 @@ end
 %% 4. input data
 % the current stemmus-scope does not support useXLSX=0
 if useXLSX == 0
-    X                           = textread([path_input parameter_file{3}], '%s'); % ok<DTXTRD>
+    X                           = textread([path_input parameter_file{3}], '%s'); %#ok<DTXTRD>
     N                           = str2double(X);
 else
     [N, X]                       = xlsread([path_input char(parameter_file)], 'inputdata', '');

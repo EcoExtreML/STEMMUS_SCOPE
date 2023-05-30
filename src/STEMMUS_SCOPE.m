@@ -501,7 +501,7 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
 % SoilConstants for init
-SoilConstants = init.setSoilConstants(InitialValues, SoilData, SoilProperties, ForcingData);
+SoilConstants = init.setSoilConstants(InitialValues, SoilProperties, ForcingData);
 [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts

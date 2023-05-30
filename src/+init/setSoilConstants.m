@@ -1,4 +1,4 @@
-function SoilConstants = setSoilConstants(InitialValues, SoilData, SoilProperties, ForcingData)
+function SoilConstants = setSoilConstants(InitialValues, SoilProperties, ForcingData)
 
     % create SoilConstants structure holding initial values
     SoilConstants = struct();
@@ -10,11 +10,6 @@ function SoilConstants = setSoilConstants(InitialValues, SoilData, SoilPropertie
                   };
     for field = soil_fields
         SoilConstants.(field{1}) = InitialValues.(field{1});
-    end
-
-    % Add variables from SoilData
-    for field = fieldnames(SoilData)'
-        SoilConstants.(field{1}) = SoilData.(field{1});
     end
 
     SoilConstants.Ta_msr = ForcingData.Ta_msr;
@@ -33,13 +28,4 @@ function SoilConstants = setSoilConstants(InitialValues, SoilData, SoilPropertie
     SoilConstants.Theta_soc = 0.6;
     SoilConstants.XK = 0.11; % 0.11 This is for silt loam; For sand XK=0.025
 
-    % get model settings
-    ModelSettings = io.getModelSettings();
-    fields = {
-              'SWCC', 'J', 'DeltZ', 'Tot_Depth', 'Thmrlefc', 'Soilairefc', ...
-              'T0', 'Tr', 'KIT', 'hThmrl', 'Hystrs', 'Eqlspace', 'ThermCond'
-             };
-    for field = fields
-        SoilConstants.(field{1}) = ModelSettings.(field{1});
-    end
 end

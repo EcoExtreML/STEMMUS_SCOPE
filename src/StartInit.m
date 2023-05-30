@@ -1,4 +1,4 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties)
+function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);
@@ -9,7 +9,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
     SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, VanGenuchten);
-    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilVariables, VanGenuchten);
+    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilData, SoilVariables, VanGenuchten);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
@@ -38,15 +38,9 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     Theta_I = SoilConstants.Theta_I;
     Theta_UU = SoilConstants.Theta_UU;
     Theta_U = SoilConstants.Theta_U;
-    T0 = SoilConstants.T0;
     TT_CRIT = SoilConstants.TT_CRIT;
     KfL_h = SoilConstants.KfL_h;
     DTheta_UUh = SoilConstants.DTheta_UUh;
-    hThmrl = SoilConstants.hThmrl;
-    Tr = SoilConstants.Tr;
-    Hystrs = SoilConstants.Hystrs;
-    KIT = SoilConstants.KIT;
-    Thmrlefc = SoilConstants.Thmrlefc;
 
     % get Constants
     Constants = io.define_constants();
@@ -59,6 +53,13 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN;
     NL = ModelSettings.NL;
+    SWCC = ModelSettings.SWCC;
+    Thmrlefc = ModelSettings.Thmrlefc;
+    T0 = ModelSettings.T0;
+    Tr = ModelSettings.Tr;
+    KIT = ModelSettings.KIT;
+    hThmrl = ModelSettings.hThmrl;
+    Hystrs = ModelSettings.Hystrs;
 
     Theta_s = VanGenuchten.Theta_s;
     Theta_r = VanGenuchten.Theta_r;
@@ -78,7 +79,6 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     XWRE = SoilVariables.XWRE;
     IH = SoilVariables.IH;
     Ks = SoilVariables.Ks;
-    SWCC = SoilConstants.SWCC;
     Imped = SoilVariables.Imped;
     XCAP = SoilVariables.XCAP;
 
@@ -107,7 +107,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     SoilVariables.KLT_Switch = 1;
     SoilVariables.DVT_Switch = 1;
     SoilVariables.KaT_Switch = [];
-    if SoilConstants.Soilairefc
+    if ModelSettings.Soilairefc
         SoilVariables.KaT_Switch = 1;
         % these vars are not used in the main script!
         Kaa_Switch = 1;

@@ -98,7 +98,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         TPS2(j) = TPS2(j) + TTERM(j);
 
         % Farouki thermal parameter method
-        if SoilConstants.ThermCond == 4
+        if ModelSettings.ThermCond == 4
             FEHCAP(j) = (2.128 * Theta_sa(j) + 2.385 * Theta_cl(j)) / (Theta_sa(j) + Theta_cl(j)) * 1e6;  % j m-3 K-1
             FEHCAP(j) = FEHCAP(j) * (1 - SoilVariables.XSOC(j)) + SoilVariables.XSOC(j) * 2.5 * 1e6;  % organic effect j m-3 K-1
             TCON_s(j) = (8.8 * Theta_sa(j) + 2.92 * Theta_cl(j)) / (Theta_sa(j) + Theta_cl(j)); % W m-1 K-1

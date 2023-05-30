@@ -49,6 +49,9 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
 
     Ta_msr = SoilConstants.Ta_msr;
 
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     % NBCh: Moisture Surface B.C.:
     % 1 --Specified matric head(BCh);
     % 2 --Specified flux(BCh);
@@ -66,7 +69,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
         NBChB = 3;
     end
     BChB = -9e-10;
-    if SoilConstants.Thmrlefc == 1
+    if ModelSettings.Thmrlefc == 1
         % NBCT: Energy Surface B.C.:
         % 1 --Specified temperature (BCT);
         % 2 --Specified heat flux (BCT);
@@ -87,7 +90,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
             BCTB = nanmean(Ta_msr);
         end
     end
-    if SoilConstants.Soilairefc == 1
+    if ModelSettings.Soilairefc == 1
         % NBCP: Soil air pressure B.C.:
         % 1 --Ponded infiltration caused a specified pressure value;
         % 2 --The soil air pressure is allowed to escape after beyond the threshold value;

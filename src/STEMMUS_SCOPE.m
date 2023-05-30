@@ -502,7 +502,7 @@ atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
 % SoilConstants for init
 SoilConstants = init.setSoilConstants(InitialValues, SoilData, SoilProperties, ForcingData);
-[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SiteProperties);
+[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
@@ -576,7 +576,6 @@ Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
 Theta_L = SoilVariables.Theta_L;
 Theta_LL = SoilVariables.Theta_LL;
-SWCC = SoilConstants.SWCC;
 Theta_V = SoilVariables.Theta_V;
 Theta_g = SoilVariables.Theta_g;
 Se = SoilVariables.Se;

@@ -17,8 +17,6 @@ function [bbx] = Max_Rootdepth(bbx, NL, KT, TT)
     R_depth = ModelSettings.R_depth;
     Tot_Depth = ModelSettings.Tot_Depth;
     DeltZ = ModelSettings.DeltZ;
-    DeltZ
-    disp("DeltZ*****")
     Elmn_Lnth = 0;
     for ML = 1:NL
         Elmn_Lnth = Elmn_Lnth + DeltZ(ML);

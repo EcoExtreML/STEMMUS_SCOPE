@@ -9,5 +9,5 @@ function [rss, rbs] = calc_rssrbs(SMC, LAI, rbs, ResidualMC, fieldMC)
     bb = 4.1;
     cc = 4.3;
 
-    rss = exp((aa + bb) - aa * (SMC - ResidualMC) / (fieldMC - ResidualMC));
+    rss = exp((aa + bb) - aa * (SMC - ResidualMC(1)) / (fieldMC(1) - ResidualMC(1)));
     rbs            = rbs * LAI / cc;

@@ -212,7 +212,7 @@ spectral.IwlF = (640:850) - 399;
 ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
-    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, vi, canopy, options);
+    [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, vi, canopy, options, SoilProperties);
     [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options);
 else
     soil = struct;
@@ -512,7 +512,7 @@ for i = 1:1:Dur_tot
         if options.simulation == 0
             vi(vmax == telmax) = k;
         end
-        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, vi, canopy, options, xyt, soil);
+        [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, vi, canopy, options, soil, xyt);
         if options.simulation ~= 1
             fprintf('simulation %i ', k);
             fprintf('of %i \n', telmax);

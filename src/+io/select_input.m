@@ -1,4 +1,4 @@
-function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SpaceTimeInfo, SoilProperties)
+function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = select_input(ScopeParameters, digitsVector, canopy, options, SoilProperties, SpaceTimeInfo)
     global Theta_LL theta_s0
     SoilProperties.spectrum      = ScopeParameters.spectrum(digitsVector(16));
     SoilProperties.rss           = ScopeParameters.rss(digitsVector(17));
@@ -82,7 +82,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
         SoilProperties.GAM  = equations.Soil_Inertia0(SoilProperties.cs, SoilProperties.rhos, SoilProperties.lambdas);
     end
     if options.calc_rss_rbs
-        [SoilProperties.rss, SoilProperties.rbs] = equations.calc_rssrbs(SoilProperties.SMC, canopy.LAI, SoilProperties.rbs);
+        [SoilProperties.rss, SoilProperties.rbs] = equations.calc_rssrbs(SoilProperties.SMC, canopy.LAI, SoilProperties.rbs, SoilProperties.ResidualMC, SoilProperties.fieldMC);
     end
 
     if leafbio.Type

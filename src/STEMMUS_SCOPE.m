@@ -320,7 +320,7 @@ GWT = Constants.GWT; % used in CondL_T
 Gamma0 = Constants.Gamma0; % used in other scripts!
 Gamma_w = Constants.Gamma_w; % used in other scripts!
 c_i = Constants.c_i; % used in EnrgyPARM!
-RHO_bulk = Constants.RHO_bulk; % TODO: issue: used in CondL_Tdisp, and CondT_coeff and defined as RHo_bulk in thermal conectivity !
+RHO_bulk = Constants.RHO_bulk;
 
 RTB = 1000; % initial root total biomass (g m-2)
 % Rl used in ebal
@@ -508,7 +508,7 @@ global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
 global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
 global Theta_s Theta_r Theta_f m n Alpha
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
-global TCON_dry TPS1 TPS2 TCON0 TCON_s RHo_bulk XOLD
+global TCON_dry TPS1 TPS2 TCON0 TCON_s XOLD
 
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
@@ -553,7 +553,7 @@ PS1 = ThermalConductivity.PS1;
 PS2 = ThermalConductivity.PS2;
 TCON_s = ThermalConductivity.TCON_s;
 TCON_dry = ThermalConductivity.TCON_dry;
-RHo_bulk = ThermalConductivity.RHo_bulk;
+RHO_bulk = ThermalConductivity.RHO_bulk;
 TPS1 = ThermalConductivity.TPS1;
 TPS2 = ThermalConductivity.TPS2;
 FEHCAP = ThermalConductivity.FEHCAP;

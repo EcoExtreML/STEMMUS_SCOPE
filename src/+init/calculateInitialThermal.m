@@ -59,8 +59,8 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
         GB2(j) = (GA1 - GA2) / SoilVariables.XWILT(j) + GB1(j);
 
         %%%%%%%% Johansen thermal conductivity method %%%%%%%
-        RHo_bulk(j) = (1 - VanGenuchten.Theta_s(j)) * 2.7 * 1000;         % Unit g.cm^-3
-        TCON_dry(j) = (0.135 * RHo_bulk(j) + 64.7) / (2700 - 0.947 * RHo_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
+        RHO_bulk(j) = (1 - VanGenuchten.Theta_s(j)) * 2.7 * 1000;         % Unit g.cm^-3
+        TCON_dry(j) = (0.135 * RHO_bulk(j) + 64.7) / (2700 - 0.947 * RHO_bulk(j));   % Unit W m-1 K-1 ==> j cm^-1 s^-1 Cels^-1
 
         %%%%%%%% organic thermal conductivity method %%%%%%%
         TCON_Soc = 0.05;
@@ -113,7 +113,7 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     ThermalConductivity.GA2 = GA2;
     ThermalConductivity.GB1 = GB1;
     ThermalConductivity.GB2 = GB2;
-    ThermalConductivity.RHo_bulk = RHo_bulk;
+    ThermalConductivity.RHO_bulk = RHO_bulk;
     ThermalConductivity.TCON_dry = TCON_dry;
     ThermalConductivity.S1 = S1;
     ThermalConductivity.S2 = S2;

@@ -7,10 +7,13 @@ function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine,
     initT = SoilConstants.InitialValues.initT;
     initH = SoilConstants.InitialValues.initH;
 
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     switch subRoutine
         case 0
             from_id = Dmark;
-            to_id = SoilConstants.totalNumberOfElements + 1;
+            to_id = ModelSettings.NL + 1;
             indexOfSoilType = 1; % Index of soil type
             indexOfInit = 1; % index of initH and initT
         case 1

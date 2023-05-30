@@ -2,7 +2,10 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
 
     SoilVariables.ISFT = 0;
 
-    for i = 1:SoilConstants.numberOfNodes
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
+    for i = 1:ModelSettings.NN
         SoilVariables.h_frez = init.updateHfreez(i, SoilVariables, SoilConstants);
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
         SoilVariables.h(i) = SoilVariables.h(i) - SoilVariables.h_frez(i);
@@ -19,7 +22,7 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
             SoilConstants.P_g(i) = 95197.850;
             SoilConstants.P_gg(i) = SoilConstants.P_g(i);
         end
-        if i < SoilConstants.numberOfNodes
+        if i < ModelSettings.NN
             SoilVariables.XWRE(i, 1) = 0;
             SoilVariables.XWRE(i, 2) = 0;
         end

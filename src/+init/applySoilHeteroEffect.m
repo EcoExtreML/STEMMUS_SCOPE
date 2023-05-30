@@ -8,6 +8,9 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
     SoilVariables.Lamda = []; % see issue 139, item 5
     ImpedF = repelem(3, 6);
 
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     for i = 1:6
         if SoilConstants.SWCC == 0
             if SoilConstants.CHST == 0
@@ -23,7 +26,7 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
             SoilConstants.InitialValues.initH(i) = init.calcInitH(VanGenuchten.Theta_s(j), VanGenuchten.Theta_r(j), initX(i), VanGenuchten.n(j), VanGenuchten.m(j), VanGenuchten.Alpha(j));
         end
         Dmark = [];
-        for i = 1:SoilConstants.totalNumberOfElements % NL
+        for i = 1:ModelSettings.NL
             SoilConstants.Elmn_Lnth = SoilConstants.Elmn_Lnth + SoilConstants.DeltZ(i);
             InitLnth(i) = SoilConstants.Tot_Depth - SoilConstants.Elmn_Lnth;
             for subRoutine = 5:-1:1
@@ -40,7 +43,7 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
             end
         end
     else
-        for i = 1:SoilConstants.numberOfNodes
+        for i = 1:ModelSettings.NN
             SoilVariables.h(i) = -95;
             SoilVariables.T(i) = 22;
             SoilVariables.TT(i) = SoilVariables.T(i);

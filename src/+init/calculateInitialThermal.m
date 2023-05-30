@@ -25,8 +25,11 @@ function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariab
     GA1 = 0.035;
     GA2 = 0.013;
 
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     % Sum over all phases of dry porous media to find the dry heat capacity
-    for j = 1:SoilConstants.totalNumberOfElements % NL
+    for j = 1:ModelSettings.NL
         % and the sums in the dry thermal conductivity;
         S1(j) = SoilVariables.POR(j) * TCA;
         S2(j) = SoilVariables.POR(j);

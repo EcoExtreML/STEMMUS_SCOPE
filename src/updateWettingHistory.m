@@ -1,4 +1,4 @@
-function [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, XWRE, IH, Theta_s, XK)
+function [XWRE, XOLD] = updateWettingHistory(SoilVariables, VanGenuchten)
     %{
     This subroutine is caled after one time step to update the wetting
     history. If the change in average moisture content of the element during the
@@ -7,11 +7,18 @@ function [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, 
     scanning curves are used, subject to the constraint that matric head and
     moisture content be continuous in time.
     %}
+    % get model settings
+    ModelSettings = io.getModelSettings();
 
-    for i = 1:NL
-        % Soil type index;
-        J = i;
+    XOLD = SoilVariables.XOLD;
+    Theta_L = SoilVariables.Theta_L;
+    Theta_LL = SoilVariables.Theta_LL;
+    XWRE = SoilVariables.XWRE;
+    IH = SoilVariables.IH;
+    XK = SoilVariables.XK;
+    Theta_s = VanGenuchten.Theta_s;
 
+    for i = 1:ModelSettings.NL
         % The average moisture content of an element;
         EX = 0.5 * (Theta_L(i, 1) + Theta_L(i, 2));
         % Has average trend of wetting in the element changed? If the trend is
@@ -29,10 +36,10 @@ function [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, 
             else
                 IH(i) = 1;
                 for j = 1:2
-                    if (Theta_s(J) - Theta_LL(i, j)) < 1e-3
-                        XWRE(i, j) = Theta_s(J);
+                    if (Theta_s(i) - Theta_LL(i, j)) < 1e-3
+                        XWRE(i, j) = Theta_s(i);
                     else
-                        XWRE(i, j) = Theta_s(J) * (Theta_L(i, j) - Theta_LL(i, j)) / (Theta_s(J) - Theta_LL(i, j));
+                        XWRE(i, j) = Theta_s(i) * (Theta_L(i, j) - Theta_LL(i, j)) / (Theta_s(i) - Theta_LL(i, j));
                     end
                 end
                 XOLD(i) = EX;
@@ -41,10 +48,10 @@ function [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, 
         else
             IH(i) = 2;
             for j = 1:2
-                if (Theta_LL(J) - XK(J)) < 1e-3
-                    XWRE(i, j) = XK(J);
+                if (Theta_LL(i) - XK(i)) < 1e-3
+                    XWRE(i, j) = XK(i);
                 else
-                    XWRE(i, j) = Theta_LL(i, j) + Theta_s(J) * (Theta_L(i, j) / Theta_LL(i, j) - 1);
+                    XWRE(i, j) = Theta_LL(i, j) + Theta_s(i) * (Theta_L(i, j) / Theta_LL(i, j) - 1);
                 end
             end
             XOLD(i) = EX;

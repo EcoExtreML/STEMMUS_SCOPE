@@ -508,7 +508,7 @@ global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
 global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
 global Theta_s Theta_r Theta_f m n Alpha
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
-global TCON_dry TPS1 TPS2 TCON0 TCON_s XOLD
+global TCON_dry TPS1 TPS2 TCON0 TCON_s
 
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
@@ -558,7 +558,6 @@ TPS1 = ThermalConductivity.TPS1;
 TPS2 = ThermalConductivity.TPS2;
 FEHCAP = ThermalConductivity.FEHCAP;
 TCON0 = ThermalConductivity.TCON0;
-XOLD = SoilVariables.XOLD; % used in SOIL1
 
 %% these vars are defined as global at the begining of this script
 %% because they are both input and output of StartInit
@@ -838,7 +837,8 @@ for i = 1:1:Dur_tot
         DSTOR0 = DSTOR;
 
         if KT > 1
-            [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, XWRE, IH, Theta_s, XK);
+            % TODO: issue XOLD is not used somewhere else
+            [XWRE, XOLD] = updateWettingHistory(SoilVariables, VanGenuchten);
         end
 
         for ML = 1:NL

@@ -838,7 +838,7 @@ for i = 1:1:Dur_tot
         DSTOR0 = DSTOR;
 
         if KT > 1
-            run SOIL1;
+            [J, XWRE, XOLD] = updateWettingHistory(NL, J, Theta_L, XOLD, Theta_LL, XWRE, IH, Theta_s, XK);
         end
 
         for ML = 1:NL

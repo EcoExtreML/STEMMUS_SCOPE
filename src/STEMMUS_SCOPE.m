@@ -42,20 +42,15 @@ global InputPath OutputPath InitialConditionPath
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
 
 % Prepare forcing and soil data
-global IGBP_veg_long latitude longitude reference_height canopy_height sitename DELT Dur_tot
+global latitude longitude reference_height canopy_height sitename DELT Dur_tot
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
-IGBP_veg_long        = SiteProperties.IGBP_veg_long;
+landcoverClass       = SiteProperties.landcoverClass;
 latitude             = SiteProperties.latitude;
 longitude            = SiteProperties.longitude;
 reference_height     = SiteProperties.reference_height;
 canopy_height        = SiteProperties.canopy_height;
 sitename             = SiteProperties.sitename;
 
-disp('Create dummy landcover values...'); % Temporary, until PyStemmusScope catches up. 
-nTestSteps = floor(TimeProperties.Dur_tot/2);
-landcover_igbp = repmat({strtrim(IGBP_veg_long.')}, TimeProperties.Dur_tot - nTestSteps, 1);
-testClass = repmat({'Evergreen Broadleaf'}, nTestSteps, 1);
-landcoverClass = cat(1, landcover_igbp, testClass);
 
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;
@@ -89,7 +84,7 @@ global RWU EVAP theta_s0 Ks0 HR Precip Precipp Tss frac sfactortot sfactor fluxe
 
 %% 1. define constants
 [constants] = io.define_constants();
-[Rl] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML);
+[Rl, Ztot] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML, landcoverClass(1));
 
 %% 2. simulation options
 path_input = InputPath;          % path of all inputs
@@ -408,7 +403,7 @@ KfL_h = SoilVariables.KfL_h;
 DTheta_UUh = SoilVariables.DTheta_UUh;
 
 %% The boundary condition information settings
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, landcoverClass(1));
 
 %% get global vars
 global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
@@ -880,8 +875,6 @@ if options.verify
 end
 
 %% soil layer information
-%% Ztot is defined as a global variable in Initial_root_biomass.m
-%% TODO avoid global variables
 SoilLayer.thickness = DeltZ_R;
 SoilLayer.depth = Ztot';
 

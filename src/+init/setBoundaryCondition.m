@@ -1,4 +1,6 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long)
+function BoundaryCondition = setBoundaryCondition(...
+    SoilVariables, SoilConstants, initialLandcoverClass...
+)
 
     NBCP = [];
     BCTB = [];
@@ -18,7 +20,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     NBCh = 3;
 
     BCh = -20 / 3600;
-    if strcmp(IGBP_veg_long(1:9)', 'Croplands')  % ['Croplands']
+    if startsWith(initialLandcoverClass, 'Croplands')
         % NBChB: Moisture Bottom B.C.:
         % 1 --> Specified matric head (BChB);
         % 2 --> Specified flux(BChB);

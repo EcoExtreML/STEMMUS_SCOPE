@@ -26,8 +26,15 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     Theta_L = SoilConstants.Theta_L;
     Theta_I = SoilConstants.Theta_I;
     Theta_U = SoilConstants.Theta_U;
+
     [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten);
 
+    Theta_LL = SoilVariables.Theta_LL;
+    Theta_UU = SoilConstants.Theta_UU;
+    Theta_II = SoilConstants.Theta_II;
+
+    % get model settings
+    ModelSettings = io.getModelSettings();
     for i = 1:ModelSettings.NL
         Theta_L(i, 1) = Theta_LL(i, 1);
         Theta_L(i, 2) = Theta_LL(i, 2);

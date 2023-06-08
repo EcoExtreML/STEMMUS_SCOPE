@@ -1,10 +1,14 @@
-function [W, WW, MU_W, D_Ta] = CondL_Tdisp(POR, Theta_LL, Theta_L, SSUR, RHO_bulk, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch)
-
-    MU_W0 = 2.4152 * 10^(-4);   % (g.cm^-1.s^-1)
-    MU1 = 4742.8;                   % (J.mol^-1)
-    b = 4 * 10^(-6);                  % (cm)
-    W0 = 10^3;                      % (J.g^-1)
+function [W, WW, MU_W, D_Ta] = CondL_Tdisp(InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch)
     %%
+
+    W = InitialValues.W;
+    WW = InitialValues.WW;
+    MU_W = InitialValues.MU_W;
+    D_Ta = InitialValues.D_Ta;
+
+    % load Constants
+    Constants = io.define_constants();
+
     MN = 0;
     for ML = 1:NL
         J = ML;
@@ -15,8 +19,8 @@ function [W, WW, MU_W, D_Ta] = CondL_Tdisp(POR, Theta_LL, Theta_L, SSUR, RHO_bul
                 WW(ML, ND) = 0;
                 WARG = Theta_LL(ML, ND) * 10^7 / SSUR;
                 if WARG < 80
-                    W(ML, ND) = W0 * exp(-WARG);
-                    WW(ML, ND) = W0 * exp(-WARG);
+                    W(ML, ND) = Constants.W0 * exp(-WARG);
+                    WW(ML, ND) = Constants.W0 * exp(-WARG);
                 end
             else
                 W(ML, ND) = -0.2932 * (h(MN)) / 1000; % 0;% +h_frez(MN)   %%% J.g^-1---Original J.Kg^-1, now is divided by 1000.
@@ -29,15 +33,15 @@ function [W, WW, MU_W, D_Ta] = CondL_Tdisp(POR, Theta_LL, Theta_L, SSUR, RHO_bul
                 end
             end
             f0(ML, ND) = Theta_g(ML, ND)^(7 / 3) / Theta_s(J)^2; % Theta_g(ML,ND)^0.67;
-            H_W(ML, ND) = RHOL * WW(ML, ND) * (Theta_LL(ML, ND) - Theta_L(ML, ND)) / ((SSUR / RHO_bulk) * Delt_t);  % 1e3; % 1e-4J cm-2---> g s-2 ; SSUR and RHO_bulk could also be set as an array to consider more than one soil type;
+            H_W(ML, ND) = RHOL * WW(ML, ND) * (Theta_LL(ML, ND) - Theta_L(ML, ND)) / ((SSUR / Constants.RHO_bulk) * Delt_t);  % 1e3; % 1e-4J cm-2---> g s-2 ; SSUR and RHO_bulk could also be set as an array to consider more than one soil type;
             if TT(MN) < -20
                 MU_W(ML, ND) = 3.71e-2; % L_WT(ML,ND)=0;
             elseif TT(MN) > 150
                 MU_W(ML, ND) = 1.81e-3;
             else
-                MU_W(ML, ND) = MU_W0 * exp(MU1 / (8.31441 * (TT(MN) + 133.3)));
+                MU_W(ML, ND) = Constants.MU_W0 * exp(Constants.MU1 / (8.31441 * (TT(MN) + 133.3)));
             end
-            L_WT(ML, ND) = f0(ML, ND) * 1e7 * 1.5550e-13 * POR(J) * H_W(ML, ND) / (b * MU_W(ML, ND));   % kgm^-1s^-1 --> 10 g.cm^-1.s^-1; J.cm^-2---> kg.m^2.s^-2.cm^-2--> 1e7g.cm^2.s^-2.cm^-2
+            L_WT(ML, ND) = f0(ML, ND) * 1e7 * 1.5550e-13 * POR(J) * H_W(ML, ND) / (Constants.b * MU_W(ML, ND));   % kgm^-1s^-1 --> 10 g.cm^-1.s^-1; J.cm^-2---> kg.m^2.s^-2.cm^-2--> 1e7g.cm^2.s^-2.cm^-2
 
             if KLT_Switch == 1
                 D_Ta(ML, ND) = L_WT(ML, ND) / (RHOL * (TT(MN) + 273.15)); % 0; %0;%0; %

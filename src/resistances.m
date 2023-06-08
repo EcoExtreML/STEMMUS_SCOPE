@@ -69,9 +69,11 @@ function [resist_out] = resistances(resist_in)
     % uz0       =   windspeed at z0                                     [m s-1]
     % Kh        =   Diffusivity for heat                                [m2s-1]
 
+    % load Constants
+    Constants = io.define_constants();
+    kappa = Constants.kappa;
+
     %% parameters
-    global constants
-    kappa = constants. kappa;
 
     Cd        =  resist_in.Cd;
 

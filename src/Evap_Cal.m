@@ -1,5 +1,5 @@
 function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Resis_a, Srt] = Evap_Cal(DeltZ, TIME, RHOV, Ta, HR_a, U, Theta_LL, Ts, Rv, g, NL, NN, KT, hh, rwuef, Theta_UU, Rn, T, TT, Gvc, Rns, Srt)
-    global LAI rl_min RWU lEstot lEctot Tss RWUtot RWUtott RWUtottt EVAPO
+    global LAI rl_min RWU lEstot lEctot Tss
 
     %%%%%%% LAI and light extinction coefficient calculation %%%%%%%%%%%%%%%%%%
     %%%%%%% LAI and light extinction coefficient calculation %%%%%%%%%%%%%%%%%%
@@ -320,10 +320,6 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Resis_a, Srt] = Evap_Cal(DeltZ, T
         Tp_t(KT) = 0; % transfer to second value
         Srt1 = 0 ./ DeltZ';
     end
-    RWUtot(:, KT) = RWU;
-    RWUtott = sum(RWUtot);
-    RWUtottt = RWUtott * 3600 * 1000;
-    EVAPO(KT) = Evap(KT);
     for ML = 1:NL
         for ND = 1:2
             MN = ML + ND - 1;

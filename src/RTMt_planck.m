@@ -58,16 +58,16 @@ function rad = RTMt_planck(spectral, rad, soil, leafopt, canopy, gap, angles, Tc
     %   nwl     number of wavelengths of input (net PAR)
     % '_'means: a flux at different wavelengths (a vertically oriented vector)
 
-    %% 0.0 globals
-    global constants
-
     %% 0.1 parameters
 
     % for speed-up the calculation only uses thermal part of the spectrum
     IT          = spectral.IwlT;   %
     wlt         = spectral.wlT;
 
-    deg2rad     = constants.deg2rad;
+    % load Constants
+    Constants = io.define_constants();
+
+    deg2rad     = Constants.deg2rad;
     nl          = canopy.nlayers;
     lidf        = canopy.lidf;
     litab       = canopy.litab;

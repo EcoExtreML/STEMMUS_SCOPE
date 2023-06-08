@@ -2,7 +2,7 @@
 Please add a description of the changes proposed in the pull request.
 
 ### Update executable file
-Please re-generate exe file if matlab codes are changed. About how to create an exe file, see [exe readme](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/exe/README.md).
+Please re-generate exe file if matlab codes are changed. About how to create an exe file, see [exe readme](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/run_model_on_snellius/exe/README.md).
 
 ### Checklist
 - [ ] Add a reference to related issues.

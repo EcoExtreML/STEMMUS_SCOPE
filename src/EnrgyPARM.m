@@ -111,7 +111,6 @@ function [CTh, CTT, CTa, KTh, KTT, KTa, VTT, VTh, VTa, CTg, QL, QLT, QLH, QV, QV
             end
 
             VTa(ML, ND) = Ccaa(ML, ND); % c_a*TT(MN)*Vaa(ML,ND);
-
             CTg(ML, ND) = (c_L * RHOL + c_a * Hc * RHODA(MN)) * KfL_h(ML, ND) * TT(MN) - c_L * Srt(ML, ND) * TT(MN); % ;;% % Revised from "c_L*T(MN)*KL_h(ML,ND)"
         end
     end

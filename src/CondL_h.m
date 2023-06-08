@@ -1,5 +1,7 @@
 function [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se)
-    global Theta_m
+
+    % load Constants
+    Constants = io.define_constants();
 
     hd = SoilConstants.hd;
     hm = SoilConstants.hm;
@@ -242,7 +244,7 @@ function [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_
                 Se(ML, ND) = 0;
             end
             if isnan(Se(ML, ND)) == 1
-                warning('\n Warning: FIX warning message \r');
+                warning('\n case "isnan(Se(ML, ND)) == 1" happens. Dont know what to do! \r');
             end
             Theta_II(ML, ND) = (Theta_UU(ML, ND) - Theta_LL(ML, ND)) * RHOL / RHOI;  % ice water content
             if Theta_UU(ML, ND) ~= 0
@@ -252,16 +254,14 @@ function [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_
             end
 
             if KIT
-                MU_W0 = 2.4152 * 10^(-4);   % (g.cm^-1.s^-1)
-                MU1 = 4742.8;                   % (J.mol^-1)
-                MU_WN = MU_W0 * exp(MU1 / (8.31441 * (20 + 133.3)));
+                MU_WN = Constants.MU_W0 * exp(Constants.MU1 / (8.31441 * (20 + 133.3)));
                 if TT(MN) < -20
                     MU_W(ML, ND) = 3.71e-2; % CKT(MN)=0.2688;
                 elseif TT(MN) > 150
                     MU_W(ML, ND) = 1.81e-3;
                     % CKT(MN)=5.5151;   % kgm^-1s^-1 --> 10 g.cm^-1.s^-1; J.cm^-2---> kg.m^2.s^-2.cm^-2--> 1e7g.cm^2.s^-2.cm^-2
                 else
-                    MU_W(ML, ND) = MU_W0 * exp(MU1 / (8.31441 * (TT(MN) + 133.3)));
+                    MU_W(ML, ND) = Constants.MU_W0 * exp(Constants.MU1 / (8.31441 * (TT(MN) + 133.3)));
 
                 end
                 % CKT(MN)=CKTN/(50+2.575*TT(MN));
@@ -347,10 +347,10 @@ function [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_
                 end
                 if isnan(KL_h(ML, ND)) == 1
                     KL_h(ML, ND) = 0;
-                    warning('\n Warning: FIX warning message \r');
+                    warning('\n case "isnan(KL_h(ML, ND)) == 1", set "KL_h(ML, ND) = 0" \r');
                 end
                 if ~isreal(KL_h(ML, ND))
-                    warning('\n Warning: FIX warning message \r');
+                    warning('\n case "~isreal(KL_h(ML, ND))", dont know what to do! \r');
                 end
                 KfL_T(ML, ND) = helpers.heaviside1(TT_CRIT(MN) - (TT(MN) + T0)) * L_f * 1e4 / (g * (T0));   % thermal consider for freezing soil
             else

@@ -1,6 +1,4 @@
-function BoundaryCondition = setBoundaryCondition(...
-    SoilVariables, SoilConstants, initialLandcoverClass...
-)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, initialLandcoverClass)
 
     NBCP = [];
     BCTB = [];

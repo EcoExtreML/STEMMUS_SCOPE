@@ -21,7 +21,6 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
     TimeProperties = load(forcing_global_path, 'DELT', 'Dur_tot');
     SiteProperties = load(forcing_global_path, 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename');
 
-
     SoilProperties = load(soil_global_path, 'SaturatedK', 'SaturatedMC', 'ResidualMC', 'Coefficient_n', 'Coefficient_Alpha', ...
                           'porosity', 'FOC', 'FOS', 'MSOC', 'Coef_Lamda', 'fieldMC', 'fmax', 'theta_s0', 'Ks0');
 
@@ -29,12 +28,8 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
     SiteProperties.sitename = char(SiteProperties.sitename);
 
     % Convert the 1-D int vector into a vector of strings;
-    landcoverClass = load(forcing_global_path, 'landcoverClass');
-    SiteProperties.landcoverClass = cellstr(char(...
-        reshape(...
-            landcoverClass, ...
-            [size(landcoverClass)/Dur_tot, Dur_tot] ...
-        )' ...
-    ));
+    load(forcing_global_path, 'IGBP_veg_long');
+    nRows = size(IGBP_veg_long)(2) / TimeProperties.Dur_tot;
+    SiteProperties.landcoverClass = cellstr(char(reshape(IGBP_veg_long, [nRows, TimeProperties.Dur_tot])'));
 
 end

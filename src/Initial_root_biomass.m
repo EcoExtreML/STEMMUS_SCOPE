@@ -1,6 +1,4 @@
-function [Rl, Ztot] = Initial_root_biomass(...
-    RTB, DeltZ_R, rroot, ML, initialLandcoverClass ...
-)
+function [Rl, Ztot] = Initial_root_biomass(RTB, DeltZ_R, rroot, ML, initialLandcoverClass)
     root_den = 250 * 1000; %% [gDM / m^3] Root density  Jackson et al., 1997
     R_C = 0.488; %% [gC/gDM] Ratio Carbon-Dry Matter in root   Jackson et al.,  1997
     %% beta is a plant-dependent root distribution parameter adopted from

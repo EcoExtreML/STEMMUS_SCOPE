@@ -51,7 +51,6 @@ reference_height     = SiteProperties.reference_height;
 canopy_height        = SiteProperties.canopy_height;
 sitename             = SiteProperties.sitename;
 
-
 DELT = TimeProperties.DELT;
 Dur_tot = TimeProperties.Dur_tot;
 

@@ -1,7 +1,65 @@
-function [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se)
+function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten)
+
+    % these lines can be removed after issue 181
+    % get model settings
+    ModelSettings = io.getModelSettings();
+    NN = ModelSettings.NN;
+    NL = ModelSettings.NL;
+    SWCC = ModelSettings.SWCC;
+    Thmrlefc = ModelSettings.Thmrlefc;
+    T0 = ModelSettings.T0;
+    Tr = ModelSettings.Tr;
+    KIT = ModelSettings.KIT;
+    hThmrl = ModelSettings.hThmrl;
+    Hystrs = ModelSettings.Hystrs;
+
+    Theta_s = VanGenuchten.Theta_s;
+    Theta_r = VanGenuchten.Theta_r;
+    Alpha = VanGenuchten.Alpha;
+    n = VanGenuchten.n;
+    m = VanGenuchten.m;
+
+    POR = SoilVariables.POR;
+    h = SoilVariables.h;
+    Lamda = SoilVariables.Lamda;
+    Phi_s = SoilVariables.Phi_s;
+
+    h_frez = SoilVariables.h_frez;
+    hh_frez = SoilVariables.hh_frez;
+    TT = SoilVariables.TT;
+    hh = SoilVariables.hh;
+    XWRE = SoilVariables.XWRE;
+    IH = SoilVariables.IH;
+    Ks = SoilVariables.Ks;
+    Imped = SoilVariables.Imped;
+    XCAP = SoilVariables.XCAP;
+
+    Theta_L = SoilConstants.Theta_L;
+    Theta_LL = SoilConstants.Theta_LL;
+    Theta_V = SoilConstants.Theta_V;
+    Theta_g = SoilConstants.Theta_g;
+    Se = SoilConstants.Se;
+    KL_h = SoilConstants.KL_h;
+    DTheta_LLh = SoilConstants.DTheta_LLh;
+    KfL_T = SoilConstants.KfL_T;
+    Theta_II = SoilConstants.Theta_II;
+    Theta_I = SoilConstants.Theta_I;
+    Theta_UU = SoilConstants.Theta_UU;
+    Theta_U = SoilConstants.Theta_U;
+    TT_CRIT = SoilConstants.TT_CRIT;
+    KfL_h = SoilConstants.KfL_h;
+    DTheta_UUh = SoilConstants.DTheta_UUh;
+
+    % get Constants
+    Constants = io.define_constants();
+    g = Constants.g;
+    RHOI = Constants.RHOI;
+    RHOL = Constants.RHOL;
+
+    % TODO issue L_f is used with different value in main script
+    L_f = 3.34 * 1e5; % latent heat of freezing fusion i Kg-1
 
     if hThmrl == 1
-
         for MN = 1:NN
             CORh(MN) = 0.0068;
             COR(MN) = exp(-1 * CORh(MN) * (TT(MN) - Tr)); % *COR21(MN)
@@ -20,61 +78,76 @@ function [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h
         hhU(MN) = COR(MN) * hh(MN);
         hh(MN) = hhU(MN);
     end
+
     [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+
     for MN = 1:NN
         hhU(MN) = hh(MN);
         hh(MN) = hhU(MN) / COR(MN);
     end
 
     if Hystrs == 0
-        for ML = 1:NL
-            J = ML;
-            %         J=IS(ML);
+        for i = 1:NL
             for ND = 1:2
-                Theta_V(ML, ND) = POR(J) - Theta_UU(ML, ND); % -Theta_II(ML,ND); % Theta_LL==>Theta_UU
-                if Theta_V(ML, ND) <= 1e-14
-                    Theta_V(ML, ND) = 1e-14;
+                Theta_V(i, ND) = POR(i) - Theta_UU(i, ND); % -Theta_II(i,ND); % Theta_LL==>Theta_UU
+                if Theta_V(i, ND) <= 1e-14
+                    Theta_V(i, ND) = 1e-14;
                 end
-                Theta_g(ML, ND) = Theta_V(ML, ND);
+                Theta_g(i, ND) = Theta_V(i, ND);
             end
         end
     else
-        for ML = 1:NL
-            J = ML;
-            %         J=IS(ML);
+        for i = 1:NL
             for ND = 1:2
-                if IH(ML) == 2
-                    if XWRE(ML, ND) < Theta_LL(ML, ND)
-                        Theta_V(ML, ND) = POR(J) - Theta_LL(ML, ND) - Theta_II(ML, ND);
+                if IH(i) == 2
+                    if XWRE(i, ND) < Theta_LL(i, ND)
+                        Theta_V(i, ND) = POR(i) - Theta_LL(i, ND) - Theta_II(i, ND);
                     else
-                        XSAVE = Theta_LL(ML, ND);
-                        Theta_LL(ML, ND) = XSAVE * (1 + (XWRE(ML, ND) - Theta_LL(ML, ND)) / Theta_s(J));
+                        XSAVE = Theta_LL(i, ND);
+                        Theta_LL(i, ND) = XSAVE * (1 + (XWRE(i, ND) - Theta_LL(i, ND)) / Theta_s(i));
                         if KIT > 0
-                            DTheta_LLh(ML, ND) = DTheta_LLh(ML, ND) * (Theta_LL(ML, ND) / XSAVE - XSAVE / Theta_s(J));
+                            DTheta_LLh(i, ND) = DTheta_LLh(i, ND) * (Theta_LL(i, ND) / XSAVE - XSAVE / Theta_s(i));
                         end
-                        Theta_V(ML, ND) = POR(J) - Theta_LL(ML, ND) - Theta_II(ML, ND);
+                        Theta_V(i, ND) = POR(i) - Theta_LL(i, ND) - Theta_II(i, ND);
                     end
                 end
-                if IH(ML) == 1
-                    if XWRE(ML, ND) > Theta_LL(ML, ND)
-                        XSAVE = Theta_LL(ML, ND);
-                        Theta_LL(ML, ND) = (2 - XSAVE / Theta_s(J)) * XSAVE;
+                if IH(i) == 1
+                    if XWRE(i, ND) > Theta_LL(i, ND)
+                        XSAVE = Theta_LL(i, ND);
+                        Theta_LL(i, ND) = (2 - XSAVE / Theta_s(i)) * XSAVE;
                         if KIT > 0
-                            DTheta_LLh(ML, ND) = 2 * DTheta_LLh(ML, ND) * (1 - XSAVE / Theta_s(J));
+                            DTheta_LLh(i, ND) = 2 * DTheta_LLh(i, ND) * (1 - XSAVE / Theta_s(i));
                         end
-                        Theta_V(ML, ND) = POR(J) - Theta_LL(ML, ND) - Theta_II(ML, ND);
+                        Theta_V(i, ND) = POR(i) - Theta_LL(i, ND) - Theta_II(i, ND);
                     else
-                        Theta_LL(ML, ND) = Theta_LL(ML, ND) + XWRE(ML, ND) * (1 - Theta_LL(ML, ND) / Theta_s(J));
+                        Theta_LL(i, ND) = Theta_LL(i, ND) + XWRE(i, ND) * (1 - Theta_LL(i, ND) / Theta_s(i));
                         if KIT > 0
-                            DTheta_LLh(ML, ND) = DTheta_LLh(ML, ND) * (1 - XWRE(ML, ND) / Theta_s(J));
+                            DTheta_LLh(i, ND) = DTheta_LLh(i, ND) * (1 - XWRE(i, ND) / Theta_s(i));
                         end
-                        Theta_V(ML, ND) = POR(J) - Theta_LL(ML, ND) - Theta_II(ML, ND);
+                        Theta_V(i, ND) = POR(i) - Theta_LL(i, ND) - Theta_II(i, ND);
                     end
                 end
-                if Theta_V(ML, ND) <= 1e-14    % consider the negative conditions?
-                    Theta_V(ML, ND) = 1e-14;
+                if Theta_V(i, ND) <= 1e-14    % consider the negative conditions?
+                    Theta_V(i, ND) = 1e-14;
                 end
-                Theta_g(ML, ND) = Theta_V(ML, ND);
+                Theta_g(i, ND) = Theta_V(i, ND);
             end
         end
     end
+    SoilConstants.KfL_T = KfL_T;
+    SoilConstants.Theta_II = Theta_II;
+    SoilConstants.Theta_UU = Theta_UU;
+
+    SoilVariables.hh_frez = hh_frez;
+    SoilVariables.hh = hh;
+    SoilVariables.COR = COR;
+    SoilVariables.CORh = CORh;
+    SoilVariables.Se = Se;
+    SoilVariables.KL_h = KL_h;
+    SoilVariables.Theta_LL = Theta_LL;
+    SoilVariables.DTheta_LLh = DTheta_LLh;
+    SoilVariables.KfL_h = KfL_h;
+    SoilVariables.Theta_V = Theta_V;
+    SoilVariables.Theta_g = Theta_g;
+    SoilVariables.DTheta_UUh = DTheta_UUh;
+end

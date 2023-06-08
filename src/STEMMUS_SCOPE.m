@@ -512,7 +512,6 @@ global TCON_dry TPS1 TPS2 TCON0 TCON_s
 
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
-hh_frez = SoilVariables.hh_frez;
 XWRE = SoilVariables.XWRE;
 POR = SoilVariables.POR;
 IH = SoilVariables.IH;
@@ -531,8 +530,6 @@ XCAP = SoilVariables.XCAP;
 Gama_hh = SoilVariables.Gama_hh;
 Gama_h = SoilVariables.Gama_h;
 SAVEhh = SoilVariables.SAVEhh;
-COR = SoilVariables.COR;
-CORh = SoilVariables.CORh;
 Theta_s = VanGenuchten.Theta_s;
 Theta_r = VanGenuchten.Theta_r;
 Theta_f = VanGenuchten.Theta_f;
@@ -561,26 +558,14 @@ TCON0 = ThermalConductivity.TCON0;
 
 %% these vars are defined as global at the begining of this script
 %% because they are both input and output of StartInit
-KfL_T = SoilConstants.KfL_T;
-Theta_II = SoilConstants.Theta_II;
 Theta_I = SoilConstants.Theta_I;
-Theta_UU = SoilConstants.Theta_UU;
 Theta_U = SoilConstants.Theta_U;
 T = SoilVariables.T;
 h = SoilVariables.h;
 TT = SoilVariables.TT;
-hh = SoilVariables.hh;
 Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
 Theta_L = SoilVariables.Theta_L;
-Theta_LL = SoilVariables.Theta_LL;
-Theta_V = SoilVariables.Theta_V;
-Theta_g = SoilVariables.Theta_g;
-Se = SoilVariables.Se;
-KL_h = SoilVariables.KL_h;
-DTheta_LLh = SoilVariables.DTheta_LLh;
-KfL_h = SoilVariables.KfL_h;
-DTheta_UUh = SoilVariables.DTheta_UUh;
 
 %% The boundary condition information settings
 BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);
@@ -608,6 +593,24 @@ BCPB = BoundaryCondition.BCPB;
 BCT = BoundaryCondition.BCT;
 BCP = BoundaryCondition.BCP;
 BtmPg = BoundaryCondition.BtmPg;
+
+
+% Inputs and outputs in SOIL2
+hh = SoilVariables.hh;
+COR = SoilVariables.COR;
+CORh = SoilVariables.CORh;
+Theta_V = SoilVariables.Theta_V;
+Theta_g = SoilVariables.Theta_g;
+Se = SoilVariables.Se;
+KL_h = SoilVariables.KL_h;
+Theta_LL = SoilVariables.Theta_LL;
+DTheta_LLh = SoilVariables.DTheta_LLh;
+KfL_h = SoilVariables.KfL_h;
+KfL_T = SoilConstants.KfL_T;
+hh_frez = SoilVariables.hh_frez;
+Theta_UU = SoilConstants.Theta_UU;
+DTheta_UUh = SoilVariables.DTheta_UUh;
+Theta_II = SoilConstants.Theta_II;
 
 %% 14. Run the model
 disp('The calculations start now');
@@ -881,7 +884,27 @@ for i = 1:1:Dur_tot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+        % inputs for SOIL2
+        SoilConstants.TT_CRIT = TT_CRIT;
+        SoilVariables.hh_frez = hh_frez;
+        [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten);
+
+        % these can be removed after issue 181
+        hh = SoilVariables.hh;
+        COR = SoilVariables.COR;
+        CORh = SoilVariables.CORh;
+        Theta_V = SoilVariables.Theta_V;
+        Theta_g = SoilVariables.Theta_g;
+        Se = SoilVariables.Se;
+        KL_h = SoilVariables.KL_h;
+        Theta_LL = SoilVariables.Theta_LL;
+        DTheta_LLh = SoilVariables.DTheta_LLh;
+        KfL_h = SoilVariables.KfL_h;
+        KfL_T = SoilConstants.KfL_T;
+        hh_frez = SoilVariables.hh_frez;
+        Theta_UU = SoilConstants.Theta_UU;
+        DTheta_UUh = SoilVariables.DTheta_UUh;
+        Theta_II = SoilConstants.Theta_II;
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
         [W, WW, MU_W, D_Ta] = CondL_Tdisp(InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
@@ -931,7 +954,27 @@ for i = 1:1:Dur_tot
     KIT;
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+
+    % inputs for SOIL2
+    SoilConstants.TT_CRIT = TT_CRIT;
+    SoilVariables.hh_frez = hh_frez;
+    [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten);
+    % these can be removed after issue 181
+    hh = SoilVariables.hh;
+    COR = SoilVariables.COR;
+    CORh = SoilVariables.CORh;
+    Theta_V = SoilVariables.Theta_V;
+    Theta_g = SoilVariables.Theta_g;
+    Se = SoilVariables.Se;
+    KL_h = SoilVariables.KL_h;
+    Theta_LL = SoilVariables.Theta_LL;
+    DTheta_LLh = SoilVariables.DTheta_LLh;
+    KfL_h = SoilVariables.KfL_h;
+    KfL_T = SoilConstants.KfL_T;
+    hh_frez = SoilVariables.hh_frez;
+    Theta_UU = SoilConstants.Theta_UU;
+    DTheta_UUh = SoilVariables.DTheta_UUh;
+    Theta_II = SoilConstants.Theta_II;
 
     SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0

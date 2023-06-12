@@ -1,4 +1,4 @@
-function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties)
+function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(InitialValues, SoilConstants, SoilProperties, SoilData, SiteProperties)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);
@@ -8,7 +8,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
-    SoilVariables = init.setSoilVariables(SoilProperties, SoilConstants, VanGenuchten);
+    SoilVariables = init.setSoilVariables(InitialValues, SoilProperties, VanGenuchten);
     [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilConstants, SoilData, SoilVariables, VanGenuchten);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,18 +23,22 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ThermalConductivity = init.calculateInitialThermal(SoilConstants, SoilVariables, VanGenuchten);
 
-    Theta_L = SoilConstants.Theta_L;
-    Theta_I = SoilConstants.Theta_I;
-    Theta_U = SoilConstants.Theta_U;
-
-    [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten);
-
-    Theta_LL = SoilVariables.Theta_LL;
-    Theta_UU = SoilConstants.Theta_UU;
-    Theta_II = SoilConstants.Theta_II;
+    % these will be updated in SOIL2
+    SoilVariables.COR = [];
+    SoilVariables.CORh = [];
 
     % get model settings
     ModelSettings = io.getModelSettings();
+    SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanGenuchten);
+
+    Theta_L = SoilVariables.Theta_L;
+    Theta_I = SoilVariables.Theta_I;
+    Theta_U = SoilVariables.Theta_U;
+
+    Theta_LL = SoilVariables.Theta_LL;
+    Theta_UU = SoilVariables.Theta_UU;
+    Theta_II = SoilVariables.Theta_II;
+
     for i = 1:ModelSettings.NL
         Theta_L(i, 1) = Theta_LL(i, 1);
         Theta_L(i, 2) = Theta_LL(i, 2);
@@ -60,7 +64,7 @@ function [SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = Sta
         KLa_Switch = 1;
     end
 
-    SoilConstants.Theta_I = Theta_I;
-    SoilConstants.Theta_U = Theta_U;
+    SoilVariables.Theta_I = Theta_I;
+    SoilVariables.Theta_U = Theta_U;
     SoilVariables.Theta_L = Theta_L;
 end

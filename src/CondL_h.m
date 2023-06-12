@@ -252,7 +252,6 @@ function [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_
             else
                 Ratio_ice(ML, ND) = 0;
             end
-
             if KIT
                 MU_WN = Constants.MU_W0 * exp(Constants.MU1 / (8.31441 * (20 + 133.3)));
                 if TT(MN) < -20

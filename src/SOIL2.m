@@ -1,8 +1,6 @@
-function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, VanGenuchten)
+function SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanGenuchten)
 
     % these lines can be removed after issue 181
-    % get model settings
-    ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN;
     NL = ModelSettings.NL;
     SWCC = ModelSettings.SWCC;
@@ -28,27 +26,29 @@ function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, Va
     hh_frez = SoilVariables.hh_frez;
     TT = SoilVariables.TT;
     hh = SoilVariables.hh;
+    COR = SoilVariables.COR;
+    CORh = SoilVariables.CORh;
     XWRE = SoilVariables.XWRE;
     IH = SoilVariables.IH;
     Ks = SoilVariables.Ks;
     Imped = SoilVariables.Imped;
     XCAP = SoilVariables.XCAP;
 
-    Theta_L = SoilConstants.Theta_L;
-    Theta_LL = SoilConstants.Theta_LL;
-    Theta_V = SoilConstants.Theta_V;
-    Theta_g = SoilConstants.Theta_g;
-    Se = SoilConstants.Se;
-    KL_h = SoilConstants.KL_h;
-    DTheta_LLh = SoilConstants.DTheta_LLh;
-    KfL_T = SoilConstants.KfL_T;
-    Theta_II = SoilConstants.Theta_II;
-    Theta_I = SoilConstants.Theta_I;
-    Theta_UU = SoilConstants.Theta_UU;
-    Theta_U = SoilConstants.Theta_U;
-    TT_CRIT = SoilConstants.TT_CRIT;
-    KfL_h = SoilConstants.KfL_h;
-    DTheta_UUh = SoilConstants.DTheta_UUh;
+    Theta_L = SoilVariables.Theta_L;
+    Theta_LL = SoilVariables.Theta_LL;
+    Theta_V = SoilVariables.Theta_V;
+    Theta_g = SoilVariables.Theta_g;
+    Se = SoilVariables.Se;
+    KL_h = SoilVariables.KL_h;
+    DTheta_LLh = SoilVariables.DTheta_LLh;
+    KfL_T = SoilVariables.KfL_T;
+    Theta_II = SoilVariables.Theta_II;
+    Theta_I = SoilVariables.Theta_I;
+    Theta_UU = SoilVariables.Theta_UU;
+    Theta_U = SoilVariables.Theta_U;
+    TT_CRIT = SoilVariables.TT_CRIT;
+    KfL_h = SoilVariables.KfL_h;
+    DTheta_UUh = SoilVariables.DTheta_UUh;
 
     % get Constants
     Constants = io.define_constants();
@@ -57,7 +57,7 @@ function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, Va
     RHOL = Constants.RHOL;
 
     % TODO issue L_f is used with different value in main script
-    L_f = 3.34 * 1e5; % latent heat of freezing fusion i Kg-1
+    L_f = SoilConstants.L_f;
 
     if hThmrl == 1
         for MN = 1:NN
@@ -78,14 +78,11 @@ function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, Va
         hhU(MN) = COR(MN) * hh(MN);
         hh(MN) = hhU(MN);
     end
-
     [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
-
     for MN = 1:NN
         hhU(MN) = hh(MN);
         hh(MN) = hhU(MN) / COR(MN);
     end
-
     if Hystrs == 0
         for i = 1:NL
             for ND = 1:2
@@ -134,9 +131,9 @@ function [SoilConstants, SoilVariables] = SOIL2(SoilConstants, SoilVariables, Va
             end
         end
     end
-    SoilConstants.KfL_T = KfL_T;
-    SoilConstants.Theta_II = Theta_II;
-    SoilConstants.Theta_UU = Theta_UU;
+    SoilVariables.KfL_T = KfL_T;
+    SoilVariables.Theta_II = Theta_II;
+    SoilVariables.Theta_UU = Theta_UU;
 
     SoilVariables.hh_frez = hh_frez;
     SoilVariables.hh = hh;

@@ -1,4 +1,4 @@
-function h_frez = updateHfreez(i, SoilVariables, SoilConstants)
+function h_frez = updateHfreez(i, SoilVariables)
     % get Constants
     Constants = io.define_constants();
 

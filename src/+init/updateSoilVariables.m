@@ -6,7 +6,7 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
     SoilVariables.VPER(i, 1) = SoilVariables.VPERS(j);
     SoilVariables.VPER(i, 2) = SoilVariables.VPERSL(j);
     SoilVariables.VPER(i, 3) = SoilVariables.VPERC(j);
-    SoilVariables.XSOC(i) = SoilConstants.VPERSOC(j);
+    SoilVariables.XSOC(i) = SoilVariables.VPERSOC(j);
     SoilVariables.XK(i) = SoilConstants.XK;
 
     % get model settings

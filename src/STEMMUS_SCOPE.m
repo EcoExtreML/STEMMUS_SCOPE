@@ -280,25 +280,16 @@ c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk;
 
 RTB = 1000; % initial root total biomass (g m-2)
-% Rl used in ebal
 global IGBP_veg_long  % used in Initial_root_biomass
 IGBP_veg_long = SiteProperties.IGBP_veg_long;
-[Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);
+[Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);  % Rl used in ebal
 
 %% 2. simulation options
-path_input = InputPath;          % path of all inputs
+path_input = InputPath;  % path of all inputs
 path_of_code = cd;
 
-useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
-    % Read parameter file which is 'input_data.xlsx' and return it as options.
-    %     options = io.setOptions(parameter_file,path_input);
-    warning("the current stemmus-scope does not support useXLSX=0");
-else
-    parameter_file = {'input_data.xlsx'};
-    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
-end
+parameter_file = {'input_data.xlsx'};
+options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
 
 if options.simulation > 2 || options.simulation < 0
     fprintf('\n simulation option should be between 0 and 2 \r');
@@ -306,14 +297,9 @@ if options.simulation > 2 || options.simulation < 0
 end
 
 %% 3. file names
-% the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    run([path_input parameter_file{2}]);
-else
-    [dummy, X] = xlsread([path_input char(parameter_file)], 'filenames');
-    j = find(~strcmp(X(:, 2), {''}));
-    X = X(j, 1:end);
-end
+[dummy, X] = xlsread([path_input char(parameter_file)], 'filenames');
+j = find(~strcmp(X(:, 2), {''}));
+X = X(j, 1:end);
 
 F = struct('FileID', {'Simulation_Name', 'soil_file', 'leaf_file', 'atmos_file'...
                       'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
@@ -327,16 +313,11 @@ for i = 1:length(F)
 end
 
 %% 4. input data
-% the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    X                           = textread([path_input parameter_file{3}], '%s'); %#ok<DTXTRD>
-    N                           = str2double(X);
-else
-    [N, X]                       = xlsread([path_input char(parameter_file)], 'inputdata', '');
-    X                           = X(9:end, 1);
-end
+[N, X] = xlsread([path_input char(parameter_file)], 'inputdata', '');
+X  = X(9:end, 1);
 
 % Create a structure holding Scope parameters
+useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
 [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
 % Define the location information
@@ -587,21 +568,20 @@ KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
 
-% Is the tS(time step) needed to be added with 1?
 % Cause the start of simulation period is from 0mins, while the input data start from 30mins.
 tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
 TimeStep = [];
-TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
-Delt_t0 = Delt_t; % Duration of last time step;
+TEND = TIME + DURTN; % Time to be reached at the end of simulation period
+Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 for i = 1:1:TimeProperties.Dur_tot
-    KT = KT + 1;                         % Counting Number of timesteps
+    KT = KT + 1;  % Counting Number of timesteps
     if KT > 1 && Delt_t > (TEND - TIME)
-        Delt_t = TEND - TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
+        Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
     end
-    TIME = TIME + Delt_t;               % The time elapsed since start of simulation
+    TIME = TIME + Delt_t;  % The time elapsed since start of simulation
     TimeStep(KT, 1) = Delt_t;
     SUMTIME(KT, 1) = TIME;
     Processing = TIME / TEND;
@@ -612,8 +592,7 @@ for i = 1:1:TimeProperties.Dur_tot
         k = NoTime(KT);
     end
     %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % ignore Freeze/Thaw, see issue 139
-    L_f = 0;
+    L_f = 0;  % ignore Freeze/Thaw, see issue 139
     TT_CRIT(NN) = T0; % unit K
     hOLD_frez = [];
     if IRPT1 == 0 && IRPT2 == 0 && ISFT == 0
@@ -654,9 +633,7 @@ for i = 1:1:TimeProperties.Dur_tot
         end
 
         if calculate
-
             iter.counter = 0;
-
             LIDF_file            = char(F(22).FileName);
             if  ~isempty(LIDF_file)
                 canopy.lidf     = dlmread([path_input, 'leafangles/', LIDF_file], '', 3, 0);
@@ -675,10 +652,8 @@ for i = 1:1:TimeProperties.Dur_tot
             leafopt  = fversion(spectral, leafbio, optipar);
             leafbio.V2Z = 1;
             leafoptZ = fversion(spectral, leafbio, optipar);
-
             IwlP     = spectral.IwlP;
             IwlT     = spectral.IwlT;
-
             rho(IwlP)  = leafopt.refl;
             tau(IwlP)  = leafopt.tran;
             rlast    = rho(nwlP);
@@ -705,16 +680,13 @@ for i = 1:1:TimeProperties.Dur_tot
             end
             leafopt.refl = rho;     % extended wavelength ranges are stored in structures
             leafopt.tran = tau;
-
             reflZ = leafopt.refl;
             tranZ = leafopt.tran;
             reflZ(1:300) = leafoptZ.refl(1:300);
             tranZ(1:300) = leafoptZ.tran(1:300);
             leafopt.reflZ = reflZ;
             leafopt.tranZ = tranZ;
-
             soil.refl    = rs;
-
             soil.Ts     = meteo.Ta * ones(2, 1);       % initial soil surface temperature
 
             if length(F(4).FileName) > 1 && options.simulation == 0
@@ -847,7 +819,8 @@ for i = 1:1:TimeProperties.Dur_tot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-        % inputs for SOIL2
+
+        % update inputs for SOIL2
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
         SoilVariables.h = h;
@@ -856,26 +829,21 @@ for i = 1:1:TimeProperties.Dur_tot
         SoilVariables.KfL_h = KfL_h;
         SoilVariables.TT = TT;
         SoilVariables.h_frez = h_frez;
-
         SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten);
-
         % these can be removed after refactoring functions below
         h = SoilVariables.h;
         hh = SoilVariables.hh;
         COR = SoilVariables.COR;
         CORh = SoilVariables.CORh;
-
         Theta_V = SoilVariables.Theta_V;
         Theta_g = SoilVariables.Theta_g;
         Theta_LL = SoilVariables.Theta_LL;
-
         Se = SoilVariables.Se;
         KL_h = SoilVariables.KL_h;
         DTheta_LLh = SoilVariables.DTheta_LLh;
         KfL_h = SoilVariables.KfL_h;
         KfL_T = SoilVariables.KfL_T;
         hh_frez = SoilVariables.hh_frez;
-
         Theta_UU = SoilVariables.Theta_UU;
         DTheta_UUh = SoilVariables.DTheta_UUh;
         Theta_II = SoilVariables.Theta_II;
@@ -931,7 +899,7 @@ for i = 1:1:TimeProperties.Dur_tot
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
 
-    % inputs for SOIL2
+    % updates inputs for SOIL2
     SoilVariables.TT_CRIT = TT_CRIT;
     SoilVariables.hh_frez = hh_frez;
     SoilVariables.h = h;
@@ -1009,13 +977,8 @@ if options.verify
 end
 
 %% soil layer information
-%% Ztot is defined as a global variable in Initial_root_biomass.m
-%% TODO avoid global variables
 SoilLayer.thickness = ModelSettings.DeltZ_R;
-SoilLayer.depth = Ztot';
+SoilLayer.depth = Ztot';  % used in Initial_root_biomass
 
 io.bin_to_csv(fnames, n_col, k, options, SoilLayer);
 save([Output_dir, 'output.mat']);
-% if options.makeplots
-%  plot.plots(Output_dir)
-% end

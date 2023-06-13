@@ -1,11 +1,11 @@
-function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine, SoilConstants, SoilData, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, ML)
+function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, ML)
     %{
         considering soil heterogeneity effect
     %}
 
-    initX = SoilData.InitialValues.initX;
-    initT = SoilData.InitialValues.initT;
-    initH = SoilData.InitialValues.initH;
+    initX = SoilVariables.InitialValues.initX;
+    initT = SoilVariables.InitialValues.initT;
+    initH = SoilVariables.InitialValues.initH;
 
     % get model settings
     ModelSettings = io.getModelSettings();
@@ -56,14 +56,14 @@ function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine,
         end
 
         J = SoilVariables.IS(i);
-        [SoilVariables, VanGenuchten] = init.updateSoilVariables(SoilVariables, VanGenuchten, SoilConstants, SoilProperties, j, J);
+        [SoilVariables, VanGenuchten] = init.updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, j, J);
         SoilVariables.Imped(i) = ImpedF(J);
 
-        initH(indexOfInit) = init.updateInitH(initX(indexOfInit), VanGenuchten, SoilConstants, SoilVariables, j);
+        initH(indexOfInit) = init.updateInitH(initX(indexOfInit), VanGenuchten, SoilVariables, j);
 
         if subRoutine == 5
-            Btmh = init.updateBtmh(VanGenuchten, SoilData, SoilVariables, i);
-            SoilVariables.T(i) = SoilData.BtmT + (i - 1) * (initT(indexOfInit) - SoilData.BtmT) / ML;
+            Btmh = init.updateBtmh(VanGenuchten, SoilVariables, i);
+            SoilVariables.T(i) = SoilVariables.BtmT + (i - 1) * (initT(indexOfInit) - SoilVariables.BtmT) / ML;
             SoilVariables.h(i) = Btmh + (i - 1) * (initH(indexOfInit) - Btmh) / ML;
             SoilVariables.IH(i) = 1;   % Index of wetting history of soil which would be assumed as dry at the first with the value of 1
         else

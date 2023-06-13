@@ -1,4 +1,4 @@
-function ThermalConductivity = calculateInitialThermal(SoilConstants, SoilVariables, VanGenuchten)
+function ThermalConductivity = calculateInitialThermal(SoilVariables, VanGenuchten)
     FEHCAP = []; % see issue 139
 
     HCAP(1) = 0.998 * 4.182;

@@ -1,4 +1,4 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, IGBP_veg_long)
     % Variables information for boundary condition settings
     % NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
     %        "1"--Specified matric head;
@@ -47,7 +47,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     IRPT1 = 0;
     IRPT2 = 0;
 
-    Ta_msr = SoilConstants.Ta_msr;
+    Ta_msr = ForcingData.Ta_msr;
 
     % get model settings
     ModelSettings = io.getModelSettings();

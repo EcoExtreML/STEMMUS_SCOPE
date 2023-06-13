@@ -1,4 +1,4 @@
-function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, SoilVariables)
+function [SoilVariables] = applySoilHeteroWithInitialFreezing(LatentHeatOfFreezing, SoilVariables)
 
     SoilVariables.ISFT = 0;
 
@@ -6,14 +6,14 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(SoilConstants, Soi
     ModelSettings = io.getModelSettings();
 
     for i = 1:ModelSettings.NN
-        SoilVariables.h_frez = init.updateHfreez(i, SoilVariables);
+        SoilVariables.h_frez = init.updateHfreez(i, LatentHeatOfFreezing, SoilVariables);
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
         SoilVariables.h(i) = SoilVariables.h(i) - SoilVariables.h_frez(i);
         SoilVariables.hh(i) = SoilVariables.h(i);
         SoilVariables.SAVEh(i) = SoilVariables.h(i);
         SoilVariables.SAVEhh(i) = SoilVariables.hh(i);
 
-        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGamaH(i, SoilConstants, SoilVariables);
+        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGamaH(i, SoilVariables);
 
         if ModelSettings.Thmrlefc == 1
             SoilVariables.TT(i) = SoilVariables.T(i);

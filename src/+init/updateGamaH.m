@@ -1,7 +1,11 @@
-function [Gama_h, Gama_hh] = updateGamaH(i, SoilConstants, SoilVariables)
+function [Gama_h, Gama_hh] = updateGamaH(i, SoilVariables)
+
+    % get soil constants
+    SoilConstants = io.getSoilConstants();
 
     hd = SoilConstants.hd;
     hm = SoilConstants.hm;
+
     hh = SoilVariables.hh;
 
     if abs(hh(i)) >= abs(hd)

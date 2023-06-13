@@ -1,8 +1,11 @@
-function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilConstants, SoilProperties, i, j)
+function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, i, j)
+
+     % Get soil constants for StartInit
+    SoilConstants = io.getSoilConstants();
 
     SoilVariables.POR(i) = SoilProperties.porosity(j);
     SoilVariables.Ks(i) = SoilProperties.SaturatedK(j);
-    SoilVariables.Theta_qtz(i) = SoilConstants.Vol_qtz(j);
+    SoilVariables.Theta_qtz(i) = SoilVariables.Vol_qtz(j);
     SoilVariables.VPER(i, 1) = SoilVariables.VPERS(j);
     SoilVariables.VPER(i, 2) = SoilVariables.VPERSL(j);
     SoilVariables.VPER(i, 3) = SoilVariables.VPERC(j);

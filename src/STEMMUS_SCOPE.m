@@ -839,9 +839,7 @@ for i = 1:1:Dur_tot
         DSTOR0 = DSTOR;
 
         if KT > 1
-            % TODO: issue XOLD is not used somewhere else
-            [XWRE, XOLD] = updateWettingHistory(SoilVariables, VanGenuchten);
-            SoilVariables.XWRE = XWRE;
+            SoilVariables.XWRE = updateWettingHistory(SoilVariables, VanGenuchten);
         end
 
         for ML = 1:NL

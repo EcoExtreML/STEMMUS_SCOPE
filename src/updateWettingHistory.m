@@ -1,4 +1,4 @@
-function [XWRE, XOLD] = updateWettingHistory(SoilVariables, VanGenuchten)
+function XWRE = updateWettingHistory(SoilVariables, VanGenuchten)
     %{
     This subroutine is caled after one time step to update the wetting
     history. If the change in average moisture content of the element during the

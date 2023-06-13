@@ -1,6 +1,6 @@
 function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, i, j)
 
-     % Get soil constants for StartInit
+    % Get soil constants for StartInit
     SoilConstants = io.getSoilConstants();
 
     SoilVariables.POR(i) = SoilProperties.porosity(j);

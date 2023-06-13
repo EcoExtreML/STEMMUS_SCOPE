@@ -1,13 +1,15 @@
-function SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanGenuchten)
+function SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten)
 
     % these lines can be removed after issue 181
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     NN = ModelSettings.NN;
     NL = ModelSettings.NL;
     SWCC = ModelSettings.SWCC;
     Thmrlefc = ModelSettings.Thmrlefc;
     T0 = ModelSettings.T0;
     Tr = ModelSettings.Tr;
-    KIT = ModelSettings.KIT;
     hThmrl = ModelSettings.hThmrl;
     Hystrs = ModelSettings.Hystrs;
 
@@ -56,9 +58,6 @@ function SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanG
     RHOI = Constants.RHOI;
     RHOL = Constants.RHOL;
 
-    % TODO issue L_f is used with different value in main script
-    L_f = SoilConstants.L_f;
-
     if hThmrl == 1
         for MN = 1:NN
             CORh(MN) = 0.0068;
@@ -78,7 +77,7 @@ function SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanG
         hhU(MN) = COR(MN) * hh(MN);
         hh(MN) = hhU(MN);
     end
-    [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilConstants, SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+    [Theta_LL, Se, KfL_h, KfL_T, DTheta_LLh, hh, hh_frez, Theta_UU, DTheta_UUh, Theta_II, KL_h] = CondL_h(SoilVariables, Theta_r, Theta_s, Alpha, hh, hh_frez, h_frez, n, m, Ks, NL, Theta_L, h, KIT, TT, Thmrlefc, POR, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, Theta_II, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
     for MN = 1:NN
         hhU(MN) = hh(MN);
         hh(MN) = hhU(MN) / COR(MN);

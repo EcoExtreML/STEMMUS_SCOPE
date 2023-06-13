@@ -55,7 +55,7 @@ Dur_tot = TimeProperties.Dur_tot;
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();
 
-global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
+global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl DURTN KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
 Tot_Depth = ModelSettings.Tot_Depth;
 Eqlspace = ModelSettings.Eqlspace;
@@ -78,7 +78,6 @@ T0 = ModelSettings.T0;
 rwuef = ModelSettings.rwuef;
 rroot = ModelSettings.rroot;
 SAVE = ModelSettings.SAVE;
-KIT = ModelSettings.KIT;
 NIT = ModelSettings.NIT;
 KT = ModelSettings.KT;
 NN = ModelSettings.NN;
@@ -105,11 +104,6 @@ LAI_msr = ForcingData.LAI_msr;
 G_msr = ForcingData.G_msr;
 Precip_msr = ForcingData.Precip_msr;
 Tmin = ForcingData.Tmin;
-
-% load initial soil moisture and soil temperature
-SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC);
-global Tss
-Tss = SoilData.Tss; % global vars used in Forcing_PARM
 
 global i tS MN ND hOLD TOLD h hh T TT P_g P_gg AVAIL Evap EXCESS QMT hN Trap
 global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
@@ -496,12 +490,23 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
 %% 13. create output files and
-%% Initialize Temperature, Matric potential and soil air pressure.
 [Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
 
-% SoilConstants for init
-SoilConstants = init.setSoilConstants(SoilProperties, ForcingData);
-[SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(InitialValues, SoilConstants, SoilProperties, SoilData, SiteProperties);
+%% Initialize Temperature, Matric potential and soil air pressure.
+% Define soil variables for StartInit
+VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
+SoilVariables = init.defineSoilVariables(InitialValues, SoilProperties, VanGenuchten);
+
+% Add initial soil moisture and soil temperature
+global Tss % global vars used in Forcing_PARM
+[SoilInitialValues, BtmX, BtmT, Tss] = io.loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData);
+SoilVariables.InitialValues = SoilInitialValues;
+SoilVariables.BtmX = BtmX;
+SoilVariables.BtmT = BtmT;
+SoilVariables.Tss = Tss;
+
+% Run StartInit
+[SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
@@ -510,6 +515,8 @@ global Theta_s Theta_r Theta_f m n Alpha
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
 global TCON_dry TPS1 TPS2 TCON0 TCON_s
 
+% get soil constants for StartInit
+SoilConstants = io.getSoilConstants();
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
 
@@ -569,7 +576,7 @@ Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
 
 %% The boundary condition information settings
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long);
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, IGBP_veg_long);
 
 %% get global vars
 global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
@@ -647,7 +654,7 @@ for i = 1:1:Dur_tot
     end
     %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % ignore Freeze/Thaw, see issue 139
-    SoilConstants.L_f = 0;
+    L_f = 0;
     TT_CRIT(NN) = T0; % unit K
     hOLD_frez = [];
     if IRPT1 == 0 && IRPT2 == 0 && ISFT == 0
@@ -880,7 +887,7 @@ for i = 1:1:Dur_tot
     run Forcing_PARM;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
-        [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, SoilConstants.L_f, TT, NN, hd, Tmin);
+        [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
         % inputs for SOIL2
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
@@ -891,9 +898,7 @@ for i = 1:1:Dur_tot
         SoilVariables.TT = TT;
         SoilVariables.h_frez = h_frez;
 
-        % update KIT value
-        ModelSettings.KIT = KIT;
-        SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanGenuchten);
+        SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten);
 
         % these can be removed after issue 181
         h = SoilVariables.h;
@@ -965,7 +970,7 @@ for i = 1:1:Dur_tot
     TIMEOLD = KT;
     KIT;
     KIT = 0;
-    [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, SoilConstants.L_f, TT, NN, hd, Tmin);
+    [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
 
     % inputs for SOIL2
     SoilVariables.TT_CRIT = TT_CRIT;
@@ -974,9 +979,7 @@ for i = 1:1:Dur_tot
     SoilVariables.hh = hh;
     SoilVariables.TT = TT;
     SoilVariables.h_frez = h_frez;
-    % update KIT value
-    ModelSettings.KIT = KIT;
-    SoilVariables = SOIL2(ModelSettings, SoilConstants, SoilVariables, VanGenuchten);
+    SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten);
 
     % these can be removed after issue 181
     h = SoilVariables.h;

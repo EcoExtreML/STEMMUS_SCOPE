@@ -59,6 +59,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     NBCh = 3;
 
     BCh = -20 / 3600;
+    % this should be fixed in issue 183
     if startsWith(initialLandcoverClass, 'Croplands')
         % NBChB: Moisture Bottom B.C.:
         % 1 --Specified matric head (BChB);

@@ -8,7 +8,7 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
     for landcoverIndex = 1:length(landcovers)
         [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(landcoverIndex), siteName);
         % The lc... parameters are intermediate values. The timeseries are generated in
-        #   io.loadTimeSeries.m.
+        %   io.loadTimeSeries.m.
         ScopeParameters.lcVcmo(landcoverIndex, 1) = Vcmo;
         ScopeParameters.lcTparam(landcoverIndex, :) = Tparam;
         ScopeParameters.lcm(landcoverIndex, 1) = m;

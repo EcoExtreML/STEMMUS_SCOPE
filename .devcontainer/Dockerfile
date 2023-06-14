@@ -1,4 +1,4 @@
-FROM gnuoctave/octave:8.1.0
+FROM gnuoctave/octave:8.1.0@sha256:bb4eebf2e72e49c7bc564120843219f13c53396a515e1d7a00e99baea0c651fd
 
 # NOTE: all package version are pinned to avoid the container breaking with the 
 #     latest version on octave's forge.

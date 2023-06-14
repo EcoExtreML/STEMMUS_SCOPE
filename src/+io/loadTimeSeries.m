@@ -122,18 +122,20 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.SMC = load(fullfile(path_input, SMC_file));
     end
 
-    %% 7. Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth parameters
-    % where landcoverClass is an vector like ["forest"; "forest"; "forest"; "shrubland"; ...]
+    %% 7. Set Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth as time-dependent
+    %    parameters. The timeseries of landcover, along with the lookup table values
+    %    (lc...) are used to generate the timeseries.
     landcovers = unique(landcoverClass, 'stable');
-    for ii = 1:length(xyt.t)
-        landcoverIndex = find(strcmp(landcoverClass(ii), landcovers));
-        ScopeParameters.Vcmo(ii, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);
-        ScopeParameters.Tparam(ii, :) = ScopeParameters.lcTparam(landcoverIndex, :);
-        ScopeParameters.m(ii, 1) = ScopeParameters.lcm(landcoverIndex, 1);
-        ScopeParameters.Type(ii, 1) = ScopeParameters.lcType(landcoverIndex, 1);
-        ScopeParameters.Rdparam(ii, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
-        ScopeParameters.leafwidth(ii, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
+    for timeIndex = 1:length(xyt.t)
+        landcoverIndex = find(strcmp(landcoverClass(timeIndex), landcovers));
+        ScopeParameters.Vcmo(timeIndex, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);
+        ScopeParameters.Tparam(timeIndex, :) = ScopeParameters.lcTparam(landcoverIndex, :);
+        ScopeParameters.m(timeIndex, 1) = ScopeParameters.lcm(landcoverIndex, 1);
+        ScopeParameters.Type(timeIndex, 1) = ScopeParameters.lcType(landcoverIndex, 1);
+        ScopeParameters.Rdparam(timeIndex, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
+        ScopeParameters.leafwidth(timeIndex, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
     end
+    % Remove the intermediate variables that were required to generate the timeseries:
     ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
 
     if ~isempty(Cab_file)

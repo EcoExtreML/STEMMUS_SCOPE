@@ -1,18 +1,20 @@
 function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landcoverClass)
     %{
-        %Set temperature parameters for different landcover type.
+        %Determine temperature parameters for the different landcover types of this location.
     %}
     siteName = cellstr(siteName);
     % where landcoverClass is an array like {"forest", "forest", "forest", "shrubland", ...}
     landcovers = unique(landcoverClass, 'stable');
-    for ii = 1:length(landcovers)
-        [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(ii), siteName);
-        ScopeParameters.lcVcmo(ii, 1) = Vcmo;
-        ScopeParameters.lcTparam(ii, :) = Tparam;
-        ScopeParameters.lcm(ii, 1) = m;
-        ScopeParameters.lcType(ii, 1) = Type;
-        ScopeParameters.lcRdparam(ii, 1) = Rdparam;
-        ScopeParameters.lcleafwidth(ii, 1) = leafwidth;
+    for landcoverIndex = 1:length(landcovers)
+        [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(landcoverIndex), siteName);
+        % The lc... parameters are intermediate values. The timeseries are generated in
+        #   io.loadTimeSeries.m.
+        ScopeParameters.lcVcmo(landcoverIndex, 1) = Vcmo;
+        ScopeParameters.lcTparam(landcoverIndex, :) = Tparam;
+        ScopeParameters.lcm(landcoverIndex, 1) = m;
+        ScopeParameters.lcType(landcoverIndex, 1) = Type;
+        ScopeParameters.lcRdparam(landcoverIndex, 1) = Rdparam;
+        ScopeParameters.lcleafwidth(landcoverIndex, 1) = leafwidth;
     end
 end
 

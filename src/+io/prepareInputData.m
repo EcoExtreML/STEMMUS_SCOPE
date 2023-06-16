@@ -29,7 +29,8 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
 
     % Convert the 1-D int vector into a vector of strings;
     load(forcing_global_path, 'IGBP_veg_long');
-    nRows = size(IGBP_veg_long)(2) / TimeProperties.Dur_tot;
+    IGBP_veg_long_size = size(IGBP_veg_long); % Matlab doesn't like size(...)(2).
+    nRows = IGBP_veg_long_size(2) / TimeProperties.Dur_tot;
     SiteProperties.landcoverClass = cellstr(char(reshape(IGBP_veg_long, [nRows, TimeProperties.Dur_tot])'));
 
 end

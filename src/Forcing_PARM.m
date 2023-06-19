@@ -1,8 +1,7 @@
 function Forcing_PARM
-    global Umax Umin tmax1 DayNum Hrmax Hrmin Tmax Tmin Um Ur DURTN Tsmax Tsmin
-    global Pg_w Pg_a0 Pg_a Pg_b Rn TIMEOLD DELT
-    global Ta Ts U HR_a SH Rns Rnl TIME KT P_Va RHOV_A Rv TopPg h_SUR  Hsur_w Hsur_a0 Hsur_a Hsur_b NBCT
-    global Ts_a0 Ts_a Ts_w Ts_b Tbtm Tb_msr Ta_msr RH_msr Rn_msr WS_msr G_msr Pg_msr G_SOIL HourInput Rns_msr SH_msr LET LE_msr SUMTIME NoTime Precip Precip_msr LAI_msr Gvc Tss Tsss
+    global Rn TIMEOLD DELT
+    global Ta Ts U HR_a SH Rns Rnl KT P_Va RHOV_A Rv TopPg h_SUR NBCT
+    global Ta_msr RH_msr Rn_msr WS_msr Pg_msr HourInput Rns_msr Precip Precip_msr LAI_msr Gvc Tss
 
     if TIMEOLD == KT
         Ta(KT) = 0;

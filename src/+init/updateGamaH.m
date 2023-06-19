@@ -5,7 +5,6 @@ function [Gama_h, Gama_hh] = updateGamaH(i, SoilVariables)
 
     hd = SoilConstants.hd;
     hm = SoilConstants.hm;
-
     hh = SoilVariables.hh;
 
     if abs(hh(i)) >= abs(hd)

@@ -1,4 +1,9 @@
 function SoilVariables = defineSoilVariables(InitialValues, SoilProperties, VanGenuchten)
+    %{
+        Create a SoilVariables structure and define some variables.
+        SoilVariables is input for initializing Temperature, Matric potential
+        and soil air pressure.
+    %}
 
     % Create a SoilVariables structure
     SoilVariables = struct();

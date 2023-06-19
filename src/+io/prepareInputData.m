@@ -19,16 +19,18 @@ function [SiteProperties, SoilProperties, TimeProperties] = prepareInputData(Inp
 
     %% Explicitly load all variables into the workspace
     TimeProperties = load(forcing_global_path, 'DELT', 'Dur_tot');
-    SiteProperties = load(forcing_global_path, 'IGBP_veg_long', 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename');
+    SiteProperties = load(forcing_global_path, 'latitude', 'longitude', 'reference_height', 'canopy_height', 'sitename');
 
     SoilProperties = load(soil_global_path, 'SaturatedK', 'SaturatedMC', 'ResidualMC', 'Coefficient_n', 'Coefficient_Alpha', ...
                           'porosity', 'FOC', 'FOS', 'MSOC', 'Coef_Lamda', 'fieldMC', 'fmax', 'theta_s0', 'Ks0');
 
     % Convert the int vectors back to strings
     SiteProperties.sitename = char(SiteProperties.sitename);
-    SiteProperties.IGBP_veg_long = char(SiteProperties.IGBP_veg_long);
 
-    % The model expects the char vector to be transposed:
-    SiteProperties.IGBP_veg_long = transpose(SiteProperties.IGBP_veg_long);
+    % Convert the 1-D int vector into a vector of strings;
+    load(forcing_global_path, 'IGBP_veg_long');
+    IGBP_veg_long_size = size(IGBP_veg_long); % Matlab doesn't like size(...)(2).
+    nRows = IGBP_veg_long_size(2) / TimeProperties.Dur_tot;
+    SiteProperties.landcoverClass = cellstr(char(reshape(IGBP_veg_long, [nRows, TimeProperties.Dur_tot])'));
 
 end

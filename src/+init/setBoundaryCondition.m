@@ -1,4 +1,4 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, IGBP_veg_long)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, initialLandcoverClass)
     % Variables information for boundary condition settings
     % NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
     %        "1"--Specified matric head;
@@ -59,7 +59,8 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, 
     NBCh = 3;
 
     BCh = -20 / 3600;
-    if strcmp(IGBP_veg_long(1:9)', 'Croplands')  % ['Croplands']
+    % this should be fixed in issue 183
+    if startsWith(initialLandcoverClass, 'Croplands')
         % NBChB: Moisture Bottom B.C.:
         % 1 --Specified matric head (BChB);
         % 2 --Specified flux(BChB);

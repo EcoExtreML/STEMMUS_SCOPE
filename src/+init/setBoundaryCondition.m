@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, IGBP_veg_long)
-=======
 function BoundaryCondition = setBoundaryCondition(SoilVariables, SoilConstants, initialLandcoverClass)
->>>>>>> main
     % Variables information for boundary condition settings
     % NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
     %        "1"--Specified matric head;

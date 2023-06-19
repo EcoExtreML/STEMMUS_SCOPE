@@ -1,4 +1,4 @@
-function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options)
+function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options, landcoverClass)
 
     %{
         This function loads time series data.
@@ -122,13 +122,21 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.SMC = load(fullfile(path_input, SMC_file));
     end
 
-    %% 7. Leaf biochemical parameters
-    if ~isempty(Vcmax_file)
-        Vcmaxtable = load(fullfile(path_input, Vcmax_file));
-        ScopeParameters.Vcmo  = interp1(Vcmaxtable(:, 1), Vcmaxtable(:, 2), t_);
-    else
-        ScopeParameters.Vcmo = leafbio.Vcmo * ones(size(t_));
+    %% 7. Set Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth as time-dependent
+    %    parameters. The timeseries of landcover, along with the lookup table values
+    %    (lc...) are used to generate the timeseries.
+    landcovers = unique(landcoverClass, 'stable');
+    for timeIndex = 1:length(xyt.t)
+        landcoverIndex = find(strcmp(landcoverClass(timeIndex), landcovers));
+        ScopeParameters.Vcmo(timeIndex, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);
+        ScopeParameters.Tparam(timeIndex, :) = ScopeParameters.lcTparam(landcoverIndex, :);
+        ScopeParameters.m(timeIndex, 1) = ScopeParameters.lcm(landcoverIndex, 1);
+        ScopeParameters.Type(timeIndex, 1) = ScopeParameters.lcType(landcoverIndex, 1);
+        ScopeParameters.Rdparam(timeIndex, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
+        ScopeParameters.leafwidth(timeIndex, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
     end
+    % Remove the intermediate variables that were required to generate the timeseries:
+    ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
 
     if ~isempty(Cab_file)
         Cabtable = load(fullfile(path_input, Cab_file));

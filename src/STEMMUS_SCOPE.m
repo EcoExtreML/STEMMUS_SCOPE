@@ -22,7 +22,8 @@
 
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
-    pkg load statistics;
+    disp('Loading Octave packages...');
+    pkg load statistics io;
 end
 
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
@@ -36,6 +37,7 @@ disp (['Reading config from ', CFG]);
 % Prepare forcing and soil data
 global DELT SaturatedMC ResidualMC fieldMC theta_s0 Ks0
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
+landcoverClass = SiteProperties.landcoverClass;
 SaturatedMC = SoilProperties.SaturatedMC;  % used in calc_rssrbs
 ResidualMC = SoilProperties.ResidualMC;  % used in calc_rssrbs
 fieldMC = SoilProperties.fieldMC;  % used in calc_rssrbs
@@ -189,7 +191,7 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 
 global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
-global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ztot Ta Ts U HR_a Rns Rnl Rn
+global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ta Ts U HR_a Rns Rnl Rn
 global RHOV_s DRHOV_sT Tbtm r_a_SOIL Rn_SOIL SH MO Zeta_MO TopPg Tp_t RHS C7 C9
 f0 = InitialValues.f0;
 L_WT = InitialValues.L_WT;
@@ -233,7 +235,6 @@ Ksoil = InitialValues.Ksoil;
 SMC = InitialValues.SMC;
 bbx = InitialValues.bbx;
 wfrac = InitialValues.wfrac;
-Ztot = InitialValues.Ztot;
 Ta = InitialValues.Ta;
 Ts = InitialValues.Ts;
 U = InitialValues.U;
@@ -280,9 +281,8 @@ c_i = Constants.c_i; % used in EnrgyPARM!
 RHO_bulk = Constants.RHO_bulk;
 
 RTB = 1000; % initial root total biomass (g m-2)
-global IGBP_veg_long  % used in Initial_root_biomass
-IGBP_veg_long = SiteProperties.IGBP_veg_long;
-[Rl] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML);  % Rl used in ebal
+% Rl used in ebal
+[Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML, SiteProperties.landcoverClass(1));
 
 %% 2. simulation options
 path_input = InputPath;  % path of all inputs
@@ -333,7 +333,7 @@ ScopeParameters.Tyear = mean(Ta_msr); % calculate mean air temperature; Ta_msr i
 ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);
 
 % Input T parameters for different vegetation type
-[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.IGBP_veg_long);
+[ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.landcoverClass);
 
 %% 5. Declare paths
 path_input      = InputPath;          % path of all inputs
@@ -396,7 +396,7 @@ ScopeParametersNames = fieldnames(ScopeParameters);
 if options.simulation == 1
     vi = ones(length(ScopeParametersNames), 1);
     [soil, leafbio, canopy, meteo, angles, xyt]  = io.select_input(ScopeParameters, Theta_LL, vi, canopy, options, SiteProperties, SoilProperties);
-    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options);
+    [ScopeParameters, xyt, canopy]  = io.loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options, SiteProperties.landcoverClass);
 else
     soil = struct;
 end
@@ -419,7 +419,7 @@ for i = 1:nvars
     name = ScopeParametersNames{i};
     vmax(i) = length(ScopeParameters.(name));
 end
-vmax([14, 27], 1) = 1; % these are Tparam and LIDFb
+vmax(27, 1) = 1; % these are Tparam and LIDFb
 vi      = ones(nvars, 1);
 switch options.simulation
     case 0
@@ -522,7 +522,7 @@ Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
 
 %% The boundary condition information settings
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.IGBP_veg_long);
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, landcoverClass(1));
 
 %% get global vars
 global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2

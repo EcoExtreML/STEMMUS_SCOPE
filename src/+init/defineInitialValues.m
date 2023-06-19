@@ -150,7 +150,7 @@ function InitialValues = defineInitialValues(Dur_tot)
 
     %% Structure 3: variables with zeros(ML, 1)
     fields = {
-              'Ksoil', 'SMC', 'bbx', 'frac', 'wfrac', 'Ztot'
+              'Ksoil', 'SMC', 'bbx', 'frac', 'wfrac'
              };
     % TODO issue: ML is index
     structures{3} = helpers.createStructure(zeros(ML, 1), fields);

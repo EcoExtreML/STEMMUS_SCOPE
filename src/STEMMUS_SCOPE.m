@@ -522,7 +522,7 @@ Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
 
 %% The boundary condition information settings
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, landcoverClass(1));
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, landcoverClass(1));
 
 %% get global vars
 global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2

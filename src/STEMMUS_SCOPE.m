@@ -548,14 +548,14 @@ BCT = BoundaryCondition.BCT;
 BCP = BoundaryCondition.BCP;
 BtmPg = BoundaryCondition.BtmPg;
 
-% Outputs of SOIL2 used in step  Run the model
+% Outputs of UpdateSoilWaterContent used in step Run the model
 hh = SoilVariables.hh;
 hh_frez = SoilVariables.hh_frez;
 
 KL_h = SoilVariables.KL_h;
 KfL_h = SoilVariables.KfL_h;
 
-% Outputs of SOIL2 used in io.select_input in the loop
+% Outputs of UpdateSoilWaterContent used in io.select_input in the loop
 Theta_LL = SoilVariables.Theta_LL;
 
 %% 14. Run the model
@@ -820,7 +820,7 @@ for i = 1:1:TimeProperties.Dur_tot
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
 
-        % update inputs for SOIL2
+        % update inputs for UpdateSoilWaterContent
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
         SoilVariables.h = h;
@@ -829,7 +829,7 @@ for i = 1:1:TimeProperties.Dur_tot
         SoilVariables.KfL_h = KfL_h;
         SoilVariables.TT = TT;
         SoilVariables.h_frez = h_frez;
-        SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten);
+        SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
         % these can be removed after refactoring functions below
         h = SoilVariables.h;
         hh = SoilVariables.hh;
@@ -899,14 +899,14 @@ for i = 1:1:TimeProperties.Dur_tot
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
 
-    % updates inputs for SOIL2
+    % updates inputs for UpdateSoilWaterContent
     SoilVariables.TT_CRIT = TT_CRIT;
     SoilVariables.hh_frez = hh_frez;
     SoilVariables.h = h;
     SoilVariables.hh = hh;
     SoilVariables.TT = TT;
     SoilVariables.h_frez = h_frez;
-    SoilVariables = SOIL2(KIT, L_f, SoilVariables, VanGenuchten);
+    SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
 
     % these can be removed after refactoring codes below
     h = SoilVariables.h;

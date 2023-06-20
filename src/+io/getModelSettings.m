@@ -59,7 +59,6 @@ function ModelSettings = getModelSettings()
     ModelSettings.NS = 1; % Number of soil types;
 
     % The time and domain information setting
-    ModelSettings.KIT = 0; % KIT is used to count the number of iteration in a time step;
     ModelSettings.NIT = 30; % Desirable number of iterations in a time step;
     ModelSettings.KT = 0; % Number of time steps;
 

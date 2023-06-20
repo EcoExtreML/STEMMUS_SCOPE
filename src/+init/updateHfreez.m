@@ -1,9 +1,6 @@
-function h_frez = updateHfreez(i, SoilVariables, SoilConstants)
+function h_frez = updateHfreez(i, LatentHeatOfFreezing, SoilVariables)
     % get Constants
     Constants = io.define_constants();
-
-    L_f = 3.34 * 1e5; % latent heat of freezing fusion J Kg-1
-    T0 = 273.15; % unit K
 
     T = SoilVariables.T;
     h_frez = SoilVariables.h_frez;
@@ -14,7 +11,7 @@ function h_frez = updateHfreez(i, SoilVariables, SoilConstants)
     ModelSettings = io.getModelSettings();
 
     if T(i) <= 0
-        h_frez(i) = L_f * 1e4 * (T(i)) / Constants.g / T0;
+        h_frez(i) = LatentHeatOfFreezing * 1e4 * (T(i)) / Constants.g / ModelSettings.T0;
     else
         h_frez(i) = 0;
     end

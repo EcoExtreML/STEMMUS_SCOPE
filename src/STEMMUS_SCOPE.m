@@ -32,40 +32,30 @@ if isempty(CFG)
     CFG = '../config_file_crib.txt';
 end
 disp (['Reading config from ', CFG]);
-global InputPath OutputPath InitialConditionPath
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
 
 % Prepare forcing and soil data
-global latitude longitude reference_height canopy_height sitename DELT Dur_tot SaturatedMC ResidualMC fieldMC fmax theta_s0 Ks0
+global DELT SaturatedMC ResidualMC fieldMC theta_s0 Ks0
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
-landcoverClass       = SiteProperties.landcoverClass;
-latitude             = SiteProperties.latitude;
-longitude            = SiteProperties.longitude;
-reference_height     = SiteProperties.reference_height;
-canopy_height        = SiteProperties.canopy_height;
-sitename             = SiteProperties.sitename;
-SaturatedMC = SoilProperties.SaturatedMC;
-ResidualMC = SoilProperties.ResidualMC;
-fieldMC = SoilProperties.fieldMC;
-fmax = SoilProperties.fmax;
-theta_s0 = SoilProperties.theta_s0;
-Ks0 = SoilProperties.Ks0;
-DELT = TimeProperties.DELT;
-Dur_tot = TimeProperties.Dur_tot;
+landcoverClass = SiteProperties.landcoverClass;
+SaturatedMC = SoilProperties.SaturatedMC;  % used in calc_rssrbs
+ResidualMC = SoilProperties.ResidualMC;  % used in calc_rssrbs
+fieldMC = SoilProperties.fieldMC;  % used in calc_rssrbs
+
+theta_s0 = SoilProperties.theta_s0; % used in h_BC
+Ks0 = SoilProperties.Ks0;  % used in h_BC
+DELT = TimeProperties.DELT;  % used in h_BC
 
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();
 
-global J rwuef SWCC Hystrs Thmrlefc Soilairefc hThmrl KIT DURTN KT TIME Delt_t NN ML nD
-global W_Chg ThmrlCondCap ThermCond SSUR fc Tr T0 rroot SAVE NL DeltZ Tot_Depth Eqlspace
-Tot_Depth = ModelSettings.Tot_Depth;
-Eqlspace = ModelSettings.Eqlspace;
+global J rwuef SWCC Thmrlefc Soilairefc hThmrl DURTN KT TIME Delt_t NN ML nD
+global W_Chg ThmrlCondCap ThermCond SSUR fc T0 rroot SAVE NL DeltZ
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
 DeltZ_R = ModelSettings.DeltZ_R;
 J = ModelSettings.J;
 SWCC = ModelSettings.SWCC;
-Hystrs = ModelSettings.Hystrs;
 Thmrlefc = ModelSettings.Thmrlefc;
 Soilairefc = ModelSettings.Soilairefc;
 hThmrl = ModelSettings.hThmrl;
@@ -74,24 +64,22 @@ ThmrlCondCap = ModelSettings.ThmrlCondCap;
 ThermCond = ModelSettings.ThermCond;
 SSUR = ModelSettings.SSUR;
 fc = ModelSettings.fc;
-Tr = ModelSettings.Tr;
 T0 = ModelSettings.T0;
 rwuef = ModelSettings.rwuef;
 rroot = ModelSettings.rroot;
 SAVE = ModelSettings.SAVE;
-KIT = ModelSettings.KIT;
 NIT = ModelSettings.NIT;
 KT = ModelSettings.KT;
 NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 nD = ModelSettings.nD;
 % defined as global, and used in other scripts
-DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
+DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % used in Forcing_PARM, Duration of simulation period;
 TIME = 0 * TimeProperties.DELT; % Time of simulation released;
 Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 
 % load forcing data
-ForcingData = io.loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth);
+ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
 % global vars used in Forcing_PARM
 global Ta_msr RH_msr WS_msr Pg_msr Rn_msr Tmin Rns_msr VPD_msr LAI_msr G_msr Precip_msr
@@ -107,45 +95,27 @@ G_msr = ForcingData.G_msr;
 Precip_msr = ForcingData.Precip_msr;
 Tmin = ForcingData.Tmin;
 
-% load initial soil moisture and soil temperature
-SoilData = io.loadSoilData(InputPath, TimeProperties, Tot_Depth, SoilProperties, ForcingData, SWCC);
-global Tss
-Tss = SoilData.Tss; % global vars used in Forcing_PARM
-
-global i tS MN ND hOLD TOLD h hh T TT P_g P_gg AVAIL Evap EXCESS QMT hN Trap
-global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II Theta_I
+global MN ND hOLD TOLD h hh T TT P_g P_gg Evap QMT hN Trap
+global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II
 global AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH CTT_LT CTT_g CTT_Lg c_unsat
-global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T  TT_CRIT T_CRIT TOLD_CRIT
+global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T TT_CRIT
 global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DhDZ DTDZ DRHOVZ
 global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
-global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_a  Theta_V W WW D_Ta Ratio_ice
-global KCHK FCHK hCHK SAVEhh_frez SAVETT INDICATOR thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
+global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_V W WW D_Ta Ratio_ice
+global thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
 global Theta_g Alpha_Lg Beta_g D_V D_A Eta ZETA MU_W Ks RHODA RHOV ETCON EHCAP
-global uERR L QMTT QMBB Evapo trap RnSOIL PrecipO Beta_gBAR Alpha_LgBAR
-global RWU EVAP theta_s0 Ks0 Precip Precipp Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
+global L Evapo Beta_gBAR Alpha_LgBAR
+global RWU EVAP theta_s0 Ks0 Precip Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
 
 % Get initial values
 InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
 alpha_h = InitialValues.alpha_h;
 bx = InitialValues.bx;
 Srt = InitialValues.Srt;
-DTheta_LLh = InitialValues.DTheta_LLh;
-DTheta_UUh = InitialValues.DTheta_UUh;
 SAVEDTheta_UUh = InitialValues.SAVEDTheta_UUh;
 SAVEDTheta_LLh = InitialValues.SAVEDTheta_LLh;
 Ratio_ice = InitialValues.Ratio_ice;
-KL_h = InitialValues.KL_h;
-KfL_h = InitialValues.KfL_h;
-KfL_T = InitialValues.KfL_T;
 KL_T = InitialValues.KL_T;
-Theta_L = InitialValues.Theta_L;
-Theta_LL = InitialValues.Theta_LL;
-Theta_U = InitialValues.Theta_U;
-Theta_UU = InitialValues.Theta_UU;
-Theta_I = InitialValues.Theta_I;
-Theta_II = InitialValues.Theta_II;
-Se = InitialValues.Se;
-Theta_V = InitialValues.Theta_V;
 Lambda_eff = InitialValues.Lambda_eff;
 W = InitialValues.W;
 WW = InitialValues.WW;
@@ -154,7 +124,6 @@ D_Ta = InitialValues.D_Ta;
 D_V = InitialValues.D_V;
 Eta = InitialValues.Eta;
 D_A = InitialValues.D_A;
-Theta_g = InitialValues.Theta_g;
 EHCAP = InitialValues.EHCAP;
 Chh = InitialValues.Chh;
 ChT = InitialValues.ChT;
@@ -204,10 +173,6 @@ sfactortot = InitialValues.sfactortot;
 EVAP = InitialValues.EVAP;
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
-h = InitialValues.h;
-h_frez = InitialValues.h_frez;
-T = InitialValues.T;
-TT = InitialValues.TT;
 T_CRIT = InitialValues.T_CRIT;
 TT_CRIT = InitialValues.TT_CRIT;
 EPCT = InitialValues.EPCT;
@@ -227,7 +192,7 @@ TOLD = InitialValues.TOLD;
 
 global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
 global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ta Ts U HR_a Rns Rnl Rn
-global RHOV_s DRHOV_sT LL P_gOLD hh_frez XCAP Tbtm r_a_SOIL Rn_SOIL PSItot Tsur SH MO Zeta_MO TopPg Tp_t DhT RHS C7 C9
+global RHOV_s DRHOV_sT Tbtm r_a_SOIL Rn_SOIL SH MO Zeta_MO TopPg Tp_t RHS C7 C9
 f0 = InitialValues.f0;
 L_WT = InitialValues.L_WT;
 Kha = InitialValues.Kha;
@@ -282,25 +247,19 @@ MO = InitialValues.MO;
 Zeta_MO = InitialValues.Zeta_MO;
 TopPg = InitialValues.TopPg;
 Tp_t = InitialValues.Tp_t;
-DhT = InitialValues.DhT;
 RHS = InitialValues.RHS;
 C7 = InitialValues.C7;
 C9 = InitialValues.C9;
 RHOV_s = InitialValues.RHOV_s;
 DRHOV_sT = InitialValues.DRHOV_sT;
-LL = InitialValues.LL;
 P_gOLD = InitialValues.P_gOLD;
-hh_frez = InitialValues.hh_frez;
-XCAP = InitialValues.XCAP;
 Tbtm = InitialValues.Tbtm;
 r_a_SOIL = InitialValues.r_a_SOIL;
 Rn_SOIL = InitialValues.Rn_SOIL;
-PSItot = InitialValues.PSItot;
-Tsur = InitialValues.Tsur;
 
 %% 1. define Constants
 Constants = io.define_constants();
-global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc GWT c_i Gamma0 Gamma_w RHO_bulk Rl
+global g RHOL RHOI Rv RDA MU_a Lambda1 Lambda2 Lambda3 c_a c_V c_L Hc c_i Gamma0 Gamma_w RHO_bulk Rl
 g = Constants.g;
 RHOL = Constants.RHOL;
 RHOI = Constants.RHOI;
@@ -316,7 +275,6 @@ c_a = Constants.c_a;
 Hc = Constants.Hc;
 
 % used in other scripts not here!
-GWT = Constants.GWT; % used in CondL_T
 Gamma0 = Constants.Gamma0; % used in other scripts!
 Gamma_w = Constants.Gamma_w; % used in other scripts!
 c_i = Constants.c_i; % used in EnrgyPARM!
@@ -327,19 +285,11 @@ RTB = 1000; % initial root total biomass (g m-2)
 [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, rroot, ML, SiteProperties.landcoverClass(1));
 
 %% 2. simulation options
-path_input = InputPath;          % path of all inputs
+path_input = InputPath;  % path of all inputs
 path_of_code = cd;
 
-useXLSX = 1;      % set it to 1 or 0, the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    % parameter_file             = { 'setoptions.m', 'filenames.m', 'inputdata.txt'};
-    % Read parameter file which is 'input_data.xlsx' and return it as options.
-    %     options = io.setOptions(parameter_file,path_input);
-    warning("the current stemmus-scope does not support useXLSX=0");
-else
-    parameter_file = {'input_data.xlsx'};
-    options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
-end
+parameter_file = {'input_data.xlsx'};
+options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
 
 if options.simulation > 2 || options.simulation < 0
     fprintf('\n simulation option should be between 0 and 2 \r');
@@ -347,14 +297,9 @@ if options.simulation > 2 || options.simulation < 0
 end
 
 %% 3. file names
-% the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    run([path_input parameter_file{2}]);
-else
-    [dummy, X] = xlsread([path_input char(parameter_file)], 'filenames');
-    j = find(~strcmp(X(:, 2), {''}));
-    X = X(j, 1:end);
-end
+[dummy, X] = xlsread([path_input char(parameter_file)], 'filenames');
+j = find(~strcmp(X(:, 2), {''}));
+X = X(j, 1:end);
 
 F = struct('FileID', {'Simulation_Name', 'soil_file', 'leaf_file', 'atmos_file'...
                       'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
@@ -368,16 +313,11 @@ for i = 1:length(F)
 end
 
 %% 4. input data
-% the current stemmus-scope does not support useXLSX=0
-if useXLSX == 0
-    X                           = textread([path_input parameter_file{3}], '%s'); %#ok<DTXTRD>
-    N                           = str2double(X);
-else
-    [N, X]                       = xlsread([path_input char(parameter_file)], 'inputdata', '');
-    X                           = X(9:end, 1);
-end
+[N, X] = xlsread([path_input char(parameter_file)], 'inputdata', '');
+X  = X(9:end, 1);
 
 % Create a structure holding Scope parameters
+useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
 [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
 
 % Define the location information
@@ -496,23 +436,36 @@ atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
 atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
 %% 13. create output files and
-%% Initialize Temperature, Matric potential and soil air pressure.
-[Output_dir, fnames] = io.create_output_files_binary(parameter_file, sitename, path_of_code, path_input, path_output, spectral, options);
+[Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
-% SoilConstants for init
-SoilConstants = init.setSoilConstants(InitialValues, SoilProperties, ForcingData);
-[SoilConstants, SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilConstants, SoilProperties, SoilData, SiteProperties);
+%% Initialize Temperature, Matric potential and soil air pressure.
+% Define soil variables for StartInit
+VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
+SoilVariables = init.defineSoilVariables(InitialValues, SoilProperties, VanGenuchten);
+
+% Add initial soil moisture and soil temperature
+global Tss % global vars used in Forcing_PARM
+[SoilInitialValues, BtmX, BtmT, Tss] = io.loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData);
+SoilVariables.InitialValues = SoilInitialValues;
+SoilVariables.BtmX = BtmX;
+SoilVariables.BtmT = BtmT;
+SoilVariables.Tss = Tss;
+
+% Run StartInit
+[SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
 
 %% get variables that are defined global and are used by other scripts
 global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
 global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
 global Theta_s Theta_r Theta_f m n Alpha
 global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
-global TCON_dry TPS1 TPS2 TCON0 TCON_s XOLD
+global TCON_dry TPS1 TPS2 TCON0 TCON_s
 
+% get soil constants for StartInit
+SoilConstants = io.getSoilConstants();
 hm = SoilConstants.hm;
 hd = SoilConstants.hd;
-hh_frez = SoilVariables.hh_frez;
+
 XWRE = SoilVariables.XWRE;
 POR = SoilVariables.POR;
 IH = SoilVariables.IH;
@@ -531,8 +484,6 @@ XCAP = SoilVariables.XCAP;
 Gama_hh = SoilVariables.Gama_hh;
 Gama_h = SoilVariables.Gama_h;
 SAVEhh = SoilVariables.SAVEhh;
-COR = SoilVariables.COR;
-CORh = SoilVariables.CORh;
 Theta_s = VanGenuchten.Theta_s;
 Theta_r = VanGenuchten.Theta_r;
 Theta_f = VanGenuchten.Theta_f;
@@ -558,33 +509,20 @@ TPS1 = ThermalConductivity.TPS1;
 TPS2 = ThermalConductivity.TPS2;
 FEHCAP = ThermalConductivity.FEHCAP;
 TCON0 = ThermalConductivity.TCON0;
-XOLD = SoilVariables.XOLD; % used in SOIL1
 
 %% these vars are defined as global at the begining of this script
 %% because they are both input and output of StartInit
-KfL_T = SoilConstants.KfL_T;
-Theta_II = SoilConstants.Theta_II;
-Theta_I = SoilConstants.Theta_I;
-Theta_UU = SoilConstants.Theta_UU;
-Theta_U = SoilConstants.Theta_U;
+Theta_I = SoilVariables.Theta_I;
+Theta_U = SoilVariables.Theta_U;
+Theta_L = SoilVariables.Theta_L;
 T = SoilVariables.T;
 h = SoilVariables.h;
 TT = SoilVariables.TT;
-hh = SoilVariables.hh;
 Ks = SoilVariables.Ks;
 h_frez = SoilVariables.h_frez;
-Theta_L = SoilVariables.Theta_L;
-Theta_LL = SoilVariables.Theta_LL;
-Theta_V = SoilVariables.Theta_V;
-Theta_g = SoilVariables.Theta_g;
-Se = SoilVariables.Se;
-KL_h = SoilVariables.KL_h;
-DTheta_LLh = SoilVariables.DTheta_LLh;
-KfL_h = SoilVariables.KfL_h;
-DTheta_UUh = SoilVariables.DTheta_UUh;
 
 %% The boundary condition information settings
-BoundaryCondition = init.setBoundaryCondition(SoilVariables, SoilConstants, landcoverClass(1));
+BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, landcoverClass(1));
 
 %% get global vars
 global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
@@ -610,6 +548,16 @@ BCT = BoundaryCondition.BCT;
 BCP = BoundaryCondition.BCP;
 BtmPg = BoundaryCondition.BtmPg;
 
+% Outputs of UpdateSoilWaterContent used in step Run the model
+hh = SoilVariables.hh;
+hh_frez = SoilVariables.hh_frez;
+
+KL_h = SoilVariables.KL_h;
+KfL_h = SoilVariables.KfL_h;
+
+% Outputs of UpdateSoilWaterContent used in io.select_input in the loop
+Theta_LL = SoilVariables.Theta_LL;
+
 %% 14. Run the model
 disp('The calculations start now');
 calculate = 1;
@@ -620,20 +568,20 @@ KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
 
-% Is the tS(time step) needed to be added with 1?
 % Cause the start of simulation period is from 0mins, while the input data start from 30mins.
 tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
 TimeStep = [];
-TEND = TIME + DURTN; % Time to be reached at the end of simulation period;
-Delt_t0 = Delt_t; % Duration of last time step;
-for i = 1:1:Dur_tot
-    KT = KT + 1;                         % Counting Number of timesteps
+TEND = TIME + DURTN; % Time to be reached at the end of simulation period
+Delt_t0 = Delt_t; % Duration of last time step
+TOLD_CRIT = [];
+for i = 1:1:TimeProperties.Dur_tot
+    KT = KT + 1;  % Counting Number of timesteps
     if KT > 1 && Delt_t > (TEND - TIME)
-        Delt_t = TEND - TIME;           % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
+        Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
     end
-    TIME = TIME + Delt_t;               % The time elapsed since start of simulation
+    TIME = TIME + Delt_t;  % The time elapsed since start of simulation
     TimeStep(KT, 1) = Delt_t;
     SUMTIME(KT, 1) = TIME;
     Processing = TIME / TEND;
@@ -644,9 +592,7 @@ for i = 1:1:Dur_tot
         k = NoTime(KT);
     end
     %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    L_f = 0; % latent heat of freezing fusion J Kg-1
-    T0 = 273.15;
+    L_f = 0;  % ignore Freeze/Thaw, see issue 139
     TT_CRIT(NN) = T0; % unit K
     hOLD_frez = [];
     if IRPT1 == 0 && IRPT2 == 0 && ISFT == 0
@@ -687,9 +633,7 @@ for i = 1:1:Dur_tot
         end
 
         if calculate
-
             iter.counter = 0;
-
             LIDF_file            = char(F(22).FileName);
             if  ~isempty(LIDF_file)
                 canopy.lidf     = dlmread([path_input, 'leafangles/', LIDF_file], '', 3, 0);
@@ -708,10 +652,8 @@ for i = 1:1:Dur_tot
             leafopt  = fversion(spectral, leafbio, optipar);
             leafbio.V2Z = 1;
             leafoptZ = fversion(spectral, leafbio, optipar);
-
             IwlP     = spectral.IwlP;
             IwlT     = spectral.IwlT;
-
             rho(IwlP)  = leafopt.refl;
             tau(IwlP)  = leafopt.tran;
             rlast    = rho(nwlP);
@@ -738,16 +680,13 @@ for i = 1:1:Dur_tot
             end
             leafopt.refl = rho;     % extended wavelength ranges are stored in structures
             leafopt.tran = tau;
-
             reflZ = leafopt.refl;
             tranZ = leafopt.tran;
             reflZ(1:300) = leafoptZ.refl(1:300);
             tranZ(1:300) = leafoptZ.tran(1:300);
             leafopt.reflZ = reflZ;
             leafopt.tranZ = tranZ;
-
             soil.refl    = rs;
-
             soil.Ts     = meteo.Ta * ones(2, 1);       % initial soil surface temperature
 
             if length(F(4).FileName) > 1 && options.simulation == 0
@@ -838,7 +777,7 @@ for i = 1:1:Dur_tot
         DSTOR0 = DSTOR;
 
         if KT > 1
-            run SOIL1;
+            SoilVariables.XWRE = updateWettingHistory(SoilVariables, VanGenuchten);
         end
 
         for ML = 1:NL
@@ -877,11 +816,38 @@ for i = 1:1:Dur_tot
         end
     end
     run Forcing_PARM;
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-        [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+
+        % update inputs for UpdateSoilWaterContent
+        SoilVariables.TT_CRIT = TT_CRIT;
+        SoilVariables.hh_frez = hh_frez;
+        SoilVariables.h = h;
+        SoilVariables.hh = hh;
+        SoilVariables.KL_h = KL_h;
+        SoilVariables.KfL_h = KfL_h;
+        SoilVariables.TT = TT;
+        SoilVariables.h_frez = h_frez;
+        SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
+        % these can be removed after refactoring functions below
+        h = SoilVariables.h;
+        hh = SoilVariables.hh;
+        COR = SoilVariables.COR;
+        CORh = SoilVariables.CORh;
+        Theta_V = SoilVariables.Theta_V;
+        Theta_g = SoilVariables.Theta_g;
+        Theta_LL = SoilVariables.Theta_LL;
+        Se = SoilVariables.Se;
+        KL_h = SoilVariables.KL_h;
+        DTheta_LLh = SoilVariables.DTheta_LLh;
+        KfL_h = SoilVariables.KfL_h;
+        KfL_T = SoilVariables.KfL_T;
+        hh_frez = SoilVariables.hh_frez;
+        Theta_UU = SoilVariables.Theta_UU;
+        DTheta_UUh = SoilVariables.DTheta_UUh;
+        Theta_II = SoilVariables.Theta_II;
+
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
         [W, WW, MU_W, D_Ta] = CondL_Tdisp(InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
@@ -891,6 +857,7 @@ for i = 1:1:Dur_tot
         [k_g] = Condg_k_g(POR, NL, m, Theta_g, g, MU_W, Ks, RHOL, SWCC, Imped, Ratio_ice, Soilairefc, MN);
         [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU);
         [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g);
+
         run h_sub;
         if NBCh == 1
             DSTOR = 0;
@@ -931,7 +898,33 @@ for i = 1:1:Dur_tot
     KIT;
     KIT = 0;
     [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
-    [hh, COR, CORh, Theta_V, Theta_g, Se, KL_h, Theta_LL, DTheta_LLh, KfL_h, KfL_T, hh_frez, Theta_UU, DTheta_UUh, Theta_II] = SOIL2(SoilConstants, SoilVariables, hh, COR, hThmrl, NN, NL, TT, Tr, Hystrs, XWRE, Theta_s, IH, KIT, Theta_r, Alpha, n, m, Ks, Theta_L, h, Thmrlefc, POR, Theta_II, CORh, hh_frez, h_frez, SWCC, Theta_U, XCAP, Phi_s, RHOI, RHOL, Lamda, Imped, L_f, g, T0, TT_CRIT, KfL_h, KfL_T, KL_h, Theta_UU, Theta_LL, DTheta_LLh, DTheta_UUh, Se);
+
+    % updates inputs for UpdateSoilWaterContent
+    SoilVariables.TT_CRIT = TT_CRIT;
+    SoilVariables.hh_frez = hh_frez;
+    SoilVariables.h = h;
+    SoilVariables.hh = hh;
+    SoilVariables.TT = TT;
+    SoilVariables.h_frez = h_frez;
+    SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
+
+    % these can be removed after refactoring codes below
+    h = SoilVariables.h;
+    hh = SoilVariables.hh;
+    COR = SoilVariables.COR;
+    CORh = SoilVariables.CORh;
+    Theta_V = SoilVariables.Theta_V;
+    Theta_g = SoilVariables.Theta_g;
+    Se = SoilVariables.Se;
+    KL_h = SoilVariables.KL_h;
+    Theta_LL = SoilVariables.Theta_LL;
+    DTheta_LLh = SoilVariables.DTheta_LLh;
+    KfL_h = SoilVariables.KfL_h;
+    KfL_T = SoilVariables.KfL_T;
+    hh_frez = SoilVariables.hh_frez;
+    Theta_UU = SoilVariables.Theta_UU;
+    DTheta_UUh = SoilVariables.DTheta_UUh;
+    Theta_II = SoilVariables.Theta_II;
 
     SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0
@@ -985,10 +978,7 @@ end
 
 %% soil layer information
 SoilLayer.thickness = ModelSettings.DeltZ_R;
-SoilLayer.depth = Ztot';
+SoilLayer.depth = Ztot';  % used in Initial_root_biomass
 
 io.bin_to_csv(fnames, n_col, k, options, SoilLayer);
 save([Output_dir, 'output.mat']);
-% if options.makeplots
-%  plot.plots(Output_dir)
-% end

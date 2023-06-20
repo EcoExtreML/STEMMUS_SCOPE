@@ -1,4 +1,4 @@
-function initH = updateInitH(initX, VanGenuchten, SoilConstants, SoilVariables, i)
+function initH = updateInitH(initX, VanGenuchten, SoilVariables, i)
     % get model settings
     ModelSettings = io.getModelSettings();
 

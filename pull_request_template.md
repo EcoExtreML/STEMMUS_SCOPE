@@ -1,9 +1,6 @@
 ### Description
 Please add a description of the changes proposed in the pull request.
 
-### Update executable file
-Please
-
 ### Checklist
 - [ ] Add a reference to related issues.
 - [ ] @mentions of the person or team responsible for reviewing proposed changes.

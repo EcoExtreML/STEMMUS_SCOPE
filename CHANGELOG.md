@@ -1,3 +1,25 @@
+# [Unreleased]
+
+**Added:**
+
+- A license file, indicating that the code is under the GNU GPL-3.0 license ([#153](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/153))
+- A notebook to (more) easily compare the results of different STEMMUS_SCOPE git branches ([#177](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/177))
+- Changes in the land cover over time are now supported by the model ([#182](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/182)).
+
+**Changed:**
+
+- All code has been formatted with [MISS_HIT](https://misshit.org/), to improve readability ([#147](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/147)). All new or modified code should follow this style as well.
+- The `Constants.m` file has been refactored ([#158](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/158)):
+  - Removed unused script `src/CnvrgnCHK.m`
+  - Removed unused global variables
+  - Replaced `Constants.m` with `io.loadModelSettings` and `init.defineInitialValues`
+ - The files `calcLambda.m` and `calcPhi_s.m` have been moved to the `+equations` module ([#171](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/171))
+ - The scripts `SOIL1.m` and `SOIL2.m` have been refactored. The code is now in the files `UpdateSoilWaterContent.m` and `updateWettingHistory.m`([#180](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/180))
+
+**Fixed:**
+
+- An error in the sign of NEE has been corrected ([#151](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/151)).
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.2.0) - 21 Feb 2023
 

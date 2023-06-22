@@ -1,4 +1,7 @@
-# [Unreleased]
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.3.0) - 22 Jun 2023
+
+This version of STEMMUS_SCOPE is only compatible with [PyStemmusScope 0.3.0.](https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing/releases/tag/v0.3.0)
 
 **Added:**
 
@@ -19,6 +22,8 @@
 **Fixed:**
 
 - An error in the sign of NEE has been corrected ([#151](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/151)).
+
+[Changes][1.3.0]
 
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.2.0) - 21 Feb 2023
@@ -282,7 +287,7 @@ Snapshots of codes used for the paper [Integrated modeling of canopy photosynthe
 
 [Changes][1.0.0]
 
-
+[1.3.0]: https://github.com/EcoExtreML/STEMMUS_SCOPE/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/EcoExtreML/STEMMUS_SCOPE/compare/1.1.11...1.2.0
 [1.1.11]: https://github.com/EcoExtreML/STEMMUS_SCOPE/compare/1.1.10...1.1.11
 [1.1.10]: https://github.com/EcoExtreML/STEMMUS_SCOPE/compare/1.1.9...1.1.10

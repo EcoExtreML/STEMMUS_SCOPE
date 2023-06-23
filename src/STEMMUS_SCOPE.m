@@ -77,6 +77,9 @@ Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
+% Fix wind speed values < 0.05
+ForcingData.WS_msr(ForcingData.WS_msr < 0.05) = 0.05;
+
 global Tmin LAI_msr G_msr Precip_msr
 LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
 Precip_msr = ForcingData.Precip_msr; % used in h_BC and h_sub
@@ -550,7 +553,12 @@ KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
 
-% Cause the start of simulation period is from 0mins, while the input data start from 30mins.
+% Convert unit to Centimeter-Gram-Second system
+HR_a = 0.01 .* (ForcingData.RH_msr);
+U = 100 .* (ForcingData.WS_msr);
+TopPg = 100 .* (ForcingData.Pg_msr);
+
+% the start of simulation period is from 0mins, while the input data start from 30mins.
 tS = DURTN / Delt_t;
 SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
@@ -797,37 +805,10 @@ for i = 1:1:TimeProperties.Dur_tot
             hSAVE = hN;
         end
     end
-    %% Reconstruct the driving forces to be a continuous function of time
-    if TIMEOLD == KT
-        Ta(KT) = 0;
-        HR_a(KT) = 0;
-        Ts(KT) = 0;
-        U(KT) = 0;
-        SH(KT) = 0;
-        Rns(KT) = 0;
-        Rnl(KT) = 0;
-        Rn(KT) = 0;
-        TopPg(KT) = 0;
-        h_SUR(KT) = 0;
-    end
-    if NBCT == 1 && KT == 1
-        Ts(1) = 0;
-    end
 
-    ForcingData.WS_msr(ForcingData.WS_msr < 0.05) = 0.05;
     Ta(KT) = ForcingData.Ta_msr(KT);
-    HR_a(KT) = 0.01 .* (ForcingData.RH_msr(KT));
-    U(KT) = 100 .* (ForcingData.WS_msr(KT));
-    Rns(KT) = (ForcingData.Rns_msr(KT)) * 8.64 / 24 / 100 * 1;
-    TopPg(KT) = 100 .* (ForcingData.Pg_msr(KT));
     Ts(KT) = Tss;
-    Rn(KT) = (ForcingData.Rn_msr(KT)) * 8.64 / 24 / 100 * 1;
-    Precip(KT) = ForcingData.Precip_msr(KT) * 0.1 / DELT;
     Gvc(KT) = ForcingData.LAI_msr(KT);
-
-    % The atmospheric vapor pressure (KPa)  (1000Pa=1000.1000.g.100^-1.cm^-1.s^-2)
-    P_Va(KT) = 0.611 * exp(17.27 * Ta(KT) / (Ta(KT) + 237.3)) * HR_a(KT);
-    RHOV_A(KT) = P_Va(KT) * 1e4 / (Rv * (Ta(KT) + 273.15));
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.

@@ -70,8 +70,7 @@ NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 nD = ModelSettings.nD;
 % defined as global, and used in other scripts
-DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % Duration of simulation period;
-TIME = 0 * TimeProperties.DELT; % Time of simulation released;
+TIME = 0; % Time of simulation released;
 Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 
 % load forcing data
@@ -557,11 +556,9 @@ U = 100 .* (ForcingData.WS_msr);
 TopPg = 100 .* (ForcingData.Pg_msr);
 
 % the start of simulation period is from 0mins, while the input data start from 30mins.
-tS = DURTN / Delt_t;
-SAVEtS = tS;
 kk = 0;   % DELT=Delt_t;
 TimeStep = [];
-TEND = TIME + DURTN; % Time to be reached at the end of simulation period
+TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached at the end of simulation period
 Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 for i = 1:1:TimeProperties.Dur_tot
@@ -804,9 +801,9 @@ for i = 1:1:TimeProperties.Dur_tot
         end
     end
 
-    Ta(KT) = ForcingData.Ta_msr(KT);
-    Ts(KT) = Tss;
-    Gvc(KT) = ForcingData.LAI_msr(KT);
+    Ts(KT) = Tss;  % Tss is calculated above
+    Ta(KT) = ForcingData.Ta_msr(KT);  % it is reset here because Ta is a gloval var
+    Gvc(KT) = ForcingData.LAI_msr(KT);  % it is reset here because Gvc is a gloval var
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
@@ -918,7 +915,6 @@ for i = 1:1:TimeProperties.Dur_tot
     DTheta_UUh = SoilVariables.DTheta_UUh;
     Theta_II = SoilVariables.Theta_II;
 
-    SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0
         if KT        % In case last time step is not convergent and needs to be repeated.
             MN = 0;

@@ -77,9 +77,6 @@ Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
-% Fix wind speed values < 0.05
-ForcingData.WS_msr(ForcingData.WS_msr < 0.05) = 0.05;
-
 global Tmin LAI_msr G_msr Precip_msr
 LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
 Precip_msr = ForcingData.Precip_msr; % used in h_BC and h_sub

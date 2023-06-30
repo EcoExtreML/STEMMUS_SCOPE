@@ -551,6 +551,7 @@ hCHK = zeros(1, NN);
 TIMELAST = 0;
 
 % Convert unit to Centimeter-Gram-Second system
+% see issue 188 to refactor these lines
 HR_a = 0.01 .* (ForcingData.RH_msr);
 U = 100 .* (ForcingData.WS_msr);
 TopPg = 100 .* (ForcingData.Pg_msr);

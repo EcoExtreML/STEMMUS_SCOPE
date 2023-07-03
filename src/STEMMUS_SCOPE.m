@@ -1,9 +1,6 @@
 %% STEMMUS-SCOPE.m (script)
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
 %     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
-%
-%     Version: 1.0.1
-%
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
 %     Contact: y.wang-3@utwente.nl; l.yu@utwente.nl; y.zeng@utwente.nl; c.vandertol@utwente.nl; z.su@utwente.nl
 %
@@ -41,7 +38,6 @@ landcoverClass = SiteProperties.landcoverClass;
 SaturatedMC = SoilProperties.SaturatedMC;  % used in calc_rssrbs
 ResidualMC = SoilProperties.ResidualMC;  % used in calc_rssrbs
 fieldMC = SoilProperties.fieldMC;  % used in calc_rssrbs
-
 theta_s0 = SoilProperties.theta_s0; % used in h_BC
 Ks0 = SoilProperties.Ks0;  % used in h_BC
 DELT = TimeProperties.DELT;  % used in h_BC
@@ -49,7 +45,7 @@ DELT = TimeProperties.DELT;  % used in h_BC
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();
 
-global J rwuef SWCC Thmrlefc Soilairefc hThmrl DURTN KT TIME Delt_t NN ML nD
+global J rwuef SWCC Thmrlefc Soilairefc hThmrl KT TIME Delt_t NN ML nD
 global W_Chg ThmrlCondCap ThermCond SSUR fc T0 rroot SAVE NL DeltZ
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
@@ -74,38 +70,28 @@ NN = ModelSettings.NN;
 ML = ModelSettings.ML;
 nD = ModelSettings.nD;
 % defined as global, and used in other scripts
-DURTN = TimeProperties.DELT * TimeProperties.Dur_tot; % used in Forcing_PARM, Duration of simulation period;
-TIME = 0 * TimeProperties.DELT; % Time of simulation released;
+TIME = 0; % Time of simulation released;
 Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
-% global vars used in Forcing_PARM
-global Ta_msr RH_msr WS_msr Pg_msr Rn_msr Tmin Rns_msr VPD_msr LAI_msr G_msr Precip_msr
-Ta_msr = ForcingData.Ta_msr;
-RH_msr = ForcingData.RH_msr;
-WS_msr = ForcingData.WS_msr;
-Pg_msr = ForcingData.Pg_msr;
-Rn_msr = ForcingData.Rn_msr;
-Rns_msr = ForcingData.Rns_msr;
-VPD_msr = ForcingData.VPD_msr;
-LAI_msr = ForcingData.LAI_msr;
-G_msr = ForcingData.G_msr;
-Precip_msr = ForcingData.Precip_msr;
-Tmin = ForcingData.Tmin;
+global Tmin LAI_msr G_msr Precip_msr
+LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
+Precip_msr = ForcingData.Precip_msr; % used in h_BC and h_sub
+Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 
-global MN ND hOLD TOLD h hh T TT P_g P_gg Evap QMT hN Trap
-global SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU Theta_U Theta_III Theta_II
-global AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH CTT_LT CTT_g CTT_Lg c_unsat
-global QL QL_h QL_T QV Qa KL_h Chh ChT Khh KhT Resis_a KfL_h KfL_T TT_CRIT
-global h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DhDZ DTDZ DRHOVZ
-global DEhBAR DRHOVhDz EtaBAR D_Vg DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh
-global QVT QVH Sa HR QVa QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_V W WW D_Ta Ratio_ice
-global thermal Xaa XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz
-global Theta_g Alpha_Lg Beta_g D_V D_A Eta ZETA MU_W Ks RHODA RHOV ETCON EHCAP
-global L Evapo Beta_gBAR Alpha_LgBAR
-global RWU EVAP theta_s0 Ks0 Precip Tss frac sfactortot sfactor fluxes lEstot lEctot NoTime
+global MN ND hOLD TOLD h hh T TT P_g P_gg Evap QMT hN Trap RWU EVAP theta_s0 Ks0
+global Precip frac SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU
+global Theta_U Theta_III Theta_II AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH
+global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ DRHOVZ QL QL_h QL_T QV Qa KL_h Chh ChT
+global Khh KhT Resis_a KfL_h KfL_T TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
+global DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
+global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH Sa HR QVa
+global QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_V W WW D_Ta Ratio_ice thermal Xaa
+global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Alpha_Lg Beta_g D_V D_A Eta
+global ZETA MU_W Ks RHODA RHOV ETCON EHCAP L Evapo Beta_gBAR Alpha_LgBAR Gvc
+global sfactortot sfactor fluxes lEstot lEctot NoTime Tss
 
 % Get initial values
 InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
@@ -327,7 +313,7 @@ ScopeParameters.BSMlat = SiteProperties.latitude; % latitude of BSM model
 ScopeParameters.BSMlon = SiteProperties.longitude; % longitude of BSM model
 ScopeParameters.z =  SiteProperties.reference_height;   % reference height
 ScopeParameters.hc =  SiteProperties.canopy_height;  % canopy height
-ScopeParameters.Tyear = mean(Ta_msr); % calculate mean air temperature; Ta_msr is defined in Constant.m
+ScopeParameters.Tyear = mean(ForcingData.Ta_msr); % calculate mean air temperature
 
 % calculate the time zone based on longitude
 ScopeParameters.timezn = helpers.calculateTimeZone(SiteProperties.longitude);
@@ -408,7 +394,7 @@ if options.simulation == 1
     I_tmin              =   find(min(diff_tmin) == diff_tmin);
     I_tmax              =   find(min(diff_tmax) == diff_tmax);
     if options.soil_heat_method < 2
-        meteo.Ta = Ta_msr(1);
+        meteo.Ta = ForcingData.Ta_msr(1);
         soil.Tsold = meteo.Ta * ones(12, 2);
     end
 end
@@ -444,7 +430,6 @@ VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
 SoilVariables = init.defineSoilVariables(InitialValues, SoilProperties, VanGenuchten);
 
 % Add initial soil moisture and soil temperature
-global Tss % global vars used in Forcing_PARM
 [SoilInitialValues, BtmX, BtmT, Tss] = io.loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData);
 SoilVariables.InitialValues = SoilInitialValues;
 SoilVariables.BtmX = BtmX;
@@ -455,11 +440,9 @@ SoilVariables.Tss = Tss;
 [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
 
 %% get variables that are defined global and are used by other scripts
-global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch
-global ISFT Imped XSOC Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh
-global Theta_s Theta_r Theta_f m n Alpha
-global HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
-global TCON_dry TPS1 TPS2 TCON0 TCON_s
+global hm hd hh_frez XWRE POR IH IS XK XWILT KLT_Switch DVT_Switch KaT_Switch ISFT Imped XSOC
+global Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh m n Alpha TCON_dry TPS1 TPS2 TCON0 TCON_s
+global Theta_s Theta_r Theta_f HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
 
 % get soil constants for StartInit
 SoilConstants = io.getSoilConstants();
@@ -525,9 +508,7 @@ h_frez = SoilVariables.h_frez;
 BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, landcoverClass(1));
 
 %% get global vars
-global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2
-global NBCP BChB BCTB BCPB BCT BCP BtmPg
-
+global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2 NBCP BChB BCTB BCPB BCT BCP BtmPg
 NBCh = BoundaryCondition.NBCh;
 NBCT = BoundaryCondition.NBCT;
 NBChB = BoundaryCondition.NBChB;
@@ -568,12 +549,16 @@ KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
 
-% Cause the start of simulation period is from 0mins, while the input data start from 30mins.
-tS = DURTN / Delt_t;
-SAVEtS = tS;
+% Convert unit to Centimeter-Gram-Second system
+% see issue 188 to refactor these lines
+HR_a = 0.01 .* (ForcingData.RH_msr);
+U = 100 .* (ForcingData.WS_msr);
+TopPg = 100 .* (ForcingData.Pg_msr);
+
+% the start of simulation period is from 0mins, while the input data start from 30mins.
 kk = 0;   % DELT=Delt_t;
 TimeStep = [];
-TEND = TIME + DURTN; % Time to be reached at the end of simulation period
+TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached at the end of simulation period
 Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 for i = 1:1:TimeProperties.Dur_tot
@@ -757,7 +742,7 @@ for i = 1:1:TimeProperties.Dur_tot
                 Acc = 0;
                 lEstot = 0;
                 lEctot = 0;
-                Tss = Ta_msr(KT);
+                Tss = ForcingData.Ta_msr(KT);
             end
         elseif NoTime(KT) > NoTime(KT - 1)
             if isreal(fluxes.Actot) && isreal(thermal.Tsave) && isreal(fluxes.lEstot) && isreal(fluxes.lEctot)
@@ -769,7 +754,7 @@ for i = 1:1:TimeProperties.Dur_tot
                 Acc = 0;
                 lEstot = 0;
                 lEctot = 0;
-                Tss = Ta_msr(KT);
+                Tss = ForcingData.Ta_msr(KT);
             end
         end
 
@@ -815,7 +800,11 @@ for i = 1:1:TimeProperties.Dur_tot
             hSAVE = hN;
         end
     end
-    run Forcing_PARM;
+
+    Ts(KT) = Tss;  % Tss is calculated above
+    Ta(KT) = ForcingData.Ta_msr(KT);  % it is reset here because Ta is a gloval var
+    Gvc(KT) = ForcingData.LAI_msr(KT);  % it is reset here because Gvc is a gloval var
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
@@ -926,7 +915,6 @@ for i = 1:1:TimeProperties.Dur_tot
     DTheta_UUh = SoilVariables.DTheta_UUh;
     Theta_II = SoilVariables.Theta_II;
 
-    SAVEtS = tS;
     if IRPT1 == 0 && IRPT2 == 0
         if KT        % In case last time step is not convergent and needs to be repeated.
             MN = 0;

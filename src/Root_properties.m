@@ -15,8 +15,15 @@
 %}
 
 function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LAI_msr)
-    % calculate the fraction of root
-    fr = calculateRootfraction(KT);
+    % this function is used to calculate the root fraction
+    if KT < 2880 % 2880 means the time step when the root stops growing
+        fr = 0.3 * 3 * exp(-0.15 * LAI_msr(KT)) / (exp(-0.15 * LAI_msr(KT)) + 2 * sfactor);
+        if fr < 0.15
+           fr = 0.15;
+        end
+    else
+        fr = 0.001;
+    end
 
     DeltZ0 = DeltZ' / 100;
     BR = Ac * fr * 1800 * 12 / 1000000;
@@ -39,14 +46,3 @@ function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LA
     end
 end
 
-function fr = calculateRootfraction(KT)
-    % this function is used to calculate the root fraction
-    if KT < 2880 % 2880 means the time step when the root stops growing
-        fr = 0.3 * 3 * exp(-0.15 * LAI_msr(KT)) / (exp(-0.15 * LAI_msr(KT)) + 2 * sfactor);
-        if fr < 0.15
-            fr = 0.15;
-        end
-    else
-        fr = 0.001;
-    end
-end

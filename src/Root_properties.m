@@ -1,20 +1,16 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Subfunction - Root - Properties         %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% REFERENCES
-%{
-    This function is used to calculate the dynamic growth of root
-    This part can refer to Wang et al. (2021) "Intergrated modelling of photosynthesis and transfer of energy, mass, and momentum in the SPAC system"
-    Input:
-        Rl: root length index at last step
-        Ac: the net assimilation of canopy
-        rroot: radius of root
-    Output:
-        Rl: root length index at current step
-%}
-
 function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LAI_msr)
+    %% REFERENCES
+    %{
+        This function is used to calculate the dynamic growth of root
+        This part can refer to Wang et al. (2021) "Intergrated modelling of photosynthesis and transfer of energy, mass, and momentum in the SPAC system"
+        Input:
+            Rl: root length index at last step
+            Ac: the net assimilation of canopy
+            rroot: radius of root
+        Output:
+            Rl: root length index at current step
+    %}
+
     % this function is used to calculate the root fraction
     if KT < 2880 % 2880 means the time step when the root stops growing
         fr = 0.3 * 3 * exp(-0.15 * LAI_msr(KT)) / (exp(-0.15 * LAI_msr(KT)) + 2 * sfactor);

@@ -15,7 +15,7 @@ function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LA
     if KT < 2880 % 2880 means the time step when the root stops growing
         fr = 0.3 * 3 * exp(-0.15 * LAI_msr(KT)) / (exp(-0.15 * LAI_msr(KT)) + 2 * sfactor);
         if fr < 0.15
-           fr = 0.15;
+            fr = 0.15;
         end
     else
         fr = 0.001;
@@ -26,7 +26,7 @@ function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LA
     root_den = 250 * 1000; % [gDM / m^3] Root density  Jackson et al., 1997
     R_C = 0.488; % [gC/gDM] Ratio Carbon-Dry Matter in root   Jackson et al.,  1997
     nn = numel(Rl);
-    
+
     % This is used to simulate the root growth
     if (~isnan(Ac)) || (Ac > 0)
         Rl = Rl .* DeltZ0;
@@ -41,4 +41,3 @@ function [Rl] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LA
         Rl = Rl ./ DeltZ0;
     end
 end
-

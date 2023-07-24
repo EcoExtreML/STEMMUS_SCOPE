@@ -1,4 +1,4 @@
-function kl_h = calculateKL_h(mu_w, se, m)
+function kl_h = calculateKL_h(mu_w, se, Ks, m)
 
     % load Constants
     Constants = io.define_constants();

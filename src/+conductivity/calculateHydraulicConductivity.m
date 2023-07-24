@@ -84,7 +84,7 @@ function [SoilVariables] = calculateHydraulicConductivity(SoilVariables, VanGenu
                     MU_W = Constants.MU_W0 * exp(Constants.MU1 / (8.31441 * (SV.TT + 133.3)));
                 end
 
-                KL_h = conductivity.hydraulicConductivity.calculateKL_h(MU_W, Se, VG.m);
+                KL_h = conductivity.hydraulicConductivity.calculateKL_h(MU_W, Se, SV.Ks, VG.m);
 
                 if Gama_hh ~= 1
                     KfL_h = KL_h * 10^(-1 * SV.Imped * Ratio_ice);  % hydraulic conductivity for freezing soil

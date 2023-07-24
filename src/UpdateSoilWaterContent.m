@@ -11,10 +11,11 @@ function SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenu
     POR = SoilVariables.POR;
     TT = SoilVariables.TT;
     hh = SoilVariables.hh;
-    COR = SoilVariables.COR;
-    CORh = SoilVariables.CORh;
     XWRE = SoilVariables.XWRE;
     IH = SoilVariables.IH;
+
+    COR = [];
+    CORh = [];
 
     if ModelSettings.hThmrl == 1
         for MN = 1:ModelSettings.NN
@@ -35,7 +36,8 @@ function SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenu
         hhU(MN) = COR(MN) * hh(MN);
         hh(MN) = hhU(MN);
     end
-    SoilVariables = conductivity.calculateHydraulicConductivity(SoilVariables, VanGenuchten, InitialValues, KIT, L_f);
+
+    SoilVariables = conductivity.calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f);
     Theta_LL = SoilVariables.Theta_LL;
     DTheta_LLh = SoilVariables.DTheta_LLh;
     Theta_UU = SoilVariables.Theta_UU;

@@ -9,6 +9,7 @@ function theta = calculateTheta(subRoutine, theta_m, heat_term, gama_hh, theta_s
             theta = gama_hh * theta_r + (theta_m - gama_hh * theta_r) * (1 + abs(alpha * (heat_term)) ^ n) ^ m;
             if heat_term <= hd
                 theta = 0;
+            end
         case 1
             % heat_term = hh or hh + hh_frez
             theta = theta_s * (heat_term / phi_s) ^ (-1 * lamda);

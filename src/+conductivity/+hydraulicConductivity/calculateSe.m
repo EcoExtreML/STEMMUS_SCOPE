@@ -1,4 +1,7 @@
 function se = calculateSe(theta_ll, gama_hh, SoilVariables)
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
     % get soil constants
     SoilConstants = io.getSoilConstants();
 
@@ -6,9 +9,10 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
     POR = SoilVariables.POR;
     hh = SoilVariables.hh;
     phi_s = SoilVariables.Phi_s;
+    se = SoilVariables.Se;
 
-    if SWCC == 1
-        if SFCC == 1
+    if ModelSettings.SWCC == 1
+        if ModelSettings.SFCC == 1
             if hh >= -1
                 if hh_frez >= 0
                     se = 1;
@@ -19,7 +23,7 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
                         se = theta_ll / POR;
                     end
                 end
-            elseif Thmrlefc && gama_hh == 0
+            elseif ModelSettings.Thmrlefc && gama_hh == 0
                 if (hh + hh_frez) <= SoilConstants.hd
                     se = 0;
                 else

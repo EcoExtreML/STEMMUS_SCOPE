@@ -1,4 +1,4 @@
-function gama_hh = alculateGamma_hh(hh)
+function gama_hh = calculateGama_hh(hh)
     % get soil constants
     SoilConstants = io.getSoilConstants();
 

@@ -10,6 +10,7 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
     hh = SoilVariables.hh;
     phi_s = SoilVariables.Phi_s;
     se = SoilVariables.Se;
+    seCalculated = theta_ll / POR;
 
     if ModelSettings.SWCC == 1
         if ModelSettings.SFCC == 1
@@ -20,20 +21,20 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
                     if (hh + hh_frez) <= SoilConstants.hd
                         se = 0;
                     else
-                        se = theta_ll / POR;
+                        se = seCalculated;
                     end
                 end
-            elseif ModelSettings.Thmrlefc && gama_hh == 0
+            elseif ModelSettings.Thmrlefc
                 if (hh + hh_frez) <= SoilConstants.hd
                     se = 0;
                 else
-                    se = theta_ll / POR;
+                    se = seCalculated;
                 end
             end
         elseif theta_ll <= 0.06 || hh <= -1e7
                 se = 0;
         else
-            se = theta_ll / POR;
+            se = seCalculated;
         end
     else
         if hh + hh_frez <= -1e7 || hh <= -1e7
@@ -41,12 +42,13 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
         elseif hh + hh_frez >= phi_s
             se = 1;
         else
-            se = theta_ll / POR;
+            se = seCalculated;
         end
     end
-    if se >= 1
+
+    if se > 1
         se = 1;
-    elseif se <= 0
+    elseif se < 0
         se = 0;
     end
     if isnan(se) == 1

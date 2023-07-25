@@ -1,12 +1,22 @@
-function [SoilVariables] = calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f)
+function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f)
+    %{
+        This is to calculate the hydraulic conductivity of soil, based on
+        hydraulic conductivity models (like VG and others).
+        van Genuchten, M. T. (1980), A closed-form equation for predicting the
+        hydraulic conductivity of unsaturated soils, Soil Sci. Soc. Am. J., 44,
+        892–898,
+        Zeng, Y., Su, Z., Wan, L. and Wen, J.: Numerical analysis of
+        air-water-heat flow in unsaturated soil: Is it necessary to consider
+        airflow in land surface models?, J. Geophys. Res. Atmos., 116(D20),
+        20107, doi:10.1029/2011JD015835, 2011.
+    %}
+
     % get model settings
     ModelSettings = io.getModelSettings();
 
     % load Constants
     Constants = io.define_constants();
 
-    % TODO issue  Phi_s and Lamda are empty
-    % TODO issue FILM = 1 not used
 
     function [sliced] = sliceVector(structure, lengthX, ix)
         %{
@@ -47,35 +57,43 @@ function [SoilVariables] = calculateHydraulicConductivity(SoilVariables, VanGenu
     for i = 1:ModelSettings.NL
         % slice vectors
         VG = sliceVector(VanGenuchten, ModelSettings.NL, i);
-        SV = sliceVector(SoilVariables, ModelSettings.NL, i);
+
         for j = 1:ModelSettings.nD
             MN = i + j - 1;
 
-            % slice matrices
+            SV = SoilVariables;
+
+            % slice
+            % only for these variables, i is used, for the rest MN.
+            SV.POR = SoilVariables.POR(i);
+            SV.XCAP = SoilVariables.XCAP(i);
+            SV.Ks = SoilVariables.Ks(i);
+
             lengthX = ModelSettings.NL + j - 1;
+            SV = sliceVector(SV, lengthX, MN);
             SV = sliceMatrix(SV, lengthX, ModelSettings.nD, MN, j);
 
             Gama_hh = conductivity.hydraulicConductivity.calculateGama_hh(SV.hh);
-            Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gama_hh, VG);
-
+            Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gama_hh, VG, SV.POR);
             Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gama_hh, SV, VG);
+
+            % circular calculation of Theta_II! See issue 181, item 3
             Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II);
-            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, SV, VG);
-            % TODO issue circular calculation
-            Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water content
+            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gama_hh, SV, VG);
+            Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water contentTheta_II
 
             DTheta_UUh = conductivity.hydraulicConductivity.calculateDTheta_UUh(Theta_UU, Theta_m, Theta_LL, Gama_hh, SV, VG);
             DTheta_LLh = conductivity.hydraulicConductivity.calcuulateDTheta_LLh(DTheta_UUh, Theta_m, Theta_UU, Theta_LL, Gama_hh, SV, VG);
             Se = conductivity.hydraulicConductivity.calculateSe(Theta_LL, Gama_hh, SV);
 
-            % TODO issue Ratio_ice not global but used in Condg_k_g.m
+            % Ratio_ice used in Condg_k_g.m
             if Theta_UU ~= 0
                 Ratio_ice = Constants.RHOI * Theta_II / (Constants.RHOL * Theta_UU); % ice ratio
             else
                 Ratio_ice = 0;
             end
             if KIT
-                % TODO exact calculation of MU_W happens in CondL_Tdisp
+                % The calculation of MU_W repeated in CondL_Tdisp and used in Condg_k_g
                 if SV.TT < -20
                     MU_W = 3.71e-2;
                 elseif SV.TT > 150
@@ -97,17 +115,17 @@ function [SoilVariables] = calculateHydraulicConductivity(SoilVariables, VanGenu
                 KfL_h = 0;
                 KfL_T = 0;
             end
+            SoilVariables.KL_h(i, j) = KL_h;
+            SoilVariables.KfL_h(i, j) = KfL_h;
+            SoilVariables.KfL_T(i, j) = KfL_T;
+            SoilVariables.Theta_LL(i, j) = Theta_LL;
+            SoilVariables.DTheta_LLh(i, j) = DTheta_LLh;
+            SoilVariables.Theta_II(i, j) = Theta_II;
+            SoilVariables.Theta_UU(i, j) = Theta_UU;
+            SoilVariables.DTheta_UUh(i, j) = DTheta_UUh;
+            SoilVariables.Se(i, j) = Se;
+            SoilVariables.Ratio_ice(i, j) = Ratio_ice;
+            SoilVariables.Gama_hh(MN) = Gama_hh;
         end
-
-    SoilVariables.KL_h(i, j) = KL_h;
-    SoilVariables.KfL_h(i, j) = KfL_h;
-    SoilVariables.KfL_T(i, j) = KfL_T;
-    SoilVariables.Theta_LL(i, j) = Theta_LL;
-    SoilVariables.DTheta_LLh(i, j) = DTheta_LLh;
-    SoilVariables.Theta_II(i, j) = Theta_II;
-    SoilVariables.Theta_UU(i, j) = Theta_UU;
-    SoilVariables.DTheta_UUh(i, j) = DTheta_UUh;
-    SoilVariables.Se(i, j) = Se;
-    SoilVariables.Gama_hh(i) = Gama_hh;
     end
 end

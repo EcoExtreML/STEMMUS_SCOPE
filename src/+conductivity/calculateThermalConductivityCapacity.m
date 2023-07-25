@@ -9,6 +9,7 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
     Theta_LL = SoilVariables.Theta_LL;
     c_unsat = InitialValues.c_unsat;
     Lambda_eff = InitialValues.Lambda_eff;
+    RHO_bulk = ThermalConductivity.RHO_bulk;
 
     if ModelSettings.ThmrlCondCap == 1
         [ETCON, EHCAP, TETCON, EfTCON, ZETA] = conductivity.EfeCapCond(ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
@@ -34,11 +35,11 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
                     Lambda_eff(i, j) = Lambda_eff(i, j);
                 end
                 c_unsat(i, j) = EHCAP(i, j);
+            else
+                MN = i + j - 1;
+                Lambda_eff(i, j) = Constants.Lambda1 + Constants.Lambda2 * Theta_LL(i, j) + Constants.Lambda3 * Theta_LL(i, j)^0.5; % 3.6*0.001*4.182; % It is possible to add the dispersion effect here to consider the heat dispersion.
+                c_unsat(i, j) = 837 * RHO_bulk / 1000 + Theta_LL(i, j) * Constants.c_L + Theta_g(i, j) * (RHODA(MN) * Constants.c_a + RHOV(MN) * Constants.c_V); % 9.79*0.1*4.182;%
             end
-        else
-            MN = i + j - 1;
-            Lambda_eff(i, j) = Constants.Lambda1 + Constants.Lambda2 * Theta_LL(i, j) + Constants.Lambda3 * Theta_LL(i, j)^0.5; % 3.6*0.001*4.182; % It is possible to add the dispersion effect here to consider the heat dispersion.
-            c_unsat(i, j) = 837 * RHO_bulk / 1000 + Theta_LL(i, j) * Constants.c_L + Theta_g(i, j) * (RHODA(MN) * Constants.c_a + RHOV(MN) * Constants.c_V); % 9.79*0.1*4.182;%
         end
     end
     ThermalConductivityCapacity.c_unsat = c_unsat;

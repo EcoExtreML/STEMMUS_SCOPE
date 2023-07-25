@@ -1,4 +1,4 @@
-function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
+function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
 
     % TODO issue rename function
     HCAP = ThermalConductivity.HCAP;
@@ -25,10 +25,11 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(ThermalConductivity, 
     TT = SoilVariables.TT;
     POR = SoilVariables.POR;
     Theta_LL = SoilVariables.Theta_LL;
-    D_A = InitialValues.D_A;
     Theta_V = SoilVariables.Theta_V;
     Theta_II = SoilVariables.Theta_II;
     XSOC = SoilVariables.XSOC;
+
+    D_A = InitialValues.D_A;
 
     Theta_s = VanGenuchten.Theta_s;
 

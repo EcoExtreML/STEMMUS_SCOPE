@@ -20,5 +20,4 @@ function kl_h = calculateKL_h(mu_w, se, Ks, m)
     if ~isreal(kl_h)
         warning('\n case "~isreal(kl_h)", dont know what to do! \r');
     end
-
 end

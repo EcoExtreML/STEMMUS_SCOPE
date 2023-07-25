@@ -4,7 +4,7 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
         hydraulic conductivity models (like VG and others).
         van Genuchten, M. T. (1980), A closed-form equation for predicting the
         hydraulic conductivity of unsaturated soils, Soil Sci. Soc. Am. J., 44,
-        892–898,
+        892-898,
         Zeng, Y., Su, Z., Wan, L. and Wen, J.: Numerical analysis of
         air-water-heat flow in unsaturated soil: Is it necessary to consider
         airflow in land surface models?, J. Geophys. Res. Atmos., 116(D20),
@@ -16,7 +16,6 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
 
     % load Constants
     Constants = io.define_constants();
-
 
     function [sliced] = sliceVector(structure, lengthX, ix)
         %{

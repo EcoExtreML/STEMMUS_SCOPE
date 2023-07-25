@@ -6,7 +6,7 @@ function theta_m = calculateTheta_m(gama_hh, VanGenuchten, POR)
     n = VanGenuchten.n;
     m = VanGenuchten.m;
 
-    theta_m = gama_hh * theta_r + (theta_s - gama_hh * theta_r) * (1 + abs(alpha * (-1)) ^ n) ^ m;
+    theta_m = gama_hh * theta_r + (theta_s - gama_hh * theta_r) * (1 + abs(alpha * (-1))^n)^m;
     if theta_m >= POR
         theta_m = POR;
     elseif theta_m <= theta_s

@@ -32,7 +32,7 @@ function se = calculateSe(theta_ll, gama_hh, SoilVariables)
                 end
             end
         elseif theta_ll <= 0.06 || hh <= -1e7
-                se = 0;
+            se = 0;
         else
             se = seCalculated;
         end

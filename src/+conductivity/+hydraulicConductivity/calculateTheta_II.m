@@ -20,5 +20,4 @@ function theta_ii = calculateTheta_II(tt, xcap, hh, Theta_II)
             theta_ii = xcap;
         end
     end
-
 end

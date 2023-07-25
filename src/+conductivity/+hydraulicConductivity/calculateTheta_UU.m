@@ -40,5 +40,4 @@ function theta_uu = calculateTheta_UU(theta_m, gama_hh, SoilVariables, VanGenuch
         subRoutine = 1;
         theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
     end
-
 end

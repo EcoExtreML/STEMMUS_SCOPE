@@ -17,6 +17,7 @@ function dtheta_uuh = calculateDTheta_UUh(theta_uu, theta_m, theta_ll, gama_hh, 
     % get model settings
     ModelSettings = io.getModelSettings();
 
+    heatTerm = hh + hh_frez;
     if ModelSettings.SWCC == 1
         if ModelSettings.SFCC == 1
             if hh >= -1
@@ -25,41 +26,40 @@ function dtheta_uuh = calculateDTheta_UUh(theta_uu, theta_m, theta_ll, gama_hh, 
                 else
                     if ModelSettings.Thmrlefc
                         subRoutine = 0;
-                        dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+                        dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
                     elseif abs(hh - h) < 1e-3
-                            subRoutine = 1;
-                            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+                        subRoutine = 1;
+                        dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
                     else
                         subRoutine = 2;
-                        dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+                        dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
                     end
                 end
             elseif ModelSettings.Thmrlefc
                 subRoutine = 0;
-                dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+                dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
             end
         elseif hh >= -1e-6 || hh <= -1e7
-                dtheta_uuh = 0;
+            dtheta_uuh = 0;
         elseif ModelSettings.Thmrlefc || abs(hh - h) < 1e-3
-                subRoutine = 1;
-                dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+            subRoutine = 1;
+            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
         else
             subRoutine = 3;
-            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
         end
     else
         if hh >= phi_s || hh <= -1e7
             dtheta_uuh = 0;
         elseif ModelSettings.Thmrlefc
-                subRoutine = 4;
-                dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+            subRoutine = 4;
+            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
         elseif abs(hh - h) < 1e-3
-                subRoutine = 5;
-                dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+            subRoutine = 5;
+            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
         else
             subRoutine = 3;
-            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, (hh + hh_frez), theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
+            dtheta_uuh = conductivity.hydraulicConductivity.calculateDTheta(subRoutine, heatTerm, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m);
         end
     end
-
 end

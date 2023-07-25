@@ -73,6 +73,10 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             SV = sliceVector(SV, lengthX, MN);
             SV = sliceMatrix(SV, lengthX, ModelSettings.nD, MN, j);
 
+            [hh, hh_frez] = conductivity.hydraulicConductivity.fixHeat(SV.hh, SV.hh_frez, SV.Phi_s);
+            SV.hh = hh;
+            SV.hh_frez = hh_frez;
+
             Gama_hh = conductivity.hydraulicConductivity.calculateGama_hh(SV.hh);
             Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gama_hh, VG, SV.POR);
             Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gama_hh, SV, VG);

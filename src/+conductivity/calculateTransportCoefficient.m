@@ -1,4 +1,4 @@
-function TransportCoefficient = CalculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t)
+function TransportCoefficient = calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t)
     %{
         This is to calculate the transport coefficient for absorbed liquid flow
         due to temperature gradient.

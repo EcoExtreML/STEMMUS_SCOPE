@@ -100,7 +100,6 @@ bx = InitialValues.bx;
 Srt = InitialValues.Srt;
 SAVEDTheta_UUh = InitialValues.SAVEDTheta_UUh;
 SAVEDTheta_LLh = InitialValues.SAVEDTheta_LLh;
-Ratio_ice = InitialValues.Ratio_ice;
 KL_T = InitialValues.KL_T;
 Lambda_eff = InitialValues.Lambda_eff;
 W = InitialValues.W;
@@ -836,6 +835,7 @@ for i = 1:1:TimeProperties.Dur_tot
         Theta_UU = SoilVariables.Theta_UU;
         DTheta_UUh = SoilVariables.DTheta_UUh;
         Theta_II = SoilVariables.Theta_II;
+        Ratio_ice = SoilVariables.Ratio_ice;
 
         [KL_T] = CondL_T(NL);
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
@@ -914,6 +914,7 @@ for i = 1:1:TimeProperties.Dur_tot
     Theta_UU = SoilVariables.Theta_UU;
     DTheta_UUh = SoilVariables.DTheta_UUh;
     Theta_II = SoilVariables.Theta_II;
+    Ratio_ice = SoilVariables.Ratio_ice;
 
     if IRPT1 == 0 && IRPT2 == 0
         if KT        % In case last time step is not convergent and needs to be repeated.

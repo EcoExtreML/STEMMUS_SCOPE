@@ -46,7 +46,7 @@ DELT = TimeProperties.DELT;  % used in h_BC
 ModelSettings = io.getModelSettings();
 
 global J rwuef SWCC Thmrlefc Soilairefc hThmrl KT TIME Delt_t NN ML nD
-global W_Chg ThmrlCondCap ThermCond SSUR fc T0 rroot SAVE NL DeltZ
+global ThmrlCondCap ThermCond fc T0 rroot SAVE NL DeltZ
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
 DeltZ_R = ModelSettings.DeltZ_R;
@@ -55,10 +55,8 @@ SWCC = ModelSettings.SWCC;
 Thmrlefc = ModelSettings.Thmrlefc;
 Soilairefc = ModelSettings.Soilairefc;
 hThmrl = ModelSettings.hThmrl;
-W_Chg = ModelSettings.W_Chg;
 ThmrlCondCap = ModelSettings.ThmrlCondCap;
 ThermCond = ModelSettings.ThermCond;
-SSUR = ModelSettings.SSUR;
 fc = ModelSettings.fc;
 T0 = ModelSettings.T0;
 rwuef = ModelSettings.rwuef;
@@ -100,12 +98,7 @@ bx = InitialValues.bx;
 Srt = InitialValues.Srt;
 SAVEDTheta_UUh = InitialValues.SAVEDTheta_UUh;
 SAVEDTheta_LLh = InitialValues.SAVEDTheta_LLh;
-KL_T = InitialValues.KL_T;
 Lambda_eff = InitialValues.Lambda_eff;
-W = InitialValues.W;
-WW = InitialValues.WW;
-MU_W = InitialValues.MU_W;
-D_Ta = InitialValues.D_Ta;
 D_V = InitialValues.D_V;
 Eta = InitialValues.Eta;
 D_A = InitialValues.D_A;
@@ -175,11 +168,9 @@ L = InitialValues.L;
 hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 
-global f0 L_WT Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global f0 Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
 global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ta Ts U HR_a Rns Rnl Rn
 global RHOV_s DRHOV_sT Tbtm r_a_SOIL Rn_SOIL SH MO Zeta_MO TopPg Tp_t RHS C7 C9
-f0 = InitialValues.f0;
-L_WT = InitialValues.L_WT;
 Kha = InitialValues.Kha;
 Vvh = InitialValues.Vvh;
 VvT = InitialValues.VvT;
@@ -837,9 +828,19 @@ for i = 1:1:TimeProperties.Dur_tot
         Theta_II = SoilVariables.Theta_II;
         Ratio_ice = SoilVariables.Ratio_ice;
 
-        [KL_T] = CondL_T(NL);
+        %TODO issue CondL_T doesnot have useful codes!
+        KL_T = InitialValues.KL_T; % reset KL_T, replace CondL_T script
+
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
-        [W, WW, MU_W, D_Ta] = CondL_Tdisp(InitialValues, POR, Theta_LL, Theta_L, SSUR, RHOL, TT, Theta_s, h, hh, W_Chg, NL, nD, Delt_t, Theta_g, KLT_Switch);
+
+        % update inputs
+        SoilVariables.Theta_L = Theta_L;
+        TransportCoefficient = conductivity.calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t);
+        W = TransportCoefficient.W;
+        WW = TransportCoefficient.WW;
+        MU_W = TransportCoefficient.MU_W;
+        D_Ta = TransportCoefficient.D_Ta;
+
         [L] = Latent(TT, NN);
         [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(T, RDA, P_g, Rv, DeltZ, h, hh, TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
         [c_unsat, Lambda_eff, ZETA, ETCON, EHCAP, TETCON, EfTCON] = CondT_coeff(Theta_LL, Lambda1, Lambda2, Lambda3, RHO_bulk, Theta_g, RHODA, RHOV, c_a, c_V, c_L, NL, nD, ThmrlCondCap, ThermCond, HCAP, SF, TCA, GA1, GA2, GB1, GB2, HCD, ZETA0, CON0, PS1, PS2, XWILT, XK, TT, POR, DRHOVT, L, D_A, Theta_V, Theta_II, TCON_dry, Theta_s, XSOC, TPS1, TPS2, TCON0, TCON_s, FEHCAP, RHOI, RHOL, c_unsat, Lambda_eff, ETCON, EHCAP, TETCON, EfTCON, ZETA);

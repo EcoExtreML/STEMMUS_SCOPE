@@ -52,8 +52,4 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
     ThermalConductivityCapacity.c_unsat = c_unsat;
     ThermalConductivityCapacity.Lambda_eff = Lambda_eff;
     ThermalConductivityCapacity.ZETA = ZETA;
-    ThermalConductivityCapacity.ETCON = ETCON;
-    ThermalConductivityCapacity.EHCAP = EHCAP;
-    ThermalConductivityCapacity.TETCON = TETCON;
-    ThermalConductivityCapacity.EfTCON = EfTCON;
 end

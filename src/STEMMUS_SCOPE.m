@@ -26,7 +26,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txt';
+    CFG = '../config_file_crib.txtt';
 end
 disp (['Reading config from ', CFG]);
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
@@ -46,7 +46,7 @@ DELT = TimeProperties.DELT;  % used in h_BC
 ModelSettings = io.getModelSettings();
 
 global J rwuef SWCC Thmrlefc Soilairefc hThmrl KT TIME Delt_t NN ML nD
-global ThmrlCondCap ThermCond fc T0 rroot SAVE NL DeltZ
+global fc T0 rroot SAVE NL DeltZ
 NL = ModelSettings.NL;
 DeltZ = ModelSettings.DeltZ;
 DeltZ_R = ModelSettings.DeltZ_R;
@@ -55,8 +55,6 @@ SWCC = ModelSettings.SWCC;
 Thmrlefc = ModelSettings.Thmrlefc;
 Soilairefc = ModelSettings.Soilairefc;
 hThmrl = ModelSettings.hThmrl;
-ThmrlCondCap = ModelSettings.ThmrlCondCap;
-ThermCond = ModelSettings.ThermCond;
 fc = ModelSettings.fc;
 T0 = ModelSettings.T0;
 rwuef = ModelSettings.rwuef;
@@ -87,7 +85,7 @@ global Khh KhT Resis_a KfL_h KfL_T TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta
 global DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
 global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH Sa HR QVa
 global QLH QLT DVH DVT Se QL_a DPgDZ V_A Theta_V W WW D_Ta Ratio_ice thermal Xaa
-global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Alpha_Lg Beta_g D_V D_A Eta
+global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V D_A Eta
 global ZETA MU_W Ks RHODA RHOV ETCON EHCAP L Evapo Beta_gBAR Alpha_LgBAR Gvc
 global sfactortot sfactor fluxes lEstot lEctot NoTime Tss
 
@@ -112,7 +110,6 @@ QL_h = InitialValues.QL_h;
 QL_T = InitialValues.QL_T;
 Sa = InitialValues.Sa;
 V_A = InitialValues.V_A;
-Alpha_Lg = InitialValues.Alpha_Lg;
 Beta_g = InitialValues.Beta_g;
 c_unsat = InitialValues.c_unsat;
 CTT_PH = InitialValues.CTT_PH;
@@ -851,7 +848,7 @@ for i = 1:1:TimeProperties.Dur_tot
 
         k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
         [D_V, Eta, D_A] = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
-        [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g);
+        [D_Vg, V_A, Beta_g, DPgDZ] = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
         run h_sub;
         if NBCh == 1

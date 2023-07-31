@@ -1,33 +1,41 @@
-function [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g)
+function [D_Vg, V_A, Beta_g, DPgDZ] = calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g)
+    %{
+        This is to calculate the gas phase longitudinal dispersivity.
+        Zeng, Y., Su, Z., Wan, L. and Wen, i.: Numerical analysis of
+        air-water-heat flow in unsaturated soil: Is it necessary to consider
+        airflow in land surface models?, i. Geophys. Res. Atmos., 116(D20),
+        20107, doi:10.1029/2011JD015835, 2011.
+    %}
 
-    MN = 0;
-    for ML = 1:NL
-        J = ML;
-        for ND = 1:2
-            MN = ML + ND - 1;
-            Sa(ML, ND) = 1 - Se(ML, ND);
-            f0(ML, ND) = Theta_g(ML, ND)^(7 / 3) / Theta_s(J)^2; % Theta_g(ML,ND)^0.67;
-            Beta_g(ML, ND) = (k_g(ML, ND) / MU_a);
-            Alpha_Lg(ML, ND) = 0.078 * (13.6 - 16 * Sa(ML, ND) + 3.4 * Sa(ML, ND)^5) * 100; %
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
+    % get model constants
+    Constants = io.define_constants();
+
+    V_A = InitialValues.V_A;
+    D_Vg = InitialValues.D_Vg;
+    Beta_g = InitialValues.Beta_g;
+    DPgDZ = InitialValues.DPgDZ;
+    Alpha_Lg = InitialValues.Alpha_Lg;
+
+    # TODO issue f0 unused, see issue 181
+    for i = 1:ModelSettings.NL
+        for j = 1:ModelSettings.nD
+            Sa = 1 - SoilVariables.Se(i, j);
+            Beta_g(i, j) = (k_g(i, j) / Constants.MU_a);
+            Alpha_Lg(i, j) = 0.078 * (13.6 - 16 * Sa + 3.4 * Sa^5) * 100;
         end
-    end
 
-    for ML = 1:NL
-        Beta_gBAR(ML) = (Beta_g(ML, 1) + Beta_g(ML, 2)) / 2;
-        DPgDZ(ML) = (P_gg(ML + 1) - P_gg(ML)) / DeltZ(ML);
-        Alpha_LgBAR(ML) = (Alpha_Lg(ML, 1) + Alpha_Lg(ML, 2)) / 2;
-    end
+        DPgDZ(i) = (P_gg(i + 1) - P_gg(i)) / ModelSettings.DeltZ(i);
+        Alpha_LgBAR(i) = (Alpha_Lg(i, 1) + Alpha_Lg(i, 2)) / 2;
 
-    for ML = 1:NL
-        V_A(ML) = -Beta_gBAR(ML) * DPgDZ(ML); % 0; %
-        if KaT_Switch == 1
-            D_Vg(ML) = Alpha_LgBAR(ML) * abs(V_A(ML)); % 0; %0; %
+        Beta_gBAR = (Beta_g(i, 1) + Beta_g(i, 2)) / 2;
+        V_A(i) = -Beta_gBAR * DPgDZ(i);
+        if SoilVariables.KaT_Switch == 1
+            D_Vg(i) = Alpha_LgBAR(i) * abs(V_A(i));
         else
-            D_Vg(ML) = 0;
+            D_Vg(i) = 0;
         end
     end
-
-    %%%%%%%%%%%% Unit of kg is cm^2, MU_a is g.cm^-1.s^-1,V_A is cm.s^-1, D_Vg
-    %%%%%%%%%%%% is cm^2.s^-1, The unit of soil air pressure should be Pa=kg.m^-1.s^-2=10g.cm^-1.s^-2 %%%%%%%%%%%%%
-    %%%%%%%%%%%% Notice that '10'in V_A is because Pa needs to be converted as10g.cm^-1.s^-2; has been done in the StarInit subroutine %%%%%%%%%%%%%
-    %%%%%%%%%%%% MU_a's unit has been changed %%%%%%%%%
+end

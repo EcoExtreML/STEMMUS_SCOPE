@@ -38,10 +38,8 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
                 end
                 if Lambda_eff(i, j) <= 0
                     Lambda_eff(i, j) = 0.0008;
-                elseif Lambda_eff(i, j) >= 0.02
+                elseif Lambda_eff(i, j) > 0.02
                     Lambda_eff(i, j) = 0.02;
-                else
-                    Lambda_eff(i, j) = Lambda_eff(i, j);
                 end
                 c_unsat(i, j) = EHCAP(i, j);
             else

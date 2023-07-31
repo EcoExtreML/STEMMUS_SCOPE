@@ -86,7 +86,7 @@ global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ DRHOVZ QL QL_h QL_T QV Qa KL_h Chh 
 global Khh KhT Resis_a KfL_h KfL_T TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
 global DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
 global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH Sa HR QVa
-global QLH QLT DVH DVT Se QL_a DPgDZ k_g V_A Theta_V W WW D_Ta Ratio_ice thermal Xaa
+global QLH QLT DVH DVT Se QL_a DPgDZ V_A Theta_V W WW D_Ta Ratio_ice thermal Xaa
 global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Alpha_Lg Beta_g D_V D_A Eta
 global ZETA MU_W Ks RHODA RHOV ETCON EHCAP L Evapo Beta_gBAR Alpha_LgBAR Gvc
 global sfactortot sfactor fluxes lEstot lEctot NoTime Tss
@@ -110,7 +110,6 @@ KhT = InitialValues.KhT;
 QL = InitialValues.QL;
 QL_h = InitialValues.QL_h;
 QL_T = InitialValues.QL_T;
-k_g = InitialValues.k_g;
 Sa = InitialValues.Sa;
 V_A = InitialValues.V_A;
 Alpha_Lg = InitialValues.Alpha_Lg;
@@ -851,7 +850,7 @@ for i = 1:1:TimeProperties.Dur_tot
         TETCON = ThermalConductivityCapacity.TETCON;
         EfTCON = ThermalConductivityCapacity.EfTCON;
 
-        [k_g] = Condg_k_g(POR, NL, m, Theta_g, g, MU_W, Ks, RHOL, SWCC, Imped, Ratio_ice, Soilairefc, MN);
+        k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
         [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU);
         [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g);
 

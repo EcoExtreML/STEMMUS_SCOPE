@@ -426,7 +426,7 @@ SoilVariables.Tss = Tss;
 [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
 
 %% get variables that are defined global and are used by other scripts
-global hm hd hh_frez XWRE POR IH IS KLT_Switch DVT_Switch KaT_Switch ISFT Imped XSOC
+global hm hd hh_frez XWRE POR IH IS KLT_Switch KaT_Switch ISFT Imped XSOC
 global Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh m n Alpha TCON_dry TPS1 TPS2 TCON0 TCON_s
 global Theta_s Theta_r Theta_f HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
 
@@ -442,7 +442,6 @@ IS = SoilVariables.IS;
 XK = SoilVariables.XK;
 
 KLT_Switch = SoilVariables.KLT_Switch;
-DVT_Switch = SoilVariables.DVT_Switch;
 KaT_Switch = SoilVariables.KaT_Switch;
 ISFT = SoilVariables.ISFT;
 Imped = SoilVariables.Imped;
@@ -851,7 +850,7 @@ for i = 1:1:TimeProperties.Dur_tot
         EfTCON = ThermalConductivityCapacity.EfTCON;
 
         k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
-        [D_V, Eta, D_A] = CondV_DE(Theta_LL, TT, fc, Theta_s, NL, nD, Theta_g, POR, ThmrlCondCap, ZETA, XK, DVT_Switch, Theta_UU);
+        [D_V, Eta, D_A] = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
         [D_Vg, V_A, Beta_g, DPgDZ, Beta_gBAR, Alpha_LgBAR] = CondV_DVg(P_gg, Theta_g, Sa, V_A, k_g, MU_a, DeltZ, Alpha_Lg, KaT_Switch, Theta_s, Se, NL, DPgDZ, Beta_gBAR, Alpha_LgBAR, Beta_g);
 
         run h_sub;

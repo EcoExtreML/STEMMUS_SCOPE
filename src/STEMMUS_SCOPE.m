@@ -26,7 +26,7 @@ end
 % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 global CFG
 if isempty(CFG)
-    CFG = '../config_file_crib.txtt';
+    CFG = '../config_file_crib.txt';
 end
 disp (['Reading config from ', CFG]);
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
@@ -79,15 +79,15 @@ Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 
 global MN ND hOLD TOLD h hh T TT P_g P_gg Evap QMT hN Trap RWU EVAP theta_s0 Ks0
 global Precip frac SUMTIME TTT Theta_LLL CHK Theta_LL Theta_L Theta_UUU Theta_UU
-global Theta_U Theta_III Theta_II AVAIL0 TIMEOLD SRT ALPHA alpha_h bx Srt CTT_PH
+global Theta_U Theta_III Theta_II AVAIL0 SRT alpha_h bx Srt CTT_PH
 global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ DRHOVZ QL QL_h QL_T QV Qa KL_h Chh ChT
 global Khh KhT Resis_a KfL_h KfL_T TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
-global DTheta_UUh CKT Lambda_eff EfTCON TETCON DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
-global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH Sa HR QVa
-global QLH QLT DVH DVT Se QL_a DPgDZ V_A Theta_V W WW D_Ta Ratio_ice thermal Xaa
-global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V D_A Eta
-global ZETA MU_W Ks RHODA RHOV ETCON EHCAP L Evapo Beta_gBAR Alpha_LgBAR Gvc
-global sfactortot sfactor fluxes lEstot lEctot NoTime Tss
+global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
+global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR QVa
+global QLH QLT DVH DVT Se QL_a DPgDZ V_A Theta_V W WW D_Ta thermal Xaa
+global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V Eta
+global Ks RHODA RHOV L Evapo Gvc
+global sfactortot sfactor fluxes lEstot lEctot Tss
 
 % Get initial values
 InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
@@ -99,8 +99,6 @@ SAVEDTheta_LLh = InitialValues.SAVEDTheta_LLh;
 Lambda_eff = InitialValues.Lambda_eff;
 D_V = InitialValues.D_V;
 Eta = InitialValues.Eta;
-D_A = InitialValues.D_A;
-EHCAP = InitialValues.EHCAP;
 Chh = InitialValues.Chh;
 ChT = InitialValues.ChT;
 Khh = InitialValues.Khh;
@@ -108,7 +106,6 @@ KhT = InitialValues.KhT;
 QL = InitialValues.QL;
 QL_h = InitialValues.QL_h;
 QL_T = InitialValues.QL_T;
-Sa = InitialValues.Sa;
 V_A = InitialValues.V_A;
 Beta_g = InitialValues.Beta_g;
 c_unsat = InitialValues.c_unsat;
@@ -164,8 +161,8 @@ L = InitialValues.L;
 hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 
-global f0 Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
-global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa Ksoil SMC bbx wfrac Ta Ts U HR_a Rns Rnl Rn
+global Kha Vvh VvT Chg C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa SMC bbx Ta Ts U HR_a Rns Rn
 global RHOV_s DRHOV_sT Tbtm r_a_SOIL Rn_SOIL SH MO Zeta_MO TopPg Tp_t RHS C7 C9
 Kha = InitialValues.Kha;
 Vvh = InitialValues.Vvh;
@@ -203,16 +200,13 @@ Kcaa = InitialValues.Kcaa;
 Ccah = InitialValues.Ccah;
 CcaT = InitialValues.CcaT;
 Ccaa = InitialValues.Ccaa;
-Ksoil = InitialValues.Ksoil;
 SMC = InitialValues.SMC;
 bbx = InitialValues.bbx;
-wfrac = InitialValues.wfrac;
 Ta = InitialValues.Ta;
 Ts = InitialValues.Ts;
 U = InitialValues.U;
 HR_a = InitialValues.HR_a;
 Rns = InitialValues.Rns;
-Rnl = InitialValues.Rnl;
 Rn = InitialValues.Rn;
 SH = InitialValues.SH;
 MO = InitialValues.MO;
@@ -231,13 +225,12 @@ Rn_SOIL = InitialValues.Rn_SOIL;
 
 %% 1. define Constants
 Constants = io.define_constants();
-global g RHOL RHOI Rv RDA MU_a c_a c_V c_L Hc c_i Gamma0 Gamma_w Rl
+global g RHOL RHOI Rv RDA c_a c_V c_L Hc c_i Gamma0 Gamma_w Rl
 g = Constants.g;
 RHOL = Constants.RHOL;
 RHOI = Constants.RHOI;
 Rv = Constants.Rv;
 RDA = Constants.RDA;
-MU_a = Constants.MU_a;
 c_L = Constants.c_L;
 c_V = Constants.c_V;
 c_a = Constants.c_a;
@@ -423,31 +416,19 @@ SoilVariables.Tss = Tss;
 [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
 
 %% get variables that are defined global and are used by other scripts
-global hm hd hh_frez XWRE POR IH IS KLT_Switch KaT_Switch ISFT Imped XSOC
-global Lamda Phi_s XCAP Gama_hh Gama_h SAVEhh COR CORh m n Alpha TCON_dry TPS1 TPS2 TCON0 TCON_s
-global Theta_s Theta_r Theta_f HCAP SF TCA GA1 GA2 GB1 GB2 HCD ZETA0 CON0 PS1 PS2 FEHCAP
+global hd hh_frez POR KaT_Switch XSOC
+global XCAP SAVEhh COR CORh m n Alpha
+global Theta_s Theta_r Theta_f
 
 % get soil constants
 SoilConstants = io.getSoilConstants();
-hm = SoilConstants.hm;
 hd = SoilConstants.hd;
 
-XWRE = SoilVariables.XWRE;
 POR = SoilVariables.POR;
-IH = SoilVariables.IH;
-IS = SoilVariables.IS;
 XK = SoilVariables.XK;
-
-KLT_Switch = SoilVariables.KLT_Switch;
 KaT_Switch = SoilVariables.KaT_Switch;
-ISFT = SoilVariables.ISFT;
-Imped = SoilVariables.Imped;
 XSOC = SoilVariables.XSOC;
-Lamda = SoilVariables.Lamda;
-Phi_s = SoilVariables.Phi_s;
 XCAP = SoilVariables.XCAP;
-Gama_hh = SoilVariables.Gama_hh;
-Gama_h = SoilVariables.Gama_h;
 SAVEhh = SoilVariables.SAVEhh;
 Theta_s = VanGenuchten.Theta_s;
 Theta_r = VanGenuchten.Theta_r;
@@ -455,25 +436,6 @@ Theta_f = VanGenuchten.Theta_f;
 Alpha = VanGenuchten.Alpha;
 n = VanGenuchten.n;
 m = VanGenuchten.m;
-HCAP = ThermalConductivity.HCAP;
-SF = ThermalConductivity.SF;
-TCA = ThermalConductivity.TCA;
-GA1 = ThermalConductivity.GA1;
-GA2 = ThermalConductivity.GA2;
-GB1 = ThermalConductivity.GB1;
-GB2 = ThermalConductivity.GB2;
-HCD = ThermalConductivity.HCD;
-ZETA0 = ThermalConductivity.ZETA0;
-CON0 = ThermalConductivity.CON0;
-PS1 = ThermalConductivity.PS1;
-PS2 = ThermalConductivity.PS2;
-TCON_s = ThermalConductivity.TCON_s;
-TCON_dry = ThermalConductivity.TCON_dry;
-RHO_bulk = ThermalConductivity.RHO_bulk;
-TPS1 = ThermalConductivity.TPS1;
-TPS2 = ThermalConductivity.TPS2;
-FEHCAP = ThermalConductivity.FEHCAP;
-TCON0 = ThermalConductivity.TCON0;
 
 %% these vars are defined as global at the begining of this script
 %% because they are both input and output of StartInit
@@ -490,7 +452,7 @@ h_frez = SoilVariables.h_frez;
 BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, landcoverClass(1));
 
 %% get global vars
-global NBCh NBCT NBChB NBCTB BCh DSTOR DSTOR0 RS NBChh DSTMAX IRPT1 IRPT2 NBCP BChB BCTB BCPB BCT BCP BtmPg
+global NBCh NBCT NBChB NBCTB BCh DSTOR0 NBChh NBCP BChB BCTB BCPB BCT BCP BtmPg
 NBCh = BoundaryCondition.NBCh;
 NBCT = BoundaryCondition.NBCT;
 NBChB = BoundaryCondition.NBChB;
@@ -562,7 +524,7 @@ for i = 1:1:TimeProperties.Dur_tot
     L_f = 0;  % ignore Freeze/Thaw, see issue 139
     TT_CRIT(NN) = T0; % unit K
     hOLD_frez = [];
-    if IRPT1 == 0 && IRPT2 == 0 && ISFT == 0
+    if IRPT1 == 0 && IRPT2 == 0 && SoilVariables.ISFT == 0
         for MN = 1:NN
             hOLD_frez(MN) = h_frez(MN);
             h_frez(MN) = hh_frez(MN);
@@ -818,7 +780,6 @@ for i = 1:1:TimeProperties.Dur_tot
         Theta_UU = SoilVariables.Theta_UU;
         DTheta_UUh = SoilVariables.DTheta_UUh;
         Theta_II = SoilVariables.Theta_II;
-        Ratio_ice = SoilVariables.Ratio_ice;
 
         % TODO issue CondL_T doesnot have useful codes!
         KL_T = InitialValues.KL_T; % reset KL_T, replace CondL_T script
@@ -830,7 +791,6 @@ for i = 1:1:TimeProperties.Dur_tot
         TransportCoefficient = conductivity.calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t);
         W = TransportCoefficient.W;
         WW = TransportCoefficient.WW;
-        MU_W = TransportCoefficient.MU_W;
         D_Ta = TransportCoefficient.D_Ta;
 
         [L] = Latent(TT, NN);
@@ -840,14 +800,9 @@ for i = 1:1:TimeProperties.Dur_tot
         ThermalConductivityCapacity = conductivity.calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
         c_unsat = ThermalConductivityCapacity.c_unsat;
         Lambda_eff = ThermalConductivityCapacity.Lambda_eff;
-        ZETA = ThermalConductivityCapacity.ZETA;
-        ETCON = ThermalConductivityCapacity.ETCON;
-        EHCAP = ThermalConductivityCapacity.EHCAP;
-        TETCON = ThermalConductivityCapacity.TETCON;
-        EfTCON = ThermalConductivityCapacity.EfTCON;
 
         k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
-        [D_V, Eta, D_A] = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
+        [D_V, Eta] = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
         [D_Vg, V_A, Beta_g, DPgDZ] = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
         run h_sub;
@@ -917,7 +872,6 @@ for i = 1:1:TimeProperties.Dur_tot
     Theta_UU = SoilVariables.Theta_UU;
     DTheta_UUh = SoilVariables.DTheta_UUh;
     Theta_II = SoilVariables.Theta_II;
-    Ratio_ice = SoilVariables.Ratio_ice;
 
     if IRPT1 == 0 && IRPT2 == 0
         if KT        % In case last time step is not convergent and needs to be repeated.

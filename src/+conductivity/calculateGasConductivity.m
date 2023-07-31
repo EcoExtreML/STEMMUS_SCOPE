@@ -21,7 +21,7 @@ function k_g = calculateGasConductivity(InitialValues, TransportCoefficient, Van
 
     for i = 1:ModelSettings.NL
         for j = 1:ModelSettings.nD
-            MN = i+ j -1;
+            MN = i + j - 1;
             Sa = SoilVariables.Theta_g(i, j) / SoilVariables.POR(i);
             if ModelSettings.SWCC == 1
                 k_g(i, j) = SoilVariables.Ks(i) * TransportCoefficient.MU_W(i, j) * (1 - Sa^0.5) * (1 - (1 - (1 - Sa^(1 / m(i))))^m(i))^2 / (Constants.g * Constants.RHOL);

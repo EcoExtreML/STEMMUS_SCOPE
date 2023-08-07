@@ -1,4 +1,4 @@
-function theta_uu = calculateTheta_UU(theta_m, gama_hh, SoilVariables, VanGenuchten)
+function theta_uu = calculateTheta_UU(theta_m, gamma_hh, SoilVariables, VanGenuchten)
 
     hh = SoilVariables.hh;
     phi_s = SoilVariables.Phi_s;
@@ -19,11 +19,11 @@ function theta_uu = calculateTheta_UU(theta_m, gama_hh, SoilVariables, VanGenuch
             if hh >= -1
                 theta_uu = theta_s;
             elseif ModelSettings.Thmrlefc
-                if gama_hh == 0
+                if gamma_hh == 0
                     theta_uu = 0;
                 else
                     subRoutine = 0;
-                    theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+                    theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
                 end
             end
         else
@@ -33,11 +33,11 @@ function theta_uu = calculateTheta_UU(theta_m, gama_hh, SoilVariables, VanGenuch
                 theta_uu = theta_r;
             else
                 subRoutine = 2;
-                theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+                theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
             end
         end
     else
         subRoutine = 1;
-        theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+        theta_uu = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, hh, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
     end
 end

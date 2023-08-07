@@ -76,18 +76,18 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             SV.hh = hh;
             SV.hh_frez = hh_frez;
 
-            Gama_hh = conductivity.hydraulicConductivity.calculateGama_hh(SV.hh);
-            Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gama_hh, VG, SV.POR);
-            Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gama_hh, SV, VG);
+            Gamma_hh = conductivity.hydraulicConductivity.calculateGamma_hh(SV.hh);
+            Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gamma_hh, VG, SV.POR);
+            Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gamma_hh, SV, VG);
 
             % circular calculation of Theta_II! See issue 181, item 3
             Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II);
-            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gama_hh, SV, VG);
+            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gamma_hh, SV, VG);
             Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water contentTheta_II
 
-            DTheta_UUh = conductivity.hydraulicConductivity.calculateDTheta_UUh(Theta_UU, Theta_m, Theta_LL, Gama_hh, SV, VG);
-            DTheta_LLh = conductivity.hydraulicConductivity.calcuulateDTheta_LLh(DTheta_UUh, Theta_m, Theta_UU, Theta_LL, Gama_hh, SV, VG);
-            Se = conductivity.hydraulicConductivity.calculateSe(Theta_LL, Gama_hh, SV);
+            DTheta_UUh = conductivity.hydraulicConductivity.calculateDTheta_UUh(Theta_UU, Theta_m, Theta_LL, Gamma_hh, SV, VG);
+            DTheta_LLh = conductivity.hydraulicConductivity.calcuulateDTheta_LLh(DTheta_UUh, Theta_m, Theta_UU, Theta_LL, Gamma_hh, SV, VG);
+            Se = conductivity.hydraulicConductivity.calculateSe(Theta_LL, Gamma_hh, SV);
 
             % Ratio_ice used in Condg_k_g.m
             if Theta_UU ~= 0
@@ -107,7 +107,7 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
 
                 KL_h = conductivity.hydraulicConductivity.calculateKL_h(MU_W, Se, SV.Ks, VG.m);
 
-                if Gama_hh ~= 1
+                if Gamma_hh ~= 1
                     KfL_h = KL_h * 10^(-1 * SV.Imped * Ratio_ice);  % hydraulic conductivity for freezing soil
                 else
                     KfL_h = KL_h * 10^(-1 * SV.Imped * Ratio_ice);  % hydraulic conductivity for freezing soil
@@ -128,7 +128,7 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             SoilVariables.DTheta_UUh(i, j) = DTheta_UUh;
             SoilVariables.Se(i, j) = Se;
             SoilVariables.Ratio_ice(i, j) = Ratio_ice;
-            SoilVariables.Gama_hh(MN) = Gama_hh;
+            SoilVariables.Gamma_hh(MN) = Gamma_hh;
         end
     end
 end

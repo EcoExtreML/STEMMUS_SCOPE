@@ -1,4 +1,4 @@
-function dtheta = calculateDTheta(subRoutine, heat_term, theta_s, theta_r, theta_m, gama_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m)
+function dtheta = calculateDTheta(subRoutine, heat_term, theta_s, theta_r, theta_m, gamma_hh, theta_ll, theta_l, theta_uu, theta_u, hh, h, hh_frez, h_frez, phi_s, lamda, alpha, n, m)
 
     % get soil constants
     SoilConstants = io.getSoilConstants();
@@ -8,7 +8,7 @@ function dtheta = calculateDTheta(subRoutine, heat_term, theta_s, theta_r, theta
             % for DTheta_LLh, heat_term = hh
             % for DTheta_UUh, heat_term = hh + hh_frez
             A = (-theta_r) / (abs(heat_term) * log(abs(SoilConstants.hd / SoilConstants.hm))) * (1 - (1 + abs(alpha * heat_term)^n)^(-m));
-            B = alpha * n * m * (theta_m - gama_hh * theta_r);
+            B = alpha * n * m * (theta_m - gamma_hh * theta_r);
             C = ((1 + abs(alpha * heat_term)^n)^(-m - 1));
             D = (abs(alpha * heat_term)^(n - 1));
             dtheta = A -  B * C * D;

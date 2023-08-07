@@ -1,4 +1,4 @@
-function theta = calculateTheta(subRoutine, theta_m, heat_term, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m)
+function theta = calculateTheta(subRoutine, theta_m, heat_term, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m)
     % get soil constants
     SoilConstants = io.getSoilConstants();
     hd = SoilConstants.hd;
@@ -6,7 +6,7 @@ function theta = calculateTheta(subRoutine, theta_m, heat_term, gama_hh, theta_s
     switch subRoutine
         case 0
             % heat_term = hh or hh + hh_frez
-            theta = gama_hh * theta_r + (theta_m - gama_hh * theta_r) / (1 + abs(alpha * heat_term)^n)^m;
+            theta = gamma_hh * theta_r + (theta_m - gamma_hh * theta_r) / (1 + abs(alpha * heat_term)^n)^m;
             if heat_term <= hd
                 theta = 0;
             end

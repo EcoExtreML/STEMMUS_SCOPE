@@ -1,4 +1,4 @@
-function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gama_hh, SoilVariables, VanGenuchten)
+function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gamma_hh, SoilVariables, VanGenuchten)
     % get model settings
     ModelSettings = io.getModelSettings();
 
@@ -26,7 +26,7 @@ function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gama_hh, Soil
                 theta_ll = theta_s;
             elseif ModelSettings.Thmrlefc
                 subRoutine = 0;
-                theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+                theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
             end
         else
             if hh >= -1e-6 && TT + 273.15 > (273.15 + 1)
@@ -35,7 +35,7 @@ function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gama_hh, Soil
                 theta_ll = theta_r;
             elseif TT + 273.15 > (273.15 + 1)
                 subRoutine = 2;
-                theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+                theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
             else
                 theta_ll = theta_uu - theta_ii * Constants.RHOI / Constants.RHOL;
             end
@@ -46,7 +46,7 @@ function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gama_hh, Soil
     else
         if hh >= phi_s
             subRoutine = 1;
-            theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gama_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
+            theta_ll = conductivity.hydraulicConductivity.calculateTheta(subRoutine, theta_m, heatTerm, gamma_hh, theta_s, theta_r, lamda, phi_s, alpha, n, m);
         elseif hh <= -1e7
             theta_ll = theta_r;
         end

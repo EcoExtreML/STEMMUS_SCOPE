@@ -802,8 +802,16 @@ for i = 1:1:TimeProperties.Dur_tot
         Lambda_eff = ThermalConductivityCapacity.Lambda_eff;
 
         k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
-        [D_V, Eta] = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
-        [D_Vg, V_A, Beta_g, DPgDZ] = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
+
+        VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
+        D_V = VaporVariables.D_V;
+        Eta = VaporVariables.Eta;
+
+        GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
+        D_Vg = GasDispersivity.D_Vg;
+        V_A = GasDispersivity.V_A;
+        Beta_g = GasDispersivity.Beta_g;
+        DPgDZ = GasDispersivity.DPgDZ;
 
         run h_sub;
         if NBCh == 1

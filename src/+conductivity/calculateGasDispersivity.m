@@ -1,4 +1,4 @@
-function [D_Vg, V_A, Beta_g, DPgDZ] = calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g)
+function GasDispersivity = calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g)
     %{
         This is to calculate the gas phase longitudinal dispersivity.
         Zeng, Y., Su, Z., Wan, L. and Wen, i.: Numerical analysis of
@@ -38,4 +38,9 @@ function [D_Vg, V_A, Beta_g, DPgDZ] = calculateGasDispersivity(InitialValues, So
             D_Vg(i) = 0;
         end
     end
+
+    GasDispersivity.D_Vg = D_Vg;
+    GasDispersivity.V_A = V_A;
+    GasDispersivity.Beta_g = Beta_g;
+    GasDispersivity.DPgDZ = DPgDZ;
 end

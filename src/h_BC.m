@@ -1,4 +1,4 @@
-function [AVAIL0, RHS, C4, C4_a, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Resis_a, Srt, Precip] = h_BC(RHS, NBCh, NBChB, BCh, BChB, hN, KT, Delt_t, DSTOR0, NBChh, TIME, h_SUR, C4, KL_h, NN, C4_a, DeltZ, RHOV, Ta, HR_a, U, Theta_LL, Ts, Rv, g, NL, hh, rwuef, Theta_UU, Rn, T, TT, Gvc, Rns, Srt, Precip_msr, SUMTIME) % [AVAIL0,RHS,C4,C4_a,Evap,EVAP,Trap,Precip,bx,r_a_SOIL,Resis_a]=h_BC(DeltZ,bx,RHS,NBCh,NBChB,BCh,BChB,hN,KT,Delt_t,DSTOR0,NBChh,TIME,h_SUR,C4,KL_h,Precip,NN,AVAIL0,C4_a,Evap,RHOV,Ta,HR_a,U,Ts,Theta_LL,Rv,g,NL,hh,rwuef,Theta_UU,Rn,T,TT,Gvc,Rns)
+function [AVAIL0, RHS, C4, C4_a, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Resis_a, Srt, Precip] = h_BC(RHS, NBCh, NBChB, BCh, BChB, hN, KT, Delt_t, DSTOR0, NBChh, TIME, h_SUR, C4, KL_h, NN, C4_a, DeltZ, RHOV, Ta, HR_a, U, Theta_LL, Ts, Rv, g, NL, hh, rwuef, Theta_UU, Rn, T, TT, Gvc, Srt, Precip_msr, SUMTIME) % [AVAIL0,RHS,C4,C4_a,Evap,EVAP,Trap,Precip,bx,r_a_SOIL,Resis_a]=h_BC(DeltZ,bx,RHS,NBCh,NBChB,BCh,BChB,hN,KT,Delt_t,DSTOR0,NBChh,TIME,h_SUR,C4,KL_h,Precip,NN,AVAIL0,C4_a,Evap,RHOV,Ta,HR_a,U,Ts,Theta_LL,Rv,g,NL,hh,rwuef,Theta_UU,Rn,T,TT,Gvc,Rns)
     global DELT Ks0 theta_s0
 
     Precipp = 0;

@@ -1,4 +1,6 @@
-function [QMT, QMB] = h_Bndry_Flux(SAVE, hh, NN, KT)
+function HBoundaryFlux = h_Bndry_Flux(SAVE, hh)
+    ModelSettings = io.getModelSettings();
 
-    QMT(KT) = SAVE(2, 1, 1) - SAVE(2, 2, 1) * hh(NN - 1) - SAVE(2, 3, 1) * hh(NN);
-    QMB(KT) = -SAVE(1, 1, 1) + SAVE(1, 2, 1) * hh(1) + SAVE(1, 3, 1) * hh(2);
+    HBoundaryFlux.QMT = SAVE(2, 1, 1) - SAVE(2, 2, 1) * hh(ModelSettings.NN - 1) - SAVE(2, 3, 1) * hh(ModelSettings.NN);
+    HBoundaryFlux.QMB = -SAVE(1, 1, 1) + SAVE(1, 2, 1) * hh(1) + SAVE(1, 3, 1) * hh(2);
+end

@@ -49,6 +49,8 @@ function ModelSettings = getModelSettings()
     % Other settings
     ModelSettings.rwuef = 1;
     ModelSettings.rroot = 1.5 * 1e-3;
+    ModelSettings.SFCC = 1;
+
     ModelSettings.Tot_Depth = 500; % Unit is cm. it should be usually bigger than 0.5m. Otherwise,
     ModelSettings.Eqlspace = 0; % Indicator for deciding is the space step equal or not; % the DeltZ would be reset in 50cm by hand;
 

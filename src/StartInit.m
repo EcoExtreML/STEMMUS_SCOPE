@@ -24,9 +24,7 @@ function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVari
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ThermalConductivity = init.calculateInitialThermal(SoilVariables, VanGenuchten);
 
-    % these will be updated in UpdateSoilWaterContent
-    SoilVariables.COR = [];
-    SoilVariables.CORh = [];
+    % SoilVariables will be updated in UpdateSoilWaterContent
     SoilVariables = UpdateSoilWaterContent(KIT, LatentHeatOfFreezing, SoilVariables, VanGenuchten);
 
     Theta_L = SoilVariables.Theta_L;

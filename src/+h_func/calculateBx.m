@@ -38,7 +38,7 @@ function bx = calculateBx(InitialValues)
         for i = 1:ModelSettings.NL
             for j = 1:ModelSettings.nD
                 MN = i + j - 1;
-                bx(i, j) = bx(MN);  %TODO issue reseting bx by bx!
+                bx(i, j) = bx(MN);  % TODO issue reseting bx by bx!
             end
         end
     end

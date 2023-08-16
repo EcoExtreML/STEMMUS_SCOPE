@@ -1,11 +1,11 @@
-function [Rn_SOIL, Evap, EVAP, Trap, AR.soil, Srt] = Evap_Cal(InitialValues, ForcingData, SoilVariables, KT, RWU, lEstot, lEctot)
+function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = Evap_Cal(InitialValues, ForcingData, SoilVariables, KT, RWU, lEstot, lEctot)
 
-    %TODO issue Gvc is unused!
-    %TODO replace Gvc with LAI in the main script
-    %TODO issue if TIME <= 1800 * 3600 Rn_SOIL(KT) = Rn(KT) * 0.68;
-    %TODO issue if KT <= 1047 r_s_SOIL = 10.0 * exp(0.3563 * 100.0 * (0.2050 - Theta_LL_sur))
-    %TODO issue Evap and EVAP and Evapo (unused)
-    %TODO Trap and trap (unused)
+    % TODO issue Gvc is unused!
+    % TODO replace Gvc with LAI in the main script
+    % TODO issue if TIME <= 1800 * 3600 Rn_SOIL(KT) = Rn(KT) * 0.68;
+    % TODO issue if KT <= 1047 r_s_SOIL = 10.0 * exp(0.3563 * 100.0 * (0.2050 - Theta_LL_sur))
+    % TODO issue Evap and EVAP and Evapo (unused)
+    % TODO Trap and trap (unused)
 
     Srt = InitialValues.Srt;
     Evap = InitialValues.Evap;
@@ -16,13 +16,13 @@ function [Rn_SOIL, Evap, EVAP, Trap, AR.soil, Srt] = Evap_Cal(InitialValues, For
     ModelSettings = io.getModelSettings();
 
     % Calculate Air parameters
-    %TODO issue Z is hardcoded!
+    % TODO issue Z is hardcoded!
     Z = 3421;  % altitute of the location(m)
     HR_a = 0.01 .* (ForcingData.RH_msr(KT));
     Ta = ForcingData.Ta_msr(KT);
     Ts = SoilVariables.Tss(KT);
-    %TODO fix function name
-    AirParameters = calculateAirParameters(Ta, Ts, HR_a, Z)
+    % TODO fix function name
+    AirParameters = calculateAirParameters(Ta, Ts, HR_a, Z);
     DELTA = AirParameters.delta;
     ro_a = AirParameters.ro_a;
     e_a = AirParameters.e_a;
@@ -40,6 +40,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, AR.soil, Srt] = Evap_Cal(InitialValues, For
     % calculate Aerodynamic Resistance
     U = 100 .* (ForcingData.WS_msr(KT));
     AR = calculateAerodynamicResistance(U);
+    r_a_SOIL = AR.soil;
 
     % PT/PE - Penman-Montheith mm.day-1, FAO56 pag19 eq3
     PT_PM_VEG = (DELTA * Rn + 3600 * ro_a * Constants.cp_specific * (e0_Ta - e_a) / AR.vegetation) / (Constants.lambdav * (DELTA + gama * (1 + SR.vegetation / AR.vegetation))) / 3600;

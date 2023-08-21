@@ -12,7 +12,7 @@ function [RHS, C5, C5_a] = Enrgy_BC(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, 
     elseif NBCTB == 2
         RHS(1) = RHS(1) + BCTB;
     else
-        C5(1, 1) = C5(1, 1) - c_L * RHOL * QMB(KT);
+        C5(1, 1) = C5(1, 1) - c_L * RHOL * QMB;
     end
 
     %%%%%%%%%% Apply the surface boundary condition called by NBCT %%%%%%%%%%%%

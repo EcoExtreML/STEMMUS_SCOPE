@@ -1,4 +1,4 @@
-function [CHK, hh, C4, SAVEhh] = hh_Solve(C4, hh, C4_a, RHS)
+function [CHK, hh, C4] = hh_Solve(C4, hh, C4_a, RHS)
     ModelSettings = io.getModelSettings();
 
     RHS(1) = RHS(1) / C4(1, 1);

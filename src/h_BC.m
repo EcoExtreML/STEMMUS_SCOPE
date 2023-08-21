@@ -6,9 +6,10 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatri
     n = ModelSettings.NN;
 
     C4 = HeatMatrices.C4;
-    C4_a = [];
+    C4_a = HeatMatrices.C4_a;
 
     Precip = InitialValues.Precip;
+    Evap = InitialValues.Evap;
     Precip_msr = ForcingData.Precip_msr;
 
     Precipp = 0;

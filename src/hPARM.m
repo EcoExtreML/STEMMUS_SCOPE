@@ -1,5 +1,5 @@
 function [HeatVariables, SoilVariables] = hPARM(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
-                                                RHOV, DRHOVh, DRHOVT, D_Ta, KL_T)
+                                                RHOV, DRHOVh, DRHOVT, D_Ta)
     %{
         Piecewise linear reduction function parameters of h (HeatVariables);
         (Wesseling 1991,Veenhof and McBride 1994)
@@ -33,6 +33,7 @@ function [HeatVariables, SoilVariables] = hPARM(SoilVariables, VaporVariables, G
                 CORhh = -1 * SV.CORh(MN);
                 DhUU = SV.COR(MN) * (SV.hh(MN) + SV.hh_frez(MN) - SV.h(MN) - SV.h_frez(MN) + (SV.hh(MN) + SV.hh_frez(MN)) * CORhh * (SV.TT(MN) - SV.T(MN)));
                 DhU = SV.COR(MN) * (SV.hh(MN) - SV.h(MN) + SV.hh(MN) * CORhh * (SV.TT(MN) - SV.T(MN)));
+
                 if DhU ~= 0 && DhUU ~= 0 && abs(SV.Theta_LL(i, j) - SV.Theta_L(i, j)) > 1e-6 && SV.DTheta_UUh(i, j) ~= 0
                     SV.DTheta_UUh(i, j) = (SV.Theta_LL(i, j) - SV.Theta_L(i, j)) * SV.COR(MN) / DhUU;
                 end
@@ -58,7 +59,7 @@ function [HeatVariables, SoilVariables] = hPARM(SoilVariables, VaporVariables, G
 
             if ModelSettings.Thmrlefc == 1
                 HeatVariables.ChT(i, j) = (1 - RHOV(MN) / Constants.RHOL) * SV.DTheta_LLT(i, j) + SV.Theta_V(i, j) * DRHOVT(MN) / Constants.RHOL;
-                HeatVariables.KhT(i, j) = (VaporVariables.D_V(i, j) * VaporVariables.Eta(i, j) + GasDispersivity.D_Vg(i)) * DRHOVT(MN) / Constants.RHOL + KL_T(i, j) + D_Ta(i, j);
+                HeatVariables.KhT(i, j) = (VaporVariables.D_V(i, j) * VaporVariables.Eta(i, j) + GasDispersivity.D_Vg(i)) * DRHOVT(MN) / Constants.RHOL + InitialValues.KL_T(i, j) + D_Ta(i, j);
             end
 
             if SV.KLa_Switch == 1

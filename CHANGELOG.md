@@ -1,5 +1,14 @@
 # Unreleased
 
+**Changed:**
+
+- All `cond*_` functions are refcatored and moved to `+conductivity` folder in
+  [#189](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/189)
+
+**Fixed:**
+
+- issue [#181](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/181)
+
 
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.3.0) - 22 Jun 2023

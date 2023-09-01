@@ -39,10 +39,11 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
 
         for fieldName = fieldnames(structure)'
             fieldData = structure.(fieldName{1});
+            fieldDataSize = size(fieldData);
             if ismatrix(fieldData)
-                if size(fieldData)(1) >= lengthX && size(fieldData)(2) >= lengthY
+                if fieldDataSize(1) >= lengthX && fieldDataSize(2) >= lengthY
                     sliced.(fieldName{1}) = fieldData(ix, iy);
-                elseif size(fieldData)(1) >= lengthY && size(fieldData)(2) >= lengthX
+                elseif fieldDataSize(1) >= lengthY && fieldDataSize(2) >= lengthX
                     sliced.(fieldName{1}) = fieldData(iy, ix);
                 else
                     sliced.(fieldName{1}) = fieldData;
@@ -81,6 +82,10 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gamma_hh, SV, VG);
 
             % circular calculation of Theta_II! See issue 181, item 3
+            % Theta_II is soil ice content,
+            % Theta_LL is liquid water content,
+            % Theta_UU is the total water content before soil freezing. The
+            % 'Theta_UU' is set as saturation.
             Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II);
             Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gamma_hh, SV, VG);
             Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water contentTheta_II

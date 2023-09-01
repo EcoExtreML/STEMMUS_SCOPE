@@ -32,8 +32,8 @@ function dtheta = calculateDTheta(subRoutine, heat_term, theta_s, theta_r, theta
         case 4
             dtheta = theta_s / phi_s * (hh / phi_s)^(-1 * lamda - 1);
         case 5
-            % this case differs with case 1 only regarding theta_m and theta_s
-            % this might be a bug, see issue 181
+            % this case differs with case 1 only regarding `theta_m` and `theta_s`
+            % see issue 181, item 7
             % heat_term = hh or  hh + hh_frez
             A = (theta_s - theta_r) * alpha * n;
             B =  abs(alpha * heat_term)^(n - 1) * (-m);

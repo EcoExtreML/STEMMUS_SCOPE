@@ -723,8 +723,9 @@ for i = 1:1:TimeProperties.Dur_tot
         DTheta_UUh = SoilVariables.DTheta_UUh;
         Theta_II = SoilVariables.Theta_II;
 
-        % TODO issue CondL_T doesnot have useful codes!
-        KL_T = InitialValues.KL_T; % reset KL_T, replace CondL_T script
+        % Reset KL_T here. CondL_T script is replaced by this line
+        % see issue 181, item 4
+        KL_T = InitialValues.KL_T;
 
         [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
 

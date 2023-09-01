@@ -21,7 +21,7 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
     RHO_bulk = ThermalConductivity.RHO_bulk;
 
     if ModelSettings.ThmrlCondCap == 1
-        [ETCON, EHCAP, TETCON, EfTCON, ZETA] = conductivity.EfeCapCond(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
+        [ETCON, EHCAP, TETCON, EfTCON, ZETA] = conductivity.calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
     end
 
     for i = 1:ModelSettings.NL

@@ -39,10 +39,11 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
 
         for fieldName = fieldnames(structure)'
             fieldData = structure.(fieldName{1});
+            fieldDataSize = size(fieldData);
             if ismatrix(fieldData)
-                if size(fieldData)(1) >= lengthX && size(fieldData)(2) >= lengthY
+                if fieldDataSize(1) >= lengthX && fieldDataSize(2) >= lengthY
                     sliced.(fieldName{1}) = fieldData(ix, iy);
-                elseif size(fieldData)(1) >= lengthY && size(fieldData)(2) >= lengthX
+                elseif fieldDataSize(1) >= lengthY && fieldDataSize(2) >= lengthX
                     sliced.(fieldName{1}) = fieldData(iy, ix);
                 else
                     sliced.(fieldName{1}) = fieldData;

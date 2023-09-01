@@ -449,6 +449,7 @@ TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached
 Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 
+% Srt, root water uptake;
 Srt = InitialValues.Srt;  % will be updated!
 
 for i = 1:1:TimeProperties.Dur_tot
@@ -705,7 +706,9 @@ for i = 1:1:TimeProperties.Dur_tot
         SoilVariables.KfL_h = KfL_h;
         SoilVariables.TT = TT;
         SoilVariables.h_frez = h_frez;
+
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
+
         % these can be removed after refactoring functions below
         h = SoilVariables.h;
         hh = SoilVariables.hh;
@@ -756,8 +759,9 @@ for i = 1:1:TimeProperties.Dur_tot
         SoilVariables.Tss(KT) = Tss;
         % AFter refactoring Enrgy_sub, the input/output of this function can be
         % polished
+        % Srt is both input and output
         [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = h_sub(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                            BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD);
+                                                                                                                                           BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt);
 
         DTheta_LLh = SoilVariables.DTheta_LLh;
         DTheta_LLT = SoilVariables.DTheta_LLT;
@@ -807,6 +811,7 @@ for i = 1:1:TimeProperties.Dur_tot
         hSAVE = hh(NN);
         TSAVE = TT(NN);
     end
+
     TIMEOLD = KT;
     KIT;
     KIT = 0;

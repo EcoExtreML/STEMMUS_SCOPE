@@ -1,4 +1,4 @@
-function HeatMatrices = h_MAT(HeatVariables, InitialValues)
+function HeatMatrices = h_MAT(HeatVariables, InitialValues, Srt)
 
     ModelSettings = io.getModelSettings();
 
@@ -13,9 +13,6 @@ function HeatMatrices = h_MAT(HeatVariables, InitialValues)
     HeatMatrices.C9 = InitialValues.C9;
     HeatMatrices.C4_a = [];
     HeatMatrices.C5_a = [];
-
-    % Srt, root water uptake;
-    Srt = InitialValues.Srt;
 
     for i = 1:ModelSettings.NN
         for j = 1:ModelSettings.nD

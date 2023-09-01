@@ -19,7 +19,6 @@ function GasDispersivity = calculateGasDispersivity(InitialValues, SoilVariables
     DPgDZ = InitialValues.DPgDZ;
     Alpha_Lg = InitialValues.Alpha_Lg;
 
-    % TODO issue f0 unused, see issue 181
     for i = 1:ModelSettings.NL
         for j = 1:ModelSettings.nD
             Sa = 1 - SoilVariables.Se(i, j);

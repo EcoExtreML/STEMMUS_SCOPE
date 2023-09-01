@@ -81,6 +81,10 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gamma_hh, SV, VG);
 
             % circular calculation of Theta_II! See issue 181, item 3
+            % Theta_II is soil ice content,
+            % Theta_LL is liquid water content,
+            % Theta_UU is the total water content before soil freezing. The
+            % 'Theta_UU' is set as saturation.
             Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II);
             Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gamma_hh, SV, VG);
             Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water contentTheta_II

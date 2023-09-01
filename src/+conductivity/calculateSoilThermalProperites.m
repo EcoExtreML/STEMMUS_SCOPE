@@ -1,6 +1,8 @@
-function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = EfeCapCond(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
+function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
+    %{
+        This is used to calculate Heat Capacity and Thermal Conductivity.
+    %}
 
-    % TODO issue rename function
     HCAP = ThermalConductivity.HCAP;
     SF = ThermalConductivity.SF;
     TCA = ThermalConductivity.TCA;

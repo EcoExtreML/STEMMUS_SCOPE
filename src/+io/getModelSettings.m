@@ -49,6 +49,7 @@ function ModelSettings = getModelSettings()
     % Other settings
     ModelSettings.rwuef = 1;
     ModelSettings.rroot = 1.5 * 1e-3;
+    ModelSettings.SFCC = 1;
 
     % Arraies for calculating boundary flux;
     ModelSettings.SAVE = zeros(3, 3, 3);

@@ -13,7 +13,7 @@ function [SoilVariables] = applySoilHeteroWithInitialFreezing(LatentHeatOfFreezi
         SoilVariables.SAVEh(i) = SoilVariables.h(i);
         SoilVariables.SAVEhh(i) = SoilVariables.hh(i);
 
-        [SoilVariables.Gama_h, SoilVariables.Gama_hh] = init.updateGamaH(i, SoilVariables);
+        [SoilVariables.Gamma_h, SoilVariables.Gamma_hh] = init.updateGammaH(i, SoilVariables);
 
         if ModelSettings.Thmrlefc == 1
             SoilVariables.TT(i) = SoilVariables.T(i);

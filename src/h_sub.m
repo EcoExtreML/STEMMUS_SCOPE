@@ -4,15 +4,11 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     [HeatVariables, SoilVariables] = hPARM(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
                                            RHOV, DRHOVh, DRHOVT, D_Ta);
 
-
     HeatMatrices = h_MAT(HeatVariables, InitialValues, Srt);
-    [RHS, HeatMatrices, boundaryFluxArray] = h_EQ(InitialValues, SoilVariables, HeatMatrices, Delt_t);
-    [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                               TimeProperties, SoilProperties, RHS, hN, KT, Delt_t);
 
-    % TODO issue if should happen, otherwise the output will be empty arrays!
-    % TODO issue unused Resis_a
-    if BoundaryCondition.NBCh ~= 1 || BoundaryCondition.NBCh ~= 2
+    [RHS, HeatMatrices, boundaryFluxArray] = h_EQ(InitialValues, SoilVariables, HeatMatrices, Delt_t);
+
+    if BoundaryCondition.NBCh == 3
         [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = Evap_Cal(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt);
     else
         Rn_SOIL = InitialValues.Rn_SOIL;
@@ -22,6 +18,11 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
         r_a_SOIL = InitialValues.r_a_SOIL;
     end
 
+    [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                               TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap);
+
+    % TODO issue if should happen, otherwise the output will be empty arrays!
+    % TODO issue unused Resis_a
     [CHK, hh, C4] = hh_Solve(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS);
     % update structures
     SoilVariables.hh = hh;

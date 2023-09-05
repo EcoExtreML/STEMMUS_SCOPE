@@ -70,7 +70,7 @@ global Tmin LAI_msr
 LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
 Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 
-global MN ND TOLD h hh T TT P_g P_gg RWU EVAP
+global MN ND TOLD h hh T TT P_g P_gg RWU EVAP QMB
 global Precip frac TTT Theta_LLL CHK Theta_LL Theta_UUU
 global Theta_III Theta_II SRT Srt CTT_PH
 global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ DRHOVZ QL QL_h QL_T QV Qa KL_h
@@ -140,7 +140,7 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 SAVE = InitialValues.SAVE;
 
-global Kha Vvh VvT C1 C2 C3 C4 C5 C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
 global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa SMC bbx Ta Ts
 global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH TopPg RHS C7
 Cah = InitialValues.Cah;
@@ -695,6 +695,7 @@ for i = 1:1:TimeProperties.Dur_tot
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
+
         [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
 
         % update inputs for UpdateSoilWaterContent
@@ -705,6 +706,7 @@ for i = 1:1:TimeProperties.Dur_tot
         SoilVariables.KL_h = KL_h;
         SoilVariables.KfL_h = KfL_h;
         SoilVariables.TT = TT;
+        SoilVariables.T = T;
         SoilVariables.h_frez = h_frez;
 
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
@@ -755,17 +757,18 @@ for i = 1:1:TimeProperties.Dur_tot
         DPgDZ = GasDispersivity.DPgDZ;
 
         % Replace run h_sub;
-        SoilVariables.T = T;
-        SoilVariables.TT = TT;
         SoilVariables.Tss(KT) = Tss;
-        % AFter refactoring Enrgy_sub, the input/output of this function can be
+        % After refactoring Enrgy_sub, the input/output of this function can be
         % polished
         % Srt is both input and output
+
         [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = h_sub(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
                                                                                                                                            BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt);
 
+
         DTheta_LLh = SoilVariables.DTheta_LLh;
         DTheta_LLT = SoilVariables.DTheta_LLT;
+        DTheta_UUh = SoilVariables.DTheta_UUh;
         SAVEDTheta_UUh = SoilVariables.SAVEDTheta_UUh;
         SAVEDTheta_LLh = SoilVariables.SAVEDTheta_LLh;
         QMB = HBoundaryFlux.QMB; %  used in Enrgy_BC.m
@@ -774,6 +777,8 @@ for i = 1:1:TimeProperties.Dur_tot
         C4 = HeatMatrices.C4;
         hh = SoilVariables.hh;
         Kha = HeatVariables.Kha;
+        KhT = HeatVariables.KhT;
+        Khh = HeatVariables.Khh;
         Vvh = HeatVariables.Vvh;
         VvT = HeatVariables.VvT;
 
@@ -824,6 +829,7 @@ for i = 1:1:TimeProperties.Dur_tot
     SoilVariables.h = h;
     SoilVariables.hh = hh;
     SoilVariables.TT = TT;
+    SoilVariables.T = T;
     SoilVariables.h_frez = h_frez;
     SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
 

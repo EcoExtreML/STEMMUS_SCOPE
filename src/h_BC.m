@@ -1,5 +1,5 @@
 function [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t)
+                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap)
 
     ModelSettings = io.getModelSettings();
     % n is the index of n_th item
@@ -9,7 +9,6 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatri
     C4_a = HeatMatrices.C4_a;
 
     Precip = InitialValues.Precip;
-    Evap = InitialValues.Evap;
     Precip_msr = ForcingData.Precip_msr;
 
     Precipp = 0;

@@ -13,6 +13,8 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
 
     [RHS, HeatMatrices, boundaryFluxArray] = soilmoisture.calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t);
 
+    % When BoundaryCondition.NBCh == 3, otherwise Rn_SOIL, Evap, EVAP, Trap,
+    % r_a_SOIL, Srt will be empty arrays! see issue 98, item 2
     if BoundaryCondition.NBCh == 3
         [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = soilmoisture.calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt);
     else
@@ -26,8 +28,6 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     [AVAIL0, RHS, HeatMatrices, Precip] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
                                                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap);
 
-    % TODO issue if should happen, otherwise the output will be empty arrays!
-    % TODO issue unused Resis_a
     [CHK, hh, C4] = soilmoisture.solveTridiagonalMatrixEquations(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS);
     % update structures
     SoilVariables.hh = hh;
@@ -45,7 +45,6 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     end
 
     % calculate boundary flux
-    % TODO issue: add doc
     HBoundaryFlux = soilmoisture.calculatesSoilWaterFluxes(boundaryFluxArray, SoilVariables.hh);
 
 end

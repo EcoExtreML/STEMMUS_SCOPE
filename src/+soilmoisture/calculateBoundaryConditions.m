@@ -29,7 +29,8 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
-        % TODO issue h_SUR is not calculated anywhere!
+        % h_SUR: Observed matric potential at surface. This variable
+        % is not calculated anywhere! see issue 98, item 6
         RHS(n) = InitialValues.h_SUR(KT);
         C4(n, 1) = 1;
         RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);

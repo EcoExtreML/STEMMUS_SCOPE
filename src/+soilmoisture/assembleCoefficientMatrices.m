@@ -1,5 +1,8 @@
-function HeatMatrices = h_MAT(HeatVariables, InitialValues, Srt)
-
+function HeatMatrices = assembleCoefficientMatrices(HeatVariables, InitialValues, Srt)
+    %{
+        Assemble the coefficient matrices of Equation 4.32 (STEMMUS Technical
+        Notes, page 44).
+    %}
     ModelSettings = io.getModelSettings();
 
     % Define HeatMatrices structure

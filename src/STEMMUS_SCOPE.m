@@ -756,15 +756,13 @@ for i = 1:1:TimeProperties.Dur_tot
         Beta_g = GasDispersivity.Beta_g;
         DPgDZ = GasDispersivity.DPgDZ;
 
-        % Replace run h_sub;
         SoilVariables.Tss(KT) = Tss;
         % After refactoring Enrgy_sub, the input/output of this function can be
         % polished
         % Srt is both input and output
-
-        [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = h_sub(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                           BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt);
-
+        % Replace run h_sub;
+        [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
+                                                                                                                                                                           BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt);
 
         DTheta_LLh = SoilVariables.DTheta_LLh;
         DTheta_LLT = SoilVariables.DTheta_LLT;

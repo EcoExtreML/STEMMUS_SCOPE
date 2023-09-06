@@ -1,8 +1,8 @@
-function [HeatVariables, SoilVariables] = hPARM(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
+function [HeatVariables, SoilVariables] = calculateMatricCoefficients(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
                                                 RHOV, DRHOVh, DRHOVT, D_Ta)
     %{
-        Piecewise linear reduction function parameters of h (HeatVariables);
-        (Wesseling 1991,Veenhof and McBride 1994)
+        Calculate all the parameters related to matric coefficients (e.g.,
+        c1-c8) as in Equation 4.32 (STEMMUS Technical Notes, page 44).
     %}
 
     ModelSettings = io.getModelSettings();

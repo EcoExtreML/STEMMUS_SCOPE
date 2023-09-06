@@ -1,5 +1,8 @@
-function [RHS, HeatMatrices, boundaryFluxArray] = h_EQ(InitialValues, SoilVariables, HeatMatrices, Delt_t)
-
+function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t)
+    %{
+        Perform the finite difference of the time derivatives of the matrix
+        equation as Equation 4.32 shows in 'STEMMUS Technical Notes', section 4.
+    %}
     % Extract variables that are nedded in this fucntion
     C1 = HeatMatrices.C1;
     C2 = HeatMatrices.C2;

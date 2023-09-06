@@ -1,5 +1,4 @@
-function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = Evap_Cal(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt)
-
+function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt)
     % TODO issue if TIME <= 1800 * 3600 Rn_SOIL(KT) = Rn(KT) * 0.68;
     % TODO issue if KT <= 1047 r_s_SOIL = 10.0 * exp(0.3563 * 100.0 * (0.2050 - Theta_LL_sur))
     % TODO issue Evap and EVAP and Evapo (unused)

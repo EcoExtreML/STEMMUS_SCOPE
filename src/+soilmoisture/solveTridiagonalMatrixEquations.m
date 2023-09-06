@@ -1,4 +1,8 @@
-function [CHK, hh, C4] = hh_Solve(C4, hh, C4_a, RHS)
+function [CHK, hh, C4] = solveTridiagonalMatrixEquations(C4, hh, C4_a, RHS)
+    %{
+        Solve the tridiagonal matrix equations using Thomas algorithm, which is
+        in the form of Equation 4.25 (STEMMUS Technical Notes, page 41).
+    %}
     ModelSettings = io.getModelSettings();
 
     RHS(1) = RHS(1) / C4(1, 1);

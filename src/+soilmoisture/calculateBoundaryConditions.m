@@ -1,6 +1,8 @@
-function [AVAIL0, RHS, HeatMatrices, Precip] = h_BC(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap)
-
+function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                                                           TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap)
+    %{
+        Determine the boundary condition for solving the soil moisture equation.
+    %}
     ModelSettings = io.getModelSettings();
     % n is the index of n_th item
     n = ModelSettings.NN;

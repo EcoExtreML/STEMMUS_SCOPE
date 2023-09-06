@@ -1,4 +1,7 @@
-function HBoundaryFlux = h_Bndry_Flux(SAVE, hh)
+function HBoundaryFlux = calculatesSoilWaterFluxes(SAVE, hh)
+    %{
+        Calculate the soil water fluxes on the boundary node.
+    %}
     ModelSettings = io.getModelSettings();
 
     HBoundaryFlux.QMT = SAVE(2, 1, 1) - SAVE(2, 2, 1) * hh(ModelSettings.NN - 1) - SAVE(2, 3, 1) * hh(ModelSettings.NN);

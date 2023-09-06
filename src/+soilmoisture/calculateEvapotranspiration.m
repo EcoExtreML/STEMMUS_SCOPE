@@ -18,7 +18,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiratio
     Ta = ForcingData.Ta_msr(KT);
     Ts = SoilVariables.Tss(KT);
     % TODO fix function name
-    AirParameters = h_func.calculateAirParameters(Ta, Ts, HR_a, Z);
+    AirParameters = soilmoisture.calculateAirParameters(Ta, Ts, HR_a, Z);
     DELTA = AirParameters.delta;
     ro_a = AirParameters.ro_a;
     e_a = AirParameters.e_a;
@@ -31,11 +31,11 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiratio
     %% SURFACE RESISTANCE PARAMETERS CALCULATION
     LAI = ForcingData.LAI_msr(KT);
     Theta_LL = SoilVariables.Theta_LL(ModelSettings.NL, 2);
-    SR = h_func.calculateSurfaceResistance(Rn, LAI, Theta_LL);
+    SR = soilmoisture.calculateSurfaceResistance(Rn, LAI, Theta_LL);
 
     % calculate Aerodynamic Resistance
     U = 100 .* (ForcingData.WS_msr(KT));
-    AR = h_func.calculateAerodynamicResistance(U);
+    AR = soilmoisture.calculateAerodynamicResistance(U);
     r_a_SOIL = AR.soil;
 
     % PT/PE - Penman-Montheith mm.day-1, FAO56 pag19 eq3
@@ -53,14 +53,14 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiratio
     if ModelSettings.rwuef == 1
         % TODO issue unused code below to calculate Trap(KT)
         % calculate alpha_h
-        alpha_h =  h_func.calculateAlpha_h(KT, Tp_t, SoilVariables.hh);
+        alpha_h =  soilmoisture.calculateAlpha_h(KT, Tp_t, SoilVariables.hh);
 
         % calculate bx
-        bx =  h_func.calculateBx(InitialValues);
+        bx =  soilmoisture.calculateBx(InitialValues);
 
         % root zone water uptake
         % calculate Trap_1
-        Trap_1 =  h_func.calculateTrap_1(Tp_t, bx, alpha_h, SoilVariables.TT);
+        Trap_1 =  soilmoisture.calculateTrap_1(Tp_t, bx, alpha_h, SoilVariables.TT);
 
         % consideration of water compensation effect
         if Tp_t == 0

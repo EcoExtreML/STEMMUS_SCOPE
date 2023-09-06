@@ -664,7 +664,9 @@ for i = 1:1:TimeProperties.Dur_tot
     end
     hSAVE = hh(NN);
     TSAVE = TT(NN);
-    % TODO issue if does not happen, hN in h_sub is empty
+
+    % set "hN" empty when the "if statement" below does not happen, see issue 98,
+    % item 5
     hN = [];
     if BoundaryCondition.NBCh == 1
         hN = BoundaryCondition.BCh;

@@ -1,47 +1,55 @@
-function [Cah, CaT, Caa, Kah, KaT, Kaa, Vah, VaT, Vaa, Cag, QL, QL_h, QL_T, QL_a, KLhBAR, KLTBAR, DhDZ, DTDZ, DPgDZ, DTDBAR, DRHOVZ] = AirPARM(NL, hh, hh_frez, TT, Theta_LL, DeltZ, DTheta_LLh, DTheta_LLT, POR, RHOL, RHOV, V_A, KfL_h, D_Ta, KL_T, D_V, D_Vg, P_gg, Beta_g, Gamma_w, KLa_Switch, Xah, XaT, Xaa, RHODA, Hc, KLhBAR, KLTBAR, DhDZ, DTDZ, DPgDZ, DTDBAR, DRHOVZ)
+function AirVariabes = AirPARM(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
+                               P_gg, Xah, XaT, Xaa, RHODA)
 
-    for ML = 1:NL
-        KLhBAR(ML) = (KfL_h(ML, 1) + KfL_h(ML, 2)) / 2;
-        KLTBAR(ML) = (KL_T(ML, 1) + KL_T(ML, 2)) / 2;
-        DDhDZ(ML) = (hh(ML + 1) - hh(ML)) / DeltZ(ML);
-        DhDZ(ML) = (hh(ML + 1) + hh_frez(ML + 1) - hh(ML) - hh_frez(ML)) / DeltZ(ML);
+    ModelSettings = io.getModelSettings();
+    Constants = io.define_constants();
 
-        DTDZ(ML) = (TT(ML + 1) - TT(ML)) / DeltZ(ML);
-        DPgDZ(ML) = (P_gg(ML + 1) - P_gg(ML)) / DeltZ(ML);
-        DTDBAR(ML) = (D_Ta(ML, 1) + D_Ta(ML, 2)) / 2;
-        DRHOVZ(ML) = (RHOV(ML + 1) - RHOV(ML)) / DeltZ(ML);
-    end
+    AirVariabes.Cah = InitialValues.Cah;
+    AirVariabes.CaT = InitialValues.CaT;
+    AirVariabes.Caa = InitialValues.Caa;
+    AirVariabes.Kah = InitialValues.Kah;
+    AirVariabes.KaT = InitialValues.KaT;
+    AirVariabes.Kaa = InitialValues.Kaa;
+    AirVariabes.Vah = InitialValues.Vah;
+    AirVariabes.VaT = InitialValues.VaT;
+    AirVariabes.Vaa = InitialValues.Vaa;
+    AirVariabes.Cag = InitialValues.Cag;
 
-    MN = 0;
-    for ML = 1:NL
-        J = ML;
-        for ND = 1:2
-            MN = ML + ND - 1;
+    for i = 1:ModelSettings.NL
+        for j = 1:ModelSettings.nD
 
-            if KLa_Switch == 1
-                QL(ML) = -(KLhBAR(ML) * (DhDZ(ML) + DPgDZ(ML) / Gamma_w) + (KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML) + KLhBAR(ML));
-                QL_h(ML) = -(KLhBAR(ML) * (DhDZ(ML) + DPgDZ(ML) / Gamma_w) + KLhBAR(ML));
-                QL_a(ML) = -(KLhBAR(ML) * (DPgDZ(ML) / Gamma_w));
-                QL_T(ML) = -((KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML));
+            KLhBAR = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
+            KLTBAR = (InitialValues.KL_T(i, 1) + InitialValues.KL_T(i, 2)) / 2;
+            DhDZ = (SoilVariables.hh(i + 1) + SoilVariables.hh_frez(i + 1) - SoilVariables.hh(i) - SoilVariables.hh_frez(i)) / ModelSettings.DeltZ(i);
+            DTDZ = (SoilVariables.TT(i + 1) - SoilVariables.TT(i)) / ModelSettings.DeltZ(i);
+            DPgDZ = (P_gg(i + 1) - P_gg(i)) / ModelSettings.DeltZ(i);
+            DTDBAR = (TransportCoefficient.D_Ta(i, 1) + TransportCoefficient.D_Ta(i, 2)) / 2;
+
+            if SoilVariables.KLa_Switch == 1
+                QL(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+                QL_h(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + KLhBAR);
+                QL_a(i) = -(KLhBAR * (DPgDZ / Constants.Gamma_w));
+                QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
             else
-                QL(ML) = -(KLhBAR(ML) * DhDZ(ML) + (KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML) + KLhBAR(ML));
-                QL_h(ML) = -(KLhBAR(ML) * DhDZ(ML) + KLhBAR(ML));
-                QL_T(ML) = -((KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML));
+                QL(i) = -(KLhBAR * DhDZ + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+                QL_h(i) = -(KLhBAR * DhDZ + KLhBAR);
+                QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
 
             end
+            MN = i + j - 1;
 
-            Cah(ML, ND) = Xah(MN) * (POR(J) + (Hc - 1) * Theta_LL(ML, ND)) + (Hc - 1) * RHODA(MN) * DTheta_LLh(ML, ND);
-            CaT(ML, ND) = XaT(MN) * (POR(J) + (Hc - 1) * Theta_LL(ML, ND)) + (Hc - 1) * RHODA(MN) * DTheta_LLT(ML, ND);
-            Caa(ML, ND) = Xaa(MN) * (POR(J) + (Hc - 1) * Theta_LL(ML, ND));
+            AirVariabes.Cah(i, j) = Xah(MN) * (SoilVariables.POR(i) + (Constants.Hc - 1) * SoilVariables.Theta_LL(i, j)) + (Constants.Hc - 1) * RHODA(MN) * SoilVariables.DTheta_LLh(i, j);
+            AirVariabes.CaT(i, j) = XaT(MN) * (SoilVariables.POR(i) + (Constants.Hc - 1) * SoilVariables.Theta_LL(i, j)) + (Constants.Hc - 1) * RHODA(MN) * SoilVariables.DTheta_LLT(i, j);
+            AirVariabes.Caa(i, j) = Xaa(MN) * (SoilVariables.POR(i) + (Constants.Hc - 1) * SoilVariables.Theta_LL(i, j));
 
-            Kah(ML, ND) = Xah(MN) * (D_V(ML, ND) + D_Vg(ML)) + Hc * RHODA(MN) * KfL_h(ML, ND);
-            KaT(ML, ND) = XaT(MN) * (D_V(ML, ND) + D_Vg(ML)) + Hc * RHODA(MN) * (KL_T(ML, ND) + D_Ta(ML, ND));
-            Kaa(ML, ND) = Xaa(MN) * (D_V(ML, ND) + D_Vg(ML)) + RHODA(MN) * (Beta_g(ML, ND) + Hc * KfL_h(ML, ND) / Gamma_w); %
+            AirVariabes.Kah(i, j) = Xah(MN) * (VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) + Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j);
+            AirVariabes.KaT(i, j) = XaT(MN) * (VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) + Constants.Hc * RHODA(MN) * (InitialValues.KL_T(i, j) + TransportCoefficient.D_Ta(i, j));
+            AirVariabes.Kaa(i, j) = Xaa(MN) * (VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) + RHODA(MN) * (GasDispersivity.Beta_g(i, j) + Constants.Hc * SoilVariables.KfL_h(i, j) / Constants.Gamma_w);
 
-            Cag(ML, ND) = Hc * RHODA(MN) * KfL_h(ML, ND);
+            AirVariabes.Cag(i, j) = Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j);
 
-            Vah(ML, ND) = -(V_A(ML) + Hc * QL(ML) / RHOL) * Xah(MN); % 0;%
-            VaT(ML, ND) = -(V_A(ML) + Hc * QL(ML) / RHOL) * XaT(MN); % 0;%
-            Vaa(ML, ND) = -(V_A(ML) + Hc * QL(ML) / RHOL) * Xaa(MN); % 0;%
+            AirVariabes.Vah(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * Xah(MN);
+            AirVariabes.VaT(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * XaT(MN);
+            AirVariabes.Vaa(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * Xaa(MN);
         end
     end

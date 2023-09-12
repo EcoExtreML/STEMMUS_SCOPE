@@ -1,30 +1,32 @@
-function [RHS, C6, C6_a] = Air_BC(RHS, KT, NN, BtmPg, TopPg, NBCPB, BCPB, NBCP, BCP, C6, C6_a)
-    %%%%%%%%% Apply the bottom boundary condition called for by NBCPB %%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if NBCPB == 1  % ---------------------> Bounded bottom with the water table;
+function [RHS, AirMatrices] = Air_BC(BoundaryCondition, AirMatrices, ForcingData, RHS, KT)
+
+    TopPg = 100 .* (ForcingData.Pg_msr);
+    ModelSettings = io.getModelSettings();
+    n = ModelSettings.NN;
+    % Apply the bottom boundary condition called for by NBCPB
+    if BoundaryCondition.NBCPB == 1  % Bounded bottom with the water table
         RHS(1) = BtmPg;
-        C6(1, 1) = 1;
-        RHS(2) = RHS(2) - C6(1, 2) * RHS(1);
-        C6(1, 2) = 0;
-        C6_a(1) = 0;
-    elseif NBCPB == 2 % ------------------> The soil air is allowed to escape from the bottom;
-        RHS(1) = RHS(1) + BCPB;
+        AirMatrices.C6(1, 1) = 1;
+        RHS(2) = RHS(2) - AirMatrices.C6(1, 2) * RHS(1);
+        AirMatrices.C6(1, 2) = 0;
+        AirMatrices.C6_a(1) = 0;
+    elseif NBCPB == 2 % The soil air is allowed to escape from the bottom
+        RHS(1) = RHS(1) + BoundaryCondition.BCPB;
     end
 
-    %%%%%%%%%% Apply the surface boundary condition called by NBCP %%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if NBCP == 1    % ----------> Ponded infiltration with Bonded bottom,
-        RHS(NN) = BtmPg;
-        C6(NN, 1) = 1;
-        RHS(NN - 1) = RHS(NN - 1) - C6(NN - 1, 2) * RHS(NN);
-        C6(NN - 1, 2) = 0;
-        C6_a(NN - 1) = 0;
-    elseif NBCP == 2          % ----------> Specified flux on the surface;
-        RHS(NN) = RHS(NN) - BCP;
+    % Apply the surface boundary condition called by NBCP
+    if BoundaryCondition.NBCP == 1    % Ponded infiltration with Bonded bottom
+        RHS(n) = BtmPg;
+        AirMatrices.C6(n, 1) = 1;
+        RHS(n - 1) = RHS(n - 1) - AirMatrices.C6(n - 1, 2) * RHS(n);
+        AirMatrices.C6(n - 1, 2) = 0;
+        AirMatrices.C6_a(n - 1) = 0;
+    elseif NBCP == 2          % Specified flux on the surface
+        RHS(n) = RHS(n) - BoundaryCondition.BCP;
     else
-        RHS(NN) = TopPg(KT);
-        C6(NN, 1) = 1;
-        RHS(NN - 1) = RHS(NN - 1) - C6(NN - 1, 2) * RHS(NN);
-        C6(NN - 1, 2) = 0;
-        C6_a(NN - 1) = 0;
+        RHS(n) = TopPg(KT);
+        AirMatrices.C6(n, 1) = 1;
+        RHS(n - 1) = RHS(n - 1) - AirMatrices.C6(n - 1, 2) * RHS(n);
+        AirMatrices.C6(n - 1, 2) = 0;
+        AirMatrices.C6_a(n - 1) = 0;
     end

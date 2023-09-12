@@ -1,60 +1,78 @@
-function [RHS, C6, SAVE] = Air_EQ(C1, C2, C3, C4, C4_a, C5, C5_a, C6, C7, NL, NN, Delt_t, T, TT, h, hh, P_g, Thmrlefc)
+function [RHS, AirMatrices, SAVE] = Air_EQ(AirMatrices, Delt_t, P_g)
 
-    if Thmrlefc
+    C1 = AirMatrices.C1
+    C2 = AirMatrices.C2
+    C3 = AirMatrices.C3
+    C4 = AirMatrices.C4
+    C4_a = AirMatrices.C4_a
+    C5 = AirMatrices.C5
+    C5_a = AirMatrices.C5_a
+    C6 = AirMatrices.C6
+    C7 = AirMatrices.C7
+
+    ModelSettings = io.getModelSettings();
+    n = ModelSettings.NN;
+
+    # Alias of SoilVariables
+    SV = SoilVariables;
+
+    if ModelSettings.Thmrlefc
         RHS(1) = -C7(1) + (C3(1, 1) * P_g(1) + C3(1, 2) * P_g(2)) / Delt_t ...
-            - (C2(1, 1) / Delt_t + C5(1, 1)) * TT(1) - (C2(1, 2) / Delt_t + C5(1, 2)) * TT(2) ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * hh(2) ...
-            + (C2(1, 1) / Delt_t) * T(1) + (C2(1, 2) / Delt_t) * T(2) ...
-            + (C1(1, 1) / Delt_t) * h(1) + (C1(1, 2) / Delt_t) * h(2);
+            - (C2(1, 1) / Delt_t + C5(1, 1)) * SV.TT(1) - (C2(1, 2) / Delt_t + C5(1, 2)) * SV.TT(2) ...
+            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
+            + (C2(1, 1) / Delt_t) * SV.T(1) + (C2(1, 2) / Delt_t) * SV.T(2) ...
+            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
 
-        for ML = 2:NL
-            ARG1 = C2(ML - 1, 2) / Delt_t;
-            ARG2 = C2(ML, 1) / Delt_t;
-            ARG3 = C2(ML, 2) / Delt_t;
+        for i = 2:ModelSettings.NL
+            ARG1 = C2(i - 1, 2) / Delt_t;
+            ARG2 = C2(i, 1) / Delt_t;
+            ARG3 = C2(i, 2) / Delt_t;
 
-            ARG4 = C1(ML - 1, 2) / Delt_t;
-            ARG5 = C1(ML, 1) / Delt_t;
-            ARG6 = C1(ML, 2) / Delt_t;
+            ARG4 = C1(i - 1, 2) / Delt_t;
+            ARG5 = C1(i, 1) / Delt_t;
+            ARG6 = C1(i, 2) / Delt_t;
 
-            RHS(ML) = -C7(ML) + (C3(ML - 1, 2) * P_g(ML - 1) + C3(ML, 1) * P_g(ML) + C3(ML, 2) * P_g(ML + 1)) / Delt_t ...
-                - (ARG1 + C5_a(ML - 1)) * TT(ML - 1) - (ARG2 + C5(ML, 1)) * TT(ML) - (ARG3 + C5(ML, 2)) * TT(ML + 1) ...
-                - (ARG4 + C4_a(ML - 1)) * hh(ML - 1) - (ARG5 + C4(ML, 1)) * hh(ML) - (ARG6 + C4(ML, 2)) * hh(ML + 1) ...
-                + ARG1 * T(ML - 1) + ARG2 * T(ML) + ARG3 * T(ML + 1) ...
-                + ARG4 * h(ML - 1) + ARG5 * h(ML) + ARG6 * h(ML + 1);
+            RHS(i) = -C7(i) + (C3(i - 1, 2) * P_g(i - 1) + C3(i, 1) * P_g(i) + C3(i, 2) * P_g(i + 1)) / Delt_t ...
+                - (ARG1 + C5_a(i - 1)) * SV.TT(i - 1) - (ARG2 + C5(i, 1)) * SV.TT(i) - (ARG3 + C5(i, 2)) * SV.TT(i + 1) ...
+                - (ARG4 + C4_a(i - 1)) * SV.hh(i - 1) - (ARG5 + C4(i, 1)) * SV.hh(i) - (ARG6 + C4(i, 2)) * SV.hh(i + 1) ...
+                + ARG1 * SV.T(i - 1) + ARG2 * SV.T(i) + ARG3 * SV.T(i + 1) ...
+                + ARG4 * SV.h(i - 1) + ARG5 * SV.h(i) + ARG6 * SV.h(i + 1);
         end
 
-        RHS(NN) = -C7(NN) + (C3(NN - 1, 2) * P_g(NN - 1) + C3(NN, 1) * P_g(NN)) / Delt_t ...
-            - (C2(NN - 1, 2) / Delt_t + C5_a(NN - 1)) * TT(NN - 1) - (C2(NN, 1) / Delt_t + C5(NN, 1)) * TT(NN) ...
-            - (C1(NN - 1, 2) / Delt_t + C4_a(NN - 1)) * hh(NN - 1) - (C1(NN, 1) / Delt_t + C4(NN, 1)) * hh(NN) ...
-            + (C2(NN - 1, 2) / Delt_t) * T(NN - 1) + (C2(NN, 1) / Delt_t) * T(NN) ...
-            + (C1(NN - 1, 2) / Delt_t) * h(NN - 1) + (C1(NN, 1) / Delt_t) * h(NN);
+        RHS(n) = -C7(n) + (C3(n - 1, 2) * P_g(n - 1) + C3(n, 1) * P_g(n)) / Delt_t ...
+            - (C2(n - 1, 2) / Delt_t + C5_a(n - 1)) * SV.TT(n - 1) - (C2(n, 1) / Delt_t + C5(n, 1)) * SV.TT(n) ...
+            - (C1(n - 1, 2) / Delt_t + C4_a(n - 1)) * SV.hh(n - 1) - (C1(n, 1) / Delt_t + C4(n, 1)) * SV.hh(n) ...
+            + (C2(n - 1, 2) / Delt_t) * SV.T(n - 1) + (C2(n, 1) / Delt_t) * SV.T(n) ...
+            + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     else
-        ARG4 = C1(ML - 1, 2) / Delt_t;
-        ARG5 = C1(ML, 1) / Delt_t;
-        ARG6 = C1(ML, 2) / Delt_t;
+        ARG4 = C1(i - 1, 2) / Delt_t;
+        ARG5 = C1(i, 1) / Delt_t;
+        ARG6 = C1(i, 2) / Delt_t;
 
         RHS(1) = -C7(1) + (C3(1, 1) * P_g(1) + C3(1, 2) * P_g(2)) / Delt_t ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * hh(2) ...
-            + (C1(1, 1) / Delt_t) * h(1) + (C1(1, 2) / Delt_t) * h(2);
-        for ML = 2:NL
-            RHS(ML) = -C7(ML) + (C3(ML - 1, 2) * P_g(ML - 1) + C3(ML, 1) * P_g(ML) + C3(ML, 2) * P_g(ML + 1)) / Delt_t ...
-                - (ARG4 + C4(ML - 1, 2)) * hh(ML - 1) - (ARG5 + C4(ML, 1)) * hh(ML) - (ARG6 + C4(ML, 2)) * hh(ML + 1) ...
-                + ARG4 * h(ML - 1) + ARG5 * h(ML) + ARG6 * h(ML + 1);
+            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
+            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
+        for i = 2:ModelSettings.NL
+            RHS(i) = -C7(i) + (C3(i - 1, 2) * P_g(i - 1) + C3(i, 1) * P_g(i) + C3(i, 2) * P_g(i + 1)) / Delt_t ...
+                - (ARG4 + C4(i - 1, 2)) * SV.hh(i - 1) - (ARG5 + C4(i, 1)) * SV.hh(i) - (ARG6 + C4(i, 2)) * SV.hh(i + 1) ...
+                + ARG4 * SV.h(i - 1) + ARG5 * SV.h(i) + ARG6 * SV.h(i + 1);
         end
-        RHS(NN) = -C7(NN) + (C3(NN - 1, 2) * P_g(NN - 1) + C3(NN, 1) * P_g(NN)) / Delt_t ...
-            - (C1(NN - 1, 2) / Delt_t + C4(NN - 1, 2)) * hh(NN - 1) - (C1(NN, 1) / Delt_t + C4(NN, 1)) * hh(NN) ...
-            + (C1(NN - 1, 2) / Delt_t) * h(NN - 1) + (C1(NN, 1) / Delt_t) * h(NN);
+        RHS(n) = -C7(n) + (C3(n - 1, 2) * P_g(n - 1) + C3(n, 1) * P_g(n)) / Delt_t ...
+            - (C1(n - 1, 2) / Delt_t + C4(n - 1, 2)) * SV.hh(n - 1) - (C1(n, 1) / Delt_t + C4(n, 1)) * SV.hh(n) ...
+            + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     end
 
-    for MN = 1:NN
-        for ND = 1:2
-            C6(MN, ND) = C3(MN, ND) / Delt_t + C6(MN, ND);
+    for i = 1:ModelSettings.NN
+        for j = 1:ModelSettings.nD
+            C6(i, j) = C3(i, j) / Delt_t + C6(i, j);
         end
     end
+
+    AirMatrices.C6 = C6;
 
     SAVE(1, 1, 3) = RHS(1);
     SAVE(1, 2, 3) = C6(1, 1);
     SAVE(1, 3, 3) = C6(1, 2);
-    SAVE(2, 1, 3) = RHS(NN);
-    SAVE(2, 2, 3) = C6(NN - 1, 2);
-    SAVE(2, 3, 3) = C6(NN, 1);
+    SAVE(2, 1, 3) = RHS(n);
+    SAVE(2, 2, 3) = C6(n - 1, 2);
+    SAVE(2, 3, 3) = C6(n, 1);

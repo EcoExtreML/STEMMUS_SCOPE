@@ -1,16 +1,17 @@
-function [C6, P_gg, RHS] = Air_Solve(C6, NN, NL, C6_a, RHS)
+function [AirMatrices, P_gg, RHS] = Air_Solve(RHS, AirMatrices)
 
-    RHS(1) = RHS(1) / C6(1, 1);
+    ModelSettings = io.getModelSettings();
+    RHS(1) = RHS(1) / AirMatrices.C6(1, 1);
 
-    for ML = 2:NN
-        C6(ML, 1) = C6(ML, 1) - C6_a(ML - 1) * C6(ML - 1, 2) / C6(ML - 1, 1);
-        RHS(ML) = (RHS(ML) - C6_a(ML - 1) * RHS(ML - 1)) / C6(ML, 1);
+    for i = 2:ModelSettings.NN
+        AirMatrices.C6(i, 1) = AirMatrices.C6(i, 1) - AirMatrices.C6_a(i - 1) * AirMatrices.C6(i - 1, 2) / AirMatrices.C6(i - 1, 1);
+        RHS(i) = (RHS(i) - AirMatrices.C6_a(i - 1) * RHS(i - 1)) / AirMatrices.C6(i, 1);
     end
 
-    for ML = NL:-1:1
-        RHS(ML) = RHS(ML) - C6(ML, 2) * RHS(ML + 1) / C6(ML, 1);
+    for i = ModelSettings.NL:-1:1
+        RHS(i) = RHS(i) - AirMatrices.C6(i, 2) * RHS(i + 1) / AirMatrices.C6(i, 1);
     end
 
-    for MN = 1:NN
-        P_gg(MN) = RHS(MN);
+    for i = 1:ModelSettings.NN
+        P_gg(i) = RHS(i);
     end

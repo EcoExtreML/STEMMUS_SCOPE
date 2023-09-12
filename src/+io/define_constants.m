@@ -4,7 +4,9 @@ function [const] = define_constants()
     const.h = 6.6262E-34; % [J s] Planck's constant
     const.c = 299792458; % [m s-1] Speed of light
     const.cp = 1004; % [J kg-1 K-1] Specific heat of dry air
+    const.cp_specific =  1.013E-3; % specific heat at cte pressure [MJ.kg-1.?C-1] FAO56 p26 box6
     const.R = 8.314; % [J mol-1K-1] Molar gas constant
+    const.R_specific = 0.287; % specific gas [kJ.kg-1.K-1]    FAO56 p26 box6
     const.rhoa = 1.2047; % [kg m-3] Specific mass of air
     const.kappa = 0.4; % [] Von Karman constant
     const.MH2O = 18; % [g mol-1] Molecular mass of water
@@ -37,4 +39,6 @@ function [const] = define_constants()
     const.c_V = 1.870; % [J/g-1/Cels-1] Specific heat capacity of vapor
     const.c_a = 1.005; % [J/g-1/Cels-1] Specific heat capacity of dry air
     const.c_i = 2.0455; % [J/g-1/Cels-1] Specific heat capacity of ice
+    const.lambdav = 2.45; % latent heat of evaporation [MJ.kg-1] FAO56 pag 31
+    const.k = 0.41; % karman's cte   []  FAO 56 Eq4
 end

@@ -236,4 +236,7 @@ function InitialValues = defineInitialValues(Dur_tot)
             InitialValues.(field{1}) = structure.(field{1});
         end
     end
+
+    % Arraies for calculating boundary flux;
+    InitialValues.SAVE = zeros(3, 3, 3);
 end

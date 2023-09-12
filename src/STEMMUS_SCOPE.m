@@ -804,7 +804,8 @@ for i = 1:1:TimeProperties.Dur_tot
         end
 
         if Soilairefc == 1
-            run Air_sub;
+            [RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
+                                                            BoundaryCondition, P_gg, Xah, XaT, Xaa, RHODA, KT, Delt_t);
         end
 
         if Thmrlefc == 1

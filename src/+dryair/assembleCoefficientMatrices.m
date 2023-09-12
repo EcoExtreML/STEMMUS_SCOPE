@@ -1,4 +1,8 @@
-function [RHS, AirMatrices, SAVE] = Air_EQ(AirMatrices, Delt_t, P_g)
+function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Delt_t, P_g)
+    %{
+        Assemble the coefficient matrices of Equation 4.32 STEMMUS Technical
+        Notes, page 44, for dry air equation.
+    %}
 
     C1 = AirMatrices.C1
     C2 = AirMatrices.C2

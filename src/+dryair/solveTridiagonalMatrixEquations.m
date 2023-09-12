@@ -1,4 +1,8 @@
-function [AirMatrices, P_gg, RHS] = Air_Solve(RHS, AirMatrices)
+function [AirMatrices, P_gg, RHS] = solveTridiagonalMatrixEquations(RHS, AirMatrices)
+    %{
+        Use Thomas algorithm to solve the tridiagonal matrix equations, which is
+        in the form of Equation 4.25 STEMMUS Technical Notes, page 41.
+    %}
 
     ModelSettings = io.getModelSettings();
     RHS(1) = RHS(1) / AirMatrices.C6(1, 1);

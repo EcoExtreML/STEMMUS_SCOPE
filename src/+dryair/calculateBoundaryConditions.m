@@ -1,8 +1,12 @@
-function [RHS, AirMatrices] = Air_BC(BoundaryCondition, AirMatrices, ForcingData, RHS, KT)
+function [RHS, AirMatrices] = calculateBoundaryConditions(BoundaryCondition, AirMatrices, ForcingData, RHS, KT)
+    %{
+        Determine the boundary condition for solving the dry air equation.
+    %}
 
     TopPg = 100 .* (ForcingData.Pg_msr);
     ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
+
     % Apply the bottom boundary condition called for by NBCPB
     if BoundaryCondition.NBCPB == 1  % Bounded bottom with the water table
         RHS(1) = BtmPg;

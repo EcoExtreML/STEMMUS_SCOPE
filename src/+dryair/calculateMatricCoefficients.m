@@ -1,4 +1,9 @@
-function AirMatrices = Air_MAT(AirVariabes, InitialValues)
+function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
+    %{
+        Calculate all the parameters related to matric coefficients e.g.,
+        c1-c7 as in Equation 4.32 STEMMUS Technical Notes, page 44, which is
+        an example for soil moisture equation, but for dry air equation.
+    %}
 
     AirMatrices.C1 = InitialValues.C1;
     AirMatrices.C2 = InitialValues.C2;

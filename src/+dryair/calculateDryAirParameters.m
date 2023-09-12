@@ -1,6 +1,9 @@
-function AirVariabes = AirPARM(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
-                               P_gg, Xah, XaT, Xaa, RHODA)
-
+function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
+                                                 P_gg, Xah, XaT, Xaa, RHODA)
+    %{
+        Calculate all the parameters related to dry air equation e.g., Equation
+        3.59-3.64, STEMMUS Technical Notes, page 27-28.
+    %}
     ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 

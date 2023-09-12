@@ -59,8 +59,6 @@ function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVari
     SoilVariables.KLa_Switch = [];
     if ModelSettings.Soilairefc
         SoilVariables.KaT_Switch = 1;
-        % Kaa_Switch is not used in the main script!
-        Kaa_Switch = 1;
         SoilVariables.DVa_Switch = 1;
         SoilVariables.KLa_Switch = 1;
     end

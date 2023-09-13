@@ -72,12 +72,12 @@ Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 
 global MN ND TOLD h hh T TT P_g P_gg RWU EVAP QMB
 global Precip frac TTT Theta_LLL CHK Theta_LL Theta_UUU
-global Theta_III Theta_II SRT Srt CTT_PH
-global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ DRHOVZ QL QL_h QL_T QV Qa KL_h
+global Theta_III SRT Srt CTT_PH
+global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ QL QV Qa KL_h
 global Khh KhT Resis_a KfL_h TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
 global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
 global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR QVa
-global QLH QLT DVH DVT Se QL_a DPgDZ V_A Theta_V W WW D_Ta thermal Xaa
+global QLH QLT DVH DVT Se DPgDZ V_A Theta_V W WW D_Ta thermal Xaa
 global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V Eta
 global Ks RHODA RHOV L
 global sfactor fluxes Tss
@@ -89,8 +89,6 @@ Eta = InitialValues.Eta;
 Khh = InitialValues.Khh;
 KhT = InitialValues.KhT;
 QL = InitialValues.QL;
-QL_h = InitialValues.QL_h;
-QL_T = InitialValues.QL_T;
 V_A = InitialValues.V_A;
 CTT_PH = InitialValues.CTT_PH;
 CTT_Lg = InitialValues.CTT_Lg;
@@ -99,7 +97,6 @@ CTT_LT = InitialValues.CTT_LT;
 CTT = InitialValues.CTT;
 DhDZ = InitialValues.DhDZ;
 DTDZ = InitialValues.DTDZ;
-DRHOVZ = InitialValues.DRHOVZ;
 D_Vg = InitialValues.D_Vg;
 DRHOVhDz = InitialValues.DRHOVhDz;
 EtaBAR = InitialValues.EtaBAR;
@@ -118,7 +115,6 @@ QV = InitialValues.QV;
 QVa = InitialValues.QVa;
 Qa = InitialValues.Qa;
 DPgDZ = InitialValues.DPgDZ;
-QL_a = InitialValues.QL_a;
 frac = InitialValues.frac;
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
@@ -140,19 +136,12 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 SAVE = InitialValues.SAVE;
 
-global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6 Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag CTh CTa KTh KTT KTa
+global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6  Kaa Vaa  CTh CTa KTh KTT KTa
 global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa SMC bbx Ta Ts
-global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH TopPg RHS C7
-Cah = InitialValues.Cah;
-CaT = InitialValues.CaT;
-Caa = InitialValues.Caa;
-Kah = InitialValues.Kah;
-KaT = InitialValues.KaT;
+global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7
+
 Kaa = InitialValues.Kaa;
-Vah = InitialValues.Vah;
-VaT = InitialValues.VaT;
 Vaa = InitialValues.Vaa;
-Cag = InitialValues.Cag;
 CTh = InitialValues.CTh;
 CTa = InitialValues.CTa;
 KTh = InitialValues.KTh;
@@ -402,7 +391,7 @@ h_frez = SoilVariables.h_frez;
 BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, landcoverClass(1));
 
 %% get global vars
-global NBCT NBCTB DSTOR0 NBCP BCTB BCPB BCT BCP BtmPg
+global NBCT NBCTB DSTOR0 BCTB BCT
 NBCT = BoundaryCondition.NBCT;
 NBCTB = BoundaryCondition.NBCTB;
 DSTOR = BoundaryCondition.DSTOR;
@@ -411,12 +400,8 @@ RS = BoundaryCondition.RS;
 DSTMAX = BoundaryCondition.DSTMAX;
 IRPT1 = BoundaryCondition.IRPT1;
 IRPT2 = BoundaryCondition.IRPT2;
-NBCP = BoundaryCondition.NBCP;
 BCTB = BoundaryCondition.BCTB;
-BCPB = BoundaryCondition.BCPB;
 BCT = BoundaryCondition.BCT;
-BCP = BoundaryCondition.BCP;
-BtmPg = BoundaryCondition.BtmPg;
 
 % Outputs of UpdateSoilWaterContent used in step Run the model
 hh = SoilVariables.hh;
@@ -437,10 +422,6 @@ FCHK = zeros(1, NN);
 KCHK = zeros(1, NN);
 hCHK = zeros(1, NN);
 TIMELAST = 0;
-
-% Convert unit to Centimeter-Gram-Second system
-% see issue 188 to refactor these lines
-TopPg = 100 .* (ForcingData.Pg_msr);
 
 % the start of simulation period is from 0mins, while the input data start from 30mins.
 kk = 0;   % DELT=Delt_t;

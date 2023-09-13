@@ -1,4 +1,4 @@
-function [RHS, SAVE, P_gg] = solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
+function [RHS, SAVE, P_gg] = solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity, ...
                                                   BoundaryCondition, P_gg, Xah, XaT, Xaa, RHODA, KT, Delt_t)
     %{
         Solve the dry air equation with the Thomas algorithm to update the soil
@@ -6,7 +6,7 @@ function [RHS, SAVE, P_gg] = solveDryAirEquations(SoilVariables, GasDispersivity
         exampled as for the soil moisture equation, which derived in 'STEMMUS
         Technical Notes' section 4, Equation 4.32.
     %}
-    AirVariabes = dryair.calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity,...
+    AirVariabes = dryair.calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity, ...
                                                    P_gg, Xah, XaT, Xaa, RHODA);
 
     AirMatrices = dryair.calculateMatricCoefficients(AirVariabes, InitialValues);

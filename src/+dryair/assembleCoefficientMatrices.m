@@ -4,20 +4,20 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Del
         Notes, page 44, for dry air equation.
     %}
 
-    C1 = AirMatrices.C1
-    C2 = AirMatrices.C2
-    C3 = AirMatrices.C3
-    C4 = AirMatrices.C4
-    C4_a = AirMatrices.C4_a
-    C5 = AirMatrices.C5
-    C5_a = AirMatrices.C5_a
-    C6 = AirMatrices.C6
-    C7 = AirMatrices.C7
+    C1 = AirMatrices.C1;
+    C2 = AirMatrices.C2;
+    C3 = AirMatrices.C3;
+    C4 = AirMatrices.C4;
+    C4_a = AirMatrices.C4_a;
+    C5 = AirMatrices.C5;
+    C5_a = AirMatrices.C5_a;
+    C6 = AirMatrices.C6;
+    C7 = AirMatrices.C7;
 
     ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
 
-    # Alias of SoilVariables
+    % Alias of SoilVariables
     SV = SoilVariables;
 
     if ModelSettings.Thmrlefc

@@ -40,6 +40,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
 
     NBCP = [];
     BCTB = [];
+    NBCPB = [];
     BCPB = [];
     BCT = [];
     BCP = [];
@@ -141,5 +142,6 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
     BoundaryCondition.BCT = BCT;
     BoundaryCondition.BCP = BCP;
     BoundaryCondition.BtmPg = BtmPg;
+    BoundaryCondition.NBCPB = NBCPB;
 
 end

@@ -1,4 +1,4 @@
-function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity, ...
+function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
                                                  P_gg, Xah, XaT, Xaa, RHODA)
     %{
         Calculate all the parameters related to dry air equation e.g., Equation
@@ -18,27 +18,41 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
     AirVariabes.Vaa = InitialValues.Vaa;
     AirVariabes.Cag = InitialValues.Cag;
 
+    AirVariabes.KLhBAR = InitialValues.KLhBAR;
+    AirVariabes.KLTBAR = InitialValues.KLTBAR;
+    AirVariabes.DhDZ = InitialValues.DhDZ;
+    AirVariabes.DTDZ = InitialValues.DTDZ;
+    AirVariabes.DPgDZ = InitialValues.DPgDZ;
+
     for i = 1:ModelSettings.NL
+        KLhBAR = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
+        KLTBAR = (InitialValues.KL_T(i, 1) + InitialValues.KL_T(i, 2)) / 2;
+        DDhDZ = (SoilVariables.hh(i + 1) - SoilVariables.hh(i)) / ModelSettings.DeltZ(i);
+        DhDZ = (SoilVariables.hh(i + 1) + SoilVariables.hh_frez(i + 1) - SoilVariables.hh(i) - SoilVariables.hh_frez(i)) / ModelSettings.DeltZ(i);
+        DTDZ = (SoilVariables.TT(i + 1) - SoilVariables.TT(i)) / ModelSettings.DeltZ(i);
+        DPgDZ = (P_gg(i + 1) - P_gg(i)) / ModelSettings.DeltZ(i);
+        DTDBAR = (TransportCoefficient.D_Ta(i, 1) + TransportCoefficient.D_Ta(i, 2)) / 2;
+
+        if SoilVariables.KLa_Switch == 1
+            QL(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+            QL_h(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + KLhBAR);
+            QL_a(i) = -(KLhBAR * (DPgDZ / Constants.Gamma_w));
+            QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
+        else
+            QL(i) = -(KLhBAR * DhDZ + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+            QL_h(i) = -(KLhBAR * DhDZ + KLhBAR);
+            QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
+        end
+
+        % used in EnrgyPARM % TODO issue DDhDZ not a global var in EnrgyPARM
+        AirVariabes.KLhBAR(i) = KLhBAR;
+        AirVariabes.KLTBAR(i) = KLTBAR;
+        AirVariabes.DDhDZ(i) = DDhDZ;
+        AirVariabes.DhDZ(i) = DhDZ;
+        AirVariabes.DTDZ(i) = DTDZ;
+        AirVariabes.DPgDZ(i) = DPgDZ;
+
         for j = 1:ModelSettings.nD
-
-            KLhBAR = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
-            KLTBAR = (InitialValues.KL_T(i, 1) + InitialValues.KL_T(i, 2)) / 2;
-            DhDZ = (SoilVariables.hh(i + 1) + SoilVariables.hh_frez(i + 1) - SoilVariables.hh(i) - SoilVariables.hh_frez(i)) / ModelSettings.DeltZ(i);
-            DTDZ = (SoilVariables.TT(i + 1) - SoilVariables.TT(i)) / ModelSettings.DeltZ(i);
-            DPgDZ = (P_gg(i + 1) - P_gg(i)) / ModelSettings.DeltZ(i);
-            DTDBAR = (TransportCoefficient.D_Ta(i, 1) + TransportCoefficient.D_Ta(i, 2)) / 2;
-
-            if SoilVariables.KLa_Switch == 1
-                QL(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
-                QL_h(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + KLhBAR);
-                QL_a(i) = -(KLhBAR * (DPgDZ / Constants.Gamma_w));
-                QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
-            else
-                QL(i) = -(KLhBAR * DhDZ + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
-                QL_h(i) = -(KLhBAR * DhDZ + KLhBAR);
-                QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
-
-            end
             MN = i + j - 1;
 
             AirVariabes.Cah(i, j) = Xah(MN) * (SoilVariables.POR(i) + (Constants.Hc - 1) * SoilVariables.Theta_LL(i, j)) + (Constants.Hc - 1) * RHODA(MN) * SoilVariables.DTheta_LLh(i, j);
@@ -56,3 +70,4 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
             AirVariabes.Vaa(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * Xaa(MN);
         end
     end
+end

@@ -19,3 +19,4 @@ function [AirMatrices, P_gg, RHS] = solveTridiagonalMatrixEquations(RHS, AirMatr
     for i = 1:ModelSettings.NN
         P_gg(i) = RHS(i);
     end
+end

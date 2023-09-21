@@ -5,14 +5,15 @@ function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
         an example for soil moisture equation, but for dry air equation.
     %}
 
+    ModelSettings = io.getModelSettings();
+
     AirMatrices.C1 = InitialValues.C1;
     AirMatrices.C2 = InitialValues.C2;
     AirMatrices.C3 = InitialValues.C3;
     AirMatrices.C4 = InitialValues.C4;
     AirMatrices.C5 = InitialValues.C5;
     AirMatrices.C6 = InitialValues.C6;
-
-    ModelSettings = io.getModelSettings();
+    AirMatrices.C7 = zeros(ModelSettings.NN);
 
     for i = 1:ModelSettings.NL
         AirMatrices.C1(i, 1) = AirMatrices.C1(i, 1) + AirVariabes.Cah(i, 1) * ModelSettings.DeltZ(i) / 2;
@@ -27,8 +28,9 @@ function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
         C4ARG1 = (AirVariabes.Kah(i, 1) + AirVariabes.Kah(i, 2)) / (2 * ModelSettings.DeltZ(i));
         C4ARG2_1 = AirVariabes.Vah(i, 1) / 3 + AirVariabes.Vah(i, 2) / 6;
         C4ARG2_2 = AirVariabes.Vah(i, 1) / 6 + AirVariabes.Vah(i, 2) / 3;
+
         AirMatrices.C4(i, 1) = AirMatrices.C4(i, 1) + C4ARG1 - C4ARG2_1;
-        AirMatrices.C4(i, 2) = AirMatrices.C4(i, 2) - C4ARG1 - C4ARG2_2;
+        AirMatrices.C4(i, 2) = AirMatrices.C4(i, 2) -C4ARG1 - C4ARG2_2;
         AirMatrices.C4(i + 1, 1) = AirMatrices.C4(i + 1, 1) + C4ARG1 + C4ARG2_2;
         AirMatrices.C4_a(i) = -C4ARG1 + C4ARG2_1;
 
@@ -52,3 +54,4 @@ function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
         AirMatrices.C7(i) = AirMatrices.C7(i) - C7ARG;
         AirMatrices.C7(i + 1) = AirMatrices.C7(i + 1) + C7ARG;
     end
+end

@@ -1,4 +1,4 @@
-function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Delt_t, P_g)
+function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, SoilVariables, Delt_t, P_g)
     %{
         Assemble the coefficient matrices of Equation 4.32 STEMMUS Technical
         Notes, page 44, for dry air equation.
@@ -49,6 +49,7 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Del
             + (C2(n - 1, 2) / Delt_t) * SV.T(n - 1) + (C2(n, 1) / Delt_t) * SV.T(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     else
+        % TODO issue i defined outside of the loop!
         ARG4 = C1(i - 1, 2) / Delt_t;
         ARG5 = C1(i, 1) / Delt_t;
         ARG6 = C1(i, 2) / Delt_t;
@@ -80,3 +81,4 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Del
     SAVE(2, 1, 3) = RHS(n);
     SAVE(2, 2, 3) = C6(n - 1, 2);
     SAVE(2, 3, 3) = C6(n, 1);
+end

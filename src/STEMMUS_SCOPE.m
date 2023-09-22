@@ -431,7 +431,7 @@ TOLD_CRIT = [];
 
 % Srt, root water uptake;
 Srt = InitialValues.Srt;  % will be updated!
- P_gg = InitialValues.P_gg;  % will be updated!
+P_gg = InitialValues.P_gg;  % will be updated!
 
 for i = 1:1:TimeProperties.Dur_tot
     KT = KT + 1;  % Counting Number of timesteps
@@ -761,7 +761,6 @@ for i = 1:1:TimeProperties.Dur_tot
         Khh = HeatVariables.Khh;
         Vvh = HeatVariables.Vvh;
         VvT = HeatVariables.VvT;
-
 
         if BoundaryCondition.NBCh == 1
             DSTOR = 0;

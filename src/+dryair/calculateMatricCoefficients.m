@@ -30,7 +30,7 @@ function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
         C4ARG2_2 = AirVariabes.Vah(i, 1) / 6 + AirVariabes.Vah(i, 2) / 3;
 
         AirMatrices.C4(i, 1) = AirMatrices.C4(i, 1) + C4ARG1 - C4ARG2_1;
-        AirMatrices.C4(i, 2) = AirMatrices.C4(i, 2) -C4ARG1 - C4ARG2_2;
+        AirMatrices.C4(i, 2) = AirMatrices.C4(i, 2) - C4ARG1 - C4ARG2_2;
         AirMatrices.C4(i + 1, 1) = AirMatrices.C4(i + 1, 1) + C4ARG1 + C4ARG2_2;
         AirMatrices.C4_a(i) = -C4ARG1 + C4ARG2_1;
 

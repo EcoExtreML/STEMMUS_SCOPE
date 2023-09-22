@@ -17,12 +17,12 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
     AirVariabes.VaT = InitialValues.VaT;
     AirVariabes.Vaa = InitialValues.Vaa;
     AirVariabes.Cag = InitialValues.Cag;
-
+    AirVariabes.QL = InitialValues.QL;
     AirVariabes.KLhBAR = InitialValues.KLhBAR;
     AirVariabes.KLTBAR = InitialValues.KLTBAR;
     AirVariabes.DhDZ = InitialValues.DhDZ;
     AirVariabes.DTDZ = InitialValues.DTDZ;
-    AirVariabes.DPgDZ = InitialValues.DPgDZ;
+    GasDispersivity.DPgDZ = InitialValues.DPgDZ;
 
     for i = 1:ModelSettings.NL
         KLhBAR = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
@@ -34,12 +34,12 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         DTDBAR = (TransportCoefficient.D_Ta(i, 1) + TransportCoefficient.D_Ta(i, 2)) / 2;
 
         if SoilVariables.KLa_Switch == 1
-            QL(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+            QL = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
             QL_h(i) = -(KLhBAR * (DhDZ + DPgDZ / Constants.Gamma_w) + KLhBAR);
             QL_a(i) = -(KLhBAR * (DPgDZ / Constants.Gamma_w));
             QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
         else
-            QL(i) = -(KLhBAR * DhDZ + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
+            QL = -(KLhBAR * DhDZ + (KLTBAR + DTDBAR) * DTDZ + KLhBAR);
             QL_h(i) = -(KLhBAR * DhDZ + KLhBAR);
             QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
         end
@@ -50,7 +50,7 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         AirVariabes.DDhDZ(i) = DDhDZ;
         AirVariabes.DhDZ(i) = DhDZ;
         AirVariabes.DTDZ(i) = DTDZ;
-        AirVariabes.DPgDZ(i) = DPgDZ;
+        AirVariabes.QL(i) = QL;
 
         for j = 1:ModelSettings.nD
             MN = i + j - 1;
@@ -65,9 +65,9 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
 
             AirVariabes.Cag(i, j) = Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j);
 
-            AirVariabes.Vah(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * Xah(MN);
-            AirVariabes.VaT(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * XaT(MN);
-            AirVariabes.Vaa(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL) * Xaa(MN);
+            AirVariabes.Vah(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL / Constants.RHOL) * Xah(MN);
+            AirVariabes.VaT(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL / Constants.RHOL) * XaT(MN);
+            AirVariabes.Vaa(i, j) = -(GasDispersivity.V_A(i) + Constants.Hc * QL / Constants.RHOL) * Xaa(MN);
         end
     end
 end

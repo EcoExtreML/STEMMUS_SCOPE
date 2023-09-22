@@ -76,7 +76,7 @@ global Theta_III SRT Srt CTT_PH
 global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ QL QV Qa KL_h
 global Khh KhT Resis_a KfL_h TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
 global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
-global DRHOVTDz KLhBAR KLTBAR DTDBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR QVa
+global DRHOVTDz KLhBAR KLTBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR QVa
 global QLH QLT DVH DVT Se DPgDZ V_A Theta_V W WW D_Ta thermal Xaa
 global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V Eta
 global Ks RHODA RHOV L
@@ -104,7 +104,6 @@ DRHOVTDz = InitialValues.DRHOVTDz;
 KLhBAR = InitialValues.KLhBAR;
 DEhBAR = InitialValues.DEhBAR;
 KLTBAR = InitialValues.KLTBAR;
-DTDBAR = InitialValues.DTDBAR;
 QLH = InitialValues.QLH;
 QLT = InitialValues.QLT;
 DVH = InitialValues.DVH;
@@ -138,7 +137,7 @@ SAVE = InitialValues.SAVE;
 
 global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6  Kaa Vaa  CTh CTa KTh KTT KTa
 global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa SMC bbx Ta Ts
-global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7
+global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7 DVa_Switch
 
 Kaa = InitialValues.Kaa;
 Vaa = InitialValues.Vaa;
@@ -432,6 +431,7 @@ TOLD_CRIT = [];
 
 % Srt, root water uptake;
 Srt = InitialValues.Srt;  % will be updated!
+ P_gg = InitialValues.P_gg;  % will be updated!
 
 for i = 1:1:TimeProperties.Dur_tot
     KT = KT + 1;  % Counting Number of timesteps
@@ -737,7 +737,6 @@ for i = 1:1:TimeProperties.Dur_tot
         D_Vg = GasDispersivity.D_Vg;
         V_A = GasDispersivity.V_A;
         Beta_g = GasDispersivity.Beta_g;
-        DPgDZ = GasDispersivity.DPgDZ;
 
         SoilVariables.Tss(KT) = Tss;
         % After refactoring Enrgy_sub, the input/output of this function can be
@@ -745,7 +744,7 @@ for i = 1:1:TimeProperties.Dur_tot
         % Srt is both input and output
         % Replace run h_sub;
         [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                                           BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt);
+                                                                                                                                                                           BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg);
 
         DTheta_LLh = SoilVariables.DTheta_LLh;
         DTheta_LLT = SoilVariables.DTheta_LLT;
@@ -762,6 +761,7 @@ for i = 1:1:TimeProperties.Dur_tot
         Khh = HeatVariables.Khh;
         Vvh = HeatVariables.Vvh;
         VvT = HeatVariables.VvT;
+
 
         if BoundaryCondition.NBCh == 1
             DSTOR = 0;
@@ -783,12 +783,20 @@ for i = 1:1:TimeProperties.Dur_tot
             DSTOR = min(EXCESS, DSTMAX);
             RS(KT) = (EXCESS - DSTOR) / Delt_t;
         end
-
         if Soilairefc == 1
-            [RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, GasDispersivity, ...
-                                                            BoundaryCondition, P_gg, Xah, XaT, Xaa, RHODA, KT, Delt_t);
+            [AirVariabes, RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
+                                                                         BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t);
+            KLhBAR = AirVariabes.KLhBAR;
+            KLTBAR = AirVariabes.KLTBAR;
+            DDhDZ = AirVariabes.DDhDZ;
+            DhDZ = AirVariabes.DhDZ;
+            DTDZ = AirVariabes.DTDZ;
+            Kaa = AirVariabes.Kaa;
+            Vaa = AirVariabes.Vaa;
+            QL = AirVariabes.QL;
         end
 
+        DVa_Switch = SoilVariables.DVa_Switch;
         if Thmrlefc == 1
             run Enrgy_sub;
         end

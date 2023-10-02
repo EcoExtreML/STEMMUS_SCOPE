@@ -49,15 +49,13 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
             + (C2(n - 1, 2) / Delt_t) * SV.T(n - 1) + (C2(n, 1) / Delt_t) * SV.T(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     else
-        % TODO issue i defined outside of the loop!
-        ARG4 = C1(i - 1, 2) / Delt_t;
-        ARG5 = C1(i, 1) / Delt_t;
-        ARG6 = C1(i, 2) / Delt_t;
-
         RHS(1) = -C7(1) + (C3(1, 1) * P_g(1) + C3(1, 2) * P_g(2)) / Delt_t ...
             - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
             + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
         for i = 2:ModelSettings.NL
+            ARG4 = C1(i - 1, 2) / Delt_t;
+            ARG5 = C1(i, 1) / Delt_t;
+            ARG6 = C1(i, 2) / Delt_t;
             RHS(i) = -C7(i) + (C3(i - 1, 2) * P_g(i - 1) + C3(i, 1) * P_g(i) + C3(i, 2) * P_g(i + 1)) / Delt_t ...
                 - (ARG4 + C4(i - 1, 2)) * SV.hh(i - 1) - (ARG5 + C4(i, 1)) * SV.hh(i) - (ARG6 + C4(i, 2)) * SV.hh(i + 1) ...
                 + ARG4 * SV.h(i - 1) + ARG5 * SV.h(i) + ARG6 * SV.h(i + 1);

@@ -44,7 +44,7 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
             QL_T(i) = -((KLTBAR + DTDBAR) * DTDZ);
         end
 
-        % used in EnrgyPARM % TODO issue DDhDZ not a global var in EnrgyPARM
+        % used in EnrgyPARM
         AirVariabes.KLhBAR(i) = KLhBAR;
         AirVariabes.KLTBAR(i) = KLTBAR;
         AirVariabes.DDhDZ(i) = DDhDZ;

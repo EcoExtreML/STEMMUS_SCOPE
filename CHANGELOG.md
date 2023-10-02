@@ -6,11 +6,14 @@
   [#189](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/189)
 - All `h_*` functions are refcatored and moved to `+soilmoisture` folder in
   [#193](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/193)
+- All `Air_*` functions are refcatored and moved to `+dryair` folder in
+  [194](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/194)
 
 **Fixed:**
 
 - issue [#181](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/181)
 - issue [#98](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/98)
+- issue [#99](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/99)
 
 
 <a name="1.3.0"></a>

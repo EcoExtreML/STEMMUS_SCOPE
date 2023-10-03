@@ -1,62 +1,57 @@
-function [C1, C2, C3, C4, C4_a, C5, C5_a, C6, C6_a, C7] = calculateMatricCoefficients(CTh, CTT, CTa, KTh, KTT, KTa, CTg, VTT, VTh, VTa, DeltZ, NL, NN, Soilairefc)
+function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialValues)
     %{
         Calculate all the parameters related to matric coefficients e.g., c1-c7
         as in Equation 4.32 STEMMUS Technical Notes, page 44, which is an
         example for soil moisture equation, but here it is for energy equation.
     %}
-    for MN = 1:NN              % Clean the space in C1-7 every iteration,otherwise, in *.PARM files,
-        for ND = 1:2           % C1-7 will be mixed up with pre-storaged data, which will cause extremly crazy for computation, which exactly results in NAN.
-            C1(MN, ND) = 0;
-            C2(MN, ND) = 0;
-            C3(MN, ND) = 0;
-            C4_a(MN) = 0;
-            C5_a(MN) = 0;
-            C6_a(MN) = 0;
-            C4(MN, ND) = 0;
-            C5(MN, ND) = 0;
-            C6(MN, ND) = 0;
-            C7(MN) = 0;
-        end
-    end
+    ModelSettings = io.getModelSettings();
 
-    for ML = 1:NL
-        C1(ML, 1) = C1(ML, 1) + CTh(ML, 1) * DeltZ(ML) / 2;
-        C1(ML + 1, 1) = C1(ML + 1, 1) + CTh(ML, 2) * DeltZ(ML) / 2;
+    EnergyMatrices.C1 = InitialValues.C1;
+    EnergyMatrices.C2 = InitialValues.C2;
+    EnergyMatrices.C3 = InitialValues.C3;
+    EnergyMatrices.C4 = InitialValues.C4;
+    EnergyMatrices.C5 = InitialValues.C5;
+    EnergyMatrices.C6 = InitialValues.C6;
+    EnergyMatrices.C7 = zeros(ModelSettings.NN);
 
-        C2(ML, 1) = C2(ML, 1) + CTT(ML, 1) * DeltZ(ML) / 2;
-        C2(ML + 1, 1) = C2(ML + 1, 1) + CTT(ML, 2) * DeltZ(ML) / 2; %
+    for i = 1:ModelSettings.NL
+        EnergyMatrices.C1(i, 1) = EnergyMatrices.C1(i, 1) + EnergyVariables.CTh(i, 1) * ModelSettings.DeltZ(i) / 2;
+        EnergyMatrices.C1(i + 1, 1) = EnergyMatrices.C1(i + 1, 1) + EnergyVariables.CTh(i, 2) * ModelSettings.DeltZ(i) / 2;
 
-        C4ARG1 = (KTh(ML, 1) + KTh(ML, 2)) / (2 * DeltZ(ML)); % sqrt(KTh(ML,1)*KTh(ML,2))/(DeltZ(ML));%
-        C4ARG2_1 = VTh(ML, 1) / 3 + VTh(ML, 2) / 6;
-        C4ARG2_2 = VTh(ML, 1) / 6 + VTh(ML, 2) / 3;
-        C4(ML, 1) = C4(ML, 1) + C4ARG1 - C4ARG2_1;
-        C4(ML, 2) = C4(ML, 2) - C4ARG1 - C4ARG2_2;
-        C4(ML + 1, 1) = C4(ML + 1, 1) + C4ARG1 + C4ARG2_2;
-        C4_a(ML) = -C4ARG1 + C4ARG2_1;
+        EnergyMatrices.C2(i, 1) = EnergyMatrices.C2(i, 1) + EnergyVariables.CTT(i, 1) * ModelSettings.DeltZ(i) / 2;
+        EnergyMatrices.C2(i + 1, 1) = EnergyMatrices.C2(i + 1, 1) + EnergyVariables.CTT(i, 2) * ModelSettings.DeltZ(i) / 2;
 
-        C5ARG1 = (KTT(ML, 1) + KTT(ML, 2)) / (2 * DeltZ(ML)); % sqrt(KTT(ML,1)*KTT(ML,2))/(DeltZ(ML));%
-        C5ARG2_1 = VTT(ML, 1) / 3 + VTT(ML, 2) / 6;
-        C5ARG2_2 = VTT(ML, 1) / 6 + VTT(ML, 2) / 3;
-        C5(ML, 1) = C5(ML, 1) + C5ARG1 - C5ARG2_1;
-        C5(ML, 2) = C5(ML, 2) - C5ARG1 - C5ARG2_2;
-        C5(ML + 1, 1) = C5(ML + 1, 1) + C5ARG1 + C5ARG2_2;
-        C5_a(ML) = -C5ARG1 + C5ARG2_1;
+        C4ARG1 = (EnergyVariables.KTh(i, 1) + EnergyVariables.KTh(i, 2)) / (2 * ModelSettings.DeltZ(i));
+        C4ARG2_1 = EnergyVariables.VTh(i, 1) / 3 + EnergyVariables.VTh(i, 2) / 6;
+        C4ARG2_2 = EnergyVariables.VTh(i, 1) / 6 + EnergyVariables.VTh(i, 2) / 3;
+        EnergyMatrices.C4(i, 1) = EnergyMatrices.C4(i, 1) + C4ARG1 - C4ARG2_1;
+        EnergyMatrices.C4(i, 2) = EnergyMatrices.C4(i, 2) - C4ARG1 - C4ARG2_2;
+        EnergyMatrices.C4(i + 1, 1) = EnergyMatrices.C4(i + 1, 1) + C4ARG1 + C4ARG2_2;
+        EnergyMatrices.C4_a(i) = -C4ARG1 + C4ARG2_1;
 
-        if Soilairefc == 1
-            C3(ML, 1) = C3(ML, 1) + CTa(ML, 1) * DeltZ(ML) / 2;
-            C3(ML + 1, 1) = C3(ML + 1, 1) + CTa(ML, 2) * DeltZ(ML) / 2;
+        C5ARG1 = (EnergyVariables.KTT(i, 1) + EnergyVariables.KTT(i, 2)) / (2 * ModelSettings.DeltZ(i));
+        C5ARG2_1 = EnergyVariables.VTT(i, 1) / 3 + EnergyVariables.VTT(i, 2) / 6;
+        C5ARG2_2 = EnergyVariables.VTT(i, 1) / 6 + EnergyVariables.VTT(i, 2) / 3;
+        EnergyMatrices.C5(i, 1) = EnergyMatrices.C5(i, 1) + C5ARG1 - C5ARG2_1;
+        EnergyMatrices.C5(i, 2) = EnergyMatrices.C5(i, 2) - C5ARG1 - C5ARG2_2;
+        EnergyMatrices.C5(i + 1, 1) = EnergyMatrices.C5(i + 1, 1) + C5ARG1 + C5ARG2_2;
+        EnergyMatrices.C5_a(i) = -C5ARG1 + C5ARG2_1;
 
-            C6ARG1 = (KTa(ML, 1) + KTa(ML, 2)) / (2 * DeltZ(ML)); % sqrt(KTa(ML,1)*KTa(ML,2))/(DeltZ(ML)); %
-            C6ARG2_1 = VTa(ML, 1) / 3 + VTa(ML, 2) / 6;
-            C6ARG2_2 = VTa(ML, 1) / 6 + VTa(ML, 2) / 3;
-            C6(ML, 1) = C6(ML, 1) + C6ARG1 - C6ARG2_1;
-            C6(ML, 2) = C6(ML, 2) - C6ARG1 - C6ARG2_2;
-            C6(ML + 1, 1) = C6(ML + 1, 1) + C6ARG1 + C6ARG2_2;
-            C6_a(ML) = -C6ARG1 + C6ARG2_1;
+        if ModelSettings.Soilairefc == 1
+            EnergyMatrices.C3(i, 1) = EnergyMatrices.C3(i, 1) + EnergyVariables.CTa(i, 1) * ModelSettings.DeltZ(i) / 2;
+            EnergyMatrices.C3(i + 1, 1) = EnergyMatrices.C3(i + 1, 1) + EnergyVariables.CTa(i, 2) * ModelSettings.DeltZ(i) / 2;
+
+            C6ARG1 = (EnergyVariables.KTa(i, 1) + EnergyVariables.KTa(i, 2)) / (2 * ModelSettings.DeltZ(i));
+            C6ARG2_1 = EnergyVariables.VTa(i, 1) / 3 + EnergyVariables.VTa(i, 2) / 6;
+            C6ARG2_2 = EnergyVariables.VTa(i, 1) / 6 + EnergyVariables.VTa(i, 2) / 3;
+            EnergyMatrices.C6(i, 1) = EnergyMatrices.C6(i, 1) + C6ARG1 - C6ARG2_1;
+            EnergyMatrices.C6(i, 2) = EnergyMatrices.C6(i, 2) - C6ARG1 - C6ARG2_2;
+            EnergyMatrices.C6(i + 1, 1) = EnergyMatrices.C6(i + 1, 1) + C6ARG1 + C6ARG2_2;
+            EnergyMatrices.C6_a(i) = -C6ARG1 + C6ARG2_1;
         end
 
-        C7ARG = (CTg(ML, 1) + CTg(ML, 2)) / 2; % sqrt(CTg(ML,1)*CTg(ML,2));%
-        C7(ML) = C7(ML) - C7ARG;
-        C7(ML + 1) = C7(ML + 1) + C7ARG;
+        C7ARG = (EnergyVariables.CTg(i, 1) + EnergyVariables.CTg(i, 2)) / 2;
+        EnergyMatrices.C7(i) = EnergyMatrices.C7(i) - C7ARG;
+        EnergyMatrices.C7(i + 1) = EnergyMatrices.C7(i + 1) + C7ARG;
     end
 end

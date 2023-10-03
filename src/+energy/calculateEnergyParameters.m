@@ -9,14 +9,13 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
+    % input
     Kcah = InitialValues.Kcah;
     KcaT = InitialValues.KcaT;
     Kcaa = InitialValues.Kcaa;
     Ccah = InitialValues.Ccah;
     CcaT = InitialValues.CcaT;
     Ccaa = InitialValues.Ccaa;
-    CTT = InitialValues.CTT;
-
     KLhBAR = AirVariabes.KLhBAR;
     KLTBAR = AirVariabes.KLTBAR;
     DDhDZ = AirVariabes.DDhDZ;
@@ -26,6 +25,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     Vaa = AirVariabes.Vaa;
     QL = AirVariabes.QL;
 
+    % output
     EnergyVariables.CTh = InitialValues.CTh;
     EnergyVariables.CTa = InitialValues.CTa;
     EnergyVariables.KTh = InitialValues.KTh;
@@ -35,6 +35,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     EnergyVariables.VTh = InitialValues.VTh;
     EnergyVariables.VTa = InitialValues.VTa;
     EnergyVariables.CTg = InitialValues.CTg;
+    EnergyVariables.CTT = InitialValues.CTT;
 
     for i = 1:ModelSettings.NL
         if ~ModelSettings.Soilairefc
@@ -71,10 +72,12 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
                 QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
             end
 
-            DVH(i) = (DEhBAR) * DRHOVhDz(i);
-            DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
-            QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
-            QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
+            % TODO issue unused vars
+            % DVH(i) = (DEhBAR) * DRHOVhDz(i);
+            % DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
+            % QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
+            % QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
+
             if ModelSettings.Soilairefc == 1
                 Kcah(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * Xah(MN) + Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j));
                 KcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * XaT(MN) + Constants.Hc * RHODA(MN) * (KL_T(i, j) + TransportCoefficient.D_Ta(i, j))); %
@@ -98,7 +101,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
                 if CTT_PH(i, j) < 0
                     CTT_PH(i, j) = 0;
                 end
-                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
+                EnergyVariables.CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
                 EnergyVariables.CTh(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
                 EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
 
@@ -110,7 +113,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
                 CTT_PH(i, j) = 0;
                 EnergyVariables.CTh(i, j) = ((Constants.c_L * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL - (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) - Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * SoilVariables.DTheta_LLh(i, j);
                 +(Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
-                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVT(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN) ...
+                EnergyVariables.CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVT(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN) ...
                     + ((Constants.c_L * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL - (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) - Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * SoilVariables.DTheta_LLT(i, j);
                 EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
             end
@@ -126,7 +129,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
                 CTT_g(i, j) = Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN);
                 CTT_LT(i, j) = ((Constants.c_L * SoilVariables.TT(MN) - Constants.c_i * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL + ((Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) + Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * (Constants.RHOL / Constants.RHOI - 1)) * 1e4 * L_f / (Constants.g * (ModelSettings.T0 + SoilVariables.TT(MN))) * SoilVariables.DTheta_UUh(i, j);
 
-                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
+                EnergyVariables.CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
                 EnergyVariables.CTh(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
                 EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
             end

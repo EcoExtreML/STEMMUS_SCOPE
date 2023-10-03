@@ -1,4 +1,4 @@
-function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t)
+function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t, P_gg)
     %{
         Perform the finite difference of the time derivatives of the matrix
         equation as Equation 4.32 shows in 'STEMMUS Technical Notes', section 4.
@@ -12,7 +12,6 @@ function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(Initi
     C7 = HeatMatrices.C7;
     C5_a = HeatMatrices.C5_a;
     C9 = HeatMatrices.C9;
-    P_gg = InitialValues.P_gg;
     h = SoilVariables.h;
     T = SoilVariables.T;
     TT = SoilVariables.TT;

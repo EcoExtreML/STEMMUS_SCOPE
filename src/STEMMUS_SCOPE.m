@@ -73,11 +73,11 @@ Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 global MN ND TOLD h hh T TT P_g P_gg RWU EVAP QMB
 global Precip frac TTT Theta_LLL CHK Theta_LL Theta_UUU
 global Theta_III SRT Srt CTT_PH
-global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ QL QV Qa KL_h
-global Khh KhT Resis_a KfL_h TT_CRIT h_frez L_f CTT EPCT DTheta_LLh DTheta_LLT
-global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz EtaBAR D_Vg
-global DRHOVTDz KLhBAR KLTBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR QVa
-global QLH QLT DVH DVT Se DPgDZ V_A Theta_V W WW D_Ta thermal Xaa
+global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ QL KL_h
+global Khh KhT Resis_a KfL_h TT_CRIT h_frez L_f EPCT DTheta_LLh DTheta_LLT
+global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz D_Vg
+global DRHOVTDz KLhBAR KLTBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR
+global DVH DVT Se V_A Theta_V W WW D_Ta thermal Xaa
 global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V Eta
 global Ks RHODA RHOV L
 global sfactor fluxes Tss
@@ -94,26 +94,18 @@ CTT_PH = InitialValues.CTT_PH;
 CTT_Lg = InitialValues.CTT_Lg;
 CTT_g = InitialValues.CTT_g;
 CTT_LT = InitialValues.CTT_LT;
-CTT = InitialValues.CTT;
 DhDZ = InitialValues.DhDZ;
 DTDZ = InitialValues.DTDZ;
 D_Vg = InitialValues.D_Vg;
 DRHOVhDz = InitialValues.DRHOVhDz;
-EtaBAR = InitialValues.EtaBAR;
 DRHOVTDz = InitialValues.DRHOVTDz;
 KLhBAR = InitialValues.KLhBAR;
 DEhBAR = InitialValues.DEhBAR;
 KLTBAR = InitialValues.KLTBAR;
-QLH = InitialValues.QLH;
-QLT = InitialValues.QLT;
 DVH = InitialValues.DVH;
 DVT = InitialValues.DVT;
 QVH = InitialValues.QVH;
 QVT = InitialValues.QVT;
-QV = InitialValues.QV;
-QVa = InitialValues.QVa;
-Qa = InitialValues.Qa;
-DPgDZ = InitialValues.DPgDZ;
 frac = InitialValues.frac;
 P_g = InitialValues.P_g;
 P_gg = InitialValues.P_gg;
@@ -135,28 +127,9 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 SAVE = InitialValues.SAVE;
 
-global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6  Kaa Vaa  CTh CTa KTh KTT KTa
-global VTT VTh VTa CTg Kcva Kcah KcaT Kcaa Ccah CcaT Ccaa SMC bbx Ta Ts
-global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7 DVa_Switch
+global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6 SMC bbx Ta Ts
+global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7
 
-Kaa = InitialValues.Kaa;
-Vaa = InitialValues.Vaa;
-CTh = InitialValues.CTh;
-CTa = InitialValues.CTa;
-KTh = InitialValues.KTh;
-KTT = InitialValues.KTT;
-KTa = InitialValues.KTa;
-VTT = InitialValues.VTT;
-VTh = InitialValues.VTh;
-VTa = InitialValues.VTa;
-CTg = InitialValues.CTg;
-Kcva = InitialValues.Kcva;
-Kcah = InitialValues.Kcah;
-KcaT = InitialValues.KcaT;
-Kcaa = InitialValues.Kcaa;
-Ccah = InitialValues.Ccah;
-CcaT = InitialValues.CcaT;
-Ccaa = InitialValues.Ccaa;
 SMC = InitialValues.SMC;
 bbx = InitialValues.bbx;
 Ta = InitialValues.Ta;
@@ -785,17 +758,17 @@ for i = 1:1:TimeProperties.Dur_tot
         if Soilairefc == 1
             [AirVariabes, RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
                                                                          BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t);
-            KLhBAR = AirVariabes.KLhBAR;
-            KLTBAR = AirVariabes.KLTBAR;
-            DDhDZ = AirVariabes.DDhDZ;
-            DhDZ = AirVariabes.DhDZ;
-            DTDZ = AirVariabes.DTDZ;
-            Kaa = AirVariabes.Kaa;
-            Vaa = AirVariabes.Vaa;
-            QL = AirVariabes.QL;
+        else
+            AirVariabes.KLhBAR = InitialValues.KLhBAR;
+            AirVariabes.KLTBAR = InitialValues.KLTBAR;
+            AirVariabes.DDhDZ = InitialValues.DDhDZ;
+            AirVariabes.DhDZ = InitialValues.DhDZ;
+            AirVariabes.DTDZ = InitialValues.DTDZ;
+            AirVariabes.Kaa = InitialValues.Kaa;
+            AirVariabes.Vaa = InitialValues.Vaa;
+            AirVariabes.QL = InitialValues.QL;
         end
 
-        DVa_Switch = SoilVariables.DVa_Switch;
         if Thmrlefc == 1
             run Enrgy_sub;
         end

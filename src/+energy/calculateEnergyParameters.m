@@ -1,116 +1,149 @@
-function [CTh, CTT, CTa, KTh, KTT, KTa, VTT, VTh, VTa, CTg, QL, QLT, QLH, QV, QVH, QVT, QVa, Qa, KLhBAR, KLTBAR, DTDBAR, DhDZ, DTDZ, DPgDZ, Beta_g, DEhBAR, DETBAR, RHOVBAR, EtaBAR] = EnrgyPARM(NL, hh, TT, DeltZ, P_gg, Kaa, Vvh, VvT, Vaa, c_a, c_L, DTheta_LLh, RHOV, Hc, RHODA, DRHODAz, L, WW, RHOL, Theta_V, DRHOVh, DRHOVT, KfL_h, D_Ta, KL_T, D_V, D_Vg, DVa_Switch, Theta_g, QL, V_A, Lambda_eff, c_unsat, Eta, Xah, XaT, Xaa, DTheta_LLT, Soilairefc, Khh, KhT, Kha, KLhBAR, KLTBAR, DTDBAR, DhDZ, DTDZ, DPgDZ, Beta_g, DEhBAR, DETBAR, QV, Qa, RHOVBAR, EtaBAR, h_frez, hh_frez, SFCC, Srt, DTheta_UUh, TT_CRIT, T0, EPCT, L_f, RHOI, g, c_i, QLT, QLH, SAVEDTheta_LLh, SAVEDTheta_UUh, Kcah, KcaT, Kcaa, Kcva, Ccah, CcaT, Ccaa, QVa, CTT, DDhDZ)
+function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
+                                                      VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
+                                                      DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L)
+    %{
+        Calculate all the parameters related to energy balance equation e.Constants.g.,
+        Equation 3.65-3.73, STEMMUS Technical Notes, page 29-32.
+    %}
 
-    for ML = 1:NL
-        if ~Soilairefc
-            KLhBAR(ML) = (KfL_h(ML, 1) + KfL_h(ML, 2)) / 2;
-            KLTBAR(ML) = (KL_T(ML, 1) + KL_T(ML, 2)) / 2;
-            DETBAR(ML) = (D_V(ML, 1) * Eta(ML, 1) + D_V(ML, 2) * Eta(ML, 2)) / 2;
-            DDhDZ(ML) = (hh(ML + 1) - hh(ML)) / DeltZ(ML);
-            DhDZ(ML) = (hh(ML + 1) + hh_frez(ML + 1) - hh(ML) - hh_frez(ML)) / DeltZ(ML);
-            DTDZ(ML) = (TT(ML + 1) - TT(ML)) / DeltZ(ML);
-            DPgDZ(ML) = (P_gg(ML + 1) - P_gg(ML)) / DeltZ(ML);
+    ModelSettings = io.getModelSettings();
+    Constants = io.define_constants();
+
+    Kcah = InitialValues.Kcah;
+    KcaT = InitialValues.KcaT;
+    Kcaa = InitialValues.Kcaa;
+    Ccah = InitialValues.Ccah;
+    CcaT = InitialValues.CcaT;
+    Ccaa = InitialValues.Ccaa;
+    CTT = InitialValues.CTT;
+
+    KLhBAR = AirVariabes.KLhBAR;
+    KLTBAR = AirVariabes.KLTBAR;
+    DDhDZ = AirVariabes.DDhDZ;
+    DhDZ = AirVariabes.DhDZ;
+    DTDZ = AirVariabes.DTDZ;
+    Kaa = AirVariabes.Kaa;
+    Vaa = AirVariabes.Vaa;
+    QL = AirVariabes.QL;
+
+    EnergyVariables.CTh = InitialValues.CTh;
+    EnergyVariables.CTa = InitialValues.CTa;
+    EnergyVariables.KTh = InitialValues.KTh;
+    EnergyVariables.KTT = InitialValues.KTT;
+    EnergyVariables.KTa = InitialValues.KTa;
+    EnergyVariables.VTT = InitialValues.VTT;
+    EnergyVariables.VTh = InitialValues.VTh;
+    EnergyVariables.VTa = InitialValues.VTa;
+    EnergyVariables.CTg = InitialValues.CTg;
+
+    for i = 1:ModelSettings.NL
+        if ~ModelSettings.Soilairefc
+            KLhBAR(i) = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
+            KLTBAR(i) = (KL_T(i, 1) + KL_T(i, 2)) / 2;
+            DDhDZ(i) = (SoilVariables.hh(i + 1) - SoilVariables.hh(i)) / ModelSettings.DeltZ(i);
+            DhDZ(i) = (SoilVariables.hh(i + 1) + SoilVariables.hh_frez(i + 1) - SoilVariables.hh(i) - SoilVariables.hh_frez(i)) / ModelSettings.DeltZ(i);
+            DTDZ(i) = (SoilVariables.TT(i + 1) - SoilVariables.TT(i)) / ModelSettings.DeltZ(i);
         end
-        DTDBAR(ML) = (D_Ta(ML, 1) + D_Ta(ML, 2)) / 2;
-        DEhBAR(ML) = (D_V(ML, 1) + D_V(ML, 2)) / 2;
-        DRHOVhDz(ML) = (DRHOVh(ML + 1) + DRHOVh(ML)) / 2;
-        DRHOVTDz(ML) = (DRHOVT(ML + 1) + DRHOVT(ML)) / 2;
-        RHOVBAR(ML) = (RHOV(ML + 1) + RHOV(ML)) / 2;
-        EtaBAR(ML) = (Eta(ML, 1) + Eta(ML, 2)) / 2;
+        DTDBAR(i) = (TransportCoefficient.D_Ta(i, 1) + TransportCoefficient.D_Ta(i, 2)) / 2;
+        DEhBAR = (VaporVariables.D_V(i, 1) + VaporVariables.D_V(i, 2)) / 2;
+        DRHOVhDz(i) = (DRHOVh(i + 1) + DRHOVh(i)) / 2;
+        DRHOVTDz(i) = (DRHOVT(i + 1) + DRHOVT(i)) / 2;
+        RHOVBAR = (RHOV(i + 1) + RHOV(i)) / 2;
+        EtaBAR = (VaporVariables.Eta(i, 1) + VaporVariables.Eta(i, 2)) / 2;
     end
 
-    %%%%%% NOTE: The soil air gas in soil-pore is considered with Xah and XaT terms.(0.0003,volumetric heat capacity)%%%%%%
-    MN = 0;
-    for ML = 1:NL
-        for ND = 1:2
-            MN = ML + ND - 1;
-            if ~Soilairefc
-                QL(ML) = -(KLhBAR(ML) * DhDZ(ML) + (KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML) + KLhBAR(ML));
-                QLT(ML) = -((KLTBAR(ML) + DTDBAR(ML)) * DTDZ(ML));
-                QLH(ML) = -(KLhBAR(ML) * DhDZ(ML) + KLhBAR(ML));
-                Qa(ML) = 0;
+    % The soil air gas in soil-pore is considered with Xah and XaT
+    % terms.(0.0003,volumetric heat capacity)
+
+    for i = 1:ModelSettings.NL
+        for j = 1:ModelSettings.nD
+            MN = i + j - 1;
+            if ~ModelSettings.Soilairefc
+                QL(i) = -(KLhBAR(i) * DhDZ(i) + (KLTBAR(i) + DTDBAR(i)) * DTDZ(i) + KLhBAR(i));
+                Qa = 0;
             else
-                Qa(ML) = -((DEhBAR(ML) + D_Vg(ML)) * DRHODAz(ML) - RHODA(ML) * (V_A(ML) + Hc * QL(ML) / RHOL));
+                Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
             end
 
-            if DVa_Switch == 1
-                QV(ML) = -(DEhBAR(ML) + D_Vg(ML)) * DRHOVhDz(ML) * DDhDZ(ML) - (DEhBAR(ML) * EtaBAR(ML) + D_Vg(ML)) * DRHOVTDz(ML) * DTDZ(ML) + RHOVBAR(ML) * V_A(ML);
-                QVa(ML) = RHOVBAR(ML) * V_A(ML);
-
+            if SoilVariables.DVa_Switch == 1
+                QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i) + RHOVBAR * GasDispersivity.V_A(i);
             else
-                QV(ML) = -(DEhBAR(ML) + D_Vg(ML)) * DRHOVhDz(ML) * DDhDZ(ML) - (DEhBAR(ML) * EtaBAR(ML) + D_Vg(ML)) * DRHOVTDz(ML) * DTDZ(ML);
+                QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
             end
-            DVH(ML) = (DEhBAR(ML)) * DRHOVhDz(ML);
-            DVT(ML) = (DEhBAR(ML) * EtaBAR(ML)) * DRHOVTDz(ML);
-            QVH(ML) = -(DEhBAR(ML) + D_Vg(ML)) * DRHOVhDz(ML) * DDhDZ(ML);
-            QVT(ML) = -(DEhBAR(ML) * EtaBAR(ML) + D_Vg(ML)) * DRHOVTDz(ML) * DTDZ(ML);
-            if Soilairefc == 1
-                Kcah(ML, ND) = c_a * TT(MN) * ((D_V(ML, ND) + D_Vg(ML)) * Xah(MN) + Hc * RHODA(MN) * KfL_h(ML, ND));
-                KcaT(ML, ND) = c_a * TT(MN) * ((D_V(ML, ND) + D_Vg(ML)) * XaT(MN) + Hc * RHODA(MN) * (KL_T(ML, ND) + D_Ta(ML, ND))); %
-                Kcaa(ML, ND) = c_a * TT(MN) * Kaa(ML, ND); % ((D_V(ML,ND)+D_Vg(ML))*Xaa(MN)+RHODA(MN)*(Beta_g(ML,ND)+Hc*KL_h(ML,ND)/Gamma_w)); %
-                if DVa_Switch == 1
-                    Kcva(ML, ND) = L(MN) * RHOV(MN) * Beta_g(ML, ND);  % (c_V*TT(MN)+L(MN))--->(c_L*TT(MN)+L(MN))
+
+            DVH(i) = (DEhBAR) * DRHOVhDz(i);
+            DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
+            QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
+            QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
+            if ModelSettings.Soilairefc == 1
+                Kcah(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * Xah(MN) + Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j));
+                KcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * XaT(MN) + Constants.Hc * RHODA(MN) * (KL_T(i, j) + TransportCoefficient.D_Ta(i, j))); %
+                Kcaa(i, j) = Constants.c_a * SoilVariables.TT(MN) * Kaa(i, j);
+                if SoilVariables.DVa_Switch == 1
+                    Kcva = L(MN) * RHOV(MN) * GasDispersivity.Beta_g(i, j);
                 else
-                    Kcva(ML, ND) = 0;
+                    Kcva = 0;
                 end
-                Ccah(ML, ND) = c_a * TT(MN) * (-V_A(ML) - Hc * QL(ML) / RHOL) * Xah(MN);
-                CcaT(ML, ND) = c_a * TT(MN) * (-V_A(ML) - Hc * QL(ML) / RHOL) * XaT(MN);
-                Ccaa(ML, ND) = c_a * TT(MN) * Vaa(ML, ND); % *(-V_A(ML)-Hc*QL(ML)/RHOL)*Xaa(MN); %
+                Ccah(i, j) = Constants.c_a * SoilVariables.TT(MN) * (-GasDispersivity.V_A(i) - Constants.Hc * QL(i) / Constants.RHOL) * Xah(MN);
+                CcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * (-GasDispersivity.V_A(i) - Constants.Hc * QL(i) / Constants.RHOL) * XaT(MN);
+                Ccaa(i, j) = Constants.c_a * SoilVariables.TT(MN) * Vaa(i, j);
             end
 
-            if abs(SAVEDTheta_LLh(ML, ND) - SAVEDTheta_UUh(ML, ND)) ~= 0
-                CTT_PH(ML, ND) = (10 * L_f^2 * RHOI / (g * (T0 + TT(MN)))) * DTheta_UUh(ML, ND);
-                CTT_Lg(ML, ND) = (c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVT(MN);
-                CTT_g(ML, ND) = c_a * TT(MN) * Theta_g(ML, ND) * XaT(MN);
-                % Modified 20190514
-                CTT_LT(ML, ND) = (((c_L * TT(MN) - WW(ML, ND)) * RHOL - ((c_L * TT(MN) + L(MN)) * RHOV(MN) + c_a * RHODA(MN) * TT(MN))) * (1 - RHOI / RHOL) - RHOI * c_i * TT(MN)) * 1e4 * L_f / (g * (T0 + TT(MN))) * DTheta_UUh(ML, ND); % DTheta_LLh(ML,ND); %DTheta_LLT(ML,ND)
-                if CTT_PH(ML, ND) < 0
-                    CTT_PH(ML, ND) = 0; % -c_i*TT(MN)-c_i*TT(MN)
+            if abs(SoilVariables.SAVEDTheta_LLh(i, j) - SoilVariables.SAVEDTheta_UUh(i, j)) ~= 0
+                CTT_PH(i, j) = (10 * L_f^2 * Constants.RHOI / (Constants.g * (ModelSettings.T0 + SoilVariables.TT(MN)))) * SoilVariables.DTheta_UUh(i, j);
+                CTT_Lg(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVT(MN);
+                CTT_g(i, j) = Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN);
+
+                CTT_LT(i, j) = (((Constants.c_L * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL - ((Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) + Constants.c_a * RHODA(MN) * SoilVariables.TT(MN))) * (1 - Constants.RHOI / Constants.RHOL) - Constants.RHOI * Constants.c_i * SoilVariables.TT(MN)) * 1e4 * L_f / (Constants.g * (ModelSettings.T0 + SoilVariables.TT(MN))) * SoilVariables.DTheta_UUh(i, j);
+                if CTT_PH(i, j) < 0
+                    CTT_PH(i, j) = 0;
                 end
-                CTT(ML, ND) = c_unsat(ML, ND) + CTT_Lg(ML, ND) + CTT_g(ML, ND) + CTT_LT(ML, ND) + CTT_PH(ML, ND);
-                CTh(ML, ND) = (c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVh(MN) + c_a * TT(MN) * Theta_g(ML, ND) * Xah(MN); % ;%+c_a*TT(MN)*Theta_g(ML,ND)*Xah(MN)
-                CTa(ML, ND) = TT(MN) * Theta_V(ML, ND) * c_a * Xaa(MN); % There is not this term in Milly's work.
+                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
+                EnergyVariables.CTh(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
+                EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
 
             else
-                %  Main coefficients for energy transport is here:
-                CTT_Lg(ML, ND) = 0;
-                CTT_g(ML, ND) = 0;
-                CTT_LT(ML, ND) = 0;
-                CTT_PH(ML, ND) = 0;
-                CTh(ML, ND) = ((c_L * TT(MN) - WW(ML, ND)) * RHOL - (c_L * TT(MN) + L(MN)) * RHOV(MN) - c_a * RHODA(MN) * TT(MN)) * DTheta_LLh(ML, ND); % DTheta_LLh(ML,ND) ...
-                +(c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVh(MN) + c_a * TT(MN) * Theta_g(ML, ND) * Xah(MN); % ;%+c_a*TT(MN)*Theta_g(ML,ND)*Xah(MN)
-                CTT(ML, ND) = c_unsat(ML, ND) + (c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVT(MN) + c_a * TT(MN) * Theta_g(ML, ND) * XaT(MN) ...
-                    + ((c_L * TT(MN) - WW(ML, ND)) * RHOL - (c_L * TT(MN) + L(MN)) * RHOV(MN) - c_a * RHODA(MN) * TT(MN)) * DTheta_LLT(ML, ND); % %+c_a*TT(MN)*Theta_g(ML,ND)*XaT(MN)"+"
-                CTa(ML, ND) = TT(MN) * Theta_V(ML, ND) * c_a * Xaa(MN); % There is not this term in Milly's work.
+                % Main coefficients for energy transport is here
+                CTT_Lg(i, j) = 0;
+                CTT_g(i, j) = 0;
+                CTT_LT(i, j) = 0;
+                CTT_PH(i, j) = 0;
+                EnergyVariables.CTh(i, j) = ((Constants.c_L * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL - (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) - Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * SoilVariables.DTheta_LLh(i, j);
+                +(Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
+                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVT(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN) ...
+                    + ((Constants.c_L * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL - (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) - Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * SoilVariables.DTheta_LLT(i, j);
+                EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
             end
-            if SFCC == 0  %%%%%% ice calculation use Sin function
-                if TT(MN) + 273.15 > Tf1
-                    CTT_PH(ML, ND) = 0;
-                elseif TT(MN) + 273.15 >= Tf2 % XCAP(MN)*
-                    CTT_PH(ML, ND) = L_f * 10^(-3) * 0.5 * cos(pi() * (TT(MN) + 273.15 - 0.5 * Tf1 - 0.5 * Tf2) / (Tf1 - Tf2)) * pi() / (Tf1 - Tf2);
+            if ModelSettings.SFCC == 0  % ice calculation use Sin function
+                if SoilVariables.TT(MN) + 273.15 > Tf1
+                    CTT_PH(i, j) = 0;
+                elseif SoilVariables.TT(MN) + 273.15 >= Tf2
+                    CTT_PH(i, j) = L_f * 10^(-3) * 0.5 * cos(pi() * (SoilVariables.TT(MN) + 273.15 - 0.5 * Tf1 - 0.5 * Tf2) / (Tf1 - Tf2)) * pi() / (Tf1 - Tf2);
                 else
-                    CTT_PH(ML, ND) = 0;
+                    CTT_PH(i, j) = 0;
                 end
-                CTT_Lg(ML, ND) = (c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVT(MN);
-                CTT_g(ML, ND) = c_a * TT(MN) * Theta_g(ML, ND) * XaT(MN);
-                CTT_LT(ML, ND) = ((c_L * TT(MN) - c_i * TT(MN) - WW(ML, ND)) * RHOL + ((c_L * TT(MN) + L(MN)) * RHOV(MN) + c_a * RHODA(MN) * TT(MN)) * (RHOL / RHOI - 1)) * 1e4 * L_f / (g * (T0 + TT(MN))) * DTheta_UUh(ML, ND); % DTheta_LLT(ML,ND)
+                CTT_Lg(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVT(MN);
+                CTT_g(i, j) = Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * XaT(MN);
+                CTT_LT(i, j) = ((Constants.c_L * SoilVariables.TT(MN) - Constants.c_i * SoilVariables.TT(MN) - TransportCoefficient.WW(i, j)) * Constants.RHOL + ((Constants.c_L * SoilVariables.TT(MN) + L(MN)) * RHOV(MN) + Constants.c_a * RHODA(MN) * SoilVariables.TT(MN)) * (Constants.RHOL / Constants.RHOI - 1)) * 1e4 * L_f / (Constants.g * (ModelSettings.T0 + SoilVariables.TT(MN))) * SoilVariables.DTheta_UUh(i, j);
 
-                CTT(ML, ND) = c_unsat(ML, ND) + CTT_Lg(ML, ND) + CTT_g(ML, ND) + CTT_LT(ML, ND) + CTT_PH(ML, ND);
-                CTh(ML, ND) = (c_L * TT(MN) + L(MN)) * Theta_g(ML, ND) * DRHOVh(MN) + c_a * TT(MN) * Theta_g(ML, ND) * Xah(MN); % ;%+c_a*TT(MN)*Theta_g(ML,ND)*Xah(MN)
-                CTa(ML, ND) = TT(MN) * Theta_V(ML, ND) * c_a * Xaa(MN); % There is not this term in Milly's work.
+                CTT(i, j) = ThermalConductivityCapacity.c_unsat(i, j) + CTT_Lg(i, j) + CTT_g(i, j) + CTT_LT(i, j) + CTT_PH(i, j);
+                EnergyVariables.CTh(i, j) = (Constants.c_L * SoilVariables.TT(MN) + L(MN)) * SoilVariables.Theta_g(i, j) * DRHOVh(MN) + Constants.c_a * SoilVariables.TT(MN) * SoilVariables.Theta_g(i, j) * Xah(MN);
+                EnergyVariables.CTa(i, j) = SoilVariables.TT(MN) * SoilVariables.Theta_V(i, j) * Constants.c_a * Xaa(MN);  % This term isnot in Milly's work.
             end
-            KTh(ML, ND) = L(MN) * (D_V(ML, ND) + D_Vg(ML)) * DRHOVh(MN) + c_L * TT(MN) * RHOL * Khh(ML, ND) + Kcah(ML, ND); % ; %+Kcah(ML,ND)
-            KTT(ML, ND) = Lambda_eff(ML, ND) + c_L * TT(MN) * RHOL * KhT(ML, ND) + KcaT(ML, ND) + L(MN) * (D_V(ML, ND) * Eta(ML, ND) + D_Vg(ML)) * DRHOVT(MN);  % ;%;  % Revised from: "Lambda_eff(ML,ND)+c_L*TT(MN)*RHOL*KhT(ML,ND);"
-            KTa(ML, ND) = Kcva(ML, ND) + Kcaa(ML, ND) + c_L * TT(MN) * RHOL * Kha(ML, ND); % There is not this term in Milly's work.
+            EnergyVariables.KTh(i, j) = L(MN) * (VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * DRHOVh(MN) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Khh(i, j) + Kcah(i, j);
+            EnergyVariables.KTT(i, j) = ThermalConductivityCapacity.Lambda_eff(i, j) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.KhT(i, j) + KcaT(i, j) + L(MN) * (VaporVariables.D_V(i, j) * VaporVariables.Eta(i, j) + GasDispersivity.D_Vg(i)) * DRHOVT(MN);
+            EnergyVariables.KTa(i, j) = Kcva + Kcaa(i, j) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Kha(i, j);  % This term isnot in Milly's work.
 
-            if DVa_Switch == 1
-                VTh(ML, ND) = c_L * TT(MN) * RHOL * Vvh(ML, ND) + Ccah(ML, ND) - L(MN) * V_A(ML) * DRHOVh(MN);
-                VTT(ML, ND) = c_L * TT(MN) * RHOL * VvT(ML, ND) + CcaT(ML, ND) - L(MN) * V_A(ML) * DRHOVT(MN) - (c_L * (QL(ML) + QV(ML)) + c_a * Qa(ML) - 2.369 * QV(ML));
+            if SoilVariables.DVa_Switch == 1
+                EnergyVariables.VTh(i, j) = Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Vvh(i, j) + Ccah(i, j) - L(MN) * GasDispersivity.V_A(i) * DRHOVh(MN);
+                EnergyVariables.VTT(i, j) = Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.VvT(i, j) + CcaT(i, j) - L(MN) * GasDispersivity.V_A(i) * DRHOVT(MN) - (Constants.c_L * (QL(i) + QV) + Constants.c_a * Qa - 2.369 * QV);
             else
-                VTh(ML, ND) = c_L * TT(MN) * RHOL * Vvh(ML, ND) + Ccah(ML, ND);
-                VTT(ML, ND) = c_L * TT(MN) * RHOL * VvT(ML, ND) + CcaT(ML, ND) - (c_L * (QL(ML) + QV(ML)) + c_a * Qa(ML) - 2.369 * QV(ML));
+                EnergyVariables.VTh(i, j) = Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Vvh(i, j) + Ccah(i, j);
+                EnergyVariables.VTT(i, j) = Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.VvT(i, j) + CcaT(i, j) - (Constants.c_L * (QL(i) + QV) + Constants.c_a * Qa - 2.369 * QV);
             end
 
-            VTa(ML, ND) = Ccaa(ML, ND); % c_a*TT(MN)*Vaa(ML,ND);
-            CTg(ML, ND) = (c_L * RHOL + c_a * Hc * RHODA(MN)) * KfL_h(ML, ND) * TT(MN) - c_L * Srt(ML, ND) * TT(MN); % ;;% % Revised from "c_L*T(MN)*KL_h(ML,ND)"
+            EnergyVariables.VTa(i, j) = Ccaa(i, j);
+            EnergyVariables.CTg(i, j) = (Constants.c_L * Constants.RHOL + Constants.c_a * Constants.Hc * RHODA(MN)) * SoilVariables.KfL_h(i, j) * SoilVariables.TT(MN) - Constants.c_L * Srt(i, j) * SoilVariables.TT(MN);
         end
     end
+end

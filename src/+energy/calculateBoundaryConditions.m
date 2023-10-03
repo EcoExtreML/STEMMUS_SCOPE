@@ -1,42 +1,43 @@
-function [RHS, C5, C5_a] = calculateBoundaryConditions(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, L_ts, NBCTB, NBCT, BCT, BCTB, DSTOR0, Delt_t, T, Ts, Ta, EVAP, C5, C5_a, r_a_SOIL, Resis_a, Tbtm, c_a, Rn_SOIL)
+function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
+                                                             Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT)
     %{
         Determine the boundary condition for solving the energy equation.
     %}
-    global Tss Tsur Tsss
-    Tsur(KT) = Tss;
-    %%%%%%%%% Apply the bottom boundary condition called for by NBCTB %%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if NBCTB == 1
-        RHS(1) = BCTB; % Tbtm(KT);
-        C5(1, 1) = 1;
-        RHS(2) = RHS(2) - C5(1, 2) * RHS(1);
-        C5(1, 2) = 0;
-        C5_a(1) = 0;
-    elseif NBCTB == 2
-        RHS(1) = RHS(1) + BCTB;
+
+    ModelSettings = io.getModelSettings();
+    n = ModelSettings.NN;
+
+    Constants = io.define_constants();
+
+    % Apply the bottom boundary condition called for by BoundaryCondition.NBCTB
+    if BoundaryCondition.NBCTB == 1
+        RHS(1) = BoundaryCondition.BCTB;
+        EnergyMatrices.C5(1, 1) = 1;
+        RHS(2) = RHS(2) - EnergyMatrices.C5(1, 2) * RHS(1);
+        EnergyMatrices.C5(1, 2) = 0;
+        EnergyMatrices.C5_a(1) = 0;
+    elseif BoundaryCondition.NBCTB == 2
+        RHS(1) = RHS(1) + BoundaryCondition.BCTB;
     else
-        C5(1, 1) = C5(1, 1) - c_L * RHOL * QMB;
+        EnergyMatrices.C5(1, 1) = EnergyMatrices.C5(1, 1) - Constants.c_L * Constants.RHOL * HBoundaryFlux.QMB;
     end
 
-    %%%%%%%%%% Apply the surface boundary condition called by NBCT %%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if NBCT == 1
-        if isreal(Tss)
-            RHS(NN) = Tss; % BCT;%30;
+    % Apply the surface boundary condition called by BoundaryCondition.NBCT
+    if BoundaryCondition.NBCT == 1
+        if isreal(SoilVariables.Tss(KT))
+            RHS(n) = SoilVariables.Tss(KT);
         else
-            RHS(NN) = Ta(KT);
+            RHS(n) = ForcingData.Ta_msr(KT);
         end
-        C5(NN, 1) = 1;
-        RHS(NN - 1) = RHS(NN - 1) - C5(NN - 1, 2) * RHS(NN);
-        C5(NN - 1, 2) = 0;
-        C5_a(NN - 1) = 0;
-        % SHH(KT)=0.1200*c_a*(T(NN)-Ta(KT))/r_a_SOIL(KT);%Resis_a(KT);   % J cm-2 s-1
-        % SHF(KT)=0.1200*c_a*(T(NN)-Ta(KT))/Resis_a(KT);%Resis_a(KT);   % J cm-2 s-1
-    elseif NBCT == 2
-        RHS(NN) = RHS(NN) - BCT;
+        EnergyMatrices.C5(n, 1) = 1;
+        RHS(n - 1) = RHS(n - 1) - EnergyMatrices.C5(n - 1, 2) * RHS(n);
+        EnergyMatrices.C5(n - 1, 2) = 0;
+        EnergyMatrices.C5_a(n - 1) = 0;
+    elseif BoundaryCondition.NBCT == 2
+        RHS(n) = RHS(n) - BoundaryCondition.BCT;
     else
-        L_ts(KT) = L(NN);
-        SH(KT) = 0.1200 * c_a * (T(NN) - Ta(KT)) / r_a_SOIL(KT); % Resis_a(KT);   % J cm-2 s-1
-        RHS(NN) = RHS(NN) + 100 * Rn_SOIL(KT) / 1800 - RHOL * L_ts(KT) * EVAP(KT) - SH(KT) + RHOL * c_L * (Ta(KT) * Precip(KT) + DSTOR0 * T(NN) / Delt_t);    % J cm-2 s-1
+        L_ts = L(n);
+        SH = 0.1200 * Constants.c_a * (SoilVariables.T(n) - ForcingData.Ta_msr(KT)) / r_a_SOIL(KT);
+        RHS(n) = RHS(n) + 100 * Rn_SOIL(KT) / 1800 - Constants.RHOL * L_ts * EVAP(KT) - SH + Constants.RHOL * Constants.c_L * (ForcingData.Ta_msr(KT) * Precip(KT) + BoundaryCondition.DSTOR0 * SoilVariables.T(n) / Delt_t);    % J cm-2 s-1
     end
 end

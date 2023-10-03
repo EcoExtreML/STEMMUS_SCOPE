@@ -10,8 +10,9 @@ function solveEnergyBalanceEquations
                                                        VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                        DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L);
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues);
-    [RHS, C5, SAVE] = Enrgy_EQ(C1, C2, C3, C4, C4_a, C5, C6_a, C6, C7, NL, NN, Delt_t, T, h, hh, P_g, P_gg, Thmrlefc, Soilairefc);
-    [RHS, C5, C5_a] = Enrgy_BC(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, L_ts, NBCTB, NBCT, BCT, BCTB, DSTOR0, Delt_t, T, Ts, Ta, EVAP, C5, C5_a, r_a_SOIL, Resis_a, Tbtm, c_a, Rn_SOIL);
+    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg);
+    [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
+                                                        Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
     [TT, CHK, RHS, C5] = Enrgy_Solve(C5, C5_a, TT, NN, NL, RHS);
     DeltT = abs(TT - TOLD);
     if any(isnan(TT)) || any(TT(1:NN) < Tmin) %|| any(DeltT(1:NN)>30) %isnan(TT)==1

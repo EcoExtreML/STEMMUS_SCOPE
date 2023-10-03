@@ -1,4 +1,8 @@
-function [TT, CHK, RHS, C5] = Enrgy_Solve(C5, C5_a, TT, NN, NL, RHS)
+function [TT, CHK, RHS, C5] = solveTridiagonalMatrixEquations(C5, C5_a, TT, NN, NL, RHS)
+    %{
+        Use Thomas algorithm to solve the tridiagonal matrix equations, which
+        is in the form of Equation 4.25, STEMMUS Technical Notes, page 41.
+    %}
 
     RHS(1) = RHS(1) / C5(1, 1);
 
@@ -16,3 +20,4 @@ function [TT, CHK, RHS, C5] = Enrgy_Solve(C5, C5_a, TT, NN, NL, RHS)
         SAVETT(MN) = TT(MN); % abs((RHS(MN)-TT(MN))/TT(MN)); %
         TT(MN) = RHS(MN);
     end
+end

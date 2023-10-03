@@ -1,4 +1,7 @@
-function [RHS, C5, C5_a] = Enrgy_BC(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, L_ts, NBCTB, NBCT, BCT, BCTB, DSTOR0, Delt_t, T, Ts, Ta, EVAP, C5, C5_a, r_a_SOIL, Resis_a, Tbtm, c_a, Rn_SOIL)
+function [RHS, C5, C5_a] = calculateBoundaryConditions(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, L_ts, NBCTB, NBCT, BCT, BCTB, DSTOR0, Delt_t, T, Ts, Ta, EVAP, C5, C5_a, r_a_SOIL, Resis_a, Tbtm, c_a, Rn_SOIL)
+    %{
+        Determine the boundary condition for solving the energy equation.
+    %}
     global Tss Tsur Tsss
     Tsur(KT) = Tss;
     %%%%%%%%% Apply the bottom boundary condition called for by NBCTB %%%%%%%%%
@@ -36,3 +39,4 @@ function [RHS, C5, C5_a] = Enrgy_BC(RHS, KT, NN, c_L, RHOL, QMB, SH, Precip, L, 
         SH(KT) = 0.1200 * c_a * (T(NN) - Ta(KT)) / r_a_SOIL(KT); % Resis_a(KT);   % J cm-2 s-1
         RHS(NN) = RHS(NN) + 100 * Rn_SOIL(KT) / 1800 - RHOL * L_ts(KT) * EVAP(KT) - SH(KT) + RHOL * c_L * (Ta(KT) * Precip(KT) + DSTOR0 * T(NN) / Delt_t);    % J cm-2 s-1
     end
+end

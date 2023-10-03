@@ -1,5 +1,9 @@
-function [RHS, C5, SAVE] = Enrgy_EQ(C1, C2, C3, C4, C4_a, C5, C6_a, C6, C7, NL, NN, Delt_t, T, h, hh, P_g, P_gg, Thmrlefc, Soilairefc)
-
+function [RHS, C5, SAVE] = assembleCoefficientMatrices(C1, C2, C3, C4, C4_a, C5, C6_a, C6, C7, NL, NN, Delt_t, T, h, hh, P_g, P_gg, Thmrlefc, Soilairefc)
+    %{
+        assembles the coefficient matrices of Equation 4.32, STEMMUS Technical
+        Notes, page 44, the example was only shown for the soil moisture
+        equation, but here it is for the energy equation.
+    %}
     if Soilairefc && Thmrlefc
         RHS(1) = -C7(1) + (C2(1, 1) * T(1) + C2(1, 2) * T(2)) / Delt_t ...
             - (C1(1, 1) / Delt_t + C4(1, 1)) * hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * hh(2) ...
@@ -65,3 +69,4 @@ function [RHS, C5, SAVE] = Enrgy_EQ(C1, C2, C3, C4, C4_a, C5, C6_a, C6, C7, NL, 
     SAVE(2, 1, 2) = RHS(NN);
     SAVE(2, 2, 2) = C5(NN - 1, 2);
     SAVE(2, 3, 2) = C5(NN, 1);
+end

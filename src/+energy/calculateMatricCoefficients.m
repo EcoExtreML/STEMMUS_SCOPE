@@ -1,5 +1,9 @@
-function [C1, C2, C3, C4, C4_a, C5, C5_a, C6, C6_a, C7] = Enrgy_MAT(CTh, CTT, CTa, KTh, KTT, KTa, CTg, VTT, VTh, VTa, DeltZ, NL, NN, Soilairefc)
-
+function [C1, C2, C3, C4, C4_a, C5, C5_a, C6, C6_a, C7] = calculateMatricCoefficients(CTh, CTT, CTa, KTh, KTT, KTa, CTg, VTT, VTh, VTa, DeltZ, NL, NN, Soilairefc)
+    %{
+        Calculate all the parameters related to matric coefficients e.g., c1-c7
+        as in Equation 4.32 STEMMUS Technical Notes, page 44, which is an
+        example for soil moisture equation, but here it is for energy equation.
+    %}
     for MN = 1:NN              % Clean the space in C1-7 every iteration,otherwise, in *.PARM files,
         for ND = 1:2           % C1-7 will be mixed up with pre-storaged data, which will cause extremly crazy for computation, which exactly results in NAN.
             C1(MN, ND) = 0;
@@ -55,3 +59,4 @@ function [C1, C2, C3, C4, C4_a, C5, C5_a, C6, C6_a, C7] = Enrgy_MAT(CTh, CTT, CT
         C7(ML) = C7(ML) - C7ARG;
         C7(ML + 1) = C7(ML + 1) + C7ARG;
     end
+end

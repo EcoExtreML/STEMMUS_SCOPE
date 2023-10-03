@@ -31,7 +31,8 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
         end
     end
 
-    % TODO issue unused function
+    % These are unused vars, but I comment them for future reference,
+    % See issue 100, item 2
     % [QET, QEB] = energy.calculateEnergyFluxes(SAVE, TT)(SAVE, SoilVariables.TT);
 
 end

@@ -1,9 +1,13 @@
-function solveEnergyBalanceEquations
+function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialValues, SoilVariables, HeatVariables, TransportCoefficient,
+                                                                       AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
+                                                                       HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
+                                                                       Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
+                                                                       TOLD, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, KT)
     %{
         Solve the Energy balance equation with the Thomas algorithm to update
-        the soil temperature 'TT', the finite difference time-stepping scheme is
-        exampled as for the soil moisture equation, which is derived in 'STEMMUS
-        Technical Notes' section 4, Equation 4.32.
+        the soil temperature 'SoilVariables.TT', the finite difference
+        time-stepping scheme is exampled as for the soil moisture equation,
+        which is derived in 'STEMMUS Technical Notes' section 4, Equation 4.32.
     %}
 
     EnergyVariables = energy.calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
@@ -12,19 +16,22 @@ function solveEnergyBalanceEquations
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues);
     [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg);
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                        Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
-    [TT, CHK, RHS, C5] = Enrgy_Solve(C5, C5_a, TT, NN, NL, RHS);
-    DeltT = abs(TT - TOLD);
-    if any(isnan(TT)) || any(TT(1:NN) < Tmin) %|| any(DeltT(1:NN)>30) %isnan(TT)==1
-        for MN = 1:NN
-            TT(MN) = TOLD(MN);
+                                                               Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
+    [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS);
+
+    ModelSettings = io.getModelSettings();
+    if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:NN) < ForcingData.Tmin)
+        for i = 1:ModelSettings.NN
+            SoilVariables.TT(i) = TOLD(i);
         end
     end
-    for MN = 1:NN
-        if TT(MN) <= -272
-            TT(MN) = -272;
+    for i = 1:ModelSettings.NN
+        if SoilVariables.TT(i) <= -272
+            SoilVariables.TT(i) = -272;
         end
     end
-    [QET, QEB] = Enrgy_Bndry_Flux(SAVE, TT, NN);
+
+    % TODO issue unused function
+    % [QET, QEB] = energy.calculateEnergyFluxes(SAVE, TT)(SAVE, SoilVariables.TT);
 
 end

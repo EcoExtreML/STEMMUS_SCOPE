@@ -66,17 +66,16 @@ Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
-global Tmin LAI_msr
+global LAI_msr
 LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
-Tmin = ForcingData.Tmin;  % used in Enrgy_sub
 
-global MN ND TOLD h hh T TT P_g P_gg RWU EVAP QMB
+global MN ND TOLD h hh T TT P_g P_gg RWU
 global Precip frac TTT Theta_LLL CHK Theta_LL Theta_UUU
 global Theta_III SRT Srt CTT_PH
-global CTT_LT CTT_g CTT_Lg c_unsat DhDZ DTDZ QL KL_h
+global CTT_LT CTT_g CTT_Lg c_unsat DTDZ KL_h
 global Khh KhT Resis_a KfL_h TT_CRIT h_frez L_f EPCT DTheta_LLh DTheta_LLT
-global DTheta_UUh Lambda_eff DDhDZ DEhBAR DRHOVhDz D_Vg
-global DRHOVTDz KLhBAR KLTBAR SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR
+global DTheta_UUh Lambda_eff DDhDZ
+global SAVEDTheta_LLh SAVEDTheta_UUh QVT QVH HR
 global DVH DVT Se V_A Theta_V W WW D_Ta thermal Xaa
 global XaT Xah KL_T DRHOVT DRHOVh DRHODAt DRHODAz Theta_g Beta_g D_V Eta
 global Ks RHODA RHOV L
@@ -88,7 +87,6 @@ D_V = InitialValues.D_V;
 Eta = InitialValues.Eta;
 Khh = InitialValues.Khh;
 KhT = InitialValues.KhT;
-QL = InitialValues.QL;
 V_A = InitialValues.V_A;
 CTT_PH = InitialValues.CTT_PH;
 CTT_Lg = InitialValues.CTT_Lg;
@@ -96,19 +94,11 @@ CTT_g = InitialValues.CTT_g;
 CTT_LT = InitialValues.CTT_LT;
 DhDZ = InitialValues.DhDZ;
 DTDZ = InitialValues.DTDZ;
-D_Vg = InitialValues.D_Vg;
-DRHOVhDz = InitialValues.DRHOVhDz;
-DRHOVTDz = InitialValues.DRHOVTDz;
-KLhBAR = InitialValues.KLhBAR;
-DEhBAR = InitialValues.DEhBAR;
-KLTBAR = InitialValues.KLTBAR;
 DVH = InitialValues.DVH;
 DVT = InitialValues.DVT;
 QVH = InitialValues.QVH;
 QVT = InitialValues.QVT;
 frac = InitialValues.frac;
-P_g = InitialValues.P_g;
-P_gg = InitialValues.P_gg;
 T_CRIT = InitialValues.T_CRIT;
 TT_CRIT = InitialValues.TT_CRIT;
 EPCT = InitialValues.EPCT;
@@ -127,8 +117,8 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 SAVE = InitialValues.SAVE;
 
-global Kha Vvh VvT C1 C2 C3 C4 C5 C5_a C6 SMC bbx Ta Ts
-global RHOV_s DRHOV_sT r_a_SOIL Rn_SOIL SH RHS C7
+global Kha Vvh VvT C4 C5_a SMC bbx Ta Ts
+global RHOV_s DRHOV_sT RHS
 
 SMC = InitialValues.SMC;
 bbx = InitialValues.bbx;
@@ -405,6 +395,7 @@ TOLD_CRIT = [];
 % Srt, root water uptake;
 Srt = InitialValues.Srt;  % will be updated!
 P_gg = InitialValues.P_gg;  % will be updated!
+P_g = InitialValues.P_g;  % will be updated!
 
 for i = 1:1:TimeProperties.Dur_tot
     KT = KT + 1;  % Counting Number of timesteps
@@ -647,7 +638,6 @@ for i = 1:1:TimeProperties.Dur_tot
     end
 
     Ts(KT) = Tss;  % Tss is calculated above
-    Ta(KT) = ForcingData.Ta_msr(KT);  % it is reset here because Ta is a gloval var
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
@@ -724,7 +714,6 @@ for i = 1:1:TimeProperties.Dur_tot
         DTheta_UUh = SoilVariables.DTheta_UUh;
         SAVEDTheta_UUh = SoilVariables.SAVEDTheta_UUh;
         SAVEDTheta_LLh = SoilVariables.SAVEDTheta_LLh;
-        QMB = HBoundaryFlux.QMB; %  used in Enrgy_BC.m
         QMT = HBoundaryFlux.QMT;
         C5_a = HeatMatrices.C5_a;
         C4 = HeatMatrices.C4;
@@ -770,10 +759,15 @@ for i = 1:1:TimeProperties.Dur_tot
         end
 
         if Thmrlefc == 1
-            run Enrgy_sub;
+            [RHS, SAVE, CHK, SoilVariables] = energy.solveEnergyBalanceEquations(InitialValues, SoilVariables, HeatVariables, TransportCoefficient,
+                                                                                 AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
+                                                                                 HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
+                                                                                 Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
+                                                                                 TOLD, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, KT);
+            TT = SoilVariables.TT;
         end
 
-        if max(CHK) < 0.1 % && max(FCHK)<0.001 %&& max(hCHK)<0.001 %&& min(KCHK)>0.001
+        if max(CHK) < 0.1
             break
         end
         hSAVE = hh(NN);

@@ -608,7 +608,7 @@ for i = 1:1:TimeProperties.Dur_tot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for KIT = 1:NIT   % Start the iteration procedure in a time step.
 
-        [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
+        [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, ForcingData.Tmin);
 
         % update inputs for UpdateSoilWaterContent
         SoilVariables.TT_CRIT = TT_CRIT;
@@ -700,7 +700,7 @@ for i = 1:1:TimeProperties.Dur_tot
         else
             AirVariabes.KLhBAR = InitialValues.KLhBAR;
             AirVariabes.KLTBAR = InitialValues.KLTBAR;
-            AirVariabes.DDhDZ = InitialValues.DDhDZ;
+            AirVariabes.DDhDZ = [];  % DDhDZ is not defined as InitialValues!
             AirVariabes.DhDZ = InitialValues.DhDZ;
             AirVariabes.DTDZ = InitialValues.DTDZ;
             AirVariabes.Kaa = InitialValues.Kaa;
@@ -713,7 +713,7 @@ for i = 1:1:TimeProperties.Dur_tot
                                                                                  AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                  HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                  Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                 TOLD, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, KT);
+                                                                                 TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT);
             TT = SoilVariables.TT;
         end
 
@@ -727,7 +727,7 @@ for i = 1:1:TimeProperties.Dur_tot
     TIMEOLD = KT;
     KIT;
     KIT = 0;
-    [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, Tmin);
+    [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, ForcingData.Tmin);
 
     % updates inputs for UpdateSoilWaterContent
     SoilVariables.TT_CRIT = TT_CRIT;

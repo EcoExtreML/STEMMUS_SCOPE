@@ -10,6 +10,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     Constants = io.define_constants();
 
     % input
+    Kcva = InitialValues.Kcva;
     Kcah = InitialValues.Kcah;
     KcaT = InitialValues.KcaT;
     Kcaa = InitialValues.Kcaa;
@@ -88,9 +89,9 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
                 KcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * XaT(MN) + Constants.Hc * RHODA(MN) * (KL_T(i, j) + TransportCoefficient.D_Ta(i, j))); %
                 Kcaa(i, j) = Constants.c_a * SoilVariables.TT(MN) * Kaa(i, j);
                 if SoilVariables.DVa_Switch == 1
-                    Kcva = L(MN) * RHOV(MN) * GasDispersivity.Beta_g(i, j);
+                    Kcva(i, j) = L(MN) * RHOV(MN) * GasDispersivity.Beta_g(i, j);
                 else
-                    Kcva = 0;
+                    Kcva(i, j) = 0;
                 end
                 Ccah(i, j) = Constants.c_a * SoilVariables.TT(MN) * (-GasDispersivity.V_A(i) - Constants.Hc * QL(i) / Constants.RHOL) * Xah(MN);
                 CcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * (-GasDispersivity.V_A(i) - Constants.Hc * QL(i) / Constants.RHOL) * XaT(MN);
@@ -140,7 +141,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
             end
             EnergyVariables.KTh(i, j) = L(MN) * (VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * DRHOVh(MN) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Khh(i, j) + Kcah(i, j);
             EnergyVariables.KTT(i, j) = ThermalConductivityCapacity.Lambda_eff(i, j) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.KhT(i, j) + KcaT(i, j) + L(MN) * (VaporVariables.D_V(i, j) * VaporVariables.Eta(i, j) + GasDispersivity.D_Vg(i)) * DRHOVT(MN);
-            EnergyVariables.KTa(i, j) = Kcva + Kcaa(i, j) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Kha(i, j);  % This term isnot in Milly's work.
+            EnergyVariables.KTa(i, j) = Kcva(i, j) + Kcaa(i, j) + Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Kha(i, j);  % This term isnot in Milly's work.
 
             if SoilVariables.DVa_Switch == 1
                 EnergyVariables.VTh(i, j) = Constants.c_L * SoilVariables.TT(MN) * Constants.RHOL * HeatVariables.Vvh(i, j) + Ccah(i, j) - L(MN) * GasDispersivity.V_A(i) * DRHOVh(MN);

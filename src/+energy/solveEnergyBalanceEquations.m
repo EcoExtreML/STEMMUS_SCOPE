@@ -2,7 +2,7 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
                                                                        AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                        HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                        Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                       TOLD, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, KT)
+                                                                       TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT)
     %{
         Solve the Energy balance equation with the Thomas algorithm to update
         the soil temperature 'SoilVariables.TT', the finite difference
@@ -16,11 +16,11 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues);
     [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg);
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                               Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
+                                                               SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
     [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS);
 
     ModelSettings = io.getModelSettings();
-    if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:NN) < ForcingData.Tmin)
+    if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:ModelSettings.NN) < ForcingData.Tmin)
         for i = 1:ModelSettings.NN
             SoilVariables.TT(i) = TOLD(i);
         end

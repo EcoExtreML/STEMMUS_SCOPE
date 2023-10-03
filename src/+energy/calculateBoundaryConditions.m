@@ -1,5 +1,5 @@
 function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                             Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT)
+                                                             SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT)
     %{
         Determine the boundary condition for solving the energy equation.
     %}

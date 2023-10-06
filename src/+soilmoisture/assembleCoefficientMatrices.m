@@ -13,25 +13,11 @@ function HeatMatrices = assembleCoefficientMatrices(HeatVariables, InitialValues
     HeatMatrices.C5 = InitialValues.C5;
     HeatMatrices.C6 = InitialValues.C6;
     HeatMatrices.C7 = InitialValues.C7;
+    % C9 is the matrix coefficient of root water uptake
     HeatMatrices.C9 = InitialValues.C9;
     HeatMatrices.C4_a = [];
     HeatMatrices.C5_a = [];
 
-    for i = 1:ModelSettings.NN
-        for j = 1:ModelSettings.nD
-            HeatMatrices.C1(i, j) = 0;
-            HeatMatrices.C7(i) = 0;
-            % C9 is the matrix coefficient of root water uptake
-            HeatMatrices.C9(i) = 0;
-            HeatMatrices.C4(i, j) = 0;
-            HeatMatrices.C4_a(i) = 0;
-            HeatMatrices.C5_a(i) = 0;
-            HeatMatrices.C2(i, j) = 0;
-            HeatMatrices.C3(i, j) = 0;
-            HeatMatrices.C5(i, j) = 0;
-            HeatMatrices.C6(i, j) = 0;
-        end
-    end
     for i = 1:ModelSettings.NL
         HeatMatrices.C1(i, 1) = HeatMatrices.C1(i, 1) + HeatVariables.Chh(i, 1) * ModelSettings.DeltZ(i) / 2;
         HeatMatrices.C1(i + 1, 1) = HeatMatrices.C1(i + 1, 1) + HeatVariables.Chh(i, 2) * ModelSettings.DeltZ(i) / 2;

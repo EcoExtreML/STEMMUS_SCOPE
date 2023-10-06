@@ -8,13 +8,15 @@
   [#193](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/193)
 - All `Air_*` functions are refcatored and moved to `+dryair` folder in
   [194](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/194)
+- All `Engry_*` functions are refcatored and moved to `+energy` folder in
+[197](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/197)
 
 **Fixed:**
 
 - issue [#181](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/181)
 - issue [#98](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/98)
 - issue [#99](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/99)
-
+- issue [#100](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/100)
 
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.3.0) - 22 Jun 2023

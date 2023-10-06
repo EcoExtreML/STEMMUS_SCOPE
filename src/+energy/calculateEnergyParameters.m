@@ -56,34 +56,30 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         DRHOVTDz(i) = (DRHOVT(i + 1) + DRHOVT(i)) / 2;
         RHOVBAR = (RHOV(i + 1) + RHOV(i)) / 2;
         EtaBAR = (VaporVariables.Eta(i, 1) + VaporVariables.Eta(i, 2)) / 2;
-    end
 
-    % The soil air gas in soil-pore is considered with Xah and XaT
-    % terms.(0.0003,volumetric heat capacity)
+        % The soil air gas in soil-pore is considered with Xah and XaT
+        % terms.(0.0003,volumetric heat capacity)
+        if ~ModelSettings.Soilairefc
+            QL(i) = -(KLhBAR(i) * DhDZ(i) + (KLTBAR(i) + DTDBAR(i)) * DTDZ(i) + KLhBAR(i));
+            Qa = 0;
+        else
+            Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
+        end
 
-    for i = 1:ModelSettings.NL
+        if SoilVariables.DVa_Switch == 1
+            QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i) + RHOVBAR * GasDispersivity.V_A(i);
+        else
+            QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
+        end
+
+        % These are unused vars, but I comment them for future reference,
+        % See issue 100, item 1
+        % DVH(i) = (DEhBAR) * DRHOVhDz(i);
+        % DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
+        % QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
+        % QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
         for j = 1:ModelSettings.nD
             MN = i + j - 1;
-            if ~ModelSettings.Soilairefc
-                QL(i) = -(KLhBAR(i) * DhDZ(i) + (KLTBAR(i) + DTDBAR(i)) * DTDZ(i) + KLhBAR(i));
-                Qa = 0;
-            else
-                Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
-            end
-
-            if SoilVariables.DVa_Switch == 1
-                QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i) + RHOVBAR * GasDispersivity.V_A(i);
-            else
-                QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
-            end
-
-            % These are unused vars, but I comment them for future reference,
-            % See issue 100, item 1
-            % DVH(i) = (DEhBAR) * DRHOVhDz(i);
-            % DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
-            % QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
-            % QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
-
             if ModelSettings.Soilairefc == 1
                 Kcah(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * Xah(MN) + Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j));
                 KcaT(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * XaT(MN) + Constants.Hc * RHODA(MN) * (KL_T(i, j) + TransportCoefficient.D_Ta(i, j))); %

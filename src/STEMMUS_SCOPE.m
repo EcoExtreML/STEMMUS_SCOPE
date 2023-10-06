@@ -67,13 +67,9 @@ ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax,
 global LAI_msr
 LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
 
-global ND h hh T TT P_g P_gg RWU
-global frac TTT Theta_LLL Theta_LL Theta_UUU
-global Theta_III SRT KL_h TT_CRIT L_f HR
-global Se W thermal Xaa
-global XaT Xah DRHOVT DRHOVh DRHODAt DRHODAz
-global Ks RHODA RHOV L
-global sfactor fluxes
+global ND h hh T TT P_g P_gg RWU frac TTT Theta_LLL Theta_LL Theta_UUU
+global Theta_III SRT TT_CRIT L_f HR Se W thermal Xaa
+global XaT Xah DRHOVT DRHOVh DRHODAt DRHODAz Ks RHODA RHOV L sfactor fluxes
 
 % Get initial values
 InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
@@ -335,8 +331,6 @@ BCT = BoundaryCondition.BCT;
 % Outputs of UpdateSoilWaterContent used in step Run the model
 hh = SoilVariables.hh;
 hh_frez = SoilVariables.hh_frez;
-
-KL_h = SoilVariables.KL_h;
 
 % Outputs of UpdateSoilWaterContent used in io.select_input in the loop
 Theta_LL = SoilVariables.Theta_LL;
@@ -605,81 +599,54 @@ for i = 1:1:TimeProperties.Dur_tot
 
     Ts(KT) = Tss;  % Tss is calculated above
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    for KIT = 1:NIT   % Start the iteration procedure in a time step.
+    % Start the iteration procedure in a time step.
+    SoilVariables.h = h;
+    SoilVariables.hh = hh;
+    SoilVariables.TT = TT;
+    SoilVariables.T = T;
+    SoilVariables.h_frez = h_frez;
+    SoilVariables.Tss(KT) = Tss;
 
-        [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, ForcingData.Tmin);
-
+    for KIT = 1:NIT
+        [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, T0, g, L_f, SoilVariables.TT, NN, hd, ForcingData.Tmin);
         % update inputs for UpdateSoilWaterContent
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
-        SoilVariables.h = h;
-        SoilVariables.hh = hh;
-        SoilVariables.KL_h = KL_h;
-        SoilVariables.TT = TT;
-        SoilVariables.T = T;
-        SoilVariables.h_frez = h_frez;
 
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
-
-        % these can be removed after refactoring functions below
-        h = SoilVariables.h;
-        hh = SoilVariables.hh;
-        Theta_LL = SoilVariables.Theta_LL;
-        Se = SoilVariables.Se;
-        KL_h = SoilVariables.KL_h;
-        DTheta_LLh = SoilVariables.DTheta_LLh;
-        hh_frez = SoilVariables.hh_frez;
-        DTheta_UUh = SoilVariables.DTheta_UUh;
-        Theta_II = SoilVariables.Theta_II;
 
         % Reset KL_T here. CondL_T script is replaced by this line
         % see issue 181, item 4
         KL_T = InitialValues.KL_T;
 
-        [RHOV, DRHOVh, DRHOVT] = Density_V(TT, hh, g, Rv, NN);
+        [RHOV, DRHOVh, DRHOVT] = Density_V(SoilVariables.TT, SoilVariables.hh, g, Rv, NN);
 
         TransportCoefficient = conductivity.calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t);
         W = TransportCoefficient.W;
         D_Ta = TransportCoefficient.D_Ta;
 
-        [L] = Latent(TT, NN);
+        [L] = Latent(SoilVariables.TT, NN);
         % DRHODAt unused!
-        [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(T, RDA, P_g, Rv, DeltZ, h, hh, TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
+        [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(SoilVariables.T, RDA, P_g, Rv, DeltZ, SoilVariables.h, SoilVariables.hh, SoilVariables.TT, P_gg, Delt_t, NL, NN, DRHOVT, DRHOVh, RHOV);
 
         ThermalConductivityCapacity = conductivity.calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
 
         k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
 
-        VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT);
+        VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, SoilVariables.TT);
 
         GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
-        D_Vg = GasDispersivity.D_Vg;
-        V_A = GasDispersivity.V_A;
 
-        SoilVariables.Tss(KT) = Tss;
-        % After refactoring Enrgy_sub, the input/output of this function can be
-        % polished
         % Srt is both input and output
-        % Replace run h_sub;
         [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
                                                                                                                                                                            BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg);
-
-        DTheta_LLh = SoilVariables.DTheta_LLh;
-        DTheta_LLT = SoilVariables.DTheta_LLT;
-        DTheta_UUh = SoilVariables.DTheta_UUh;
-        QMT = HBoundaryFlux.QMT;
-        C4 = HeatMatrices.C4;
-        hh = SoilVariables.hh;
-        KhT = HeatVariables.KhT;
-        Khh = HeatVariables.Khh;
 
         if BoundaryCondition.NBCh == 1
             DSTOR = 0;
             RS = 0;
         elseif BoundaryCondition.NBCh == 2
             AVAIL = -BoundaryCondition.BCh;
-            EXCESS = (AVAIL + QMT) * Delt_t;
+            EXCESS = (AVAIL + HBoundaryFlux.QMT) * Delt_t;
             if abs(EXCESS / Delt_t) <= 1e-10
                 EXCESS = 0;
             end
@@ -687,20 +654,21 @@ for i = 1:1:TimeProperties.Dur_tot
             RS = (EXCESS - DSTOR) / Delt_t;
         else
             AVAIL = AVAIL0 - Evap(KT);
-            EXCESS = (AVAIL + QMT) * Delt_t;
+            EXCESS = (AVAIL + HBoundaryFlux.QMT) * Delt_t;
             if abs(EXCESS / Delt_t) <= 1e-10
                 EXCESS = 0;
             end
             DSTOR = min(EXCESS, DSTMAX);
             RS(KT) = (EXCESS - DSTOR) / Delt_t;
         end
+
         if ModelSettings.Soilairefc == 1
             [AirVariabes, RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
                                                                          BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t);
         else
             AirVariabes.KLhBAR = InitialValues.KLhBAR;
             AirVariabes.KLTBAR = InitialValues.KLTBAR;
-            AirVariabes.DDhDZ = [];  % DDhDZ is not defined as InitialValues!
+            AirVariabes.DDhDZ = DDhDZ;  % DDhDZ is not defined as InitialValues, see issue 100, item 3
             AirVariabes.DhDZ = InitialValues.DhDZ;
             AirVariabes.DTDZ = InitialValues.DTDZ;
             AirVariabes.Kaa = InitialValues.Kaa;
@@ -709,44 +677,42 @@ for i = 1:1:TimeProperties.Dur_tot
         end
 
         if ModelSettings.Thmrlefc == 1
+            % CHK will be updated
             [RHS, SAVE, CHK, SoilVariables] = energy.solveEnergyBalanceEquations(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, ...
                                                                                  AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                  HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                  Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                 TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT);
-            TT = SoilVariables.TT;
+                                                                                 TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK);
         end
 
         if max(CHK) < 0.1
             break
         end
-        hSAVE = hh(NN);
-        TSAVE = TT(NN);
+        hSAVE = SoilVariables.hh(NN);
+        TSAVE = SoilVariables.TT(NN);
     end
 
     TIMEOLD = KT;
     KIT;
     KIT = 0;
-    [TT_CRIT, hh_frez] = HT_frez(hh, T0, g, L_f, TT, NN, hd, ForcingData.Tmin);
 
+    [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, T0, g, L_f, SoilVariables.TT, NN, hd, ForcingData.Tmin);
     % updates inputs for UpdateSoilWaterContent
     SoilVariables.TT_CRIT = TT_CRIT;
     SoilVariables.hh_frez = hh_frez;
-    SoilVariables.h = h;
-    SoilVariables.hh = hh;
-    SoilVariables.TT = TT;
-    SoilVariables.T = T;
-    SoilVariables.h_frez = h_frez;
+
     SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
 
     % these can be removed after refactoring codes below
     h = SoilVariables.h;
     hh = SoilVariables.hh;
+    T = SoilVariables.T;
+    TT = SoilVariables.TT;
     Se = SoilVariables.Se;
-    KL_h = SoilVariables.KL_h;
     Theta_LL = SoilVariables.Theta_LL;
     DTheta_LLh = SoilVariables.DTheta_LLh;
     hh_frez = SoilVariables.hh_frez;
+    h_frez = SoilVariables.h_frez;
     Theta_UU = SoilVariables.Theta_UU;
     DTheta_UUh = SoilVariables.DTheta_UUh;
     Theta_II = SoilVariables.Theta_II;
@@ -792,6 +758,12 @@ for i = 1:1:TimeProperties.Dur_tot
             end
         end
     end
+
+    % Update SoilVariables
+    SoilVariables.h = h;
+    SoilVariables.T = T;
+    SoilVariables.h_frez = h_frez;
+
     kk = k;
 
     % Open files for writing

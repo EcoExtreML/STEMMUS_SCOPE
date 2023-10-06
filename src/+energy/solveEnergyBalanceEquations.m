@@ -2,7 +2,7 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
                                                                        AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                        HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                        Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                       TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT)
+                                                                       TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK)
     %{
         Solve the Energy balance equation with the Thomas algorithm to update
         the soil temperature 'SoilVariables.TT', the finite difference
@@ -13,11 +13,15 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
     EnergyVariables = energy.calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
                                                        VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                        DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L);
+
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues);
+
     [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg);
+
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
                                                                SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT);
-    [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS);
+
+    [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK);
 
     ModelSettings = io.getModelSettings();
     if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:ModelSettings.NN) < ForcingData.Tmin)
@@ -30,9 +34,7 @@ function [RHS, SAVE, CHK, SoilVariables] = solveEnergyBalanceEquations(InitialVa
             SoilVariables.TT(i) = -272;
         end
     end
-
     % These are unused vars, but I comment them for future reference,
     % See issue 100, item 2
     % [QET, QEB] = energy.calculateEnergyFluxes(SAVE, TT)(SAVE, SoilVariables.TT);
-
 end

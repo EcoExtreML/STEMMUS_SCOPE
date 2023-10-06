@@ -1,4 +1,4 @@
-function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS)
+function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK)
     %{
         Use Thomas algorithm to solve the tridiagonal matrix equations, which
         is in the form of Equation 4.25, STEMMUS Technical Notes, page 41.

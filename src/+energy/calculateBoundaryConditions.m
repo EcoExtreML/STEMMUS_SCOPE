@@ -1,7 +1,8 @@
 function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
                                                              SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT)
     %{
-        Determine the boundary condition for solving the energy equation.
+        Determine the boundary condition for solving the energy equation, see
+        STEMMUS Technical Notes.
     %}
 
     ModelSettings = io.getModelSettings();

@@ -1,6 +1,7 @@
 function [QET, QEB] = calculateEnergyFluxes(SAVE, TT)
     %{
-        Calculate the energy fluxes on the boundary nodes.
+        Calculate the energy fluxes on the boundary nodes, see STEMMUS Technical
+        Notes.
     %}
 
     ModelSettings = io.getModelSettings();

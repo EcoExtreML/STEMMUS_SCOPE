@@ -352,6 +352,12 @@ TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached
 Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 
+% for soil moisture and temperature outputs
+Moni_Depth = ModelSettings.NL:-1:1;
+Moni_Depth_SM = ModelSettings.NL:-1:1;
+Sim_Theta_U = [];
+Sim_Temp = [];
+
 % Srt, root water uptake;
 Srt = InitialValues.Srt;  % will be updated!
 P_gg = InitialValues.P_gg;  % will be updated!
@@ -736,7 +742,9 @@ for i = 1:1:TimeProperties.Dur_tot
             SoilVariables.Theta_U = Theta_U;
             SoilVariables.Theta_I = Theta_I;
 
-            run ObservationPoints;
+            % replace run ObservationPoints, see issue 101
+            Sim_Theta_U(KT, 1:length(Moni_Depth_SM)) = Theta_UUU(Moni_Depth_SM, 1, KT);
+            Sim_Temp(KT, 1:length(Moni_Depth)) = TTT(Moni_Depth, KT);
         end
         if (TEND - TIME) < 1E-3
             for MN = 1:NN

@@ -32,12 +32,8 @@ disp (['Reading config from ', CFG]);
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
 
 % Prepare forcing and soil data
-global SaturatedMC ResidualMC fieldMC
 [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
 landcoverClass = SiteProperties.landcoverClass;
-SaturatedMC = SoilProperties.SaturatedMC;  % used in calc_rssrbs
-ResidualMC = SoilProperties.ResidualMC;  % used in calc_rssrbs
-fieldMC = SoilProperties.fieldMC;  % used in calc_rssrbs
 
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();

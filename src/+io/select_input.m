@@ -82,7 +82,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
         SoilProperties.GAM  = equations.Soil_Inertia0(SoilProperties.cs, SoilProperties.rhos, SoilProperties.lambdas);
     end
     if options.calc_rss_rbs
-        [SoilProperties.rss, SoilProperties.rbs] = equations.calc_rssrbs(SoilProperties.SMC, canopy.LAI, SoilProperties.rbs);
+        [SoilProperties.rss, SoilProperties.rbs] = equations.calc_rssrbs(SoilProperties, canopy.LAI, SoilProperties.rbs);
     end
 
     if leafbio.Type

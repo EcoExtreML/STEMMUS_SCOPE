@@ -1,5 +1,4 @@
-function [GAM] = Soil_Inertia1(SMC)
-    global theta_s0
+function [GAM] = Soil_Inertia1(SMC, theta_s0)
     % soil inertia method by Murray and Verhoef (
 
     % % parameters
@@ -32,3 +31,4 @@ function [GAM] = Soil_Inertia1(SMC)
     Hc = (Hcw * SMC) + (1 - theta_s) * Hcs;
 
     GAM = sqrt(lambdas .* Hc);
+end

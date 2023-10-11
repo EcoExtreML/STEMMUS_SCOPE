@@ -77,7 +77,7 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
 
     %% derived input
     if options.soil_heat_method == 1
-        SoilProperties.GAM =  equations.Soil_Inertia1(SoilProperties.SMC);
+        SoilProperties.GAM =  equations.Soil_Inertia1(SoilProperties.SMC, SoilProperties.theta_s0);
     else
         SoilProperties.GAM  = equations.Soil_Inertia0(SoilProperties.cs, SoilProperties.rhos, SoilProperties.lambdas);
     end

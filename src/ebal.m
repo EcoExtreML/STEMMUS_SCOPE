@@ -1,7 +1,7 @@
 function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t)
-    global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT sfactor   PSItot sfactortot Theta_f
+    global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT  PSItot sfactortot Theta_f
     global  m n Alpha TT
     % function ebal.m calculates the energy balance of a vegetated surface
     %
@@ -234,14 +234,13 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Rdparam      = leafbio.Rdparam;
 
         if options.Fluorescence_model == 2    % specific for the v.Caemmerer-Magnani model
-            b                   = @biochemical_MD12;
             biochem_in.Tyear        = leafbio.Tyear;
             biochem_in.beta         = leafbio.beta;
             biochem_in.qLs          = leafbio.qLs;
             biochem_in.NPQs        = leafbio.kNPQs;
             biochem_in.stressfactor = leafbio.stressfactor;
         else
-            b                   = @biochemical; % specific for Berry-v.d.Tol model
+            % specific for Berry-v.d.Tol model
             biochem_in.tempcor      = options.apply_T_corr;
             biochem_in.Tparams      = leafbio.Tparam;
             biochem_in.stressfactor = SMCsf;
@@ -254,9 +253,15 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Cs       = Cch;
         biochem_in.Q        = rad.Pnh_Cab * 1E6;
 
-        biochem_out         = b(biochem_in);
+        if options.Fluorescence_model == 2
+            biochem_out = biochemical_MD12(biochem_in);
+        else
+            Ci_input = [];
+            biochem_out = biochemical(biochem_in, sfactor, Ci_input);
+        end
+
         Ah                  = biochem_out.A;
-        Ahh                  = biochem_out.Ag;
+        Ahh                 = biochem_out.Ag;
         Cih                 = biochem_out.Ci;
         Fh                  = biochem_out.eta;
         rcwh                = biochem_out.rcw;
@@ -270,7 +275,12 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Cs       = Ccu;
         biochem_in.Q        = rad.Pnu_Cab * 1E6;
 
-        biochem_out         = b(biochem_in);
+        if options.Fluorescence_model == 2
+            biochem_out = biochemical_MD12(biochem_in);
+        else
+            Ci_input = [];
+            biochem_out = biochemical(biochem_in, sfactor, Ci_input);
+        end
 
         Au                  = biochem_out.A; % Ag? or A?
         Auu                  = biochem_out.Ag;   % GPP calculation.

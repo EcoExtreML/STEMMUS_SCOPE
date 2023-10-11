@@ -69,7 +69,7 @@ LAI_msr = ForcingData.LAI_msr;  % used in Root_properties
 
 global ND h hh T TT P_g P_gg RWU frac TTT Theta_LLL Theta_LL Theta_UUU
 global Theta_III SRT TT_CRIT L_f HR Se W thermal Xaa
-global XaT Xah DRHOVT DRHOVh DRHODAt DRHODAz Ks RHODA RHOV L sfactor fluxes
+global XaT Xah DRHOVT DRHOVh DRHODAt DRHODAz Ks RHODA RHOV L fluxes
 
 % Get initial values
 InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);

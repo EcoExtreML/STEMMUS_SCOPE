@@ -1,6 +1,5 @@
-function biochem_out = biochemical(biochem_in, Ci_input)
-    %
-    global sfactor KT TT
+function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
+
     if isnan(sfactor)
         sfactor = 1;
     end

@@ -92,7 +92,7 @@ hOLD = InitialValues.hOLD;
 TOLD = InitialValues.TOLD;
 SAVE = InitialValues.SAVE;
 
-global C4 SMC bbx Ta Ts RHOV_s DRHOV_sT
+global C4 SMC Ta Ts RHOV_s DRHOV_sT
 SMC = InitialValues.SMC;
 bbx = InitialValues.bbx;
 Ta = InitialValues.Ta;
@@ -103,7 +103,7 @@ P_gOLD = InitialValues.P_gOLD;
 
 %% 1. define Constants
 Constants = io.define_constants();
-global g Rv RDA Hc Rl
+global g Rv RDA Hc
 g = Constants.g;
 Rv = Constants.Rv;
 RDA = Constants.RDA;
@@ -488,7 +488,8 @@ for i = 1:1:TimeProperties.Dur_tot
                 case 1
                     [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]                          ...
                         = ebal(iter, options, spectral, rad, gap,                       ...
-                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t);
+                               leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
+                               Rl, SoilVariables, VanGenuchten, InitialValues);
                     if options.calc_fluor
                         if options.calc_vert_profiles
                             [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);

@@ -36,12 +36,7 @@ disp (['Reading config from ', CFG]);
 
 % Load model settings: replacing "run Constants"
 ModelSettings = io.getModelSettings();
-KT = ModelSettings.KT;
 NN = ModelSettings.NN;
-
-% defined as global, and used in other scripts
-TIME = 0; % Time of simulation released;
-Delt_t = TimeProperties.DELT; % Duration of time step [Unit of second]
 
 % load forcing data
 ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
@@ -261,7 +256,10 @@ hCHK = zeros(1, NN);
 TIMELAST = 0;
 
 % the start of simulation period is from 0mins, while the input data start from 30mins.
-kk = 0;   % DELT=Delt_t;
+TIME = 0;  % Time of simulation released;
+Delt_t = TimeProperties.DELT;  % Duration of time step [Unit of second]
+KT = ModelSettings.KT;
+kk = 0;
 TimeStep = [];
 TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached at the end of simulation period
 Delt_t0 = Delt_t; % Duration of last time step
@@ -641,21 +639,21 @@ for i = 1:1:TimeProperties.Dur_tot
             Sim_Temp(KT, 1:length(Moni_Depth)) = TTT(Moni_Depth, KT);
         end
         if (TEND - TIME) < 1E-3
-            for MN = 1:NN
-                hOLD(MN) = SoilVariables.h(MN);
-                SoilVariables.h(MN) = SoilVariables.hh(MN);
+            for i = 1:NN
+                hOLD(i) = SoilVariables.h(i);
+                SoilVariables.h(i) = SoilVariables.hh(i);
                 if ModelSettings.Thmrlefc == 1
-                    TOLD(MN) = SoilVariables.T(MN);
-                    SoilVariables.T(MN) = SoilVariables.TT(MN);
-                    TTT(MN, KT) = SoilVariables.TT(MN);
-                    TOLD_CRIT(MN) = T_CRIT(MN);
-                    T_CRIT(MN) = TT_CRIT(MN);
-                    hOLD_frez(MN) = SoilVariables.h_frez(MN);
-                    SoilVariables.h_frez(MN) = SoilVariables.hh_frez(MN);
+                    TOLD(i) = SoilVariables.T(i);
+                    SoilVariables.T(i) = SoilVariables.TT(i);
+                    TTT(i, KT) = SoilVariables.TT(i);
+                    TOLD_CRIT(i) = T_CRIT(i);
+                    T_CRIT(i) = TT_CRIT(i);
+                    hOLD_frez(i) = SoilVariables.h_frez(i);
+                    SoilVariables.h_frez(i) = SoilVariables.hh_frez(i);
                 end
                 if ModelSettings.Soilairefc == 1
-                    P_gOLD(MN) = P_g(MN);
-                    P_g(MN) = P_gg(MN);
+                    P_gOLD(i) = P_g(i);
+                    P_g(i) = P_gg(i);
                 end
             end
         end

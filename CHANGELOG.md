@@ -1,5 +1,11 @@
 # Unreleased
 
+
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.4.0) - 17 Oct 2023
+
+This version of STEMMUS_SCOPE is only compatible with [PyStemmusScope 0.3.0.](https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing/releases/tag/v0.3.0)
+
 **Changed:**
 
 - All `cond*_` functions are refcatored and moved to `+conductivity` folder in

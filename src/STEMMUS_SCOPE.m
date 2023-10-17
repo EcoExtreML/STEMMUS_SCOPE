@@ -743,8 +743,8 @@ for i = 1:1:TimeProperties.Dur_tot
             SoilVariables.Theta_I = Theta_I;
 
             % replace run ObservationPoints, see issue 101
-            Sim_Theta_U(KT, 1:length(Moni_Depth_SM)) = Theta_UUU(Moni_Depth_SM, 1, KT);
-            Sim_Temp(KT, 1:length(Moni_Depth)) = TTT(Moni_Depth, KT);
+            Sim_Theta_U(KT, 1:length(monitorDepthSoilMoisture)) = Theta_UUU(monitorDepthSoilMoisture, 1, KT);
+            Sim_Temp(KT, 1:length(monitorDepthTemperature)) = TTT(monitorDepthTemperature, KT);
         end
         if (TEND - TIME) < 1E-3
             for MN = 1:NN

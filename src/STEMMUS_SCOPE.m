@@ -266,8 +266,8 @@ Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 
 % for soil moisture and temperature outputs
-Moni_Depth = ModelSettings.NL:-1:1;
-Moni_Depth_SM = ModelSettings.NL:-1:1;
+monitorDepthTemperature = ModelSettings.NL:-1:1;
+monitorDepthSoilMoisture = ModelSettings.NL:-1:1;
 Sim_Theta_U = [];
 Sim_Temp = [];
 
@@ -635,8 +635,8 @@ for i = 1:1:TimeProperties.Dur_tot
             end
 
             % replace run ObservationPoints, see issue 101
-            Sim_Theta_U(KT, 1:length(Moni_Depth_SM)) = Theta_UUU(Moni_Depth_SM, 1, KT);
-            Sim_Temp(KT, 1:length(Moni_Depth)) = TTT(Moni_Depth, KT);
+            Sim_Theta_U(KT, 1:length(monitorDepthSoilMoisture)) = Theta_UUU(monitorDepthSoilMoisture, 1, KT);
+            Sim_Temp(KT, 1:length(monitorDepthTemperature)) = TTT(monitorDepthTemperature, KT);
         end
         if (TEND - TIME) < 1E-3
             for i = 1:NN

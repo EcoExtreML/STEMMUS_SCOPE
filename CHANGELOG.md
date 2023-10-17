@@ -12,6 +12,8 @@
 [197](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/197)
 - Remove `ObservationPoints` script
 [200](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/200)
+- Remove all global variables from `STEMMUS_SCOPE` script
+[201](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/201)
 
 **Fixed:**
 
@@ -20,6 +22,7 @@
 - issue [#99](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/99)
 - issue [#100](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/100)
 - issue [#101](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/101)
+- issue [#195](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/195)
 
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.3.0) - 22 Jun 2023

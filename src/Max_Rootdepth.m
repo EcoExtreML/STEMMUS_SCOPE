@@ -3,7 +3,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% REFERENCES
-function [bbx] = Max_Rootdepth(bbx, NL, KT, TT)
+function [bbx] = Max_Rootdepth(bbx)
 
     % get model settings
     ModelSettings = io.getModelSettings();
@@ -18,11 +18,11 @@ function [bbx] = Max_Rootdepth(bbx, NL, KT, TT)
     Tot_Depth = ModelSettings.Tot_Depth;
     DeltZ = ModelSettings.DeltZ;
     Elmn_Lnth = 0;
-    for ML = 1:NL
+    for ML = 1:ModelSettings.NL
         Elmn_Lnth = Elmn_Lnth + DeltZ(ML);
         if Elmn_Lnth < Tot_Depth - R_depth
             bbx(ML) = 0;
-        elseif Elmn_Lnth >= Tot_Depth - R_depth && Elmn_Lnth <= Tot_Depth - 5 % && TT(ML)>0
+        elseif Elmn_Lnth >= Tot_Depth - R_depth && Elmn_Lnth <= Tot_Depth - 5
             bbx(ML) = 1;
         else
             bbx(ML) = 0;

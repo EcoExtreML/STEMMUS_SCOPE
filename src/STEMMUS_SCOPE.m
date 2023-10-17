@@ -23,11 +23,12 @@ if exist('OCTAVE_VERSION', 'builtin') ~= 0
     pkg load statistics io;
 end
 
-% Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
-global CFG
-if isempty(CFG)
+% set CFG to a path if it is not defined
+if exist('CFG','var') == 0
     CFG = '../config_file_crib.txt';
 end
+
+% Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
 disp (['Reading config from ', CFG]);
 [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
 

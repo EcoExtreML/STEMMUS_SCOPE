@@ -10,6 +10,8 @@
   [194](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/194)
 - All `Engry_*` functions are refcatored and moved to `+energy` folder in
 [197](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/197)
+- Remove `ObservationPoints` script
+[200](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/200)
 
 **Fixed:**
 
@@ -17,6 +19,7 @@
 - issue [#98](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/98)
 - issue [#99](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/99)
 - issue [#100](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/100)
+- issue [#101](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/101)
 
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.3.0) - 22 Jun 2023

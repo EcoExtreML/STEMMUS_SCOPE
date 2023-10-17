@@ -353,8 +353,8 @@ Delt_t0 = Delt_t; % Duration of last time step
 TOLD_CRIT = [];
 
 % for soil moisture and temperature outputs
-Moni_Depth = ModelSettings.NL:-1:1;
-Moni_Depth_SM = ModelSettings.NL:-1:1;
+monitorDepthTemperature = ModelSettings.NL:-1:1;
+monitorDepthSoilMoisture = ModelSettings.NL:-1:1;
 Sim_Theta_U = [];
 Sim_Temp = [];
 

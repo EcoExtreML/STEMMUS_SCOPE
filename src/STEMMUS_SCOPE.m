@@ -24,7 +24,7 @@ if exist('OCTAVE_VERSION', 'builtin') ~= 0
 end
 
 % set CFG to a path if it is not defined
-if exist('CFG','var') == 0
+if exist('CFG', 'var') == 0
     CFG = '../config_file_crib.txt';
 end
 

@@ -21,7 +21,7 @@ function [CHK, hh, C4] = solveTridiagonalMatrixEquations(C4, hh, C4_a, RHS)
         SAVEhh(i) = hh(i);
     end
 
-    if isnan(SAVEhh) == 1 || ~isreal(SAVEhh)
+    if any(isnan(SAVEhh)) == 1 || any(~isreal(SAVEhh))
         warning('\n SAVEhh == 1 or not real\r');
     end
 end

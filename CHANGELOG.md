@@ -1,5 +1,10 @@
 # Unreleased
 
+**Fixed:**
+
+- use `any()` function in `solveTridiagonalMatrixEquations.m` in
+  [203](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/203)
+
 
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.4.0) - 17 Oct 2023

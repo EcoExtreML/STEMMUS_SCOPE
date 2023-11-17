@@ -288,7 +288,7 @@ end
 
 % Save the workspace after initialization if running in the BMI-mode.
 if strcmp(runMode, 'initialize')
-    save([Output_dir, 'STEMMUS_SCOPE_state.mat']);
+    save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
 end
 
 if strcmp(runMode, 'update')
@@ -713,7 +713,7 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
         fclose("all");
     end
     if strcmp(runMode, 'update')
-        save([Output_dir, 'STEMMUS_SCOPE_state.mat']);
+        save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
         disp("Update finished, saved state!")
     end
 end

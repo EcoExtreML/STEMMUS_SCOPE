@@ -292,7 +292,6 @@ if strcmp(runMode, 'initialize')
 end
 
 if strcmp(runMode, 'update')
-    disp("Loading previous state...");
     [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
     actualRunMode = runMode; % Will be overridden by load...
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
@@ -303,11 +302,9 @@ if strcmp(runMode, 'update')
         disp("Finished running the model. Updating won't do anything!");
     else
         endTime = KT + 1;
-        disp("Advancing the model by one timestep...");
-        disp(["Current time step = ", num2str(KT+1)])
     end
 elseif strcmp(runMode, 'full')
-    endTime = TimeProperties.Dur_tot
+    endTime = TimeProperties.Dur_tot;
     disp('The calculations start now');
 end
 
@@ -714,12 +711,10 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
     end
     if strcmp(runMode, 'update')
         save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
-        disp("Update finished, saved state!")
     end
 end
 
 if strcmp(runMode, 'finalize')
-    disp("Loading model state...");
     [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
     actualRunMode = runMode; % Will be overridden by load...
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model

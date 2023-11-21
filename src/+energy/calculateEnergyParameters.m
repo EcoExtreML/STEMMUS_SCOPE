@@ -23,7 +23,6 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     CTT_g = InitialValues.CTT_g;
     KLhBAR = AirVariabes.KLhBAR;
     KLTBAR = AirVariabes.KLTBAR;
-    DDhDZ = AirVariabes.DDhDZ;
     DhDZ = AirVariabes.DhDZ;
     DTDZ = AirVariabes.DTDZ;
     Kaa = AirVariabes.Kaa;

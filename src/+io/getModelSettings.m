@@ -18,7 +18,7 @@ function ModelSettings = getModelSettings()
     ModelSettings.Thmrlefc = 1;
 
     % The dry air transport is considered with the value of 1,otherwise 0;
-    ModelSettings.Soilairefc = 0;
+    ModelSettings.Soilairefc = 0;  % CAN'T BE 1: MODEL FAILS.
 
     % Value of 1, the special calculation of water capacity is used, otherwise 0;
     ModelSettings.hThmrl = 1;

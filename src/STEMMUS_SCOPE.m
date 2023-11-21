@@ -215,9 +215,6 @@ if strcmp(runMode, 'initialize') | strcmp(runMode, 'full')
     atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
-    %% 13. create output files and
-    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
-
     %% Initialize Temperature, Matric potential and soil air pressure.
     % Define soil variables for StartInit
     VanGenuchten = init.setVanGenuchtenParameters(SoilProperties);
@@ -339,18 +336,13 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
 
                 hOLD(MN) = h(MN);
                 h(MN) = hh(MN);
-                DDhDZ(MN, KT) = InitialValues.DhDZ(MN);
                 if ModelSettings.Thmrlefc == 1
                     TOLD(MN) = T(MN);
                     T(MN) = TT(MN);
-                    TTT(MN, KT) = TT(MN);
                 end
                 if ModelSettings.Soilairefc == 1
                     P_gOLD(MN) = P_g(MN);
                     P_g(MN) = P_gg(MN);
-                end
-                if ModelSettings.rwuef == 1
-                    SRT(MN, KT) = Srt(MN, 1);
                 end
             end
             if options.simulation == 1
@@ -511,10 +503,6 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
             if KT > 1
                 SoilVariables.XWRE = updateWettingHistory(SoilVariables, VanGenuchten);
             end
-
-            for i = 1:ModelSettings.NL
-                DDhDZ(i, KT) = InitialValues.DhDZ(i);
-            end
         end
         if Delt_t ~= Delt_t0
             for MN = 1:NN
@@ -621,7 +609,6 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
             else
                 AirVariabes.KLhBAR = InitialValues.KLhBAR;
                 AirVariabes.KLTBAR = InitialValues.KLTBAR;
-                AirVariabes.DDhDZ = DDhDZ;  % DDhDZ is not defined as InitialValues, see issue 100, item 3
                 AirVariabes.DhDZ = InitialValues.DhDZ;
                 AirVariabes.DTDZ = InitialValues.DTDZ;
                 AirVariabes.Kaa = InitialValues.Kaa;
@@ -657,21 +644,15 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
 
         if IRPT1 == 0 && IRPT2 == 0
-            if KT        % In case last time step is not convergent and needs to be repeated.
+            if KT  % In case last time step is not convergent and needs to be repeated.
                 for i = 1:ModelSettings.NL
                     for j = 1:ModelSettings.nD
-                        Theta_LLL(i, j, KT) = SoilVariables.Theta_LL(i, j);
                         SoilVariables.Theta_L(i, j) = SoilVariables.Theta_LL(i, j);
-                        Theta_UUU(i, j, KT) = SoilVariables.Theta_UU(i, j);
                         SoilVariables.Theta_U(i, j) = SoilVariables.Theta_UU(i, j);
-                        Theta_III(i, j, KT) = SoilVariables.Theta_II(i, j);
                         SoilVariables.Theta_I(i, j) = SoilVariables.Theta_II(i, j);
                     end
                 end
 
-                % replace run ObservationPoints, see issue 101
-                Sim_Theta_U(KT, 1:length(monitorDepthSoilMoisture)) = Theta_UUU(monitorDepthSoilMoisture, 1, KT);
-                Sim_Temp(KT, 1:length(monitorDepthTemperature)) = TTT(monitorDepthTemperature, KT);
             end
             if (TEND - TIME) < 1E-3
                 for i = 1:NN
@@ -680,7 +661,6 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
                     if ModelSettings.Thmrlefc == 1
                         TOLD(i) = SoilVariables.T(i);
                         SoilVariables.T(i) = SoilVariables.TT(i);
-                        TTT(i, KT) = SoilVariables.TT(i);
                         TOLD_CRIT(i) = T_CRIT(i);
                         T_CRIT(i) = TT_CRIT(i);
                         hOLD_frez(i) = SoilVariables.h_frez(i);
@@ -704,10 +684,6 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
 
         kk = k;
 
-        % Open files for writing
-        file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput', false);
-        n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
-        fclose("all");
     end
     if strcmp(runMode, 'update')
         save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
@@ -723,14 +699,14 @@ end
 
 if strcmp(runMode, 'finalize') | strcmp(runMode, 'full')
     disp('Finalizing STEMMUS_SCOPE');
-    if options.verify
-        io.output_verification(Output_dir);
-    end
+    % if options.verify
+    %     io.output_verification(Output_dir);
+    % end
 
-    %% soil layer information
-    SoilLayer.thickness = ModelSettings.DeltZ_R;
-    SoilLayer.depth = Ztot';  % used in Initial_root_biomass
+    % %% soil layer information
+    % SoilLayer.thickness = ModelSettings.DeltZ_R;
+    % SoilLayer.depth = Ztot';  % used in Initial_root_biomass
 
-    io.bin_to_csv(fnames, n_col, k, options, SoilLayer);
-    save([Output_dir, 'output.mat']);
+    % io.bin_to_csv(fnames, n_col, k, options, SoilLayer);
+    % save([Output_dir, 'output.mat']);
 end

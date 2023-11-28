@@ -283,21 +283,20 @@ if strcmp(runMode, 'initialize') | strcmp(runMode, 'full')
     P_gg = InitialValues.P_gg;  % will be updated!
     P_g = InitialValues.P_g;  % will be updated!
 
-    disp('Finished initialization!');
+    %% soil layer information
+    SoilLayer.thickness = ModelSettings.DeltZ_R;
+    SoilLayer.depth = Ztot';  % used in Initial_root_biomass
+    
+    % NOTE: workspace will be saved, this code block is after the update step.
+    % (this is to not repeat the save-workspace code).
+    disp('Finished model initialization');
 end
 
-% Save the workspace after initialization if running in the BMI-mode.
-if strcmp(runMode, 'initialize')
-    save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
-end
-
+% If the runMode is update, retrieve the (possibly) updated state.
+% The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(runMode, 'update')
-    [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
-    actualRunMode = runMode; % Will be overridden by load...
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
-    runMode = actualRunMode;
-    clear actualRunMode % clear actual run mode so it won't be in the workspace on saving.
-    if KT >= TimeProperties.Dur_tot
+    if KT + 1 >= TimeProperties.Dur_tot
         runMode = 'finished';
         disp("Finished running the model. Updating won't do anything!");
     else
@@ -309,7 +308,7 @@ elseif strcmp(runMode, 'full')
 end
 
 % Actually run the model
-if strcmp(runMode, 'update') | strcmp(runMode, 'full')
+if strcmp(runMode, 'update') || strcmp(runMode, 'full')
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps
@@ -709,27 +708,25 @@ if strcmp(runMode, 'update') | strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
         fclose("all");
     end
-    if strcmp(runMode, 'update')
-        save([Output_dir, 'STEMMUS_SCOPE_state.mat'], "-v7.3", "-nocompression");
-    end
 end
+
+if strcmp(runMode, 'initialize') || strcmp(runMode, 'update')
+    % Save the required variables to the model state file.
+    % NOTE: bmiVarNames are defined in STEMMUS_SCOPE_exe.m
+    save([Output_dir, 'STEMMUS_SCOPE_state.mat'], bmiVarNames{:}, "-v7.3", "-nocompression");
+end
+
 
 if strcmp(runMode, 'finalize')
-    [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
-    actualRunMode = runMode; % Will be overridden by load...
-    load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
-    runMode = actualRunMode;
+    % Load the workspace to be able to finalize the model.
+    load([OutputPath, 'STEMMUS_SCOPE_state.mat']); 
 end
 
-if strcmp(runMode, 'finalize') | strcmp(runMode, 'full')
+if strcmp(runMode, 'finalize') || strcmp(runMode, 'full')
     disp('Finalizing STEMMUS_SCOPE');
     if options.verify
         io.output_verification(Output_dir);
     end
-
-    %% soil layer information
-    SoilLayer.thickness = ModelSettings.DeltZ_R;
-    SoilLayer.depth = Ztot';  % used in Initial_root_biomass
 
     io.bin_to_csv(fnames, n_col, k, options, SoilLayer);
     save([Output_dir, 'output.mat']);

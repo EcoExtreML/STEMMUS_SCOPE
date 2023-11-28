@@ -1,5 +1,11 @@
 # Unreleased
 
+**Added:**
+- STEMMUS_SCOPE BMI preparation:
+  - The executable can be run in an "interactive" mode. 
+    In this mode the model's initialization, time update, and finalization can be called upon separately.
+  - The model now will write away BMI-required variables to a state file, which can be used for the Python BMI.
+
 **Fixed:**
 
 - use `any()` function in `solveTridiagonalMatrixEquations.m` in

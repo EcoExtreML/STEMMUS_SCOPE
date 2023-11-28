@@ -83,9 +83,9 @@ if strcmp(runMode, 'initialize') | strcmp(runMode, 'full')
     X = X(j, 1:end);
 
     F = struct('FileID', {'Simulation_Name', 'soil_file', 'leaf_file', 'atmos_file'...
-                        'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
-                        , 'p_file', 'Ta_file', 'ea_file', 'u_file', 'CO2_file', 'z_file', 'tts_file' ...
-                        , 'LAI_file', 'hc_file', 'SMC_file', 'Vcmax_file', 'Cab_file', 'LIDF_file'});
+                          'Dataset_dir', 't_file', 'year_file', 'Rin_file', 'Rli_file' ...
+                          'p_file', 'Ta_file', 'ea_file', 'u_file', 'CO2_file', 'z_file', 'tts_file' ...
+                          'LAI_file', 'hc_file', 'SMC_file', 'Vcmax_file', 'Cab_file', 'LIDF_file'});
     for i = 1:length(F)
         k = find(strcmp(F(i).FileID, strtok(X(:, 1))));
         if ~isempty(k)
@@ -286,7 +286,7 @@ if strcmp(runMode, 'initialize') | strcmp(runMode, 'full')
     %% soil layer information
     SoilLayer.thickness = ModelSettings.DeltZ_R;
     SoilLayer.depth = Ztot';  % used in Initial_root_biomass
-    
+
     % NOTE: workspace will be saved, this code block is after the update step.
     % (this is to not repeat the save-workspace code).
     disp('Finished model initialization');
@@ -433,10 +433,10 @@ if strcmp(runMode, 'update') || strcmp(runMode, 'full')
 
                 switch options.calc_ebal
                     case 1
-                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]                          ...
-                            = ebal(iter, options, spectral, rad, gap,                       ...
-                                leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                                Rl, SoilVariables, VanGenuchten, InitialValues);
+                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac] ...
+                            = ebal(iter, options, spectral, rad, gap,  ...
+                                   leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
+                                   Rl, SoilVariables, VanGenuchten, InitialValues);
                         if options.calc_fluor
                             if options.calc_vert_profiles
                                 [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
@@ -590,8 +590,7 @@ if strcmp(runMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                                            BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg);
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg);
 
             if BoundaryCondition.NBCh == 1
                 DSTOR = 0;
@@ -616,7 +615,7 @@ if strcmp(runMode, 'update') || strcmp(runMode, 'full')
 
             if ModelSettings.Soilairefc == 1
                 [AirVariabes, RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
-                                                                            BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t);
+                                                                             BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t);
             else
                 AirVariabes.KLhBAR = InitialValues.KLhBAR;
                 AirVariabes.KLTBAR = InitialValues.KLTBAR;
@@ -631,10 +630,10 @@ if strcmp(runMode, 'update') || strcmp(runMode, 'full')
             if ModelSettings.Thmrlefc == 1
                 % CHK will be updated
                 [RHS, SAVE, CHK, SoilVariables] = energy.solveEnergyBalanceEquations(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, ...
-                                                                                    AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
-                                                                                    HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
-                                                                                    Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                    TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK);
+                                                                                     AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
+                                                                                     HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
+                                                                                     Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
+                                                                                     TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK);
             end
 
             if max(CHK) < 0.1
@@ -716,10 +715,9 @@ if strcmp(runMode, 'initialize') || strcmp(runMode, 'update')
     save([Output_dir, 'STEMMUS_SCOPE_state.mat'], bmiVarNames{:}, "-v7.3", "-nocompression");
 end
 
-
 if strcmp(runMode, 'finalize')
     % Load the workspace to be able to finalize the model.
-    load([OutputPath, 'STEMMUS_SCOPE_state.mat']); 
+    load([OutputPath, 'STEMMUS_SCOPE_state.mat']);
 end
 
 if strcmp(runMode, 'finalize') || strcmp(runMode, 'full')

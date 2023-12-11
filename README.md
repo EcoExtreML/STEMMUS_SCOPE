@@ -1,7 +1,6 @@
-1- the versions of STEMMUS and MODFLOW codes that you couple 
-Please see Folders “stemmus_src” “modflow_src”:
+1- The versions of STEMMUS and MODFLOW codes that were coupled are in the folders “stemmus_src” “modflow_src”:
 
-2- to highlight the name(s) of the files that you did changes.
+2- To highlight the name(s) of the files that you had changed.
 	Folder “modflow_src”:
 MAIN.F
 gwf2Q3D1H.F
@@ -28,5 +27,5 @@ SOIL1_SPAT.m to replace SOIL1.m
 STEMMUS_config.m to replace Constants.m and StartInit.m
 TIME_INTERPOLATION.m
 
-3-to highlight the variable names (and also the variables meanings) that you change or you add into STEMMUS and MODFLOW
+3- To highlight the variable names (and also the variables meanings) that you change or you add into STEMMUS and MODFLOW
 Please see the explanations in the changed files.

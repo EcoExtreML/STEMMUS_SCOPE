@@ -1,6 +1,7 @@
 1- The versions of STEMMUS and MODFLOW codes that were coupled are in the folders “stemmus_src” “modflow_src”:
 
-2- To highlight the name(s) of the files that you had changed.
+2- To highlight the name(s) of the files that you had changed
+
 	Folder “modflow_src”:
 MAIN.F
 gwf2Q3D1H.F

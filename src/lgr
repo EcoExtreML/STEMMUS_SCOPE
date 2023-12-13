@@ -1,0 +1,4 @@
+LGR                  			;Indicates this is an LGR input file
+1                    			;NGRIDS:# of grids
+MaquMonth201618Zone45.nam 			   	;Name file of parent model
+763740.691506689 3763197.12043645		 		;X0,Y0: The x-y location of the first node

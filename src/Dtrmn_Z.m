@@ -1,53 +1,26 @@
-function [DeltZ, DeltZ_R, NL, ML] = Dtrmn_Z(NL, Tot_Depth)
-    %{
-        The determination of the element length
-    %}
-    Elmn_Lnth = 0;
+function [DeltZ_R,NL,DeltZ,MML]=Dtrmn_Z(IP0STm)
+%  The determination of the element length
+% global Elmn_Lnth ML DeltZ NL Tot_Depth DeltZ_R MML 
 
-    for ML = 1:3
-        DeltZ_R(ML) = 1; % 4
+Elmn_Lnth=0;
+if IP0STm==10 || IP0STm==16 || IP0STm==33 || IP0STm==35 || IP0STm==36
+    DeltZ_R = [0.01	0.01	0.01	0.02	0.02	0.02	0.03	0.03	0.03	0.04	0.04	0.04 ...
+        0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.5	0.5	0.5	0.5	0.5	...
+        0.5	0.5	0.5	0.5	0.5	0.5	0.5	1	1	1	1	1	1	1	1	1	1	1	1	2	2	2	2	2	2	2 ...
+        2	2	2	2	2	2	2	2	2	2	2	1	1	1	1	1].*100;
+    NL=length(DeltZ_R);
+    for ML=1:NL
+        MML=NL-ML+1;
+        DeltZ(ML)=DeltZ_R(MML);
     end
-    DeltZ_R(4) = 2; % 4
-    for ML = 5:14
-        DeltZ_R(ML) = 2; % 5
-    end
-    for ML = 15:18
-        DeltZ_R(ML) = 2.5; % 5
-    end
-    for ML = 19:23
-        DeltZ_R(ML) = 5;
-    end
-    for ML = 24:31
-        DeltZ_R(ML) = 10;
-    end
-    for ML = 32:40
-        DeltZ_R(ML) = 10;
-    end
-    for ML = 41:42
-        DeltZ_R(ML) = 15; % 5
-    end
-    % Sum of element lengths and compared to the total lenght, so that judge
-    % can be made to determine the length of rest elements.
-
-    for ML = 1:42
-        Elmn_Lnth = Elmn_Lnth + DeltZ_R(ML);
-    end
-
-    % If the total sum of element lenth is over the predefined depth, stop the
-    % for loop, make the ML, at which the element lenth sumtion is over defined
-    % depth, to be new NL.
-    DeltZ = [];
-    for ML = 43:NL
-        DeltZ_R(ML) = 20;
-        Elmn_Lnth = Elmn_Lnth + DeltZ_R(ML);
-        if Elmn_Lnth >= Tot_Depth
-            DeltZ_R(ML) = Tot_Depth - Elmn_Lnth + DeltZ_R(ML);
-            NL = ML;
-            for ML = 1:NL
-                MML = NL - ML + 1;
-                DeltZ(ML) = DeltZ_R(MML);
-            end
-            return
-        end
+else
+    DeltZ_R = [ 0.01	0.01	0.01	0.02	0.02	0.02	0.03	0.03	0.03	0.04	0.04	0.04 ...
+        0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.1	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.5	0.5	0.5 ...
+        0.5	0.5	0.5	0.5	0.5	0.5	0.5	0.5	0.5	1	1	1	1	1	1	1	1	1	1	1	1	2	2 ...
+        2	2	2	2	2	2].*100;
+    NL=length(DeltZ_R);
+    for ML=1:NL
+        MML=NL-ML+1;
+        DeltZ(ML)=DeltZ_R(MML);
     end
 end

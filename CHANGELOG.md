@@ -1,5 +1,8 @@
 # Unreleased
 
+**Changed:**
+- The STEMMUS_SCOPE Matlab Runtime executable now needs version `R2023a`.
+
 **Added:**
 - STEMMUS_SCOPE BMI preparation:
   - The executable can be run in an "interactive" mode. 

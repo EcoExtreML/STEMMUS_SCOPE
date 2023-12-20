@@ -120,7 +120,7 @@ matlab -nodisplay -nosplash -nodesktop -r "STEMMUS_SCOPE_exe('config_file_snelli
 #### Run using MATLAB Compiler that does not require a license
 
 If you want to run the model as a standalone application, you need MATLAB
-Runtime version `2021a`. This is available on Snellius. You can run the
+Runtime version `2023a`. This is available on Snellius. You can run the
 model by passing the path of the config file in a terminal on a **compute
 node**:
 

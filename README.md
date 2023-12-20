@@ -34,6 +34,8 @@ If you want to run `STEMMUS_SCOPE` on CRIB, check [this document](./docs/STEMMUS
 
 If you want to run `STEMMUS_SCOPE` on your own machine, check [this document](./docs/STEMMUS_SCOPE_on_local_device.md).
 
+`STEMMUS_SCOPE` scope also has a Basic Model Interface (BMI) mode implemented. The full BMI is implemented in Python in [PyStemmusScope](https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing/). For more information, check [this document](./docs/STEMMUS_SCOPE_BMI.md).
+
 ## Contributing
 
 If you want to contribute to the development of `STEMMUS_SCOPE`,

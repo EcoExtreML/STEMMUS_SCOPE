@@ -30,11 +30,12 @@ end
 
 % set runMode to "full" if it is not defined
 if exist('runMode', 'var') == 0
-    runMode = 'full';
+    runMode = "full";
+    bmiMode = "none";
 end
 
 % Initialization routine
-if strcmp(runMode, 'initialize') | strcmp(runMode, 'full')
+if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
     disp (['Reading config from ', CFG]);
     [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
@@ -294,10 +295,10 @@ end
 
 % If the runMode is update, retrieve the (possibly) updated state.
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
-if strcmp(runMode, 'update')
+if strcmp(bmiMode, 'update')
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
     if KT + 1 >= TimeProperties.Dur_tot
-        runMode = 'finished';
+        bmiMode = 'none';  % Ensure the model does not try to update.
         disp("Finished running the model. Updating won't do anything!");
     else
         endTime = KT + 1;
@@ -308,7 +309,7 @@ elseif strcmp(runMode, 'full')
 end
 
 % Actually run the model
-if strcmp(runMode, 'update') || strcmp(runMode, 'full')
+if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps
@@ -709,18 +710,19 @@ if strcmp(runMode, 'update') || strcmp(runMode, 'full')
     end
 end
 
-if strcmp(runMode, 'initialize') || strcmp(runMode, 'update')
+if strcmp(bmiMode, 'initialize') || strcmp(bmiMode, 'update')
     % Save the required variables to the model state file.
     % NOTE: bmiVarNames are defined in STEMMUS_SCOPE_exe.m
+    % save & load is incompatible with Octave. Octave only supports full run mode, not BMI mode.
     save([Output_dir, 'STEMMUS_SCOPE_state.mat'], bmiVarNames{:}, "-v7.3", "-nocompression");
 end
 
-if strcmp(runMode, 'finalize')
+if strcmp(bmiMode, 'finalize')
     % Load the workspace to be able to finalize the model.
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']);
 end
 
-if strcmp(runMode, 'finalize') || strcmp(runMode, 'full')
+if strcmp(bmiMode, 'finalize') || strcmp(runMode, 'full')
     disp('Finalizing STEMMUS_SCOPE');
     if options.verify
         io.output_verification(Output_dir);

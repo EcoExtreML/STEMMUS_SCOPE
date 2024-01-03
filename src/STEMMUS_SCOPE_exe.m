@@ -27,7 +27,9 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'TT' ... % Soil temperature over depth
                       }; %#ok
 
+        % Variables for tracking the state of the model initialization:
         isInitialized = false;
+        isUpdated = false;
 
         % ...until finalize has been run, at which point it quits.
         while ~strcmp(bmiMode, "finalize")
@@ -49,12 +51,13 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                 if isInitialized
                     % The 'initialize', 'update' and 'finalize' run modes are dispatched to the model.
                     run STEMMUS_SCOPE;
+                    isUpdated = true;
                 else
                     disp("First initialize the model before calling 'update'");
                 end
 
             elseif strcmp(bmiMode, "finalize")
-                if isInitialized
+                if isInitialized & isUpdated
                     run STEMMUS_SCOPE;
                 end
 

@@ -24,7 +24,7 @@ To start BMI mode, pass anything (e.g. an empty string "") as config file, and u
 The model will respond with `Finished command. Select run mode: `. Now you can initialize the model:
 
 ```
-Finished command. Select run mode: interactive "/home/path/to/config/file.txt"
+Finished command. Select run mode: initialize "/home/path/to/config/file.txt"
 ```
 
 The model will respond with:

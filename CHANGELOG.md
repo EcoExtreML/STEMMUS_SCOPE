@@ -1,18 +1,26 @@
 # Unreleased
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.5.0) - 3 Jan 2024
+
+This version of STEMMUS_SCOPE is only compatible with [PyStemmusScope 0.3.0.](https://github.com/EcoExtreML/STEMMUS_SCOPE_Processing/releases/tag/v0.3.0)
+
 **Changed:**
-- The STEMMUS_SCOPE Matlab Runtime executable now needs version `R2023a`.
+
+- The STEMMUS_SCOPE Matlab Runtime executable now needs version `R2023a` ([#208](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/208)).
 
 **Added:**
-- STEMMUS_SCOPE BMI preparation:
+
+- STEMMUS_SCOPE 'BMI'-like mode ([#208](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/208)):
   - The executable can be run in an "interactive" mode. 
     In this mode the model's initialization, time update, and finalization can be called upon separately.
   - The model now will write away BMI-required variables to a state file, which can be used for the Python BMI.
+- A dockerfile for the BMI-enabled STEMMUS_SCOPE model, to make the setup easier.
 
 **Fixed:**
 
 - use `any()` function in `solveTridiagonalMatrixEquations.m` in
-  [203](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/203)
+  [#203](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/203)
 
 
 <a name="1.4.0"></a>

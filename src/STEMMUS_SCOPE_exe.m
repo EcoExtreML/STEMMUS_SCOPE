@@ -31,11 +31,15 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
 
         % ...until finalize has been run, at which point it quits.
         while ~strcmp(bmiMode, "finalize")
-            bmiMode = input("\nFinished command. Select run mode: ", "s");
+            bmiMode = input("\nFinished command. Select BMI mode: ", "s");
+
 
             if startsWith(bmiMode, "initialize ")
                 % Get config file:
-                CFG = eraseBetween(bmiMode, 1, 11);
+                CFG = erase(bmiMode, "initialize ");
+                CFG = strtrim(CFG);  % remove leading and trailing whitespace
+                CFG = erase(CFG, '"')  % remove quotes
+
                 bmiMode = "initialize";
 
                 run STEMMUS_SCOPE;

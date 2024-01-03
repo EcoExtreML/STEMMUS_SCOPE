@@ -35,12 +35,11 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
         while ~strcmp(bmiMode, "finalize")
             bmiMode = input("\nFinished command. Select BMI mode: ", "s");
 
-
             if startsWith(bmiMode, "initialize ")
                 % Get config file:
                 CFG = erase(bmiMode, "initialize ");
                 CFG = strtrim(CFG);  % remove leading and trailing whitespace
-                CFG = erase(CFG, '"')  % remove quotes
+                CFG = erase(CFG, '"');  % remove quotes
 
                 bmiMode = "initialize";
 

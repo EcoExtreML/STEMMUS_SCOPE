@@ -61,7 +61,16 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     %% 1. define Constants
     Constants = io.define_constants();
-
+    % Added by Mostafa (from Lianyu's STEMMUS_MODFLOW code)
+    HPUNIT=100; % constant for the unit conversion
+    NLAY=5;
+    NPILR=44;
+    ITERQ3D=1;
+    IGRID=1;
+    Q3DF=1;
+    RELAXF=0.8;
+    ADAPTF=1;
+    
     RTB = 1000; % initial root total biomass (g m-2)
     % Rl used in ebal
     [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
@@ -327,6 +336,16 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % next 8 lines -> Added by Mostafa (modified from Lianyu code)
+	    IP0STm = 1;
+	    BOTm = [100, 100, 100];
+	    HPILR1N = 105;
+	    HPILR0 = 104;
+	    XElemnt = [1, 1, 1];
+	    [HPILLAR,IBOT]=TIME_INTERPOLATION(TEND,TIME*86400,IP0STm,BOTm.*HPUNIT,HPILR1N*HPUNIT,HPILR0*HPUNIT,TIME,TEND*86400,XElemnt,NN,Q3DF,ADAPTF);
+        hBOT=HPILLAR;  % Bottom water heads
+        IBOTM(KT)=IBOT; %  index of bottom soil layer  
+        
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K
         hOLD_frez = [];
@@ -336,7 +355,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 h_frez(MN) = hh_frez(MN);
                 TOLD_CRIT(MN) = T_CRIT(MN);
                 T_CRIT(MN) = TT_CRIT(MN);
-
                 hOLD(MN) = h(MN);
                 h(MN) = hh(MN);
                 DDhDZ(MN, KT) = InitialValues.DhDZ(MN);

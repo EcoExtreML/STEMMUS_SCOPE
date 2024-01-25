@@ -337,12 +337,12 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % next 8 lines -> Added by Mostafa (modified from Lianyu code)
-	    IP0STm = 1;
-	    BOTm = [100, 100, 100];
-	    HPILR1N = 105;
-	    HPILR0 = 104;
-	    XElemnt = [1, 1, 1];
-	    [HPILLAR,IBOT]=TIME_INTERPOLATION(TEND,TIME*86400,IP0STm,BOTm.*HPUNIT,HPILR1N*HPUNIT,HPILR0*HPUNIT,TIME,TEND*86400,XElemnt,NN,Q3DF,ADAPTF);
+	IP0STm = 1;
+	BOTm = [100, 100, 100];
+	HPILR1N = 105;
+	HPILR0 = 104;
+	XElemnt = [1, 1, 1];
+	[HPILLAR,IBOT]=TIME_INTERPOLATION(TEND,TIME*86400,IP0STm,BOTm.*HPUNIT,HPILR1N*HPUNIT,HPILR0*HPUNIT,TIME,TEND*86400,XElemnt,NN,Q3DF,ADAPTF);
         hBOT=HPILLAR;  % Bottom water heads
         IBOTM(KT)=IBOT; %  index of bottom soil layer  
         

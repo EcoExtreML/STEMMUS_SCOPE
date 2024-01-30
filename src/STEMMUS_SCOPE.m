@@ -46,7 +46,20 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Load model settings: replacing "run Constants"
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN;
-
+    ML = ModelSettings.ML; % added by Mostafa 
+    NL = ModelSettings.NL; % added by Mostafa 
+    
+    % next 9 lines -> Added by Mostafa (retreived from Lianyu's STEMMUS_MODFLOW)
+    XElemnt = zeros(NN,1); % layer thickness of STEMMUS soil layers
+    XElemnt1 = zeros(NN,1);
+    XElemnt1(1) = 0;
+    TDeltZ = flip(ModelSettings.DeltZ);
+    for ML = 2:NL
+    	XElemnt1(ML) = XElemnt1(ML-1) + TDeltZ(ML-1);
+    end
+    XElemnt1(NN) = ModelSettings.Tot_Depth;
+    XElemnt = XElemnt1;    
+    
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 
@@ -61,29 +74,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     %% 1. define Constants
     Constants = io.define_constants();
-    % next 23 lines -> Added by Mostafa (retreived from Lianyu's STEMMUS_MODFLOW)
-    ML = ModelSettings.ML;
-    NL = ModelSettings.NL;
-    HPUNIT=100; % constant for the unit conversion
-    NLAY=5;
-    NPILR=44;
-    ITERQ3D=1;
-    IGRID=1;
-    Q3DF=1;
-    RELAXF=0.8;
-    ADAPTF=1;
-    XElemnt=zeros(NN,1);
-    XElemnt1=zeros(NN,1);
-    XElemnt1(1)=0;
-    TDeltZ=flip(ModelSettings.DeltZ);
-    for ML=2:NL
-    	XElemnt1(ML)=XElemnt1(ML-1)+TDeltZ(ML-1);
-    end
-    Tot_Depth=sum(ModelSettings.DeltZ)
-    XElemnt1(NN)=Tot_Depth;
-    TOPELEV=[3840.000	3717.500	3645.161	3586.464	3560.000	3611.383	3520.358	3483.765	3454.116	3427.815	3397.764	3414.816	3397.583	3429.178	3385.020	3393.255	3810.000	3743.777	3821.000	3772.387	3665.000	3649.507	3567.249	3545.872	3502.934	3474.846	3566.573	3599.505	3559.742	3511.335	3459.323	3395.369	3394.994	3386.328	3861.316	3775.572	3662.498	3496.611	3431.786	3461.962	3409.241	3399.618	3395.802	3388.953
-		].*HPUNIT;   % elevation at the top surface, added by LY
-    XElemnt=XElemnt1;%TOPELEV(IP0STm)-
     
     RTB = 1000; % initial root total biomass (g m-2)
     % Rl used in ebal
@@ -350,14 +340,12 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	% next 7 lines -> Added by Mostafa (modified from Lianyu code)
-	IP0STm = 1;
- 	BOTm = 100;
-	HPILR1N = 105;
-	HPILR0 = 104;	
-	[HPILLAR,IBOT]=TIME_INTERPOLATION(TEND,TIME*86400,IP0STm,BOTm.*HPUNIT,HPILR1N*HPUNIT,HPILR0*HPUNIT,TIME,TEND*86400,XElemnt,NN,Q3DF,ADAPTF);
-	hBOT=HPILLAR;  % Bottom water heads
-	IBOTM(KT)=IBOT; %  index of bottom soil layer 
+	% next 5 lines -> Added by Mostafa (modified from Lianyu code)
+	HPILR1N = 105.0; % water heads (m) at the end of the current time step, should be received from MODFLOW
+	HPILR0 = 104.0; % water heads (m) at the start of the current time step, should be received from MODFLOW
+	[HPILLAR,IBOT] = TIME_INTERPOLATION(TEND, TIME * 86400, ModelSettings.IP0STm, ModelSettings.BOTm .* Constants.HPUNIT, HPILR1N * Constants.HPUNIT, HPILR0 * Constants.HPUNIT, TIME, TEND * 86400, XElemnt, NN, ModelSettings.Q3DF, ModelSettings.ADAPTF);
+	hBOT = HPILLAR;  % bottom water heads
+	IBOTM(KT) = IBOT; %  index of bottom soil layer 
         
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K

@@ -1,42 +1,55 @@
-function [HPILLAR,IBOT]=TIME_INTERPOLATION(T1,T0,IP,BOT,HPILLAR1N,HPILLAR0,T,DELT,X,NUMNP,Q3DF,ADAPTF)
-% find the bottom layer of soil column
-IBOT=[];
+function [headBotmLayer, indexBotmLayer] = TIME_INTERPOLATION(TimeMODFLOW, nSoilColumns, botmLayerLevel, gwheadTN, gwheadT0, TIME, Delt_MODFLOW, soilLayerThickness, NN, Q3DF, ADAPTF)
+%%%%%%%% Variables defination %%%%%%%%
+	% TimeMODFLOW -> start of the current time step of MODFLOW
+	% nSoilColumns -> number of STEMMUS soil columns for MODFLOW
+	% botmLayerLevel -> bottom layer level 
+	% gwheadTN -> groundwater head at end of time step
+	% gwheadT0 -> groundwater head at start of time step
+	% TIME -> end of the current time step of STEMMUS
+	% Delt_MODFLOW -> time interval of the current time step
+	% soilLayerThickness -> Layer thickness of STEMMUS soil layer
+	% NN -> Total number of soil layers in STEMMUS
+	% Q3DF -> indicator for the quasi-3d simulation; 1 means yes, 0 means no
+	% ADAPTF -> indicator for adaptive lower boundary setting; 1 means moving lower boundary, 0 means fixed lower boundary
+	% headBotmLayer -> head at bottom layer
+	% indexBotmLayer -> index of bottom layer that contains groundwater table
+
+% find the bottom layer of soil column where groundwater table exist (start of groundwater zone)
+indexBotmLayer = [];
 if(Q3DF)
-    HPILLAR=HPILLAR0+(HPILLAR1N-HPILLAR0)*(T-T0)/DELT;
-    if HPILLAR>max(HPILLAR1N,HPILLAR0)
-        HPILLAR=max(HPILLAR1N,HPILLAR0);
-    elseif HPILLAR<min(HPILLAR1N,HPILLAR0)
-        HPILLAR=min(HPILLAR1N,HPILLAR0);
+    headBotmLayer = gwheadT0 + (gwheadTN - gwheadT0) * (TIME - TimeMODFLOW) / Delt_MODFLOW;
+    if headBotmLayer > max(gwheadTN, gwheadT0)
+        headBotmLayer = max(gwheadTN, gwheadT0);
+    elseif headBotmLayer < min(gwheadTN, gwheadT0)
+        headBotmLayer = min(gwheadTN, gwheadT0);
     end
     if(ADAPTF)
-        XTABLE=BOT(1,IP)-HPILLAR;
-        for I=1:NUMNP-1
-            XMID=(X(I)+X(I+1))/2;
-            
-            if(XTABLE>=X(I) && XTABLE<X(I+1))
-                if(XTABLE<XMID)
-                    IBOT=I;%(IP)
-                elseif(XTABLE>=XMID)
-                    IBOT=I+1;
+        gwTable = botmLayerLevel(1, nSoilColumns) - headBotmLayer;
+        for I = 1: NN - 1
+            XMID = (soilLayerThickness(I) + soilLayerThickness(I+1)) / 2;
+            if(gwTable >= soilLayerThickness(I) && gwTable < soilLayerThickness(I+1))
+                if(gwTable < XMID)
+                    indexBotmLayer = I; %(nSoilColumns)
+                elseif(gwTable >= XMID)
+                    indexBotmLayer = I+1;
                 end
                 break;
-            elseif(XTABLE>=X(I+1))
+            elseif(gwTable >= soilLayerThickness(I+1))
                 continue
             end
-            disp('NO TABLE FOUND FOR MOVING LOWER BOUNDARY')
+            disp('NO GROUNDWATER TABLE FOUND FOR MOVING LOWER BOUNDARY')
         end
-        if isempty(IBOT)
-              
-            IBOT=NUMNP;
+        if isempty(indexBotmLayer)              
+            indexBotmLayer = NN;
         else
-            IBOT=IBOT+3;
+            indexBotmLayer = indexBotmLayer + 3;
         end
-        IBOT=min(IBOT,NUMNP);
+        indexBotmLayer = min(indexBotmLayer, NN);
     else
-        IBOT=NUMNP;
+        indexBotmLayer = NN;
     end
 else
-    IBOT=NUMNP;
+    indexBotmLayer = NN;
     return
 end
 end

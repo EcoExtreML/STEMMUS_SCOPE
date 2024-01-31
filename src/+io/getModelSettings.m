@@ -87,8 +87,8 @@ function ModelSettings = getModelSettings()
 	ModelSettings.Q3DF = 1; % indicator for quasi-3d simulation, 1 means yes; 0 means no
 	ModelSettings.RELAXF = 0.8;
 	ModelSettings.ADAPTF = 1; % indicator for adaptive lower boundary setting, 1 means moving lower boundary; 0 means fixed lower boundary
-	ModelSettings.IP0STm = 1; % number of STEMMUS columns for MODFLOW
+	ModelSettings.nSoilColumns = 1; % number of STEMMUS soil columns for MODFLOW
 	Constants = io.define_constants();
-	ModelSettings.BOTm = 100.0 * Constants.HPUNIT; % elevation of the bottom layer of MODFLOW
-	ModelSettings.TOPELEV = [200.0  180.0  190.0  185.0  170].*Constants.HPUNIT; % elevation at the top surface    
+	ModelSettings.botmLayerLevel = 100.0 * Constants.HPUNIT; % elevation of the bottom layer of MODFLOW
+	ModelSettings.TopLayerLevel = [200.0  180.0  190.0  185.0  170].*Constants.HPUNIT; % elevation at the top surface   
 end

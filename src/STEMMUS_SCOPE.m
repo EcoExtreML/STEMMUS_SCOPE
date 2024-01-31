@@ -50,15 +50,15 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     NL = ModelSettings.NL; % added by Mostafa 
     
     % next 9 lines -> Added by Mostafa (retreived from Lianyu's STEMMUS_MODFLOW)
-    XElemnt = zeros(NN,1); % layer thickness of STEMMUS soil layers
-    XElemnt1 = zeros(NN,1);
+    soilLayerThickness = zeros(NN,1); % layer thickness of STEMMUS soil layers
+    XElemnt1 = zeros(NN,1);  % still need confirmation from Lianyu about the purpose of XELement1
     XElemnt1(1) = 0;
     TDeltZ = flip(ModelSettings.DeltZ);
     for ML = 2:NL
     	XElemnt1(ML) = XElemnt1(ML-1) + TDeltZ(ML-1);
     end
     XElemnt1(NN) = ModelSettings.Tot_Depth;
-    XElemnt = XElemnt1;    
+    soilLayerThickness = XElemnt1;    
     
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
@@ -339,13 +339,15 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         else
             k = NoTime(KT);
         end
-        %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	% next 5 lines -> Added by Mostafa (modified from Lianyu code)
-	HPILR1N = 105.0; % water heads (m) at the end of the current time step, should be received from MODFLOW
-	HPILR0 = 104.0; % water heads (m) at the start of the current time step, should be received from MODFLOW
-	[HPILLAR,IBOT] = TIME_INTERPOLATION(TEND, TIME * 86400, ModelSettings.IP0STm, ModelSettings.BOTm .* Constants.HPUNIT, HPILR1N * Constants.HPUNIT, HPILR0 * Constants.HPUNIT, TIME, TEND * 86400, XElemnt, NN, ModelSettings.Q3DF, ModelSettings.ADAPTF);
-	hBOT = HPILLAR;  % bottom water heads
-	IBOTM(KT) = IBOT; %  index of bottom soil layer 
+	%%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% next 8 lines -> Added by Mostafa (after Lianyu code)
+	TimeMODFLOW = TIME % first time step of MODFLOW will be = first time step of STEMMUS, added by Mostafa 
+	Delt_MODFLOW = 1 / (24 * 3600) % length of the time step of MODFLOW (conversion from sec to day), added by Mostafa 	
+	TimeMODFLOW = (TIME * Delt_MODFLOW) + Delt_MODFLOW % start of the current time step of MODFLOW, added by Mostafa 
+	gwheadTN = 105.0; % groundwater heads (m) at the end of the current time step, should be received from MODFLOW
+	gwheadT0 = 104.0; % groundwater heads (m) at the start of the current time step, should be received from MODFLOW
+	% headBotmLayer -> head at bottom layer, indexBotmLayer -> index of bottom layer that contains groundwater table
+	[headBotmLayer, indexBotmLayer] = TIME_INTERPOLATION(TimeMODFLOW, ModelSettings.nSoilColumns, ModelSettings.botmLayerLevel .* Constants.HPUNIT, gwheadTN * Constants.HPUNIT, gwheadT0 * Constants.HPUNIT, TIME, Delt_MODFLOW, soilLayerThickness, NN, ModelSettings.Q3DF, ModelSettings.ADAPTF);
         
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K

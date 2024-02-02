@@ -1,0 +1,15 @@
+WorkDir=/home/jovyan/private/
+SoilPropertyPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/SoilProperty/
+ForcingPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/global_data/
+Location=AU-DaS
+directional=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/directional/
+fluspect_parameters=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/fluspect_parameters/
+leafangles=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/leafangles/
+radiationdata=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/radiationdata/
+soil_spectrum=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/soil_spectrum/
+input_data=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/input/input_data.xlsx
+InitialConditionPath=/data/shared/EcoExtreML/STEMMUS_SCOPEv1.0.0/global_data/soil_initial/
+StartTime=2001-01-01T00:00
+EndTime=2001-01-02T00:00
+InputPath=
+OutputPath=

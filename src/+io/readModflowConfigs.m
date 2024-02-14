@@ -16,7 +16,7 @@ function [ModflowCoupling, soilLayerThickness] = readModflowConfigs(config_file)
     % Load model settings
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % Number of nodes;
-    NL = ModelSettings.NL; % added by Mostafa 
+    NL = ModelSettings.NL; % added by layers
 	
     % next 9 lines -> retreived from Lianyu's STEMMUS_MODFLOW
     soilLayerThickness = zeros(NN, 1); % layer thickness of STEMMUS soil layers

@@ -15,18 +15,38 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 
     Precipp = 0;
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
-    if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-        RHS(1) = BoundaryCondition.BChB;
-        C4(1, 1) = 1;
-        RHS(2) = RHS(2) - C4(1, 2) * RHS(1);
-        C4(1, 2) = 0;
-        C4_a(1) = 0;
-    elseif BoundaryCondition.NBChB == 2        %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-        RHS(1) = RHS(1) + BoundaryCondition.BChB;
-    elseif BoundaryCondition.NBChB == 3        %  BoundaryCondition.NBChB=3,Gravity drainage at bottom--specify flux= hydraulic conductivity;
-        RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
-    end
-
+    Modflow_config = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/Modflow_config.txt'
+	  [ModflowCoupling, soilLayerThickness] = io.readModflowConfigs(Modflow_config)
+   	ModflowCoupling = str2num(ModflowCoupling)
+	  if ~ModflowCoupling  % ModflowCoupling is not activated  
+        if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
+            RHS(1) = BoundaryCondition.BChB;
+            C4(1, 1) = 1;
+            RHS(2) = RHS(2) - C4(1, 2) * RHS(1);
+            C4(1, 2) = 0;
+            C4_a(1) = 0;
+        elseif BoundaryCondition.NBChB == 2        %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
+            RHS(1) = RHS(1) + BoundaryCondition.BChB;
+        elseif BoundaryCondition.NBChB == 3        %  BoundaryCondition.NBChB=3,Gravity drainage at bottom--specify flux= hydraulic conductivity;
+            RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
+        end
+    else % ModflowCoupling is activated
+    		headBotmLayer = 100.0; % head at bottom layer, received from MODFLOW through BMI
+		    indexBotmLayer = 40; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
+		    INBT = n - indexBotmLayer + 1; % need to ask Lianyu what does INBT mean  
+		    BOTm = soilLayerThickness(n); % bottom level of all layers, still need to confirm with Lianyu
+		    if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
+			      RHS(INBT) = (headBotmLayer - BOTm + soilLayerThickness(indexBotmLayer));
+			      C4(INBT, 1) = 1;
+			      RHS(INBT + 1) = RHS(INBT + 1) - C4(INBT, 2) * RHS(INBT);
+			      C4(INBT, 2) = 0;
+			      C4_a(INBT) = 0;
+		    elseif BoundaryCondition.NBChB == 2        %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
+			      RHS(INBT) = RHS(INBT) + BoundaryCondition.BChB;
+		    elseif BoundaryCondition.NBChB == 3        %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
+			      RHS(INBT) = RHS(INBT) - SoilVariables.KL_h(INBT, 1);
+		    end
+	  end
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable

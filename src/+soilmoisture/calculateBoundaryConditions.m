@@ -18,7 +18,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 	Modflow_config = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/Modflow_config.txt'
 	[ModflowCoupling, soilLayerThickness] = io.readModflowConfigs(Modflow_config)
 	ModflowCoupling = str2num(ModflowCoupling)
-	if ~ModflowCoupling % ModflowCoupling is not activated
+	if ~ModflowCoupling
 		if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
 			RHS(1) = BoundaryCondition.BChB;
 			C4(1, 1) = 1;
@@ -30,9 +30,9 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 		elseif BoundaryCondition.NBChB == 3        %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
 			RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
 		end
-	else % ModflowCoupling is activated
-		headBotmLayer = 100.0; % head at bottom layer, received from MODFLOW through BMI
-		indexBotmLayer = 40; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
+	else
+		headBotmLayer = 100.0; % head at bottom layer, recieved from MODFLOW through BMI
+		indexBotmLayer = 40; % index of bottom layer that contains current headBotmLayer, recieved from MODFLOW through BMI
 		INBT = n - indexBotmLayer + 1; % need to ask Lianyu what does INBT mean  
 		BOTm = soilLayerThickness(n); % bottom level of all layers, still need to confirm with Lianyu
 		if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;

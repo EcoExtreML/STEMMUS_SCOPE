@@ -61,7 +61,7 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
 
     BCh = -20 / 3600;
     Modflow_config = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/Modflow_config.txt'
-	ModflowCoupling = str2num(io.readModflowConfigs(Modflow_config));
+    ModflowCoupling = str2num(io.readModflowConfigs(Modflow_config));
     % this should be fixed in issue 183
     if startsWith(initialLandcoverClass, 'Croplands') || ModflowCoupling % modified by Mostafa, for checking MODFLOW coupling
         % NBChB: Moisture Bottom B.C.:

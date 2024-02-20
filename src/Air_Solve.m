@@ -1,4 +1,5 @@
-function [C6,P_gg,RHS]=Air_Solve(C6,NN,NL,C6_a,RHS)
+function Air_Solve
+global C6 P_gg RHS ML NN NL C6_a
 
 RHS(1)=RHS(1)/C6(1,1);
 

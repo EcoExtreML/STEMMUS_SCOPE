@@ -1,10 +1,12 @@
-function [C1,C2,C4,C3,C4_a,C5,C6,C7,C5_a,C9]=h_MAT(Chh,ChT,Khh,KhT,Kha,Vvh,VvT,Chg,DeltZ,NL,NN,Srt)
+function h_MAT
+global C1 C2 C4 C3 C4_a C5 C6 C7 C4ARG1 C4ARG2_1 C4ARG2_2 C5ARG1 C6ARG C7ARG
+global Chh ChT Khh KhT Kha Vvh VvT Chg DeltZ C5ARG2_1 C5ARG2_2  C5_a
+global ML NL NN ND
 
 for MN=1:NN             % Clean the space in C1-7 every iteration,otherwise, in *.PARM files, 
     for ND=1:2           % C1-7 will be mixed up with pre-storaged data, which will cause extremly crazy for computation, which exactly results in NAN.
         C1(MN,ND)=0; 
         C7(MN)=0;
-        C9(MN)=0; % C9 is the matrix coefficient of root water uptake;
         C4(MN,ND)=0; 
         C4_a(MN)=0;
         C5_a(MN)=0;
@@ -45,10 +47,4 @@ for ML=1:NL
     C7ARG=(Chg(ML,1)+Chg(ML,2))/2;%sqrt(Chg(ML,1)*Chg(ML,2));%
     C7(ML)=C7(ML)-C7ARG;
     C7(ML+1)=C7(ML+1)+C7ARG;
-   
-    % Srt, root water uptake; 
-    C9ARG1=(2*Srt(ML,1)+Srt(ML,2))*DeltZ(ML)/6;%sqrt(Chg(ML,1)*Chg(ML,2));%  
-    C9ARG2=(Srt(ML,1)+2*Srt(ML,2))*DeltZ(ML)/6;
-    C9(ML)=C9(ML)+C9ARG1;
-    C9(ML+1)=C9(ML+1)+C9ARG2;
 end

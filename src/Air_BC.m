@@ -1,4 +1,7 @@
-function [RHS,C6,C6_a]=Air_BC(RHS,KT,NN,BtmPg,TopPg,NBCPB,BCPB,NBCP,BCP,C6,C6_a)
+function Air_BC
+global RHS BtmPg C6 TopPg NN KT 
+global NBCPB BCPB NBCP BCP C6_a
+
 %%%%%%%%% Apply the bottom boundary condition called for by NBCPB %%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if NBCPB==1  %---------------------> Bounded bottom with the water table;

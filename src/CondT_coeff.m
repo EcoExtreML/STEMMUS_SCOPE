@@ -1,29 +1,13 @@
-function [c_unsat,Lambda_eff,ZETA,ETCON,EHCAP,TETCON,EfTCON]=CondT_coeff(Theta_LL,Lambda1,Lambda2,Lambda3,RHO_bulk,Theta_g,RHODA,RHOV,c_a,c_V,c_L,NL,nD,ThmrlCondCap,ThermCond,HCAP,SF,TCA,GA1,GA2,GB1,GB2,HCD,ZETA0,CON0,PS1,PS2,XWILT,XK,TT,POR,DRHOVT,L,D_A,Theta_V,Theta_II,TCON_dry,Theta_s,XSOC,TPS1,TPS2,TCON0,TCON_s,FEHCAP,RHOI,RHOL,c_unsat,Lambda_eff,ETCON,EHCAP,TETCON,EfTCON,ZETA)
+function CondT_coeff
+global ML ND MN Theta_LL Lambda1 Lambda2 Lambda3 c_unsat Lambda_eff RHO_bulk
+global Theta_g RHODA RHOV c_a c_V c_L NL nD
+global ThmrlCondCap ETCON EHCAP
 
 if ThmrlCondCap==1
-%     run EfeCapCond;
-    [ETCON,EHCAP,TETCON,EfTCON,ZETA]=EfeCapCond(HCAP,SF,TCA,GA1,GA2,GB1,GB2,HCD,ZETA0,CON0,PS1,PS2,XWILT,XK,TT,NL,POR,Theta_LL,DRHOVT,L,D_A,RHOV,Theta_V,Theta_II,TCON_dry,Theta_s,XSOC,ThermCond,TPS1,TPS2,TCON0,TCON_s,FEHCAP,RHOI,RHOL,ETCON,EHCAP,TETCON,EfTCON,ZETA);
+    run EfeCapCond;
     for ML=1:NL
-        for ND=1:nD
-
-            if ThermCond==1
-                Lambda_eff(ML,ND)=ETCON(ML,ND);
-            elseif ThermCond==2
-                Lambda_eff(ML,ND)=EfTCON(ML,ND)/100;
-            elseif ThermCond==3
-                Lambda_eff(ML,ND)=TETCON(ML,ND);
-            elseif ThermCond==4
-                Lambda_eff(ML,ND)=EfTCON(ML,ND)/100;
-            end
-
-
-            if Lambda_eff(ML,ND)<=0
-                Lambda_eff(ML,ND)=0.0008;
-            elseif Lambda_eff(ML,ND)>=0.02
-                Lambda_eff(ML,ND)=0.02;
-            else
-                Lambda_eff(ML,ND)=Lambda_eff(ML,ND);
-            end
+        for ND=1:nD        
+            Lambda_eff(ML,ND)=ETCON(ML,ND);
             c_unsat(ML,ND)=EHCAP(ML,ND);
         end
     end

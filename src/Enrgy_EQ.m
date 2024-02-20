@@ -1,4 +1,7 @@
-function [RHS,C5,SAVE]=Enrgy_EQ(C1,C2,C3,C4,C4_a,C5,C6_a,C6,C7,NL,NN,Delt_t,T,h,hh,P_g,P_gg,Thmrlefc,Soilairefc)
+function Enrgy_EQ
+global ARG1 ARG2 ARG3 ARG4 ARG5 ARG6
+global MN ML ND NL NN Delt_t RHS T h hh P_g P_gg SAVE 
+global C1 C2 C3 C4 C5 C6 C7 Soilairefc C4_a C6_a Thmrlefc
 
 if Soilairefc && Thmrlefc
     RHS(1)=-C7(1)+(C2(1,1)*T(1)+C2(1,2)*T(2))/Delt_t ...

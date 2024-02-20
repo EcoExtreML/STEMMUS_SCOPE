@@ -1,8 +1,10 @@
-function [D_Vg,V_A,Beta_g,DPgDZ,Beta_gBAR,Alpha_LgBAR]=CondV_DVg(P_gg,Theta_g,Sa,V_A,k_g,MU_a,DeltZ,Alpha_Lg,KaT_Switch,Theta_s,Se,NL,DPgDZ,Beta_gBAR,Alpha_LgBAR,Beta_g)
+function CondV_DVg
+global D_Vg ML ND P_gg Theta_g Sa V_A k_g MU_a DeltZ Alpha_Lg
+global NL MN J Beta_g f0 KaT_Switch Theta_s
+global Beta_gBAR DPgDZ Alpha_LgBAR Se
 
 MN=0;
-for ML=1:NL  
-    J=ML;
+for ML=1:NL   
     for ND=1:2
         MN=ML+ND-1;
         Sa(ML,ND)=1-Se(ML,ND);

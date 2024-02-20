@@ -1,4 +1,5 @@
-function [TT,CHK,RHS,C5]= Enrgy_Solve(C5,C5_a,TT,NN,NL,RHS) 
+function Enrgy_Solve
+global C5 TT RHS ML NN ML NL CHK C5_a
 
 RHS(1)=RHS(1)/C5(1,1);
 
@@ -12,7 +13,6 @@ for ML=NL:-1:1
 end
 
 for MN=1:NN
-%     CHK(MN)=0;%
-    CHK(MN)=abs(RHS(MN)-TT(MN));SAVETT(MN)=TT(MN); %abs((RHS(MN)-TT(MN))/TT(MN)); %
+    CHK(MN)=abs(RHS(MN)-TT(MN)); %abs((RHS(MN)-TT(MN))/TT(MN)); %
     TT(MN)=RHS(MN);
 end

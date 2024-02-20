@@ -6,18 +6,24 @@ NumNP=length(X);
 % KPILLAR=zeros(NumNP,NPILLAR);
 KPILLAR=zeros(NumNP,1);
 
-KPILLAR(1)=2;% JCZENG 20180412 强制柱子顶部位于地表
+% for IP=1:NPILLAR
+%     CALL HYDRUS1PNT(IP,IGRID)
+    KPILLAR(1)=1;% JCZENG 20180412 强制柱子顶部位于地表
+    %		KPILRSTMm(1)=KPILLAR(1)
     for I=2:NumNP
         for K=2:NLAY
             Z1=BOT(K-1,IP);
             Z0=BOT(K,IP);
             ZZ=BOT(1,IP)-X(I);
             if(ZZ<=Z1 && ZZ>Z0)
-                KPILLAR(I)=K;
+                KPILLAR(I)=K-1;
+                %			  KPILRSTMm(I)=K
                 break%EXIT
             elseif(ZZ==Z0 && K==NLAY)
-                KPILLAR(I)=K;
+                KPILLAR(I)=K-1;
+                %			  KPILRSTMm(I)=K
                 break%EXIT
             end
         end
     end
+% end

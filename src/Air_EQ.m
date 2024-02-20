@@ -1,4 +1,7 @@
-function [RHS,C6,SAVE]=Air_EQ(C1,C2,C3,C4,C4_a,C5,C5_a,C6,C7,NL,NN,Delt_t,T,TT,h,hh,P_g,Thmrlefc)
+function Air_EQ
+global ARG1 ARG2 ARG3 ARG4 ARG5 ARG6
+global MN ML ND NL NN Delt_t RHS T TT h hh P_g SAVE 
+global C1 C2 C3 C4 C5 C6 C7 Thmrlefc C4_a C5_a
 
 if Thmrlefc
     RHS(1)=-C7(1)+(C3(1,1)*P_g(1)+C3(1,2)*P_g(2))/Delt_t ...

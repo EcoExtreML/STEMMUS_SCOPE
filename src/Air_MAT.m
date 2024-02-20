@@ -1,4 +1,7 @@
-function [C1,C2,C3,C4,C4_a,C5,C5_a,C6,C6_a,C7]=Air_MAT(Cah,CaT,Caa,Kah,KaT,Kaa,Vah,VaT,Vaa,Cag,DeltZ,NL,NN)
+function Air_MAT
+global C1 C2 C3 C4 C5 C6 C7 DeltZ ML NL NN ND
+global Cah CaT Caa Kah KaT Kaa Vah VaT Vaa Cag 
+global C4ARG1 C5ARG1 C6ARG1 C7ARG C4ARG2_1 C4ARG2_2  C4_a C5ARG2_1 C5ARG2_2  C5_a C6ARG2_1 C6ARG2_2  C6_a
 
 for MN=1:NN              % Clean the space in C1-7 every iteration,otherwise, in *.PARM files, 
     for ND=1:2            % C1-7 will be mixed up with pre-storaged data, which will cause extremly crazy for computation, which exactly results in NAN.

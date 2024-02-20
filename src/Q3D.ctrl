@@ -1,0 +1,2 @@
+9		5		T		T		T				;NPillars, MXQ3DITER:# of 1-D pillars in GRID 1; MAX # OF Q3D ITERATIONS
+0.001	0.001	1.		1.						;HCLOSURE, FCLOSURE, RELAXH, RELAXF

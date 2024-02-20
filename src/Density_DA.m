@@ -1,4 +1,8 @@
-function [Xaa,XaT,Xah,DRHODAt,DRHODAz,RHODA]=Density_DA(T,RDA,P_g,Rv,DeltZ,h,hh,TT,P_gg,Delt_t,NL,NN,DRHOVT,DRHOVh,RHOV)
+function Density_DA
+global Xaa XaT Xah MN T RDA P_g Rv 
+global DeltZ h hh TT P_gg Delt_t ML NL NN
+global DRHOVT DRHOVh DRHODAt DRHODAz RHODA RHOV
+global XaaBAR XahBAR XaTBAR 
 
 for MN=1:NN
     Xaa(MN)=1/(RDA*(TT(MN)+273.15));

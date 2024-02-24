@@ -12,10 +12,10 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 
     Precip = InitialValues.Precip;
     Precip_msr = ForcingData.Precip_msr;
-
     Precipp = 0;
+    
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB	
-    GroundwaterSettings = io.readGroundwaterSettings()
+    GroundwaterSettings = io.readGroundwaterSettings() % added by Mostafa
     GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling;
     if ~GroundwaterCoupling % Groundwater Coupling is not activated
         if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;

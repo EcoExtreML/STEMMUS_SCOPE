@@ -60,8 +60,8 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
     NBCh = 3;
     BCh = -20 / 3600;
     
-	GroundwaterSettings = io.readGroundwaterSettings()
-	GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling;
+    GroundwaterSettings = io.readGroundwaterSettings() % added by Mostafa,
+    GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling;
     % this should be fixed in issue 183
     if startsWith(initialLandcoverClass, 'Croplands') || GroundwaterCouplingCoupling % modified by Mostafa, for checking GroundwaterCoupling coupling
         % NBChB: Moisture Bottom B.C.:

@@ -1,5 +1,5 @@
 function GroundwaterSettings = readGroundwaterSettings()
-    %{
+    %{ added by Mostafa
     %}	
     % Activate/deactivate Groundwater coupling
     GroundwaterSettings.GroundwaterCoupling = 1

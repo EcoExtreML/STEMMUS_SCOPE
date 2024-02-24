@@ -2,7 +2,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     %{ added by Mostafa
     %}	
     % Activate/deactivate Groundwater coupling
-    GroundwaterSettings.GroundwaterCoupling = 1; % value = 0 -> deactivate coupling, or = 1 -> activate coupling
+    GroundwaterSettings.GroundwaterCoupling = 0; % value = 0 -> deactivate coupling, or = 1 -> activate coupling
 	
     % Initialize the head at the bottom layer (start of saturated zone) and the index of the layer that contains that head
     GroundwaterSettings.headBotmLayer = 100.0; % head at bottom layer, received from MODFLOW through BMI

@@ -245,7 +245,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % get soil constants
     SoilConstants = io.getSoilConstants();
     
-    %% Groundwater coupling settings
+    %% Groundwater coupling settings (added by Mostafa)
 	GroundwaterSettings = io.readGroundwaterSettings();
 	GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling; % Activate/deactivate Groundwater coupling
 	headBotmLayer = GroundwaterSettings.headBotmLayer; 
@@ -333,9 +333,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		% Update Groundwater variables (received from BMI)
-		headBotmLayer = GroundwaterSettings.headBotmLayer; 
-	    indexBotmLayer = GroundwaterSettings.indexBotmLayer;        
+	% Update Groundwater variables (received from BMI, added by Mostafa)
+	headBotmLayer = GroundwaterSettings.headBotmLayer; 
+	indexBotmLayer = GroundwaterSettings.indexBotmLayer;        
         
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K

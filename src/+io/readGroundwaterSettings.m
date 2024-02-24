@@ -5,7 +5,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.GroundwaterCoupling = 1
 	
     % Initialize the head at the bottom layer (start of saturated zone) and the index of the layer that contains that head
-    GroundwaterSettings.headBotmLayer = 10.0; % head at bottom layer, received from MODFLOW through BMI
+    GroundwaterSettings.headBotmLayer = 100.0; % head at bottom layer, received from MODFLOW through BMI
     GroundwaterSettings.indexBotmLayer = 40; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
 	
     % Load model settings

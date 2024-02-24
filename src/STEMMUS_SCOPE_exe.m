@@ -24,7 +24,12 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'KT', ... % Index of current time step
                        'SiteProperties', ... % Site properties (e.g. lat, lon)
                        'fluxes', ... % Atmospheric fluxes
-                       'TT' ... % Soil temperature over depth
+                       'TT', ... % Soil temperature over depth
+                       	'Sim_Theta_U', % Soil moisture over depth
+					   'GroundwaterCoupling', % Variable with value = 0 -> deactivate Groundwater coupling, or = 1 -> activate Groundwater coupling 
+					   'headBotmLayer', % head at bottom layer
+					   'indexBotmLayer', % index of bottom layer that contains current headBotmLayers
+                      }; %#ok
                       }; %#ok
 
         % Variables for tracking the state of the model initialization:

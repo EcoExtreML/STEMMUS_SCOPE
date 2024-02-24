@@ -244,6 +244,12 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % get soil constants
     SoilConstants = io.getSoilConstants();
+    
+    %% Groundwater coupling settings
+	GroundwaterSettings = io.readGroundwaterSettings();
+	GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling; % Activate/deactivate Groundwater coupling
+	headBotmLayer = GroundwaterSettings.headBotmLayer; 
+	indexBotmLayer = GroundwaterSettings.indexBotmLayer;
 
     %% The boundary condition information settings
     BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1));
@@ -327,6 +333,10 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		% Update Groundwater variables (received from BMI)
+		headBotmLayer = GroundwaterSettings.headBotmLayer; 
+	    indexBotmLayer = GroundwaterSettings.indexBotmLayer;        
+        
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K
         hOLD_frez = [];

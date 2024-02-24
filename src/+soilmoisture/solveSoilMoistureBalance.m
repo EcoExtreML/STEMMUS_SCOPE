@@ -1,5 +1,5 @@
 function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                               BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg)
+                                                                                                                                                               BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, headBotmLayer, indexBotmLayer)
     %{
         Solve the soil moisture balance equation with the Thomas algorithm to
         update the soil matric potential 'hh', the finite difference
@@ -24,7 +24,11 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
         Trap = [];
         r_a_SOIL = InitialValues.r_a_SOIL;
     end
-
+    
+	  GroundwaterSettings = io.readGroundwaterSettings() % added by Mostafa
+	  headBotmLayer = GroundwaterSettings.headBotmLayer; % added by Mostafa
+	  indexBotmLayer = GroundwaterSettings.indexBotmLayer; % added by Mostafa
+   
     [AVAIL0, RHS, HeatMatrices, Precip] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
                                                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap);
 

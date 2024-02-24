@@ -58,12 +58,12 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
     % 2 --Specified flux(BCh);
     % 3 --Atmospheric forcing;
     NBCh = 3;
-
     BCh = -20 / 3600;
-    Modflow_config = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/Modflow_config.txt'
-    ModflowCoupling = str2num(io.readModflowConfigs(Modflow_config));
+    
+	GroundwaterSettings = io.readGroundwaterSettings()
+	GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling;
     % this should be fixed in issue 183
-    if startsWith(initialLandcoverClass, 'Croplands') || ModflowCoupling % modified by Mostafa, for checking MODFLOW coupling
+    if startsWith(initialLandcoverClass, 'Croplands') || GroundwaterCouplingCoupling % modified by Mostafa, for checking GroundwaterCoupling coupling
         % NBChB: Moisture Bottom B.C.:
         % 1 --Specified matric head (BChB);
         % 2 --Specified flux(BChB);

@@ -13,7 +13,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     NN = ModelSettings.NN; % Number of nodes;
     NL = ModelSettings.NL; % Number of layers
 
-    % Calculate soil layer thickness (cumulative layer thickness; e.g. 1, 2, 3, 4, ......., last = total_soil_depth) 
+    % Calculate soil layer thickness (cumulative layer thickness; e.g. 1, 2, 3, 4, 5, 10, 20 ......., last = total_soil_depth) 
     GroundwaterSettings.soilLayerThickness = zeros(NN, 1); % cumulative soil layer thickness
     GroundwaterSettings.soilLayerThickness(1) = 0;
     TDeltZ = flip(ModelSettings.DeltZ);

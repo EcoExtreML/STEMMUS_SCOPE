@@ -330,9 +330,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	% Update Groundwater variables (received from BMI, added by Mostafa)
-	headBotmLayer = GroundwaterSettings.headBotmLayer; 
-	indexBotmLayer = GroundwaterSettings.indexBotmLayer;        
         
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K

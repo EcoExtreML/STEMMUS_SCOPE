@@ -15,8 +15,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
     Precipp = 0;
     
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB	
-    GroundwaterSettings = io.readGroundwaterSettings() % added by Mostafa
-    if ~GroundwaterCoupling % Groundwater Coupling is not activated
+    if ~GroundwaterCoupling % Groundwater Coupling is not activated, added by Mostafa
         if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
 	    RHS(1) = BoundaryCondition.BChB;
 	    C4(1, 1) = 1;
@@ -28,7 +27,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
 	elseif BoundaryCondition.NBChB == 3        %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
 	    RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
 	end
-    else % Groundwater Coupling is activated
+    else % Groundwater Coupling is activated, added by Mostafa
 	headBotmLayer = GroundwaterSettings.headBotmLayer;  % head at bottom layer, received from MODFLOW through BMI
 	indexBotmLayer = GroundwaterSettings.indexBotmLayer; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
 	soilLayerThickness = GroundwaterSettings.soilLayerThickness;

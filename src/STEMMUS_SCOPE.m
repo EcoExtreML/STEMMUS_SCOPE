@@ -300,6 +300,8 @@ end
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(bmiMode, 'update')
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
+    if GroundwaterSettings.GroundwaterCoupling
+        BoundaryCondition.NBChB = 1
     if KT + 1 >= TimeProperties.Dur_tot
         bmiMode = 'none';  % Ensure the model does not try to update.
         disp("Finished running the model. Updating won't do anything!");
@@ -330,7 +332,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             k = NoTime(KT);
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        GroundwaterSettings = io.readGroundwaterSettings();
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
         TT_CRIT(NN) = ModelSettings.T0; % unit K
         hOLD_frez = [];

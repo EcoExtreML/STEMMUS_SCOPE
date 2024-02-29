@@ -247,9 +247,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     
     %% Groundwater coupling settings (added by Mostafa)
     GroundwaterSettings = io.readGroundwaterSettings();
-    GroundwaterCoupling = GroundwaterSettings.GroundwaterCoupling; % Activate/deactivate Groundwater coupling
-    headBotmLayer = GroundwaterSettings.headBotmLayer; 
-    indexBotmLayer = GroundwaterSettings.indexBotmLayer;
 
     %% The boundary condition information settings
     BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1));

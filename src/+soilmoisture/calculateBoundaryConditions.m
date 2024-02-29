@@ -1,5 +1,5 @@
 function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                           TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap)
+                                                                           TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}

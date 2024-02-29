@@ -26,7 +26,7 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     end
   
     [AVAIL0, RHS, HeatMatrices, Precip] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                   TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap);
+                                                                                   TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings);
 
     [CHK, hh, C4] = soilmoisture.solveTridiagonalMatrixEquations(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS);
     % update structures

@@ -24,7 +24,7 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
         Trap = [];
         r_a_SOIL = InitialValues.r_a_SOIL;
     end
-  
+
     [AVAIL0, RHS, HeatMatrices, Precip] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
                                                                                    TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings);
 

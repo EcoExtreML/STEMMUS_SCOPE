@@ -312,8 +312,8 @@ elseif strcmp(runMode, 'full')
     disp('The calculations start now');
 end
 
-if GroundwaterSettings.GroundwaterCoupling
-    BoundaryCondition.NBChB = 1
+if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
+    BoundaryCondition.NBChB = 1;
 end
 
 % Actually run the model

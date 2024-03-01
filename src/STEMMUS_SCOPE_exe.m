@@ -26,8 +26,8 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'fluxes', ... % Atmospheric fluxes
                        'TT', ... % Soil temperature over depth
                        'SoilVariables', ... % Structure that includes different variables of soil moisture, added by Mostafa
-		       'GroundwaterSettings', ... % added by Mostafa
-                     }; %#ok
+                       'GroundwaterSettings' ... % added by Mostafa
+                      }; %#ok
 
         % Variables for tracking the state of the model initialization:
         isInitialized = false;

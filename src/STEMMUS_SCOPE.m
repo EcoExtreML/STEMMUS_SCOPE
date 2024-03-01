@@ -245,6 +245,9 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % get soil constants
     SoilConstants = io.getSoilConstants();
 
+    %% Groundwater coupling settings (added by Mostafa)
+    GroundwaterSettings = io.readGroundwaterSettings();
+
     %% The boundary condition information settings
     BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1));
     DSTOR = BoundaryCondition.DSTOR;
@@ -297,6 +300,7 @@ end
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(bmiMode, 'update')
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
+
     if KT + 1 >= TimeProperties.Dur_tot
         bmiMode = 'none';  % Ensure the model does not try to update.
         disp("Finished running the model. Updating won't do anything!");
@@ -306,6 +310,10 @@ if strcmp(bmiMode, 'update')
 elseif strcmp(runMode, 'full')
     endTime = TimeProperties.Dur_tot;
     disp('The calculations start now');
+end
+
+if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
+    BoundaryCondition.NBChB = 1;
 end
 
 % Actually run the model
@@ -591,7 +599,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg);
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip] = soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings);
 
             if BoundaryCondition.NBCh == 1
                 DSTOR = 0;

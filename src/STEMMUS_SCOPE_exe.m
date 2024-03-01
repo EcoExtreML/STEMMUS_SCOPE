@@ -24,7 +24,9 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'KT', ... % Index of current time step
                        'SiteProperties', ... % Site properties (e.g. lat, lon)
                        'fluxes', ... % Atmospheric fluxes
-                       'TT' ... % Soil temperature over depth
+                       'TT', ... % Soil temperature over depth
+                       'SoilVariables', ... % Structure that includes different variables of soil moisture, added by Mostafa
+                       'GroundwaterSettings' ... % added by Mostafa
                       }; %#ok
 
         % Variables for tracking the state of the model initialization:

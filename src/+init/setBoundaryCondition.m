@@ -58,7 +58,6 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
     % 2 --Specified flux(BCh);
     % 3 --Atmospheric forcing;
     NBCh = 3;
-
     BCh = -20 / 3600;
     % this should be fixed in issue 183
     if startsWith(initialLandcoverClass, 'Croplands')

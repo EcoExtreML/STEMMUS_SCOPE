@@ -1,5 +1,11 @@
 # Unreleased
 
+**Changed:**
+
+- Added changes to support groundwater coupling via BMI in
+  [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221)
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.5.0) - 3 Jan 2024
 
@@ -12,7 +18,7 @@ This version of STEMMUS_SCOPE is only compatible with [PyStemmusScope 0.3.0.](ht
 **Added:**
 
 - STEMMUS_SCOPE 'BMI'-like mode ([#208](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/208)):
-  - The executable can be run in an "interactive" mode. 
+  - The executable can be run in an "interactive" mode.
     In this mode the model's initialization, time update, and finalization can be called upon separately.
   - The model now will write away BMI-required variables to a state file, which can be used for the Python BMI.
 - A dockerfile for the BMI-enabled STEMMUS_SCOPE model, to make the setup easier.

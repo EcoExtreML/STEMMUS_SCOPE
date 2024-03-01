@@ -244,7 +244,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % get soil constants
     SoilConstants = io.getSoilConstants();
-    
+
     %% Groundwater coupling settings (added by Mostafa)
     GroundwaterSettings = io.readGroundwaterSettings();
 
@@ -300,8 +300,7 @@ end
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(bmiMode, 'update')
     load([OutputPath, 'STEMMUS_SCOPE_state.mat']); % Load the workspace to be able to (continue) running the model
-    if GroundwaterSettings.GroundwaterCoupling
-        BoundaryCondition.NBChB = 1
+
     if KT + 1 >= TimeProperties.Dur_tot
         bmiMode = 'none';  % Ensure the model does not try to update.
         disp("Finished running the model. Updating won't do anything!");
@@ -311,6 +310,10 @@ if strcmp(bmiMode, 'update')
 elseif strcmp(runMode, 'full')
     endTime = TimeProperties.Dur_tot;
     disp('The calculations start now');
+end
+
+if GroundwaterSettings.GroundwaterCoupling
+    BoundaryCondition.NBChB = 1
 end
 
 % Actually run the model

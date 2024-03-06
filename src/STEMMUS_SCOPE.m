@@ -312,12 +312,13 @@ elseif strcmp(runMode, 'full')
     disp('The calculations start now');
 end
 
-if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
-    BoundaryCondition.NBChB = 1;
-end
-
 % Actually run the model
 if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
+
+    if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
+        BoundaryCondition.NBChB = 1;
+    end
+
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps

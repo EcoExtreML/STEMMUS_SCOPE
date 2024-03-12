@@ -41,4 +41,5 @@ function [const] = define_constants()
     const.c_i = 2.0455; % [J/g-1/Cels-1] Specific heat capacity of ice
     const.lambdav = 2.45; % latent heat of evaporation [MJ.kg-1] FAO56 pag 31
     const.k = 0.41; % karman's cte   []  FAO 56 Eq4
+    const.HPUNIT = 100; % added by Mostafa -> unit conversion from m to cm (MODFLOW values in m)
 end

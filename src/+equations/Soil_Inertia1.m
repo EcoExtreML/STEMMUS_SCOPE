@@ -12,7 +12,7 @@ function [GAM] = Soil_Inertia1(SMC, theta_s0)
 
     ke = exp(gamma_s * (1 - power(Sr, gamma_s - dels))); % (Kersten number, Eq.(15))
 
-    phis  = theta_s0; % (porosity, phis=theta_s=theta_s0) 
+    phis  = theta_s0; % (porosity, phis=theta_s=theta_s0)
     lambda_d = -0.56 * phis + 0.51; % (thermal conductivity for air-dry soil, Eq.(16))
 
     QC = 0.20; % (quartz content, approximate to fss if no measured QC)

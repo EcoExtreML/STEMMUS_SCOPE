@@ -46,7 +46,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Load model settings: replacing "run Constants"
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN;
-	NL = ModelSettings.NL; % added by Mostafa
+    NL = ModelSettings.NL; % added by Mostafa
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties.fmax, ModelSettings.Tot_Depth);
 

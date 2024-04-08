@@ -5,20 +5,20 @@ function [FTop, zGWT1] = calculateGroundwaterRecharge(RTop, zGWT0, indxGWLay0, S
 	The concept followed to calculate groundwater recharge can be found in:
 	(a) HYDRUS-MODFLOW paper https://doi.org/10.5194/hess-23-637-2019
 	(b) and also in STEMMUS-MODFLOW preprint https://doi.org/10.5194/gmd-2022-221
-	To clculate groundwater recharge, a water balance analysis is prepared at the moving balancing domain
+	To calculate groundwater recharge, a water balance analysis is prepared at the moving balancing domain
 	The water balance analysis is described in section 2.5 and Figure 2.b (balancing domain) of HYDRUS-MODFLOW paper
 		
-					%%%%%%%%%% Variables definations %%%%%%%%%%		
+					%%%%%%%%%% Variables definitions %%%%%%%%%%		
 	Equations of the water balance are implemented in this function (Equations 8-13 of HYDRUS-MODFLOW paper) as follows:
 	FTOP = RTOP + (SY - sy) * DeltZ, where:
-	FTOP: groundwater recharge into top layer of phreatic aquifer(cumualtive upper boundary flux)
+	FTOP: groundwater recharge into top layer of phreatic aquifer(cumulative upper boundary flux)
 	RTOP: upper boundary flux into the moving balancing domain
-	SY: large-scale specific yeild of the phreatic aquifer (recieved from MODFLOW)
-	sy: small-scale specific yeild (dynamically changing water yield) caused by fluctuation of the water table
+	SY: large-scale specific yield of the phreatic aquifer (received from MODFLOW)
+	sy: small-scale specific yield (dynamically changing water yield) caused by fluctuation of the water table
 	zGWT0: soil layer thickness from the top of the soil up to the phreatic surface at the start of current time step
-	indxGWLay0: index of the soil layer that include the phreatic surface (saturated zone) at the start of current time step
+	indxGWLay0: index of the soil layer that includes the phreatic surface (saturated zone) at the start of current time step
     	zGWT1: soil layer thickness from the top of the soil up to the phreatic surface at the end of current time step
-	indxGWLay1: index of the soil layer that include the phreatic surface (saturated zone) at the end of current time step
+	indxGWLay1: index of the soil layer that includes the phreatic surface (saturated zone) at the end of current time step
 	Sh: soil matric potential (from bottom layer to top; opposite of hh) at the start of the current time step
 	Shh: soil matric potential (from bottom layer to top; opposite of hh) at the end of the current time step
 	Theta_L: the soil moisture at the start of current time step;

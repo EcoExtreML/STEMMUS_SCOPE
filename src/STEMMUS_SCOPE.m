@@ -236,7 +236,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Set SoilVariables that are used in the loop
     T = SoilVariables.T;
-     h = SoilVariables.h;
+    h = SoilVariables.h;
     TT = SoilVariables.TT;
     h_frez = SoilVariables.h_frez;
     hh = SoilVariables.hh;

@@ -236,30 +236,30 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Set SoilVariables that are used in the loop
     T = SoilVariables.T;
-	h = SoilVariables.h;
+     h = SoilVariables.h;
     TT = SoilVariables.TT;
     h_frez = SoilVariables.h_frez;
     hh = SoilVariables.hh;
     hh_frez = SoilVariables.hh_frez;
     Sh = zeros(NN,1); % added by Mostafa
-	Shh = zeros(NN,1); % added by Mostafa
-	Sh(1:1:NN) = hh(NN:-1:1); % added by Mostafa
-	STheta_L = zeros(NN,1); % added by Mostafa
-	STheta_LL = zeros(NN,1); % added by Mostafa	
-	Theta_L = SoilVariables.Theta_L; % added by Mostafa
-	Theta_LL = SoilVariables.Theta_LL; % added by Mostafa
-	STheta_L(1) = Theta_LL(NL,2); % added by Mostafa
-	STheta_L(2:1:NN) = Theta_LL(NN-1:-1:1,1); % added by Mostafa
+    Shh = zeros(NN,1); % added by Mostafa
+    Sh(1:1:NN) = hh(NN:-1:1); % added by Mostafa
+    STheta_L = zeros(NN,1); % added by Mostafa
+    STheta_LL = zeros(NN,1); % added by Mostafa	
+    Theta_L = SoilVariables.Theta_L; % added by Mostafa
+    Theta_LL = SoilVariables.Theta_LL; % added by Mostafa
+    STheta_L(1) = Theta_LL(NL,2); % added by Mostafa
+    STheta_L(2:1:NN) = Theta_LL(NN-1:-1:1,1); % added by Mostafa
 	
     % get soil constants
     SoilConstants = io.getSoilConstants();
 
     %% Groundwater coupling settings (added by Mostafa)
     GroundwaterSettings = io.readGroundwaterSettings();
-	soilLayerThickness = GroundwaterSettings.soilLayerThickness; % cumulative soil layer thickness (from top to bottom)
-	[zGWT0, indxGWLay0] = soilmoisture.findPhreaticSurface(Sh, soilLayerThickness, GroundwaterSettings); % added by Mostafa
+    soilLayerThickness = GroundwaterSettings.soilLayerThickness; % cumulative soil layer thickness (from top to bottom)
+    [zGWT0, indxGWLay0] = soilmoisture.findPhreaticSurface(Sh, soilLayerThickness, GroundwaterSettings); % added by Mostafa
     
-	%% The boundary condition information settings
+    %% The boundary condition information settings
     BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1));
     DSTOR = BoundaryCondition.DSTOR;
     DSTOR0 = BoundaryCondition.DSTOR0;
@@ -693,20 +693,20 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 Sim_Temp(KT, 1:length(monitorDepthTemperature)) = TTT(monitorDepthTemperature, KT);
             end
             if (TEND - TIME) < 1E-3
-         		Shh(1:1:NN) = hh(NN:-1:1); % added by Mostafa
-				STheta_L(1)= Theta_L(NL,2); % added by Mostafa	
-				STheta_L(2:1:NN) = Theta_L(NL:-1:1,1); % added by Mostafa	
-				STheta_LL(1) = Theta_LL(NL,2); % added by Mostafa	
-				STheta_LL(2:1:NN) = Theta_LL(NL:-1:1,1); % added by Mostafa	
-				% Recharge calculations, added by Mostafa
-				% RTop = HBoundaryFlux.QMT;
-				[FTop, zGWT1] = soilmoisture.calculateGroundwaterRecharge(RTop, zGWT0, indxGWLay0, Shh, STheta_L, STheta_LL, soilLayerThickness, GroundwaterSettings);
-				if isnan(FTop) || isinf(FTop)
-					FTop = 0;
-				end 
+                Shh(1:1:NN) = hh(NN:-1:1); % added by Mostafa
+		STheta_L(1)= Theta_L(NL,2); % added by Mostafa	
+		STheta_L(2:1:NN) = Theta_L(NL:-1:1,1); % added by Mostafa	
+		STheta_LL(1) = Theta_LL(NL,2); % added by Mostafa	
+		STheta_LL(2:1:NN) = Theta_LL(NL:-1:1,1); % added by Mostafa	
+		% Recharge calculations, added by Mostafa
+		% RTop = HBoundaryFlux.QMT;
+		[FTop, zGWT1] = soilmoisture.calculateGroundwaterRecharge(RTop, zGWT0, indxGWLay0, Shh, STheta_L, STheta_LL, soilLayerThickness, GroundwaterSettings);
+		if isnan(FTop) || isinf(FTop)
+		    FTop = 0;
+		end 
                 
-				for i = 1:NN
-					hOLD(i) = SoilVariables.h(i);
+		for i = 1:NN
+		    hOLD(i) = SoilVariables.h(i);
                     SoilVariables.h(i) = SoilVariables.hh(i);
                     if ModelSettings.Thmrlefc == 1
                         TOLD(i) = SoilVariables.T(i);

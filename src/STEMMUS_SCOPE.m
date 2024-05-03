@@ -483,7 +483,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 end
                 sfactorTot(KT) = sfactor;
                 psiLeafTot(KT) = psiLeaf;
-                
+
                 if options.calc_fluor % total emitted fluorescence irradiance (excluding leaf and canopy re-absorption and scattering)
                     if options.calc_PSI
                         rad.Femtot = 1E3 * (leafbio.fqe(2) * optipar.phiII(spectral.IwlF) * fluxes.aPAR_Cab_eta + leafbio.fqe(1) * optipar.phiI(spectral.IwlF)  * fluxes.aPAR_Cab);

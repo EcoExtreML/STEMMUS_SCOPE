@@ -1,4 +1,4 @@
-function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, sfactor, PSI]             ...
+function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
                 Rl, SoilVariables, VanGenuchten, InitialValues)
@@ -568,4 +568,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, sfactor, PSI]  
     % function Tnew = update(Told, Wc, innovation)
     %     Tnew        = Wc.*innovation + (1-Wc).*Told;
     % return
+
+    WaterStressFactor.soil = sfactor;
+    WaterPotential.leaf = PSI;
 end

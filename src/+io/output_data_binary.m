@@ -1,4 +1,4 @@
-function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap)
+function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential)
     %% OUTPUT DATA
     % author C. Van der Tol
     % date:      30 Nov 2019
@@ -32,6 +32,17 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     Sim_Temp_out =  [Sim_Temp(k, :)];
     n_col.Sim_Temp = length(Sim_Temp_out);
     fwrite(f.Sim_Temp_file, Sim_Temp_out, 'double');
+
+    %% water stress factor
+    waterStressFactor_out = [k xyt.year(k) xyt.t(k) WaterStress.soil];
+    n_col.waterStressFactor = length(waterStressFactor_out);
+    fwrite(f.waterStressFactor_file, waterStressFactor_out, 'double');
+
+    %% water potential
+    waterPotential_out = [k xyt.year(k) xyt.t(k) WaterPotential.leaf];
+    n_col.waterPotential = length(waterPotential_out);
+    fwrite(f.waterPotential_file, waterPotential_out, 'double');
+
     %% spectrum (added on 19 September 2008)
     spectrum_hemis_optical_out =  rad.Eout_;
     n_col.spectrum_hemis_optical = length(spectrum_hemis_optical_out);

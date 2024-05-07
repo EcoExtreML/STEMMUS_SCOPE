@@ -49,6 +49,16 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
     write_output(Sim_Temp_names, Sim_Temp_units, ...
                  fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true);
 
+    %% water stress factor
+    waterStressFactor_names = {'simulation_number', 'year', 'DoY', 'soilWaterStressFactor'};
+    waterStressFactor_units = {'','','','-'};
+    write_output(waterStressFactor_names, waterStressFactor_units, fnames.waterStressFactor_file, n_col.waterStressFactor, ns);
+
+    %% water potential
+    waterPotential_names = {'simulation_number', 'year', 'DoY', 'leafWaterPotential'};
+    waterPotential_units = {'', '', '', 'm'};
+    write_output(waterPotential_names, waterPotential_units, fnames.waterPotential_file, n_col.waterPotential, ns);
+
     %% spectrum (added on 19 September 2008)
 
     spectrum_hemis_optical_names = {'hemispherically integrated radiation spectrum'};

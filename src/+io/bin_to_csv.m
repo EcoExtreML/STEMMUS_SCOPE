@@ -51,7 +51,7 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
 
     %% water stress factor
     waterStressFactor_names = {'simulation_number', 'year', 'DoY', 'soilWaterStressFactor'};
-    waterStressFactor_units = {'','','','-'};
+    waterStressFactor_units = {'', '', '', '-'};
     write_output(waterStressFactor_names, waterStressFactor_units, fnames.waterStressFactor_file, n_col.waterStressFactor, ns);
 
     %% water potential

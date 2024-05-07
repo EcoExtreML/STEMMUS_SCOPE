@@ -1,6 +1,6 @@
 function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
                                                      VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
-                                                     DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L)
+                                                     DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, GroundwaterSettings)
     %{
         Calculate all the parameters related to energy balance equation e.Constants.g.,
         Equation 3.65-3.73, STEMMUS Technical Notes, page 29-32.
@@ -9,6 +9,12 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+		indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+	else % Groundwater Coupling is activated, added by Mostafa
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)	
+	end
+	
     % input
     Kcva = InitialValues.Kcva;
     Kcah = InitialValues.Kcah;
@@ -29,7 +35,13 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     Kaa = AirVariabes.Kaa;
     Vaa = AirVariabes.Vaa;
     QL = AirVariabes.QL;
-
+	
+	if ModelSettings.Soilairefc
+		QL_h = AirVariabes.QL_h; % added by Mostafa
+		QL_T = AirVariabes.QL_T; % added by Mostafa
+		QL_a = AirVariabes.QL_a; % added by Mostafa
+	end
+	
     % output
     EnergyVariables.CTh = InitialValues.CTh;
     EnergyVariables.CTa = InitialValues.CTa;
@@ -42,7 +54,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     EnergyVariables.CTg = InitialValues.CTg;
     EnergyVariables.CTT = InitialValues.CTT;
 
-    for i = 1:ModelSettings.NL
+    for i = indxBotm:ModelSettings.NL
         if ~ModelSettings.Soilairefc
             KLhBAR(i) = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
             KLTBAR(i) = (KL_T(i, 1) + KL_T(i, 2)) / 2;
@@ -61,16 +73,26 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         % terms.(0.0003,volumetric heat capacity)
         if ~ModelSettings.Soilairefc
             QL(i) = -(KLhBAR(i) * DhDZ(i) + (KLTBAR(i) + DTDBAR(i)) * DTDZ(i) + KLhBAR(i));
-            Qa = 0;
+            QL_h(i) = -(KLhBAR(i) * DhDZ(i) + KLhBAR(i)); % added by Mostafa
+			QL_T(i) = -((KLTBAR(i) + DTDBAR(i)) * DTDZ(i)); % added by Mostafa
+			QL_a(i) = 0; % added by Mostafa
+			Qa = 0;
         else
             Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
         end
 
         if SoilVariables.DVa_Switch == 1
             QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i) + RHOVBAR * GasDispersivity.V_A(i);
-        else
+			QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i); % activated by Mostafa
+			QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i); % activated by Mostafa
+			QVa(i) = RHOVBAR * GasDispersivity.V_A(i); % added by Mostafa
+		else
             QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
-        end
+ 			QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i); % activated by Mostafa
+			QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i); % activated by Mostafa
+			VT1 = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i));
+			QVa(i) = 0; % added by Mostafa       
+		end
 
         % These are unused vars, but I comment them for future reference,
         % See issue 100, item 1
@@ -78,7 +100,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         % DVT(i) = (DEhBAR * EtaBAR) * DRHOVTDz(i);
         % QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
         % QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
-        for j = 1:ModelSettings.nD
+		for j = 1:ModelSettings.nD
             MN = i + j - 1;
             if ModelSettings.Soilairefc == 1
                 Kcah(i, j) = Constants.c_a * SoilVariables.TT(MN) * ((VaporVariables.D_V(i, j) + GasDispersivity.D_Vg(i)) * Xah(MN) + Constants.Hc * RHODA(MN) * SoilVariables.KfL_h(i, j));
@@ -151,4 +173,18 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
             EnergyVariables.CTg(i, j) = (Constants.c_L * Constants.RHOL + Constants.c_a * Constants.Hc * RHODA(MN)) * SoilVariables.KfL_h(i, j) * SoilVariables.TT(MN) - Constants.c_L * Srt(i, j) * SoilVariables.TT(MN);
         end
     end
+
+    % output to be used in other functions
+    EnergyVariables.QL = QL; % added by Mostafa, 
+	EnergyVariables.QV = QV; % added by Mostafa,
+	EnergyVariables.QVH = QVH; % added by Mostafa,
+	EnergyVariables.QVT = QVT; % added by Mostafa,
+	VEta = VaporVariables.Eta;
+	QVT = QVT;
+	EnergyVariables.QVa = QVa; % added by Mostafa,	
+	EnergyVariables.QL_h = QL_h; % added by Mostafa,
+	EnergyVariables.QL_T = QL_T; % added by Mostafa,
+	EnergyVariables.QL_a = QL_a; % added by Mostafa,
+	EnergyVariables.Qa = Qa; % added by Mostafa,	
+
 end

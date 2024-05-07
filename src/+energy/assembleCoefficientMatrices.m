@@ -1,4 +1,4 @@
-function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg)
+function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings)
     %{
         assembles the coefficient matrices of Equation 4.32, STEMMUS Technical
         Notes, page 44, the example was only shown for the soil moisture
@@ -12,22 +12,32 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
     C5 = EnergyMatrices.C5;
     C5_a = EnergyMatrices.C5_a;
     C6 = EnergyMatrices.C6;
-    C7 = EnergyMatrices.C7;
+	C7 = EnergyMatrices.C7;
 
     ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
+	
+	if ModelSettings.Soilairefc == 1 % added by Mostafa
+		C6_a = EnergyMatrices.C6_a;
+    end
 
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+		indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+	else % Groundwater Coupling is activated, added by Mostafa
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)	
+	end
+	
     % Alias of SoilVariables
     SV = SoilVariables;
 
     if ModelSettings.Soilairefc && ModelSettings.Thmrlefc
-        RHS(1) = -C7(1) + (C2(1, 1) * SV.T(1) + C2(1, 2) * SV.T(2)) / Delt_t ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
-            - (C3(1, 1) / Delt_t + C6(1, 1)) * P_gg(1) - (C3(1, 2) / Delt_t + C6(1, 2)) * P_gg(2) ...
-            + (C3(1, 1) / Delt_t) * P_g(1) + (C3(1, 2) / Delt_t) * P_g(2) ...
-            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
+        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(2)) / Delt_t ...
+            - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
+            - (C3(indxBotm, 1) / Delt_t + C6(indxBotm, 1)) * P_gg(indxBotm) - (C3(indxBotm, 2) / Delt_t + C6(indxBotm, 2)) * P_gg(indxBotm + 1) ...
+            + (C3(indxBotm, 1) / Delt_t) * P_g(indxBotm) + (C3(indxBotm, 2) / Delt_t) * P_g(indxBotm + 1) ...
+            + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
 
-        for i = 2:ModelSettings.NL
+        for i = indxBotm + 1:ModelSettings.NL
             ARG1 = C3(i - 1, 2) / Delt_t;
             ARG2 = C3(i, 1) / Delt_t;
             ARG3 = C3(i, 2) / Delt_t;
@@ -49,9 +59,9 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
             + (C3(n - 1, 2) / Delt_t) * P_g(n - 1) + (C3(n, 1) / Delt_t) * P_g(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     elseif ~ModelSettings.Soilairefc && ModelSettings.Thmrlefc
-        RHS(1) = -C7(1) + (C2(1, 1) * SV.T(1) + C2(1, 2) * SV.T(2)) / Delt_t ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
-            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
+        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t ...
+            - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
+            + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
         for i = 2:ModelSettings.NL
             ARG4 = C1(i - 1, 2) / Delt_t;
             ARG5 = C1(i, 1) / Delt_t;
@@ -66,14 +76,14 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
             - (C1(n - 1, 2) / Delt_t + C4(n - 1, 2)) * SV.hh(n - 1) - (C1(n, 1) / Delt_t + C4(n, 1)) * SV.hh(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     else
-        RHS(1) = -C7(1) + (C2(1, 1) * SV.T(1) + C2(1, 2) * SV.T(2)) / Delt_t;
-        for i = 2:ModelSettings.NL
+        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(1, 2) * SV.T(indxBotm + 1)) / Delt_t;
+        for i = indxBotm + 1:ModelSettings.NL
             RHS(i) = -C7(i) + (C2(i - 1, 2) * SV.T(i - 1) + C2(i, 1) * SV.T(i) + C2(i, 2) * SV.T(i + 1)) / Delt_t;
         end
         RHS(n) = -C7(n) + (C2(n - 1, 2) * SV.T(n - 1) + C2(n, 1) * SV.T(n)) / Delt_t;
     end
 
-    for i = 1:ModelSettings.NN
+    for i = indxBotm:ModelSettings.NN
         for j = 1:ModelSettings.nD
             C5(i, j) = C2(i, j) / Delt_t + C5(i, j);
         end
@@ -81,9 +91,9 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
 
     EnergyMatrices.C5 = C5;
 
-    SAVE(1, 1, 2) = RHS(1);
-    SAVE(1, 2, 2) = C5(1, 1);
-    SAVE(1, 3, 2) = C5(1, 2);
+    SAVE(1, 1, 2) = RHS(indxBotm);
+    SAVE(1, 2, 2) = C5(indxBotm, 1);
+    SAVE(1, 3, 2) = C5(indxBotm, 2);
     SAVE(2, 1, 2) = RHS(n);
     SAVE(2, 2, 2) = C5(n - 1, 2);
     SAVE(2, 3, 2) = C5(n, 1);

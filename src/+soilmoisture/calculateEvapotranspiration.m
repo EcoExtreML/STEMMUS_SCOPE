@@ -1,8 +1,14 @@
-function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt)
+function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, GroundwaterSettings)
 
     ModelSettings = io.getModelSettings();
-
-    Rn = (ForcingData.Rn_msr(KT)) * 8.64 / 24 / 100 * 1;
+	
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+		indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+	else % Groundwater Coupling is activated
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)	
+	end	
+    
+	Rn = (ForcingData.Rn_msr(KT)) * 8.64 / 24 / 100 * 1;
     Rn_SOIL = Rn * 0.68;
 
     % calculate Aerodynamic Resistance
@@ -28,7 +34,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiratio
         Srt1 = 0 ./ ModelSettings.DeltZ';
     end
 
-    for i = 1:ModelSettings.NL
+    for i = indxBotm:ModelSettings.NL
         for j = 1:ModelSettings.nD
             Srt(i, j) = Srt1(i, 1);
         end

@@ -4,8 +4,8 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
         Determine the boundary condition for solving the soil moisture equation.
     %}
     ModelSettings = io.getModelSettings();
-    % n is the index of n_th item
-    n = ModelSettings.NN;
+    % NN is the index of n_th item
+    NN = ModelSettings.NN;
 
     C4 = HeatMatrices.C4;
     C4_a = HeatMatrices.C4_a;
@@ -13,55 +13,48 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
     Precip = InitialValues.Precip;
     Precip_msr = ForcingData.Precip_msr;
     Precipp = 0;
-
-    %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
+	
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(1) = BoundaryCondition.BChB;
-            C4(1, 1) = 1;
-            RHS(2) = RHS(2) - C4(1, 2) * RHS(1);
-            C4(1, 2) = 0;
-            C4_a(1) = 0;
-        elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(1) = RHS(1) + BoundaryCondition.BChB;
-        elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
-        end
-    else % Groundwater Coupling is activated, added by Mostafa
-        headBotmLayer = GroundwaterSettings.headBotmLayer;  % head at bottom layer, received from MODFLOW through BMI
-        indexBotmLayer = GroundwaterSettings.indexBotmLayer; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
-        soilLayerThickness = GroundwaterSettings.soilLayerThickness;
-        INBT = n - indexBotmLayer + 1;  % soil layer thickness from bottom to top (opposite of soilLayerThickness)
-        BOTm = soilLayerThickness(n);  % bottom level of all layers, still need to confirm with Lianyu
-        if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(INBT) = (headBotmLayer - BOTm + soilLayerThickness(indexBotmLayer));
-            C4(INBT, 1) = 1;
-            RHS(INBT + 1) = RHS(INBT + 1) - C4(INBT, 2) * RHS(INBT);
-            C4(INBT, 2) = 0;
-            C4_a(INBT) = 0;
-        elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(INBT) = RHS(INBT) + BoundaryCondition.BChB;
-        elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(INBT) = RHS(INBT) - SoilVariables.KL_h(INBT, 1);
-        end
+		indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+	     RHS(indxBotm) = BoundaryCondition.BChB;
+	else % Groundwater Coupling is activated
+        indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)	
+        cumLayThick = GroundwaterSettings.cumLayThick; % cumulative soil layers thickness
+        topLevel = GroundwaterSettings.topLevel;
+		headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
+		RHS(indxBotm) = headBotmLayer - topLevel + cumLayThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
+	end	
+	
+    %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
+    if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
+        C4(indxBotm, 1) = 1;
+        RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm + 1, 2) * RHS(indxBotm);
+        C4(indxBotm, 2) = 0;
+        C4_a(indxBotm) = 0;
+    elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
+         RHS(indxBotm) = RHS(indxBotm) + BoundaryCondition.BChB;
+    elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
+        RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
     end
+	
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable
         % is not calculated anywhere! see issue 98, item 6
-        RHS(n) = InitialValues.h_SUR(KT);
-        C4(n, 1) = 1;
-        RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);
-        C4(n - 1, 2) = 0;
-        C4_a(n - 1) = 0;
+        RHS(NN) = InitialValues.h_SUR(KT);
+        C4(NN, 1) = 1;
+        RHS(NN - 1) = RHS(NN - 1) - C4(NN - 1, 2) * RHS(NN);
+        C4(NN - 1, 2) = 0;
+        C4_a(NN - 1) = 0;
     elseif BoundaryCondition.NBCh == 2
         if BoundaryCondition.NBChh == 1
-            RHS(n) = hN;
-            C4(n, 1) = 1;
-            RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);
-            C4(n - 1, 2) = 0;
+            RHS(NN) = hN;
+            C4(NN, 1) = 1;
+            RHS(NN - 1) = RHS(NN - 1) - C4(NN - 1, 2) * RHS(NN);
+            C4(NN - 1, 2) = 0;
         else
-            RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
+            RHS(NN) = RHS(NN) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
         end
     else
         Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.Ks0 / (3600 * 24) * TimeProperties.DELT * 10);
@@ -83,13 +76,13 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
         end
 
         if BoundaryCondition.NBChh == 1
-            RHS(n) = hN;
-            C4(n, 1) = 1;
-            RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);
-            C4(n - 1, 2) = 0;
-            C4_a(n - 1) = 0;
+            RHS(NN) = hN;
+            C4(NN, 1) = 1;
+            RHS(NN - 1) = RHS(NN - 1) - C4(NN - 1, 2) * RHS(NN);
+            C4(NN - 1, 2) = 0;
+            C4_a(NN - 1) = 0;
         else
-            RHS(n) = RHS(n) + AVAIL0 - Evap(KT);
+            RHS(NN) = RHS(NN) + AVAIL0 - Evap(KT);
         end
     end
     HeatMatrices.C4 = C4;

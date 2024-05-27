@@ -4,6 +4,8 @@
 
 - Added changes to support groundwater coupling via BMI in
   [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221)
+- Save water stress factor and water potential into csv files.
+  [#229](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/229)
 
 
 <a name="1.5.0"></a>

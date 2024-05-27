@@ -443,7 +443,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
                 switch options.calc_ebal
                     case 1
-                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac] ...
+                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential] ...
                             = ebal(iter, options, spectral, rad, gap,  ...
                                    leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
                                    Rl, SoilVariables, VanGenuchten, InitialValues);
@@ -481,6 +481,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                             end
                         end
                 end
+
                 if options.calc_fluor % total emitted fluorescence irradiance (excluding leaf and canopy re-absorption and scattering)
                     if options.calc_PSI
                         rad.Femtot = 1E3 * (leafbio.fqe(2) * optipar.phiII(spectral.IwlF) * fluxes.aPAR_Cab_eta + leafbio.fqe(1) * optipar.phiI(spectral.IwlF)  * fluxes.aPAR_Cab);
@@ -714,7 +715,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Open files for writing
         file_ids = structfun(@(x) fopen(x, 'a'), fnames, 'UniformOutput', false);
-        n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap);
+        n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStressFactor, WaterPotential);
         fclose("all");
     end
 end

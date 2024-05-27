@@ -25,6 +25,9 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     fnames.BOC_irradiance_file = fullfile(Output_dir, 'BOC_irradiance.bin');  % reflectance spectrum
     fnames.Sim_Theta_file = fullfile(Output_dir, 'Sim_Theta.bin');  % soil moisture
     fnames.Sim_Temp_file = fullfile(Output_dir, 'Sim_Temp.bin');  % soil temperature
+    fnames.waterStressFactor_file = fullfile(Output_dir, 'waterStressFactor.bin');
+    fnames.waterPotential_file = fullfile(Output_dir, 'waterPotential.bin');
+
     if options.calc_ebal
         fnames.spectrum_obsdir_BlackBody_file = fullfile(Output_dir, 'spectrum_obsdir_BlackBody.bin');  % spectrum observation direction
     end

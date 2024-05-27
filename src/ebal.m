@@ -1,4 +1,4 @@
-function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
+function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
                 Rl, SoilVariables, VanGenuchten, InitialValues)
@@ -88,6 +88,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
        rad         radiation spectra
        profiles    vertical profiles of fluxes
        thermal     temperatures, aerodynamic resistances and friction velocity
+       sfactor     soil water stress factor
+       PSI         leaf water potential
     %}
 
     %% 1. initialisations and other preparations for the iteration loop
@@ -566,4 +568,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     % function Tnew = update(Told, Wc, innovation)
     %     Tnew        = Wc.*innovation + (1-Wc).*Told;
     % return
+
+    WaterStressFactor.soil = sfactor;
+    WaterPotential.leaf = PSI;
 end

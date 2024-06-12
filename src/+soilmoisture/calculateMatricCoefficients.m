@@ -1,5 +1,5 @@
 function [HeatVariables, SoilVariables] = calculateMatricCoefficients(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
-                                                                      RHOV, DRHOVh, DRHOVT, D_Ta)
+                                                                      RHOV, DRHOVh, DRHOVT, D_Ta, GroundwaterSettings)
     %{
         Calculate all the parameters related to matric coefficients (e.g.,
         c1-c8) as in Equation 4.32 (STEMMUS Technical Notes, page 44).
@@ -26,7 +26,13 @@ function [HeatVariables, SoilVariables] = calculateMatricCoefficients(SoilVariab
     % Make SV as an alias of SoilVariables to make codes shorter
     SV = SoilVariables;
 
-    for i = 1:ModelSettings.NL
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+    else % Groundwater Coupling is activated, added by Mostafa
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    end
+
+    for i = indxBotm:ModelSettings.NL
         for j = 1:ModelSettings.nD
             MN = i + j - 1;
             if ModelSettings.hThmrl

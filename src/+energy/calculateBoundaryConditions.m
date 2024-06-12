@@ -1,5 +1,5 @@
 function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                             SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT)
+                                                             SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the energy equation, see
         STEMMUS Technical Notes.
@@ -10,17 +10,25 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
 
     Constants = io.define_constants();
 
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+        tempBotm = BoundaryCondition.BCTB;
+    else % Groundwater Coupling is activated
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+        tempBotm = GroundwaterSettings.tempBotm; % groundwater temperature
+    end
+
     % Apply the bottom boundary condition called for by BoundaryCondition.NBCTB
     if BoundaryCondition.NBCTB == 1
-        RHS(1) = BoundaryCondition.BCTB;
-        EnergyMatrices.C5(1, 1) = 1;
-        RHS(2) = RHS(2) - EnergyMatrices.C5(1, 2) * RHS(1);
-        EnergyMatrices.C5(1, 2) = 0;
-        EnergyMatrices.C5_a(1) = 0;
+        RHS(indxBotm) = tempBotm;
+        EnergyMatrices.C5(indxBotm, 1) = 1;
+        RHS(indxBotm + 1) = RHS(indxBotm + 1) - EnergyMatrices.C5(indxBotm, 2) * RHS(indxBotm);
+        EnergyMatrices.C5(indxBotm, 2) = 0;
+        EnergyMatrices.C5_a(indxBotm) = 0;
     elseif BoundaryCondition.NBCTB == 2
-        RHS(1) = RHS(1) + BoundaryCondition.BCTB;
+        RHS(indxBotm) = RHS(indxBotm) + BoundaryCondition.BCTB;
     else
-        EnergyMatrices.C5(1, 1) = EnergyMatrices.C5(1, 1) - Constants.c_L * Constants.RHOL * HBoundaryFlux.QMB;
+        EnergyMatrices.C5(indxBotm, 1) = EnergyMatrices.C5(indxBotm, 1) - Constants.c_L * Constants.RHOL * HBoundaryFlux.QMB;
     end
 
     % Apply the surface boundary condition called by BoundaryCondition.NBCT

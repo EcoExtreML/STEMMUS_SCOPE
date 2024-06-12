@@ -28,21 +28,22 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
             RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
         end
     else % Groundwater Coupling is activated, added by Mostafa
-        headBotmLayer = GroundwaterSettings.headBotmLayer;  % head at bottom layer, received from MODFLOW through BMI
-        indexBotmLayer = GroundwaterSettings.indexBotmLayer; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
-        soilLayerThickness = GroundwaterSettings.soilLayerThickness;
-        INBT = n - indexBotmLayer + 1;  % soil layer thickness from bottom to top (opposite of soilLayerThickness)
-        BOTm = soilLayerThickness(n);  % bottom level of all layers, still need to confirm with Lianyu
+        indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
+        topLevel = GroundwaterSettings.topLevel;
+        headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
+        RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
         if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(INBT) = (headBotmLayer - BOTm + soilLayerThickness(indexBotmLayer));
-            C4(INBT, 1) = 1;
-            RHS(INBT + 1) = RHS(INBT + 1) - C4(INBT, 2) * RHS(INBT);
-            C4(INBT, 2) = 0;
-            C4_a(INBT) = 0;
+            RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
+            C4(indxBotm, 1) = 1;
+            RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
+            C4(indxBotm, 2) = 0;
+            C4_a(indxBotm) = 0;
         elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(INBT) = RHS(INBT) + BoundaryCondition.BChB;
+            RHS(indxBotm) = RHS(indxBotm) + BoundaryCondition.BChB;
         elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(INBT) = RHS(INBT) - SoilVariables.KL_h(INBT, 1);
+            RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
         end
     end
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
@@ -64,11 +65,11 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
             RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
         end
     else
-        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.Ks0 / (3600 * 24) * TimeProperties.DELT * 10);
-        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10);
 
+        % Check applied infiltration doesn't exceed infiltration capcity
+        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10);
         if SoilVariables.Tss(KT) > 0
-            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT;
+            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT; % unit conversion from mm/30mins to cm/sec, comment added by Mostafa
         else
             Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT;
             Precipp = Precipp + Precip(KT);
@@ -76,7 +77,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
         end
 
         if SoilVariables.Tss(KT) > 0
-            AVAIL0 = Precip(KT) + Precipp + BoundaryCondition.DSTOR0 / Delt_t;
+            AVAIL0 = Precip(KT) + Precipp + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
             Precipp = 0;
         else
             AVAIL0 = Precip(KT) + BoundaryCondition.DSTOR0 / Delt_t;

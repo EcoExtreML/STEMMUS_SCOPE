@@ -1,4 +1,4 @@
-function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialValues)
+function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialValues, GroundwaterSettings)
     %{
         Calculate all the parameters related to matric coefficients e.g., c1-c7
         as in Equation 4.32 STEMMUS Technical Notes, page 44, which is an
@@ -14,7 +14,13 @@ function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialVa
     EnergyMatrices.C6 = InitialValues.C6;
     EnergyMatrices.C7 = zeros(ModelSettings.NN);
 
-    for i = 1:ModelSettings.NL
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+    else % Groundwater Coupling is activated, added by Mostafa
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    end
+
+    for i = indxBotm:ModelSettings.NL
         EnergyMatrices.C1(i, 1) = EnergyMatrices.C1(i, 1) + EnergyVariables.CTh(i, 1) * ModelSettings.DeltZ(i) / 2;
         EnergyMatrices.C1(i + 1, 1) = EnergyMatrices.C1(i + 1, 1) + EnergyVariables.CTh(i, 2) * ModelSettings.DeltZ(i) / 2;
 

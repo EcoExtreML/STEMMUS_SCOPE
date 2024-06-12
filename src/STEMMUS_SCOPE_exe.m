@@ -25,8 +25,15 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'SiteProperties', ... % Site properties (e.g. lat, lon)
                        'fluxes', ... % Atmospheric fluxes
                        'TT', ... % Soil temperature over depth
-                       'SoilVariables', ... % Structure that includes different variables of soil moisture, added by Mostafa
-                       'GroundwaterSettings' ... % added by Mostafa
+                       'SoilVariables', ... % Structure that includes different variables of soil moisture
+                       'GroundwaterSettings' ... % groundwater settings including input data from MODFLOW
+                       'gwfluxes' ... % structure that includes groundwater recharge and its individual components
+                       'EVAP' ... % evaporation
+                       'RWUs' ... % soil water root uptake
+                       'RWUg' ... % groundwater root uptake
+                       'R_Dunn' ... % Dunnian runoff
+                       'R_Hort' ... % Hortonian runoff
+                       'RS' ... % total surface runoff
                       }; %#ok
 
         % Variables for tracking the state of the model initialization:

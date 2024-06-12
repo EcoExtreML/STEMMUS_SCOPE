@@ -1,5 +1,5 @@
 function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
-                                                 P_gg, Xah, XaT, Xaa, RHODA)
+                                                 P_gg, Xah, XaT, Xaa, RHODA, GroundwaterSettings)
     %{
         Calculate all the parameters related to dry air equation e.g., Equation
         3.59-3.64, STEMMUS Technical Notes, page 27-28.
@@ -24,7 +24,13 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
     AirVariabes.DTDZ = InitialValues.DTDZ;
     GasDispersivity.DPgDZ = InitialValues.DPgDZ;
 
-    for i = 1:ModelSettings.NL
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+    else % Groundwater Coupling is activated
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    end
+
+    for i = indxBotm:ModelSettings.NL
         KLhBAR = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
         KLTBAR = (InitialValues.KL_T(i, 1) + InitialValues.KL_T(i, 2)) / 2;
         DDhDZ = (SoilVariables.hh(i + 1) - SoilVariables.hh(i)) / ModelSettings.DeltZ(i);
@@ -51,6 +57,9 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         AirVariabes.DhDZ(i) = DhDZ;
         AirVariabes.DTDZ(i) = DTDZ;
         AirVariabes.QL(i) = QL;
+        AirVariabes.QL_h(i) = QL_h(i); % added by Mostafa
+        AirVariabes.QL_T(i) = QL_T(i); % added by Mostafa
+        AirVariabes.QL_a(i) = QL_a(i); % added by Mostafa
 
         for j = 1:ModelSettings.nD
             MN = i + j - 1;

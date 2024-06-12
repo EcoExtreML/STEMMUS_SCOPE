@@ -1,4 +1,4 @@
-function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, SoilVariables, Delt_t, P_g)
+function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, SoilVariables, Delt_t, P_g, GroundwaterSettings)
     %{
         Assemble the coefficient matrices of Equation 4.32 STEMMUS Technical
         Notes, page 44, for dry air equation.
@@ -20,14 +20,20 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
     % Alias of SoilVariables
     SV = SoilVariables;
 
-    if ModelSettings.Thmrlefc
-        RHS(1) = -C7(1) + (C3(1, 1) * P_g(1) + C3(1, 2) * P_g(2)) / Delt_t ...
-            - (C2(1, 1) / Delt_t + C5(1, 1)) * SV.TT(1) - (C2(1, 2) / Delt_t + C5(1, 2)) * SV.TT(2) ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
-            + (C2(1, 1) / Delt_t) * SV.T(1) + (C2(1, 2) / Delt_t) * SV.T(2) ...
-            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+    else % Groundwater Coupling is activated
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    end
 
-        for i = 2:ModelSettings.NL
+    if ModelSettings.Thmrlefc
+        RHS(indxBotm) = -C7(indxBotm) + (C3(indxBotm, 1) * P_g(indxBotm) + C3(indxBotm, 2) * P_g(indxBotm + 1)) / Delt_t ...
+            - (C2(indxBotm, 1) / Delt_t + C5(indxBotm, 1)) * SV.TT(indxBotm) - (C2(indxBotm, 2) / Delt_t + C5(indxBotm, 2)) * SV.TT(indxBotm + 1) ...
+            - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
+            + (C2(indxBotm, 1) / Delt_t) * SV.T(indxBotm) + (C2(indxBotm, 2) / Delt_t) * SV.T(indxBotm + 1) ...
+            + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
+
+        for i = indxBotm + 1:ModelSettings.NL
             ARG1 = C2(i - 1, 2) / Delt_t;
             ARG2 = C2(i, 1) / Delt_t;
             ARG3 = C2(i, 2) / Delt_t;
@@ -49,10 +55,10 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
             + (C2(n - 1, 2) / Delt_t) * SV.T(n - 1) + (C2(n, 1) / Delt_t) * SV.T(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     else
-        RHS(1) = -C7(1) + (C3(1, 1) * P_g(1) + C3(1, 2) * P_g(2)) / Delt_t ...
-            - (C1(1, 1) / Delt_t + C4(1, 1)) * SV.hh(1) - (C1(1, 2) / Delt_t + C4(1, 2)) * SV.hh(2) ...
-            + (C1(1, 1) / Delt_t) * SV.h(1) + (C1(1, 2) / Delt_t) * SV.h(2);
-        for i = 2:ModelSettings.NL
+        RHS(indxBotm) = -C7(indxBotm) + (C3(indxBotm, 1) * P_g(indxBotm) + C3(indxBotm, 2) * P_g(indxBotm + 1)) / Delt_t ...
+            - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
+            + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
+        for i = indxBotm + 1:ModelSettings.NL
             ARG4 = C1(i - 1, 2) / Delt_t;
             ARG5 = C1(i, 1) / Delt_t;
             ARG6 = C1(i, 2) / Delt_t;
@@ -65,7 +71,7 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
     end
 
-    for i = 1:ModelSettings.NN
+    for i = indxBotm:ModelSettings.NN
         for j = 1:ModelSettings.nD
             C6(i, j) = C3(i, j) / Delt_t + C6(i, j);
         end
@@ -73,9 +79,9 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
 
     AirMatrices.C6 = C6;
 
-    SAVE(1, 1, 3) = RHS(1);
-    SAVE(1, 2, 3) = C6(1, 1);
-    SAVE(1, 3, 3) = C6(1, 2);
+    SAVE(1, 1, 3) = RHS(indxBotm);
+    SAVE(1, 2, 3) = C6(indxBotm, 1);
+    SAVE(1, 3, 3) = C6(indxBotm, 2);
     SAVE(2, 1, 3) = RHS(n);
     SAVE(2, 2, 3) = C6(n - 1, 2);
     SAVE(2, 3, 3) = C6(n, 1);

@@ -619,7 +619,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg] = ...
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, R_Hort, RWUs, RWUg] = ...
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
                                                                         DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings);
@@ -636,7 +636,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX);
                 RS = (EXCESS - DSTOR) / Delt_t;
             else
-                AVAIL = AVAIL0 - Evap(KT);
+				AVAIL = AVAIL0 - Evap(KT);
                 EXCESS = (AVAIL + HBoundaryFlux.QMT) * Delt_t; % (unit converstion from cm/sec to cm/30mins)
                 if abs(EXCESS / Delt_t) <= 1e-10
                     EXCESS = 0;
@@ -644,9 +644,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX); % Depth of depression storage at end of current time step
                 % Next line is commented and Surface runoff is re-calcualted using different approach (the following 3 lines)
                 % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit converstion from cm/30mins to cm/sec)
-                R_Dunn = ForcingData.R_Dunn; % (cm/sec)
-                R_Hort = ForcingData.R_Hort; % (cm/sec)
-                RS = R_Hort + R_Dunn; % total surface runoff
+                R_Dunn(KT) = ForcingData.R_Dunn(KT); % (cm/sec)
+                R_Hort(KT) = R_Hort(KT) / Delt_t / 10; % (unit converstion from mm/30mins to cm/sec)
+                RS(KT) = R_Hort(KT) + R_Dunn(KT); % total surface runoff
             end
 
             if ModelSettings.Soilairefc == 1

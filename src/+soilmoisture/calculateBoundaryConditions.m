@@ -1,4 +1,4 @@
-function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+function [AVAIL0, RHS, HeatMatrices, Precip, R_Hort] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
                                                                            TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
@@ -64,10 +64,23 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
         else
             RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
         end
-    else
+    else % (BoundaryCondition.NBCh == 3, Specified atmospheric forcing)
 
-        % Check applied infiltration doesn't exceed infiltration capcity
-        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10);
+        % Calculate applied infiltration and infiltration excess runoff (Hortonian runoff)
+        Ks0 = SoilProperties.Ks0 / (3600 * 24) * TimeProperties.DELT * 10; % saturated vertical hydraulic conductivity. unit conversion from cm/day to mm/30mins
+        % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document https://doi.org/10.5065/D6N877R)
+		% Check applied infiltration doesn't exceed infiltration capcity
+		infCap = SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10; 
+        infCap_min = min(Ks0, infCap);
+
+		% Infiltration excess runoff (Hortonian runoff)     
+        if Precip_msr(KT) > infCap_min
+            R_Hort(KT) = Precip_msr(KT) - infCap_min;
+        else
+            R_Hort(KT) = 0;
+        end
+		Precip_msr(KT) = min(Precip_msr(KT), infCap_min); % applied infiltration after removing Hortonian runoff	
+		
         if SoilVariables.Tss(KT) > 0
             Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT; % unit conversion from mm/30mins to cm/sec, comment added by Mostafa
         else

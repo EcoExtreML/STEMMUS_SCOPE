@@ -619,7 +619,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, R_Hort, RWUs, RWUg] = ...
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
                                                                         DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings);
@@ -636,17 +636,17 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX);
                 RS = (EXCESS - DSTOR) / Delt_t;
             else
-				AVAIL = AVAIL0 - Evap(KT);
+                AVAIL = AVAIL0 - Evap(KT);
                 EXCESS = (AVAIL + HBoundaryFlux.QMT) * Delt_t; % (unit converstion from cm/sec to cm/30mins)
                 if abs(EXCESS / Delt_t) <= 1e-10
                     EXCESS = 0;
                 end
                 DSTOR = min(EXCESS, DSTMAX); % Depth of depression storage at end of current time step
-                % Next line is commented and Surface runoff is re-calcualted using different approach (the following 3 lines)
-                % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit converstion from cm/30mins to cm/sec)
+                % Next line is commented and Surface runoff is re-calculated using different approach (the following 3 lines)
+                % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit conversion from cm/30mins to cm/sec)
                 R_Dunn(KT) = ForcingData.R_Dunn(KT); % (cm/sec)
-                R_Hort(KT) = R_Hort(KT) / Delt_t / 10; % (unit converstion from mm/30mins to cm/sec)
-                RS(KT) = R_Hort(KT) + R_Dunn(KT); % total surface runoff
+                R_Hort(KT) = ForcingData.R_Hort(KT); % (cm/sec)
+                RS(KT) = R_Hort(KT) + R_Dunn(KT); % total surface runoff (cm/sec)
             end
 
             if ModelSettings.Soilairefc == 1
@@ -750,7 +750,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             depToGWT_strt = depToGWT_end; % for next time step
             indxGWLay_strt = indxGWLay_end; % for next time step
         else
-            gwfluxes = 0;
+            gwfluxes.recharge = 0;
         end
 
         % set SoilVariables for the rest of the loop
@@ -766,7 +766,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, GroundwaterSettings, gwfluxes);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, GroundwaterSettings, gwfluxes);
         fclose("all");
     end
 end
@@ -795,5 +795,6 @@ end
 
 % Calculate the total simulatiom time, added by mostafa
 end_time = clock;
-simtime = etime(end_time, start_time) / 60;
-disp(['Simulation time in minutes is : ' num2str(simtime)]);
+simtime_min = etime(end_time, start_time) / 60;
+simtime_hr = simtime_min / 24;
+disp(['Simulation time is : ' num2str(simtime_hr) ' hrs (' num2str(simtime_min) ' minutes)']);

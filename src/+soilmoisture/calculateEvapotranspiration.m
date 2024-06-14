@@ -3,7 +3,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapo
     ModelSettings = io.getModelSettings();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+        indxBotm = 1; % index of bottom layer, by default (no groundwater coupling) its layer with index 1, since STEMMUS calculations start from bottom to top
     else % Groundwater Coupling is activated
         indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
     end
@@ -26,8 +26,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapo
         Evap(KT) = fluxes.lEstot / lambda2 * 0.1; % transfer to second value unit: cm s-1
         EVAP(KT, 1) = Evap(KT);
         Tp_t = fluxes.lEctot / lambda1 * 0.1; % transfer to second value
-        % Srt1 = RWU * 100 ./ ModelSettings.DeltZ'; % why we divide by DeltZ, if this division is removed -> Srt1 = Tp_t (check with Yunfei)
-        Srt1 = RWU * 100;
+        Srt1 = RWU * 100 ./ ModelSettings.DeltZ';
     else
         Evap(KT) = 0; % transfer to second value unit: cm s-1
         EVAP(KT, 1) = Evap(KT);
@@ -42,12 +41,13 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapo
     end
     Trap(KT) = Tp_t;   % root water uptake integration by ModelSettings.DeltZ;
 
-    % Calculate root water uptake from soil water (RWUs) and from groundwater (RWUg)
+    % Calculate root water uptake from soil water (RWUs) and groundwater (RWUg)
+    RWU = RWU * 100; % unit conversion from m/sec to cm/sec
     if GroundwaterSettings.GroundwaterCoupling == 1
-        RWUs = sum(Srt1(indxBotm:ModelSettings.NL));
-        RWUg = sum(Srt1(1:indxBotm - 1));
+        RWUs = sum(RWU(indxBotm:ModelSettings.NL));
+        RWUg = sum(RWU(1:indxBotm - 1));
     else
-        RWUs = sum(Srt1(1:ModelSettings.NL));
+        RWUs = sum(RWU(1:ModelSettings.NL));
         RWUg = 0;
     end
 end

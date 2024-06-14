@@ -1,5 +1,5 @@
-function [AVAIL0, RHS, HeatMatrices, Precip, R_Hort] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                           TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
+function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}
@@ -13,6 +13,8 @@ function [AVAIL0, RHS, HeatMatrices, Precip, R_Hort] = calculateBoundaryConditio
     Precip = InitialValues.Precip;
     Precip_msr = ForcingData.Precip_msr;
     Precipp = 0;
+    R_Hort = ForcingData.R_Hort;
+    applied_inf = ForcingData.applied_inf;
 
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
@@ -62,29 +64,34 @@ function [AVAIL0, RHS, HeatMatrices, Precip, R_Hort] = calculateBoundaryConditio
             RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);
             C4(n - 1, 2) = 0;
         else
-            RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
+            RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness) was applied;
         end
     else % (BoundaryCondition.NBCh == 3, Specified atmospheric forcing)
 
         % Calculate applied infiltration and infiltration excess runoff (Hortonian runoff)
-        Ks0 = SoilProperties.Ks0 / (3600 * 24) * TimeProperties.DELT * 10; % saturated vertical hydraulic conductivity. unit conversion from cm/day to mm/30mins
-        % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document https://doi.org/10.5065/D6N877R)
-		% Check applied infiltration doesn't exceed infiltration capcity
-		infCap = SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10; 
+        Ks0 = SoilProperties.Ks0 / (3600 * 24); % saturated vertical hydraulic conductivity. unit conversion from cm/day to cm/sec
+        % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document: https://doi.org/10.5065/D6N877R)
+        % Check applied infiltration doesn't exceed infiltration capcity
+        topThick = 5; % first 5 cm of the soil
+        satCap = SoilProperties.theta_s0 * topThick; % saturation capacity represented by saturated water content of the top 5 cm of the soil
+        actTheta = ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1); % actual moisture of the top 5 cm of the soil
+        infCap = (satCap - actTheta) / TimeProperties.DELT; % (cm/sec)
         infCap_min = min(Ks0, infCap);
 
-		% Infiltration excess runoff (Hortonian runoff)     
+        % Infiltration excess runoff (Hortonian runoff). Note: Dunnian runoff is calculated in the +io/loadForcingData file
         if Precip_msr(KT) > infCap_min
             R_Hort(KT) = Precip_msr(KT) - infCap_min;
         else
             R_Hort(KT) = 0;
         end
-		Precip_msr(KT) = min(Precip_msr(KT), infCap_min); % applied infiltration after removing Hortonian runoff	
-		
+
+        Precip(KT) = min(Precip_msr(KT), infCap_min);
+        applied_inf(KT) = Precip(KT); % applied infiltration after removing Hortonian runoff
+
         if SoilVariables.Tss(KT) > 0
-            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT; % unit conversion from mm/30mins to cm/sec, comment added by Mostafa
+            Precip(KT) = Precip(KT);
         else
-            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT;
+            Precip(KT) = Precip(KT);
             Precipp = Precipp + Precip(KT);
             Precip(KT) = 0;
         end
@@ -108,4 +115,6 @@ function [AVAIL0, RHS, HeatMatrices, Precip, R_Hort] = calculateBoundaryConditio
     end
     HeatMatrices.C4 = C4;
     HeatMatrices.C4_a = C4_a;
+    ForcingData.R_Hort = R_Hort;
+    ForcingData.applied_inf = applied_inf;
 end

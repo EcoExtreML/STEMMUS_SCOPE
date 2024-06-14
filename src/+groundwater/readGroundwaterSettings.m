@@ -39,7 +39,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.GroundwaterCoupling = 1; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, if update value to = 1 -> through BMI
 
     % Initialize the variables (head, temperature, air pressure) at the bottom boundary (start of saturated zone)
-    GroundwaterSettings.headBotmLayer = 1850.0; % groundwater head (cm) at bottom layer, received from MODFLOW through BMI
+    GroundwaterSettings.headBotmLayer = 1980.0; % groundwater head (cm) at bottom layer, received from MODFLOW through BMI
     GroundwaterSettings.tempBotm = 17.0; % groundwater temperature (C), received from MODFLOW through BMI
 
     % Call MODFLOW layers information (number of aquifer layers and their elevations, etc)

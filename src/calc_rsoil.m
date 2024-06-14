@@ -24,7 +24,7 @@ function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, V
             hh_lay(i) = mean([SoilVariables.hh(i), SoilVariables.hh(i + 1)]);
         end
         hh_lay = transpose(hh_lay);
-        PSIs = hh_lay / 100 .* bbx; % unit conversion from cm to m
+        PSIs = hh_lay / 100 .* bbx; % unit conversion from cm to m (needed in the ebal calculations)
     end
 
     rsss = 1 ./ Ksoil ./ Rl ./ DeltZ0 / 2 / pi .* log((pi * Rl).^(-0.5) / (0.5 * 1e-3)) * 100 .* bbx; % KL_h is the hydraulic conductivity, m s-1;VR is the root length density, m m-3;Ks is saturation conductivty;

@@ -43,6 +43,7 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     end
 
     if GroundwaterSettings.GroundwaterCoupling
+        fnames.flu2_file = fullfile(Output_dir, 'fluxes2.bin');
         fnames.gwflu_file = fullfile(Output_dir, 'gwfluxes.bin');
     end
 

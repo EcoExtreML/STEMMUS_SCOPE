@@ -349,7 +349,6 @@ function [rad, gap, profiles] = RTMo(spectral, atmo, soil, leafopt, canopy, angl
 
     % Incident and absorbed solar radiation
     Psun        = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar)), wlPAR);   % Incident solar PAR in PAR units
-    % Psky        = 0.001 * helpers.Sint(e2phot(wlPAR*1E-9,Esky_(Ipar)),wlPAR);
     Asun        = 0.001 * helpers.Sint(Esun_ .* epsc, wl);                         % Total absorbed solar radiation
     Pnsun       = 0.001 * helpers.Sint(e2phot(wlPAR * 1E-9, Esun_(Ipar) .* epsc(Ipar)), wlPAR);  % Absorbed solar radiation  in PAR range in moles m-2 s-1
     Rnsun_PAR   = 0.001 * helpers.Sint(Esun_(Ipar) .* epsc(Ipar), wlPAR);
@@ -569,22 +568,23 @@ function [chi_s, chi_o, frho, ftau]    =   volscat(tts, tto, psi, ttli)
 function molphotons = e2phot(lambda, E)
     % molphotons = e2phot(lambda,E) calculates the number of moles of photons
     % corresponding to E Joules of energy of wavelength lambda (m)
+    % A, h, c are constants
+    % load Constants
+    Constants = io.define_constants();
 
-    global constants
-    A = constants.A;
-
-    e           = ephoton(lambda);
+    A = Constants.A;
+    h = Constants.h;
+    c = Constants.c;
+    e           = ephoton(lambda, h, c);
     photons     = E ./ e;
     molphotons  = photons ./ A;
     return
 
-function E = ephoton(lambda)
+function E = ephoton(lambda, h, c)
     % E = phot2e(lambda) calculates the energy content (J) of 1 photon of
     % wavelength lambda (m)
-
-    global constants
-    h       = constants.h;           % [J s]         Planck's constant
-    c       = constants.c;           % [m s-1]       speed of light
+    % h [J s]  Planck's constant
+    % c [m s-1] speed of light
     E       = h * c ./ lambda;           % [J]           energy of 1 photon
     return
 

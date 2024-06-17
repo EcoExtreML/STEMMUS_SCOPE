@@ -1,15 +1,21 @@
-function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilConstants, SoilProperties, i, j)
+function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, i, j)
+
+    % Get soil constants for StartInit
+    SoilConstants = io.getSoilConstants();
 
     SoilVariables.POR(i) = SoilProperties.porosity(j);
     SoilVariables.Ks(i) = SoilProperties.SaturatedK(j);
-    SoilVariables.Theta_qtz(i) = SoilConstants.Vol_qtz(j);
+    SoilVariables.Theta_qtz(i) = SoilVariables.Vol_qtz(j);
     SoilVariables.VPER(i, 1) = SoilVariables.VPERS(j);
     SoilVariables.VPER(i, 2) = SoilVariables.VPERSL(j);
     SoilVariables.VPER(i, 3) = SoilVariables.VPERC(j);
-    SoilVariables.XSOC(i) = SoilConstants.VPERSOC(j);
-    SoilVariables.XK(i) = 0.11; % 0.11 This is for silt loam; For sand XK=0.025
+    SoilVariables.XSOC(i) = SoilVariables.VPERSOC(j);
+    SoilVariables.XK(i) = SoilConstants.XK;
 
-    if SoilConstants.SWCC == 1   % VG soil water retention model
+    % get model settings
+    ModelSettings = io.getModelSettings();
+
+    if ModelSettings.SWCC == 1   % VG soil water retention model
         VanGenuchten.Theta_s(i) = SoilProperties.SaturatedMC(j);
         VanGenuchten.Theta_r(i) = SoilProperties.ResidualMC(j);
         VanGenuchten.Theta_f(i) = SoilProperties.fieldMC(j);
@@ -28,8 +34,8 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
             SoilVariables.Lamda(i) = SoilProperties.Coef_Lamda(j);
         else
             VanGenuchten.Theta_s(i) = 0.489 - 0.00126 * SoilVariables.VPER(i, 1) / (1 - SoilVariables.POR(i)) * 100;
-            SoilVariables.Phi_s(i) = init.calcPhi_s(SoilVariables.VPER(i, 1), SoilVariables.POR, SoilConstants.Phi_soc, SoilVariables.XSOC);
-            SoilVariables.Lamda(i) = init.calcLambda(SoilVariables.VPER(i, 3), SoilVariables.POR, SoilVariables.Lamda_soc, SoilVariables.XSOC);
+            SoilVariables.Phi_s(i) = equations.calcPhi_s(SoilVariables.VPER(i, 1), SoilVariables.POR, SoilConstants.Phi_soc, SoilVariables.XSOC);
+            SoilVariables.Lamda(i) = equations.calcLambda(SoilVariables.VPER(i, 3), SoilVariables.POR, SoilVariables.Lamda_soc, SoilVariables.XSOC);
         end
         SoilVariables.XWILT(i) = VanGenuchten.Theta_s(i) * ((-1.5e4) / SoilVariables.Phi_s(i))^(-1 * SoilVariables.Lamda(i));
     end

@@ -33,9 +33,9 @@ function [zom, d] = zo_and_d(soil, canopy)
     %   d           zero plane displacement (m)
     %
 
-    %% constants
-    global constants
-    kappa   = constants.kappa;
+    % load Constantns
+    Constants = io.define_constants();
+    kappa = Constants.kappa;
 
     %% parameters
     CR      = canopy.CR;

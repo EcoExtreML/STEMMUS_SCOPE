@@ -1,2 +1,3 @@
-config_file = "C:/STEMMUS_SCOPE_data/workdir/input/global_N61-847_E24-295_2023-02-16-1539/global_2023-02-16-1539_config.txt";
-STEMMUS_SCOPE_exe(config_file);
+config_file = "/home/bart/tmp/stemmus_scope/input/ZA-Kru_2023-11-16-0728/ZA-Kru_2023-11-16-0728_config.txt";
+run_mode = "finalize";
+STEMMUS_SCOPE_exe(config_file, run_mode);

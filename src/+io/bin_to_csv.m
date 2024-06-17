@@ -9,7 +9,7 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
                  'W m-2', 'W m-2', 'W m-2', ...
                  'W m-2', 'W m-2', 'W m-2', 'umol m-2 s-1', ...
                  'W m-2', ' W m-2', 'W m-2', 'W m-2', 'umol m-2 s-1', ...
-                 'umol m-2 s-1', ' umol m-2 s-1', 'umol m-2 s-1', 'W m-2', 'umol m-2 s-1', 'W m-2', 'W m-2', 'cm s-1', 'cm s-1', 'cm s-1', 'Kg m-2 s-1', 'Kg m-2 s-1'};
+                 'umol m-2 s-1', ' umol m-2 s-1', 'umol m-2 s-1', 'W m-2', 'umol m-2 s-1', 'W m-2', 'W m-2', 'mm s-1', 'mm s-1', 'mm s-1', 'Kg m-2 s-1', 'Kg m-2 s-1'};
     write_output(flu_names, flu_units, fnames.flu_file, n_col.flu, ns);
 
     %% surftemp
@@ -48,6 +48,16 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
     Sim_Temp_units = repelem({'oC'}, length(depth));
     write_output(Sim_Temp_names, Sim_Temp_units, ...
                  fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true);
+
+    %% water stress factor
+    waterStressFactor_names = {'simulation_number', 'year', 'DoY', 'soilWaterStressFactor'};
+    waterStressFactor_units = {'', '', '', '-'};
+    write_output(waterStressFactor_names, waterStressFactor_units, fnames.waterStressFactor_file, n_col.waterStressFactor, ns);
+
+    %% water potential
+    waterPotential_names = {'simulation_number', 'year', 'DoY', 'leafWaterPotential'};
+    waterPotential_units = {'', '', '', 'm'};
+    write_output(waterPotential_names, waterPotential_units, fnames.waterPotential_file, n_col.waterPotential, ns);
 
     %% spectrum (added on 19 September 2008)
 

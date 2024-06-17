@@ -19,7 +19,7 @@ You can run STEMMUS_SCOPE locally. Follow the steps below and use `config_file_c
 #### Run using MATLAB Compiler that does not require a license
 
 If you want to run the model as a standalone application, you need MATLAB
-Runtime version `2021a`. To download and install the MATLAB Runtime, follow
+Runtime version `2023a`. To download and install the MATLAB Runtime, follow
 this
 [instruction](https://nl.mathworks.com/products/compiler/matlab-runtime.html).
 The "STEMMUS_SCOPE" executable file is in `STEMMUS_SCOPE/exe` directory

@@ -1,9 +1,9 @@
 function [bbx] = Max_Rootdepth(bbx)
 
-%{
-The function identify if there is root in certain layer, bbx=0 indicates no
-roots while bbx=1 indicates roots existing
-%}
+    %{
+    The function identify if there is root in certain layer, bbx=0 indicates no
+    roots while bbx=1 indicates roots existing
+    %}
 
     % get model settings
     ModelSettings = io.getModelSettings();
@@ -20,7 +20,6 @@ roots while bbx=1 indicates roots existing
         if Elmn_Lnth < Tot_Depth - R_depth
             bbx(ML) = 0; % bbx = indicate if there is root exist in this layer
         elseif Elmn_Lnth >= Tot_Depth - R_depth && Elmn_Lnth <= Tot_Depth - 5; % 5 is the depths of shallow roots (user-defined)
-
             bbx(ML) = 1;
         else
             bbx(ML) = 0;

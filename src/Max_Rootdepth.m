@@ -19,7 +19,7 @@ function [bbx] = Max_Rootdepth(bbx)
         Elmn_Lnth = Elmn_Lnth + DeltZ(ML);
         if Elmn_Lnth < Tot_Depth - R_depth
             bbx(ML) = 0; % bbx = indicate if there is root exist in this layer
-        elseif Elmn_Lnth >= Tot_Depth - R_depth && Elmn_Lnth <= Tot_Depth - 5; % 5 is the depths of shallow roots (user-defined)
+        elseif Elmn_Lnth >= Tot_Depth - R_depth && Elmn_Lnth <= Tot_Depth - 5 % 5 is the depths of shallow roots (user-defined)
             bbx(ML) = 1;
         else
             bbx(ML) = 0;

@@ -4,10 +4,11 @@ function HBoundaryFlux = calculatesSoilWaterFluxes(SAVE, hh, GroundwaterSettings
     %}
     ModelSettings = io.getModelSettings();
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
     else % Groundwater Coupling is activated
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     HBoundaryFlux.QMT = SAVE(2, 1, 1) - SAVE(2, 2, 1) * hh(ModelSettings.NN - 1) - SAVE(2, 3, 1) * hh(ModelSettings.NN);

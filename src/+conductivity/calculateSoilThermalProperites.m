@@ -139,13 +139,13 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(I
 end
 
 function kerstenCoef = calcKerstenCoef(theta, porosity)
-%{
-    Calculate the kersten coefficient, weighting dry and wet thermal
-    conductivity See Jansson, P. E. (2012). CoupModel: Model use, calibration,
-    and validation. Transactions of the ASABE, 55(4), 1337.
-    https://doi.org/10.13031/2013.42245
+    %{
+        Calculate the kersten coefficient, weighting dry and wet thermal
+        conductivity See Jansson, P. E. (2012). CoupModel: Model use, calibration,
+        and validation. Transactions of the ASABE, 55(4), 1337.
+        https://doi.org/10.13031/2013.42245
 
-%}
+    %}
     if theta / porosity > 0.1
         kerstenCoef = log10(theta / porosity) + 1;
     elseif theta / porosity > 0.05

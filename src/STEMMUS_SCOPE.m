@@ -745,7 +745,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         % Recharge calculations, added by Mostafa
         if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
             [depToGWT_end, indxGWLay_end, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
-            gwfluxes = gwfluxes; % to be exported in the 'output_data_binary' function
             depToGWT_strt = depToGWT_end; % for next time step
             indxGWLay_strt = indxGWLay_end; % for next time step
         else

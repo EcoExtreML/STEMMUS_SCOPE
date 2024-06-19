@@ -42,7 +42,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
             ForcingData.R_Dunn = Precip_msr;
             Precip_msr = Precip_msr .* 0;
         else
-            R_Dunn = zeros(size(Precip_msr));
+            ForcingData.R_Dunn = zeros(size(Precip_msr));
         end
         % (b) Return flow (from groundwater exfiltration) is added to the Dunnian runoff (through BMI)
     end

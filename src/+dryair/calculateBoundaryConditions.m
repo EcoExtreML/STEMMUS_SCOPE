@@ -9,6 +9,7 @@ function [RHS, AirMatrices] = calculateBoundaryConditions(BoundaryCondition, Air
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+        BtmPg = BoundaryCondition.BtmPg;        
     else % Groundwater Coupling is activated
         % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;

@@ -1,9 +1,11 @@
-function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, constants, F, xyt, path_input, options)
+function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbio, soil, canopy, meteo, F, xyt, path_input, options, landcoverClass)
 
     %{
         This function loads time series data.
 
     %}
+    % load Constants
+    Constants = io.define_constants();
 
     t_file = char(F(6).FileName);
     year_file = char(F(7).FileName);
@@ -34,7 +36,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.tts = load(fullfile(path_input, tts_file));
     else
         ttsR = equations.calczenithangle(DOY_, time_ - xyt.timezn, 0, 0, xyt.LON, xyt.LAT); % sun zenith angle in rad
-        ScopeParameters.tts = min(85, ttsR / constants.deg2rad); % sun zenith angle in deg
+        ScopeParameters.tts = min(85, ttsR / Constants.deg2rad); % sun zenith angle in deg
     end
 
     %% 2. Radiation
@@ -106,7 +108,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
 
     %% 5. Gas concentrations
     if ~isempty(CO2_file)
-        Ca_ = load(fullfile(path_input, CO2_file)) * constants.Mair / constants.MCO2 / constants.rhoa; % conversion from mg m-3 to ppm
+        Ca_ = load(fullfile(path_input, CO2_file)) * Constants.Mair / Constants.MCO2 / Constants.rhoa; % conversion from mg m-3 to ppm
         % mg(CO2)/m-3 * g(air)/mol(air) * mol(CO2)/g(CO2) * m3(air)/kg(air) * 10^-3 g(CO2)/mg(CO2) * 10^-3 kg(air)/g(air) * 10^6 ppm
         jj = isnan(Ca_); % find data with good quality  Ca data
         Ca_(jj) = 380;
@@ -120,13 +122,21 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.SMC = load(fullfile(path_input, SMC_file));
     end
 
-    %% 7. Leaf biochemical parameters
-    if ~isempty(Vcmax_file)
-        Vcmaxtable = load(fullfile(path_input, Vcmax_file));
-        ScopeParameters.Vcmo  = interp1(Vcmaxtable(:, 1), Vcmaxtable(:, 2), t_);
-    else
-        ScopeParameters.Vcmo = leafbio.Vcmo * ones(size(t_));
+    %% 7. Set Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth as time-dependent
+    %    parameters. The timeseries of landcover, along with the lookup table values
+    %    (lc...) are used to generate the timeseries.
+    landcovers = unique(landcoverClass, 'stable');
+    for timeIndex = 1:length(xyt.t)
+        landcoverIndex = find(strcmp(landcoverClass(timeIndex), landcovers));
+        ScopeParameters.Vcmo(timeIndex, 1) = ScopeParameters.lcVcmo(landcoverIndex, 1);
+        ScopeParameters.Tparam(timeIndex, :) = ScopeParameters.lcTparam(landcoverIndex, :);
+        ScopeParameters.m(timeIndex, 1) = ScopeParameters.lcm(landcoverIndex, 1);
+        ScopeParameters.Type(timeIndex, 1) = ScopeParameters.lcType(landcoverIndex, 1);
+        ScopeParameters.Rdparam(timeIndex, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
+        ScopeParameters.leafwidth(timeIndex, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
     end
+    % Remove the intermediate variables that were required to generate the timeseries:
+    ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
 
     if ~isempty(Cab_file)
         Cabtable = load(fullfile(path_input, Cab_file));

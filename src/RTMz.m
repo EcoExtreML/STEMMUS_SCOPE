@@ -24,8 +24,6 @@ function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angle
     %   rad         a large number of radiative fluxes: spectrally distributed
     %               and integrated, and canopy radiative transfer coefficients.
     %               Here, fluorescence fluxes are added
-    %% 0.0 globals
-    global constants
 
     %% initialisations
     wlS          = spectral.wlS';       % SCOPE wavelengths, make column vectors
@@ -77,8 +75,10 @@ function [rad, profiles] = RTMz(spectral, rad, soil, leafopt, canopy, gap, angle
     rs           = soil.refl(iwlfi);                  % [nf]     soil reflectance
 
     % geometric factors
+    % load Constants
+    Constants = io.define_constants();
 
-    deg2rad      = constants.deg2rad;
+    deg2rad      = Constants.deg2rad;
     tto          = angles.tto;
     tts          = angles.tts;
     psi          = angles.psi;

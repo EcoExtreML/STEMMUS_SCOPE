@@ -1,96 +1,99 @@
-function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
+function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
-                angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t)
-    global Rl DeltZ Ks Theta_s Theta_r Theta_LL  bbx NL KT sfactor   PSItot sfactortot Theta_f
-    global  m n Alpha TT
-    % function ebal.m calculates the energy balance of a vegetated surface
-    %
-    % authors:      Christiaan van der Tol (tol@itc.nl)
-    %               Joris Timmermans (j_timmermans@itc.nl)
-    % date          26 Nov 2007 (CvdT)
-    % updates       29 Jan 2008 (JT & CvdT)     converted into a function
-    %               11 Feb 2008 (JT & CvdT)     improved soil heat flux and temperature calculation
-    %               14 Feb 2008 (JT)            changed h in to hc (as h=Avogadro`s constant)
-    %               31 Jul 2008 (CvdT)          Included Pntot in output
-    %               19 Sep 2008 (CvdT)          Converted F0 and F1 from units per aPAR into units per iPAR
-    %               07 Nov 2008 (CvdT)          Changed layout
-    %               18 Sep 2012 (CvdT)          Changed Oc, Cc, ec
-    %                  Feb 2012 (WV)            introduced structures for variables
-    %                  Sep 2013 (JV, CvT)       introduced additional biochemical model
-    %
-    % parent: master.m (script)
-    % uses:
-    %       RTMt_sb.m, RTMt_planck.m (optional), RTMf.m (optional)
-    %       resistances.m
-    %       heatfluxes.m
-    %       biochemical.m
-    %       soil_respiration.m
-    %
-    % Table of contents of the function
-    %
-    %   1. Initialisations for the iteration loop
-    %           intial values are attributed to variables
-    %   2. Energy balance iteration loop
-    %           iteration between thermal RTM and surface fluxes
-    %   3. Write warnings whenever the energy balance did not close
-    %   4. Calculate vertical profiles (optional)
-    %   5. Calculate spectrally integrated energy, water and CO2 fluxes
-    %
-    % The energy balance iteration loop works as follows:
-    %
-    % RTMo              More or less the classic SAIL model for Radiative
-    %                   Transfer of sun and sky light (no emission by the vegetation)
-    % While continue    Here an iteration loop starts to close the energy
-    %                   balance, i.e. to match the micro-meteorological model
-    %                   and the radiative transfer model
-    %   RTMt_sb         A numerical Radiative Transfer Model for thermal
-    %                   radiation emitted by the vegetation
-    %   resistances     Calculates aerodynamic and boundary layer resistances
-    %                   of vegetation and soil (the micro-meteorological model)
-    %   biochemical     Calculates photosynthesis, fluorescence and stomatal
-    %                   resistance of leaves (or biochemical_MD12: alternative)
-    %   heatfluxes      Calculates sensible and latent heat flux of soil and
-    %                   vegetation
-    %                   Next soil heat flux is calculated, the energy balance
-    %                   is evaluated, and soil and leaf temperatures adjusted
-    %                   to force energy balance closure
-    % end {while continue}
-    %
-    % meanleaf          Integrates the fluxes over all leaf inclinations
-    %                   azimuth angles and layers, integrates over the spectrum
-    %
-    % usage:
-    % [iter,fluxes,rad,profiles,thermal]             ...
-    %         = ebal(iter,options,spectral,rad,gap,leafopt,  ...
-    %                angles,meteo,soil,canopy,leafbio)
-    %
-    % The input and output are structures. These structures are further
-    % specified in a readme file.
-    %
-    % Input:
-    %
-    %   iter        numerical parameters used in the iteration for energy balance closure
-    %   options     calculation options
-    %   spectral    spectral resolutions and wavelengths
-    %   rad         incident radiation
-    %   gap         probabilities of direct light penetration and viewing
-    %   leafopt     leaf optical properties
-    %   angles      viewing and observation angles
-    %   soil        soil properties
-    %   canopy      canopy properties
-    %   leafbio     leaf biochemical parameters
-    %
-    % Output:
-    %
-    %   iter        numerical parameters used in the iteration for energy balance closure
-    %   fluxes      energy balance, turbulent, and CO2 fluxes
-    %   rad         radiation spectra
-    %   profiles    vertical profiles of fluxes
-    %   thermal     temperatures, aerodynamic resistances and friction velocity
+                angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
+                Rl, SoilVariables, VanGenuchten, InitialValues)
+
+    %{
+        function ebal.m calculates the energy balance of a vegetated surface
+
+     authors:      Christiaan van der Tol (tol@itc.nl)
+                   Joris Timmermans (j_timmermans@itc.nl)
+     date          26 Nov 2007 (CvdT)
+     updates       29 Jan 2008 (JT & CvdT)     converted into a function
+                   11 Feb 2008 (JT & CvdT)     improved soil heat flux and temperature calculation
+                   14 Feb 2008 (JT)            changed h in to hc (as h=Avogadro`s constant)
+                   31 Jul 2008 (CvdT)          Included Pntot in output
+                   19 Sep 2008 (CvdT)          Converted F0 and F1 from units per aPAR into units per iPAR
+                   07 Nov 2008 (CvdT)          Changed layout
+                   18 Sep 2012 (CvdT)          Changed Oc, Cc, ec
+                      Feb 2012 (WV)            introduced structures for variables
+                      Sep 2013 (JV, CvT)       introduced additional biochemical model
+
+     parent: master.m (script)
+     uses:
+           RTMt_sb.m, RTMt_planck.m (optional), RTMf.m (optional)
+           resistances.m
+           heatfluxes.m
+           biochemical.m
+           soil_respiration.m
+
+     Table of contents of the function
+
+       1. Initialisations for the iteration loop
+               intial values are attributed to variables
+       2. Energy balance iteration loop
+               iteration between thermal RTM and surface fluxes
+       3. Write warnings whenever the energy balance did not close
+       4. Calculate vertical profiles (optional)
+       5. Calculate spectrally integrated energy, water and CO2 fluxes
+
+     The energy balance iteration loop works as follows:
+
+     RTMo              More or less the classic SAIL model for Radiative
+                       Transfer of sun and sky light (no emission by the vegetation)
+     While continue    Here an iteration loop starts to close the energy
+                       balance, i.e. to match the micro-meteorological model
+                       and the radiative transfer model
+       RTMt_sb         A numerical Radiative Transfer Model for thermal
+                       radiation emitted by the vegetation
+       resistances     Calculates aerodynamic and boundary layer resistances
+                       of vegetation and soil (the micro-meteorological model)
+       biochemical     Calculates photosynthesis, fluorescence and stomatal
+                       resistance of leaves (or biochemical_MD12: alternative)
+       heatfluxes      Calculates sensible and latent heat flux of soil and
+                       vegetation
+                       Next soil heat flux is calculated, the energy balance
+                       is evaluated, and soil and leaf temperatures adjusted
+                       to force energy balance closure
+     end {while continue}
+
+     meanleaf          Integrates the fluxes over all leaf inclinations
+                       azimuth angles and layers, integrates over the spectrum
+
+     usage:
+     [iter,fluxes,rad,profiles,thermal]             ...
+             = ebal(iter,options,spectral,rad,gap,leafopt,  ...
+                    angles,meteo,soil,canopy,leafbio)
+
+     The input and output are structures. These structures are further
+     specified in a readme file.
+
+     Input:
+
+       iter        numerical parameters used in the iteration for energy balance closure
+       options     calculation options
+       spectral    spectral resolutions and wavelengths
+       rad         incident radiation
+       gap         probabilities of direct light penetration and viewing
+       leafopt     leaf optical properties
+       angles      viewing and observation angles
+       soil        soil properties
+       canopy      canopy properties
+       leafbio     leaf biochemical parameters
+
+     Output:
+
+       iter        numerical parameters used in the iteration for energy balance closure
+       fluxes      energy balance, turbulent, and CO2 fluxes
+       rad         radiation spectra
+       profiles    vertical profiles of fluxes
+       thermal     temperatures, aerodynamic resistances and friction velocity
+       sfactor     soil water stress factor
+       PSI         leaf water potential
+    %}
 
     %% 1. initialisations and other preparations for the iteration loop
-    % initialisations
-    global constants
+    ModelSettings = io.getModelSettings();
 
     counter         = 0;              %           Iteration counter of ebal
     maxit           = iter.maxit;
@@ -128,14 +131,16 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Ccu   = Ca * ones(size(Rnuc));      %           Leaf CO2 (sunlit leaves)
     % Tsold = Ts;                       %           Soil temperature of the previous time step
     L     = -1;                       %           Monin-Obukhov length
+    % load Constants
+    Constants = io.define_constants();
 
-    MH2O  = constants.MH2O;
-    Mair  = constants.Mair;
-    rhoa  = constants.rhoa;
-    cp    = constants.cp;
-    g     = constants.g;
-    kappa = constants.kappa;
-    sigmaSB = constants.sigmaSB;
+    MH2O  = Constants.MH2O;
+    Mair  = Constants.Mair;
+    rhoa  = Constants.rhoa;
+    cp    = Constants.cp;
+    g     = Constants.g / 100; % [m s-2] Gravity acceleration
+    kappa = Constants.kappa;
+    sigmaSB = Constants.sigmaSB;
     Ps    = gap.Ps;
     nl    = canopy.nlayers;
 
@@ -167,11 +172,11 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
 
     LAI = canopy.LAI;
     PSI = 0;
-    % [bbx]=Max_Rootdepth(bbx,TIME,NL,KT);
-    [bbx] = Max_Rootdepth(bbx, NL, KT, TT);
-    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha);
-    [sfactor] = calc_sfactor(Rl, Theta_s, Theta_r, Theta_LL, bbx, Ta, Theta_f);
-    PSIss = PSIs(NL, 1);
+
+    [bbx] = Max_Rootdepth(InitialValues.bbx);
+    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings.DeltZ, SoilVariables.Ks, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, VanGenuchten.m, VanGenuchten.n, VanGenuchten.Alpha);
+    [sfactor] = calc_sfactor(Rl, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, Ta, VanGenuchten.Theta_f);
+    PSIss = PSIs(ModelSettings.NL, 1);
     %% 2. Energy balance iteration loop
 
     % 'Energy balance loop (Energy balance and radiative transfer)
@@ -234,14 +239,13 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Rdparam      = leafbio.Rdparam;
 
         if options.Fluorescence_model == 2    % specific for the v.Caemmerer-Magnani model
-            b                   = @biochemical_MD12;
             biochem_in.Tyear        = leafbio.Tyear;
             biochem_in.beta         = leafbio.beta;
             biochem_in.qLs          = leafbio.qLs;
             biochem_in.NPQs        = leafbio.kNPQs;
             biochem_in.stressfactor = leafbio.stressfactor;
         else
-            b                   = @biochemical; % specific for Berry-v.d.Tol model
+            % specific for Berry-v.d.Tol model
             biochem_in.tempcor      = options.apply_T_corr;
             biochem_in.Tparams      = leafbio.Tparam;
             biochem_in.stressfactor = SMCsf;
@@ -254,9 +258,15 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Cs       = Cch;
         biochem_in.Q        = rad.Pnh_Cab * 1E6;
 
-        biochem_out         = b(biochem_in);
+        if options.Fluorescence_model == 2
+            biochem_out = biochemical_MD12(biochem_in);
+        else
+            Ci_input = [];
+            biochem_out = biochemical(biochem_in, sfactor, Ci_input);
+        end
+
         Ah                  = biochem_out.A;
-        Ahh                  = biochem_out.Ag;
+        Ahh                 = biochem_out.Ag;
         Cih                 = biochem_out.Ci;
         Fh                  = biochem_out.eta;
         rcwh                = biochem_out.rcw;
@@ -270,7 +280,12 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         biochem_in.Cs       = Ccu;
         biochem_in.Q        = rad.Pnu_Cab * 1E6;
 
-        biochem_out         = b(biochem_in);
+        if options.Fluorescence_model == 2
+            biochem_out = biochemical_MD12(biochem_in);
+        else
+            Ci_input = [];
+            biochem_out = biochemical(biochem_in, sfactor, Ci_input);
+        end
 
         Au                  = biochem_out.A; % Ag? or A?
         Auu                  = biochem_out.Ag;   % GPP calculation.
@@ -295,9 +310,9 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         rac     = (LAI + 1) * (raa + rawc);
         ras     = (LAI + 1) * (raa + raws);
         for i = 1:30
-            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, constants, es_fun, s_fun);
-            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, constants, es_fun, s_fun);
-            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, constants, es_fun, s_fun);
+            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
+            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
+            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, es_fun, s_fun);
 
             % if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
             %  error('Heatfluxes produced complex values for CO2 concentration!')
@@ -335,7 +350,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
             end
             PSI  = (PSI + PSI1) / 2;
         end
-        PSItot(KT) = PSI;
+
         %%%%%%%
         if SoilHeatMethod == 2
             G = 0.30 * Rns;
@@ -407,7 +422,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
         end
     end
 
-    Tbr         = (rad.Eoutte / constants.sigmaSB)^0.25;
+    Tbr         = (rad.Eoutte / Constants.sigmaSB)^0.25;
     Lot_        = equations.Planck(spectral.wlS', Tbr);
     rad.LotBB_  = Lot_;           % Note that this is the blackbody radiance!
 
@@ -461,11 +476,11 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     Rntot_PAR       = LAI * (Fc * Rnh_PAR  + equations.meanleaf(canopy, Rnu_PAR, 'angles_and_layers', Ps)); % net PAR leaves
     aPAR_Cab_eta        = LAI * (Fc * (profiles.etah .* Rnh_PAR) + equations.meanleaf(canopy, profiles.etau .* Rnu_PAR, 'angles_and_layers', Ps));
     % ... green ePAR * relative fluorescence emission efficiency
-    %%%%%%%%%%%%%%%%%%% [Delta_Rltot] = Root_properties(Actot,rroot);
-    %%%%%%%%%%%%%%%%%%% Delta_Rl = fc*Delta_Rltot;
-    %%%%%%%%%%%%%%%%%%% Rl = Rl + Delta_Rl;
-    %%%%%%%%%%%%%%%%%%% Rltot = sum(sum(Rl));
-    %%%%%%%%%%%%%%%%%%% fc = Rl./Rltot;
+    % [Delta_Rltot] = Root_properties(Rl, Ac, rroot, frac, bbx, KT, DeltZ, sfactor, LAI_msr);
+    % Delta_Rl = fc*Delta_Rltot;
+    % Rl = Rl + Delta_Rl;
+    % Rltot = sum(sum(Rl));
+    % fc = Rl./Rltot;
     % sum of soil fluxes and average temperature
     %   (note that averaging temperature is physically not correct...)
     Rnstot          = Fs * Rns;           %                   Net radiation soil
@@ -553,3 +568,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac]             ...
     % function Tnew = update(Told, Wc, innovation)
     %     Tnew        = Wc.*innovation + (1-Wc).*Told;
     % return
+
+    WaterStressFactor.soil = sfactor;
+    WaterPotential.leaf = PSI;
+end

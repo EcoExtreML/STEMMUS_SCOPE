@@ -50,8 +50,6 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     applied_inf = Precip_msr; % later will be updated in the +soilmoisture/calculateBoundaryConditions file
 
     % (2) Infiltration excess runoff (Hortonian runoff)
-    R_Hort = zeros(size(Precip_msr)); % will be updated in the +soilmoisture/calculateBoundaryConditions file
-    % Applied infiltration will be updated again in the +soilmoisture/calculateBoundaryConditions file after removal of Hortonian runoff
 
     % replace negative values
     for jj = 1:Dur_tot

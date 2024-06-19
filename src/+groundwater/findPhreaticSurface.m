@@ -8,13 +8,13 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
         which is the opposite of MODFLOW (top to bottom). So, when converting information between STEMMUS and MODFLOW, indices need to be flipped
 
         Although the groundwater depth (variable -> "gw_Dep") is calculated already from the MODFLOW inputs, it is re-calculated again in this function for two reasons:
-        1) In this function, the groundwater depth is re-calculated, but this time is from the STEMMUS matric potential, so to make sure that ...
+        1) In this function, the groundwater depth is re-calculated, but this time is from the STEMMUS matric potential, so to ensure that ...
             STEMMUS understood the location of the groundwater depth correctly. The re-calculated groundwater depth is stored in the "depToGWT" variable.
         2) The depToGWT needs to be assigned to a certain soil layer. Because of that assignment, there will be a slight difference between gw_Dep  ...
             and depToGWT (e.g. difference = 1-10 cm  based on the thickness of the soil layer that contains the depToGWT).
 
                                 %%%%%%%%%% Variables definitions %%%%%%%%%%
-        depToGWT            depth from top soil layer to groundwater level, calculated from STEMMUS variables
+        depToGWT            water table depth: depth from top soil layer to groundwater level, calculated from STEMMUS variables
         indxBotmLayer_R     index of the bottom layer that contains the current headBotmLayer (top to bottom)
         indxBotmLayer       index of the bottom layer that contains the current headBotmLayer (bottom to top)
         indxGWLay           index of the soil layer that includes the phreatic surface, so the recharge is ....

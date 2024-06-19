@@ -93,6 +93,10 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         Theta_L = SoilVariables.Theta_L;
         Theta_LL = SoilVariables.Theta_LL;
         % flip the soil moisture to be from top layer to bottom (opposite of Theta_L)
+        % Load model settings
+        ModelSettings = io.getModelSettings();
+        NN = ModelSettings.NN; % Number of nodes
+        NL = ModelSettings.NL; % Number of layers
         STheta_L(1) = Theta_L(NL, 2);
         STheta_L(2:1:NN) = Theta_L(NN - 1:-1:1, 1);
         STheta_LL(1) = Theta_LL(NL, 2);

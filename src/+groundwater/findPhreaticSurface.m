@@ -32,7 +32,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
     % Load Groundwater settings
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
         soilThick = GroundwaterSettings.soilThick;
-        indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
 
         % Call the matric potential
         Shh(1:1:NN) = SoilVariables.hh(NN:-1:1);

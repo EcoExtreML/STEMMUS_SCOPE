@@ -28,8 +28,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
     % Load model settings
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % number of nodes
-    NL = ModelSettings.NL; % number of layers
-    gw_Dep = GroundwaterSettings.gw_Dep; %
     Tot_Depth = ModelSettings.Tot_Depth; % total soil depth
 
     % Load Groundwater settings

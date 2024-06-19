@@ -27,49 +27,45 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
     % Load model settings
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % number of nodes
+    soilThick = GroundwaterSettings.soilThick;
 
-    % Load Groundwater settings
-    if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        soilThick = GroundwaterSettings.soilThick;
+    % Call the matric potential
+    Shh(1:1:NN) = SoilVariables.hh(NN:-1:1);
+    depToGWT = 0; % starting value for initialization, updated below
+    indxGWLay = NN - 2; % starting value for initialization, updated below
 
-        % Call the matric potential
-        Shh(1:1:NN) = SoilVariables.hh(NN:-1:1);
-        depToGWT = 0; % starting value for initialization, updated below
-        indxGWLay = NN - 2; % starting value for initialization, updated below
-
-        % Find the phreatic surface (saturated zone)
-        for i = NN:-1:2
-            hh_lay = Shh(i);
-            soilThick_lay = soilThick(i);
-            hh_nextlay = Shh(i - 1);
-            soilThick_nextlay = soilThick(i - 1);
-            % apply a condition to find the groundwater table from the matric potential by differentiating ....
-            %  between a) first layer with positive or zero head value and b) last layer with negative head value
-            if hh_lay > -1e-5 && hh_nextlay <= -1e-5
-                depToGWT = (hh_lay * soilThick_nextlay - hh_nextlay * soilThick_lay) / (hh_lay - hh_nextlay);
-                midThick = (soilThick(i) + soilThick(i - 1)) / 2;
-                if depToGWT >= midThick
-                    indxGWLay = i;
-                elseif depToGWT < midThick
-                    indxGWLay = i - 1;
-                end
-                break
+    % Find the phreatic surface (saturated zone)
+    for i = NN:-1:2
+        hh_lay = Shh(i);
+        soilThick_lay = soilThick(i);
+        hh_nextlay = Shh(i - 1);
+        soilThick_nextlay = soilThick(i - 1);
+        % apply a condition to find the groundwater table from the matric potential by differentiating ....
+        %  between a) first layer with positive or zero head value and b) last layer with negative head value
+        if hh_lay > -1e-5 && hh_nextlay <= -1e-5
+            depToGWT = (hh_lay * soilThick_nextlay - hh_nextlay * soilThick_lay) / (hh_lay - hh_nextlay);
+            midThick = (soilThick(i) + soilThick(i - 1)) / 2;
+            if depToGWT >= midThick
+                indxGWLay = i;
+            elseif depToGWT < midThick
+                indxGWLay = i - 1;
             end
+            break
         end
+    end
 
-        if KT > 1 % start the checks from the first time step (after initialization)
-            % check 1
-            if depToGWT <= 0
-                warning('The phreatic surface level is equal or higher than the land surface level!');
-                % check 2
-            elseif depToGWT > ModelSettings.Tot_Depth; % total soil depth
-                warning('The phreatic surface level is lower than the end of the soil column!');
-            end
-            % check 3
-            diff = abs(indxGWLay - GroundwaterSettings.indxBotmLayer_R);
-            if diff > 1
-                warning('Index of the bottom layer boundary that includes groundwater head ~= index of the layer that has zero matric potential!');
-            end
+    if KT > 1 % start the checks from the first time step (after initialization)
+        % check 1
+        if depToGWT <= 0
+            warning('The phreatic surface level is equal or higher than the land surface level!');
+            % check 2
+        elseif depToGWT > ModelSettings.Tot_Depth % total soil depth
+            warning('The phreatic surface level is lower than the end of the soil column!');
+        end
+        % check 3
+        diff = abs(indxGWLay - GroundwaterSettings.indxBotmLayer_R);
+        if diff > 1
+            warning('Index of the bottom layer boundary that includes groundwater head ~= index of the layer that has zero matric potential!');
         end
     end
 end

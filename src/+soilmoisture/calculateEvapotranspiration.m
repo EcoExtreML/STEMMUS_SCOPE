@@ -5,7 +5,7 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapo
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
     else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 

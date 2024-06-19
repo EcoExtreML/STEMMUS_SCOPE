@@ -50,7 +50,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
 
     % (2) Infiltration excess runoff (Hortonian runoff)
     ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in +soilmoisture/calculateBoundaryConditions
-    
+
     % replace negative values
     for jj = 1:Dur_tot
         if ForcingData.Ta_msr(jj) < -100

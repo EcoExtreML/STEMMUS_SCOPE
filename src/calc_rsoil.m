@@ -4,7 +4,7 @@ function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, V
 
     SMC = SoilVariables.Theta_LL(1:54, 2);
     Se  = (SMC - VanGenuchten.Theta_r') ./ (VanGenuchten.Theta_s' - VanGenuchten.Theta_r');
-    Ksoil = SoilVariables.Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ m')).^(m')).^2;
+    Ksoil = SoilVariables.Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ VanGenuchten.m')).^(VanGenuchten.m')).^2;
 
     if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater coupling
         PSIs = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)' .* bbx;

@@ -81,7 +81,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         else
             Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
         end
-        
+
         QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
         QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
         if SoilVariables.DVa_Switch == 1
@@ -91,7 +91,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
             QVa(i) = 0;
             QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
         end
-        
+
         % These are unused vars, but I comment them for future reference,
         % See issue 100, item 1
         % DVH(i) = (DEhBAR) * DRHOVhDz(i);

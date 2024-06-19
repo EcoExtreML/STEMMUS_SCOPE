@@ -27,7 +27,7 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
     else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
@@ -57,7 +57,7 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         AirVariabes.DDhDZ(i) = DDhDZ;
         AirVariabes.DhDZ(i) = DhDZ;
         AirVariabes.DTDZ(i) = DTDZ;
-        AirVariabes.QL(i) = QL; % total liquid flux 
+        AirVariabes.QL(i) = QL; % total liquid flux
         % added by Mostafa
         AirVariabes.QL_h(i) = QL_h(i); % liquid flux due to matric potential
         AirVariabes.QL_T(i) = QL_T(i); % liquid flux due to temperature gradient

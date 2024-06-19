@@ -33,7 +33,6 @@ function GroundwaterSettings = readGroundwaterSettings()
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % Number of nodes
     NL = ModelSettings.NL; % Number of layers
-    Tot_Depth = ModelSettings.Tot_Depth; % total soil depth
 
     % Activate/deactivate Groundwater coupling
     GroundwaterSettings.GroundwaterCoupling = 0; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, update value to = 1 -> through BMI
@@ -53,7 +52,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     % Check that the position of the water table is within the soil column
     if gw_Dep <= 0
         warning('The soil is fully saturated up to the land surface level!');
-    elseif gw_Dep > Tot_Depth
+    elseif gw_Dep > ModelSettings.Tot_Depth
         warning('Groundwater table is below the end of the soil column!');
     end
 
@@ -77,7 +76,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     for i = 2:NL
         soilThick(i) = soilThick(i - 1) + DeltZ_R(i - 1);
     end
-    soilThick(NN) = Tot_Depth;
+    soilThick(NN) = ModelSettings.Tot_Depth; % total soil depth
 
     % Calculate the index of the bottom layer level using MODFLOW data
     indxBotmLayer_R = [];
@@ -96,7 +95,7 @@ function GroundwaterSettings = readGroundwaterSettings()
         end
     end
 
-    indxBotmLayer_R = indxBotmLayer_R; % index of bottom layer that contains current headBotmLayer 
+    indxBotmLayer_R = indxBotmLayer_R; % index of bottom layer that contains current headBotmLayer
     % Note: indxBotmLayer_R starts from top to bottom, opposite of STEMMUS (bottom to top)
     indxBotmLayer = NN - indxBotmLayer_R + 1; % index of bottom layer (from bottom to top)
 

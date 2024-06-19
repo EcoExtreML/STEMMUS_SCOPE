@@ -86,7 +86,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
         end
 
         Precip(KT) = min(Precip_msr(KT), infCap_min);
-        applied_inf(KT) = Precip(KT); % applied infiltration after removing Hortonian runoff
+        ForcingData.applied_inf(KT) = Precip(KT); % applied infiltration after removing Hortonian runoff
 
         if SoilVariables.Tss(KT) > 0
             Precip(KT) = Precip(KT);

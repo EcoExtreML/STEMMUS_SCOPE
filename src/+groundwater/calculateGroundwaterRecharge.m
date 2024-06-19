@@ -34,14 +34,8 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         aqLayers                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     %}
 
-
     % Start Recharge calculations
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        % Load needed variables
-        soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
-        indxAqLay = GroundwaterSettings.indxAqLay; % index of MODFLOW aquifer layers for each STEMMUS soil layer
-        aqLayers = GroundwaterSettings.aqLayers; % elevation of top surface level and all bottom levels of aquifer layers
-
         % (a) Define the upper and lower boundaries of the moving balancing domain
         % the moving balancing domain is located between depToGWT_strt and depToGWT_end
         [depToGWT_end, indxGWLay_end] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
@@ -73,6 +67,8 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
 
         % (d) Calculations of SY
         % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
+        indxAqLay = GroundwaterSettings.indxAqLay; % index of MODFLOW aquifer layers for each STEMMUS soil layer
+        aqLayers = GroundwaterSettings.aqLayers; % elevation of top surface level and all bottom levels of aquifer layers
         K = indxAqLay(indxGWLay_end);
         Thk = aqLayers(1) - aqLayers(K) - depToGWT_end;
         SY = GroundwaterSettings.SY;
@@ -80,13 +76,13 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         S = (SY(K) - SS(K) * Thk) * (depToGWT_strt - depToGWT_end);
 
         % (e) Calculations of sy
-        Theta_L = SoilVariables.Theta_L;
-        Theta_LL = SoilVariables.Theta_LL;
-        % flip the soil moisture to be from top layer to bottom (opposite of Theta_L)
-        % Load model settings
+        soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
         ModelSettings = io.getModelSettings();
         NN = ModelSettings.NN; % Number of nodes
         NL = ModelSettings.NL; % Number of layers
+        Theta_L = SoilVariables.Theta_L;
+        Theta_LL = SoilVariables.Theta_LL;
+        % Flip the soil moisture from top layer to bottom (opposite of Theta_L)
         STheta_L(1) = Theta_L(NL, 2);
         STheta_L(2:1:NN) = Theta_L(NN - 1:-1:1, 1);
         STheta_LL(1) = Theta_LL(NL, 2);

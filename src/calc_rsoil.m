@@ -7,9 +7,9 @@ function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, V
     Se  = (SMC - VanGenuchten.Theta_r') ./ (VanGenuchten.Theta_s' - VanGenuchten.Theta_r');
     Ksoil = SoilVariables.Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ m')).^(m')).^2;
 
-    if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater Coupling
+    if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater coupling
         PSIs = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)' .* bbx;
-    else % Groundwater Coupling is activated
+    else % Groundwater coupling is activated
         % Change PSIs with SoilVariables.hh to correct hydraulic head (matric potential + gravity) of the saturated layers
         for i = 1:ModelSettings.NL
             hh_lay(i) = mean([SoilVariables.hh(i), SoilVariables.hh(i + 1)]);

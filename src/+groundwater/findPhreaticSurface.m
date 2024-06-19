@@ -68,7 +68,7 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
                 warning('The pheratic surface level is lower than the end of the soil column!');
             end
             % check 3
-            diff = abs(indxGWLay - indxBotmLayer_R);
+            diff = abs(indxGWLay - GroundwaterSettings.indxBotmLayer_R);
             if diff > 1
                 warning('Index of the bottom layer boundary that includes groundwater head ~= index of the layer that has zero matric potential!');
             end

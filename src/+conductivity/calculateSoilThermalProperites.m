@@ -125,17 +125,8 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(I
             %%%%% Peters-Lidard et al. 1998 frozen soil thermal conductivity method %%%%%%%
             Satr(i, j) = (Theta_LL(i, j) + XII) / Theta_s(i);
             if Theta_II(i, j) <= 0
-                if Theta_LL(i, j) / POR(i) > 0.1
-                    K_e(i, j) = log10(Theta_LL(i, j) / POR(i)) + 1;  % Kersten coefficient, weighting dry and wet thermal conductivity
-                elseif Theta_LL(i, j) / POR(i) > 0.05
-                    K_e(i, j) = 0.7 * log10(Theta_LL(i, j) / POR(i)) + 1;  % Kersten coefficient, weighting dry and wet thermal conductivity
-                else
-                    K_e(i, j) = 0;
-                end
-                Coef_k = 1.9; % [4.6 3.55 1.9; 1.7 0.95 0.85];
-                K_e1(i, j) = Coef_k * (Theta_LL(i, j) / POR(i)) / (1 + (Coef_k - 1) * (Theta_LL(i, j) / POR(i)));  % Kersten coefficient, weighting dry and wet thermal conductivity
-                ALPHA = 0.9; % [1.05,0.9,0.58];
-                K_e2(i, j) = exp(ALPHA * (1 - (Theta_LL(i, j) / POR(i))^(ALPHA - 1.33)));   % Lu and Ren 2007; ALPHA=1.05,0.9,0.58
+                K_e(i, j) = calcKerstenCoef(Theta_LL(i, j), POR(i));
+
                 TCON_sat(i, j) = TCON_s(i)^(1 - Theta_s(i)) * TCON_L^(Theta_s(i));  % saturated soil thermal conductivity Unit W m-1 K-1
                 EfTCON(i, j) = K_e(i, j) * (TCON_sat(i, j) - TCON_dry(i)) + TCON_dry(i);
             else
@@ -145,3 +136,21 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(I
             end
         end
     end
+end
+
+function kerstenCoef = calcKerstenCoef(theta, porosity)
+%{
+    Calculate the kersten coefficient, weighting dry and wet thermal
+    conductivity See Jansson, P. E. (2012). CoupModel: Model use, calibration,
+    and validation. Transactions of the ASABE, 55(4), 1337.
+    https://doi.org/10.13031/2013.42245
+
+%}
+    if theta / porosity > 0.1
+        kerstenCoef = log10(theta / porosity) + 1;
+    elseif theta / porosity > 0.05
+        kerstenCoef = 0.7 * log10(theta / porosity) + 1;
+    else
+        kerstenCoef = 0;
+    end
+end

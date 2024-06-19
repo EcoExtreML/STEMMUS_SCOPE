@@ -59,7 +59,8 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     % Outputs to be used by other functions
     ForcingData.Tmin = min(ForcingData.Ta_msr);
     ForcingData.Precip_msr = Precip_msr;
-    ForcingData.applied_inf = applied_inf;
+    % Applied infiltration (= precipitation after removal of Dunnian runoff)
+    ForcingData.applied_inf = Precip_msr; % later will be updated in the +soilmoisture/calculateBoundaryConditions file
     ForcingData.R_Dunn = R_Dunn;
     ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in the +soilmoisture/calculateBoundaryConditions file
     % Applied infiltration will be updated again in the +soilmoisture/calculateBoundaryConditions file after removal of Hortonian runoff

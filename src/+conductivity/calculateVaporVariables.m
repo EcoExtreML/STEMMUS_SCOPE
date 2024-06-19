@@ -42,7 +42,7 @@ function VaporVariables = calculateVaporVariables(InitialValues, SoilVariables, 
                 if SoilVariables.DVT_Switch == 1
                     Eta(i, j) = ThermalConductivityCapacity.ZETA(i, j) * EnhnLiqIsland / (f0 * Theta_g(i, j));
                     % When Theta_g(i, j) = 0, both EnhnLiqIsland and f0 have too low values -> leading to extreme large value of Eta and QVT, ...
-                    % The follwoing line (if condtion) tries to solve this issue mentioned also in (https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230)
+                    % The following line (if statement) tries to solve the issue mentioned in https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230
                     if Theta_g(i, j) <= 1e-2 % added by Mostafa
                         Eta(i, j) = 0;
                     end

@@ -34,10 +34,6 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         aqLayers                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     %}
 
-    % Load model settings
-    ModelSettings = io.getModelSettings();
-    NN = ModelSettings.NN; % Number of nodes
-    NL = ModelSettings.NL; % Number of layers
 
     % Start Recharge calculations
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled

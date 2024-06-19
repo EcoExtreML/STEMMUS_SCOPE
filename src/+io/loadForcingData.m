@@ -44,11 +44,11 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         else
             ForcingData.R_Dunn = zeros(size(Precip_msr));
         end
-        % (b) Return flow (from groundwater exfiltration) calculated in MODFLOW and added to the Dunnian runoff (through BMI)
+        % (b) Return flow (from groundwater exfiltration) calculated in MODFLOW and added to Dunnian runoff (through BMI)
     end
 
     % (2) Infiltration excess runoff (Hortonian runoff)
-    ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in the +soilmoisture/calculateBoundaryConditions file
+    ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in +soilmoisture/calculateBoundaryConditions
     
     % replace negative values
     for jj = 1:Dur_tot

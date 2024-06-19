@@ -96,10 +96,11 @@ function GroundwaterSettings = readGroundwaterSettings()
         end
     end
 
-    indxBotmLayer_R = indxBotmLayer_R; % index of bottom layer that contains current headBotmLayer (layer index start from top to bottom), opposite of STEMMUS (bottom to top)
-    indxBotmLayer = NN - indxBotmLayer_R + 1; % index of bottom boundary layer (layer index start from bottom to top)
+    indxBotmLayer_R = indxBotmLayer_R; % index of bottom layer that contains current headBotmLayer 
+    % Note: indxBotmLayer_R starts from top to bottom, opposite of STEMMUS (bottom to top)
+    indxBotmLayer = NN - indxBotmLayer_R + 1; % index of bottom layer (from bottom to top)
 
-    % Assign the index of the MODFLOW aquifer that correspond to each STEMMUS soil layer
+    % Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
     indxAqLay = zeros(NN, 1);
     indxAqLay(1) = 1;
     for i = 2:NN

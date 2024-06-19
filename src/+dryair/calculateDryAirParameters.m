@@ -57,9 +57,10 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         AirVariabes.DhDZ(i) = DhDZ;
         AirVariabes.DTDZ(i) = DTDZ;
         AirVariabes.QL(i) = QL;
-        AirVariabes.QL_h(i) = QL_h(i); % added by Mostafa
-        AirVariabes.QL_T(i) = QL_T(i); % added by Mostafa
-        AirVariabes.QL_a(i) = QL_a(i); % added by Mostafa
+        % added by Mostafa
+        AirVariabes.QL_h(i) = QL_h(i);
+        AirVariabes.QL_T(i) = QL_T(i);
+        AirVariabes.QL_a(i) = QL_a(i);
 
         for j = 1:ModelSettings.nD
             MN = i + j - 1;

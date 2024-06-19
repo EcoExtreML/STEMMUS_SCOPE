@@ -27,7 +27,6 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
         indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
     else % Groundwater Coupling is activated, added by Mostafa
         indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
-        tempBotm = GroundwaterSettings.tempBotm; % groundwater temperature
     end
 
     ModelSettings = io.getModelSettings();

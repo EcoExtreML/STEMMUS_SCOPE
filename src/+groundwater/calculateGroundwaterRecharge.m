@@ -54,22 +54,14 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         indxRchrg_above = min(indxGWLay_strt, indxGWLay_end) - 2;
 
         % (b) Call the fluxes to get the initial recharge
-        QL_h = EnergyVariables.QL_h; % liquid flux due to matric potential gradient
-        QL_T = EnergyVariables.QL_T; % liquid flux due to temperature gradient
-        QL_a = EnergyVariables.QL_a; % liquid flux due to air pressure gradient
-        QVH = EnergyVariables.QVH; % vapor water flux due to matric potential gradient
-        QVT = EnergyVariables.QVT; % vapor water flux due to temperature gradient
-        QVa = EnergyVariables.QVa; % vapor water flux due to air pressure gradient
-        Qtot = EnergyVariables.Qtot; % total flux (liquid + vapor)
-
         % flip the fluxes (because STEMMUS calculations are from bottom to top, and MODFLOW needs the recharge from top to bottom)
-        QLh_flip = flip(QL_h(1, :));
-        QLT_flip = flip(QL_T(1, :));
-        QLa_flip = flip(QL_a(1, :));
-        QVH_flip = flip(QVH(1, :));
-        QVT_flip = flip(QVT(1, :));
-        QVa_flip = flip(QVa(1, :));
-        Q_flip = flip(Qtot(1, :));
+        QLh_flip = flip(EnergyVariables.QL_h(1, :)); % liquid flux due to matric potential gradient
+        QLT_flip = flip(EnergyVariables.QL_T(1, :)); % liquid flux due to temperature gradient
+        QLa_flip = flip(EnergyVariables.QL_a(1, :)); % liquid flux due to air pressure gradient
+        QVH_flip = flip(EnergyVariables.QVH(1, :)); % vapor water flux due to matric potential gradient
+        QVT_flip = flip(EnergyVariables.QVT(1, :)); % vapor water flux due to temperature gradient
+        QVa_flip = flip(EnergyVariables.QVa(1, :)); % vapor water flux due to air pressure gradient
+        Q_flip = flip(EnergyVariables.Qtot(1, :)); % total flux (liquid + vapor)
 
         % (c) Get the recharge_init (before the correction of the specific yeild))
         % to avoid a zero flux value at the layer which recharge will be exporated

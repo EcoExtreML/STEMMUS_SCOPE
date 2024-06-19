@@ -6,10 +6,11 @@ function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquat
 
     ModelSettings = io.getModelSettings();
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1;
-    else % Groundwater Coupling is activated, added by Mostafa
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     RHS(indxBotm) = RHS(indxBotm) / EnergyMatrices.C5(indxBotm, 1);
@@ -25,11 +26,12 @@ function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquat
 
     if GroundwaterSettings.GroundwaterCoupling
         for i = indxBotm:-1:2
-            RHS(i - 1) = RHS(i); % all saturated layers get the same temp which was assigned as temp bottom boundary
+            RHS(i - 1) = RHS(i); % assign temp bottom boundary for all saturated layers
         end
     end
 
-    for i = 1:ModelSettings.NN % note: this for loop causes wrong values if i = indxBotm:ModelSettings.NN instead of i = 1:ModelSettings.NN
+    for i = 1:ModelSettings.NN
+        % note: this for loop causes wrong values if i = indxBotm:ModelSettings.NN instead of i = 1:ModelSettings.NN
         CHK(i) = abs(RHS(i) - SoilVariables.TT(i));
         SoilVariables.TT(i) = RHS(i);
     end

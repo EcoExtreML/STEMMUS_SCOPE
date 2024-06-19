@@ -46,8 +46,6 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         end
         % (b) Return flow (from groundwater exfiltration) is added to the Dunnian runoff (through BMI)
     end
-    % Applied infiltration (= precipitation after removal of Dunnian runoff)
-    applied_inf = Precip_msr; % later will be updated in the +soilmoisture/calculateBoundaryConditions file
 
     % (2) Infiltration excess runoff (Hortonian runoff)
 

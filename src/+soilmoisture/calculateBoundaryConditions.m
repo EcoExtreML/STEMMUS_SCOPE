@@ -115,6 +115,4 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
     end
     HeatMatrices.C4 = C4;
     HeatMatrices.C4_a = C4_a;
-    ForcingData.R_Hort = R_Hort;
-    ForcingData.applied_inf = applied_inf;
 end

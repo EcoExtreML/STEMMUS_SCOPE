@@ -21,6 +21,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
 
     %%%%%%%%%% Adjust precipitation to get applied infiltration after removing: (1) saturation excess runoff   %%%%%%%%%%
     %%%%%%%%%%                                                                  (2) infiltration excess runoff %%%%%%%%%%
+    % Note: Code changes are related to the issue: https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232
     % Note: Adjusting the precipitation after the canopy interception is not implemented yet.
 
     % (1) Saturation excess runoff (Dunnian runoff)

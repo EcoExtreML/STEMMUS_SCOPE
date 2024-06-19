@@ -39,7 +39,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
     if GroundwaterSettings.GroundwaterCoupling
         % Assign the groundwater temperature to the saturated layers, added by Mostafa
         for i = indxBotm - 1:-1:1
-            SoilVariables.TT(i) = tempBotm;
+            SoilVariables.TT(i) = GroundwaterSettings.tempBotm; % groundwater temperature;
         end
     end
 

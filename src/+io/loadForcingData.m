@@ -39,7 +39,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         % (a) direct water input from precipitation when soil is fully saturated (depth to water table = 0)
         wat_Dep = GroundwaterSettings.gw_Dep / 100; % (m);
         if wat_Dep <= 0.01
-            R_Dunn = Precip_msr;
+            ForcingData.R_Dunn = Precip_msr;
             Precip_msr = Precip_msr .* 0;
         else
             R_Dunn = zeros(size(Precip_msr));

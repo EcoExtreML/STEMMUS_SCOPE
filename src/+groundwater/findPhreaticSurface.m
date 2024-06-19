@@ -66,7 +66,7 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
             if depToGWT <= 0
                 warning('The pheratic surface level is equal or higher than the land surface level!');
                 % check 2
-            elseif depToGWT > Tot_Depth
+            elseif depToGWT > ModelSettings.Tot_Depth; % total soil depth
                 warning('The pheratic surface level is lower than the end of the soil column!');
             end
             % check 3

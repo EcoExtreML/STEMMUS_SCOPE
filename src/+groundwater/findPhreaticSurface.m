@@ -28,7 +28,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
     % Load model settings
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % number of nodes
-    Tot_Depth = ModelSettings.Tot_Depth; % total soil depth
 
     % Load Groundwater settings
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled

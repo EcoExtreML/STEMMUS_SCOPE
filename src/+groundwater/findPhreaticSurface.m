@@ -14,7 +14,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
             and depToGWT (e.g. difference = 1-10 cm  based on the thickness of the soil layer that contains the depToGWT).
 
                                 %%%%%%%%%% Variables definitions %%%%%%%%%%
-        gw_Dep              depth from top soil layer to groundwater level, calculated from MODFLOW inputs
         depToGWT            depth from top soil layer to groundwater level, calculated from STEMMUS variables
         indxBotmLayer_R     index of the bottom layer that contains the current headBotmLayer (top to bottom)
         indxBotmLayer       index of the bottom layer that contains the current headBotmLayer (bottom to top)
@@ -35,8 +34,8 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
 
         % Call the matric potential
         Shh(1:1:NN) = SoilVariables.hh(NN:-1:1);
-        depToGWT = 0; % starting value for initalization. for update, its calcualted below
-        indxGWLay = NN - 2; % starting value for initalization. for update, its calcualted below
+        depToGWT = 0; % starting value for initialization, updated below
+        indxGWLay = NN - 2; % starting value for initialization, updated below
 
         % Find the phreatic surface (saturated zone)
         for i = NN:-1:2
@@ -44,8 +43,8 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
             soilThick_lay = soilThick(i);
             hh_nextlay = Shh(i - 1);
             soilThick_nextlay = soilThick(i - 1);
-            % apply a condition to find the groundwater table from the matric potnetial by ....
-            % differentiating between the first layer with positive or zero head value and the last layer with negative head value
+            % apply a condition to find the groundwater table from the matric potential by differentiating ....
+            %  between a) first layer with positive or zero head value and b) last layer with negative head value
             if hh_lay > -1e-5 && hh_nextlay <= -1e-5
                 depToGWT = (hh_lay * soilThick_nextlay - hh_nextlay * soilThick_lay) / (hh_lay - hh_nextlay);
                 midThick = (soilThick(i) + soilThick(i - 1)) / 2;
@@ -58,13 +57,13 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
             end
         end
 
-        if KT > 1 % start the checks from the first time step (after the initalization)
+        if KT > 1 % start the checks from the first time step (after initialization)
             % check 1
             if depToGWT <= 0
-                warning('The pheratic surface level is equal or higher than the land surface level!');
+                warning('The phreatic surface level is equal or higher than the land surface level!');
                 % check 2
             elseif depToGWT > ModelSettings.Tot_Depth; % total soil depth
-                warning('The pheratic surface level is lower than the end of the soil column!');
+                warning('The phreatic surface level is lower than the end of the soil column!');
             end
             % check 3
             diff = abs(indxGWLay - GroundwaterSettings.indxBotmLayer_R);

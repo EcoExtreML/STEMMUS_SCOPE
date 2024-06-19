@@ -126,6 +126,5 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         % gwfluxes.recharge_init = recharge_init;
         % gwfluxes.S = S;
         % gwfluxes.sy = sy;
-        gwfluxes.recharge = recharge;
     end
 end

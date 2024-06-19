@@ -5,12 +5,11 @@ function [CHK, hh, C4] = solveTridiagonalMatrixEquations(C4, hh, C4_a, RHS, Grou
     %}
     ModelSettings = io.getModelSettings();
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1; % index of bottom layer, by default (no groundwater coupling) its layer with index 1, since STEMMUS calculations starts from bottom to top
-
-    else % Groundwater Coupling is activated, added by Mostafa
-        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     RHS(indxBotm) = RHS(indxBotm) / C4(indxBotm, 1);

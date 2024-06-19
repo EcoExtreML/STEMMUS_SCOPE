@@ -9,7 +9,7 @@ function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, V
 
     if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater coupling
         PSIs = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)' .* bbx;
-    else % Groundwater coupling is activated
+    else % Groundwater coupling is activated (see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/231)
         % Change PSIs with SoilVariables.hh to correct hydraulic head (matric potential + gravity) of the saturated layers
         for i = 1:ModelSettings.NL
             hh_lay(i) = mean([SoilVariables.hh(i), SoilVariables.hh(i + 1)]);

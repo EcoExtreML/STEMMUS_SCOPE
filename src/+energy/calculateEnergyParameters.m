@@ -171,8 +171,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     end
 
     % Outputs to be used for groundwater recharge calculations in the calculateGroundwaterRecharge function
-    Qtot = QL_h + QL_T + QL_a + QVH + QVT + QVa;
-    EnergyVariables.Qtot = Qtot; % total flux (liquid + vapor)
+    EnergyVariables.Qtot = QL_h + QL_T + QL_a + QVH + QVT + QVa; % total flux (liquid + vapor)
     EnergyVariables.QL_h = QL_h; % liquid flux due to matric potential gradient
     EnergyVariables.QL_T = QL_T; % liquid flux due to temperature gradient
     EnergyVariables.QL_a = QL_a; % liquid flux due to air pressure gradient

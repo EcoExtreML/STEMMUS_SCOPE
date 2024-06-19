@@ -9,7 +9,6 @@ function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquat
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
         indxBotm = 1;
     else % Groundwater Coupling is activated, added by Mostafa
-        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
         indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
     end
 

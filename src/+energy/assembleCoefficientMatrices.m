@@ -17,7 +17,7 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
     ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
 
-    if ModelSettings.Soilairefc == 1 % added by Mostafa
+    if ModelSettings.Soilairefc == 1 % see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/227
         C6_a = EnergyMatrices.C6_a;
     end
 

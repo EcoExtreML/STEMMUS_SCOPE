@@ -31,7 +31,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         fover = 0.5; % decay factor (fixed to 0.5 m-1)
         fmax = SoilProperties.fmax; % potential maximum value of fsat
         fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless), note: the division by 100 is a unit conversion from 'cm' to 'm'
-        R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
+        ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
         Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
 
     else % Groundwater Coupling is activated

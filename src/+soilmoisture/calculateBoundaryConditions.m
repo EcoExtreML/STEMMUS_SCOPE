@@ -13,8 +13,6 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
     Precip = InitialValues.Precip;
     Precip_msr = ForcingData.Precip_msr;
     Precipp = 0;
-    R_Hort = ForcingData.R_Hort;
-    applied_inf = ForcingData.applied_inf;
 
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa

@@ -24,7 +24,7 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
         % index of bottom layer = 1, since STEMMUS calculations start from bottom to top
         indxBotm = 1;
     else % Groundwater Coupling is activated
-        % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 

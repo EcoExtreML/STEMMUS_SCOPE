@@ -23,10 +23,11 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
 
     [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK, GroundwaterSettings);
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
-    else % Groundwater Coupling is activated, added by Mostafa
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)           
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     ModelSettings = io.getModelSettings();
@@ -37,7 +38,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
     end
 
     if GroundwaterSettings.GroundwaterCoupling
-        % Assign the groundwater temperature to the saturated layers, added by Mostafa
+        % Assign the groundwater temperature to the saturated layers
         for i = indxBotm - 1:-1:1
             SoilVariables.TT(i) = GroundwaterSettings.tempBotm; % groundwater temperature;
         end

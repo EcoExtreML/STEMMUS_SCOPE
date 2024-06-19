@@ -44,9 +44,7 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
 
         % (a) Define the upper and lower boundaries of the moving balancing domain
         % the moving balancing domain is located between depToGWT_strt and depToGWT_end
-        [depToGWT, indxGWLay] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
-        depToGWT_end = depToGWT;
-        indxGWLay_end = indxGWLay;
+        [depToGWT_end, indxGWLay_end] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
         % indxRchrg and indxRchrgMax are the indecies of the upper and lower levels of the moving boundary
         % Following the HYDRUS-MODFLOW paper and also STEMMUS-MODFLOW, indxRchrg and indxRchrgMax are defined as in the next two lines
         indxRchrgMax = max(indxGWLay_strt, indxGWLay_end) + 2; % the positive 2 is a user-specified value to define lower boundary of the moving boundary

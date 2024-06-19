@@ -9,10 +9,11 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
-        indxBotm = 1; % index of bottom layer, by defualt (no groundwater coupling) its layer with index 1, since STEMMUS calcuations starts from bottom to top
-    else % Groundwater Coupling is activated, added by Mostafa
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     % input
@@ -37,9 +38,9 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     QL = AirVariabes.QL;
 
     if ModelSettings.Soilairefc % added by Mostafa
-        QL_h = AirVariabes.QL_h;
-        QL_T = AirVariabes.QL_T;
-        QL_a = AirVariabes.QL_a;
+        QL_h = AirVariabes.QL_h; % liquid flux due to matric potential gradient
+        QL_T = AirVariabes.QL_T; % liquid flux due to temperature gradient
+        QL_a = AirVariabes.QL_a; % liquid flux due to air pressure gradient
     end
 
     % output
@@ -73,26 +74,24 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         % terms.(0.0003,volumetric heat capacity)
         if ~ModelSettings.Soilairefc
             QL(i) = -(KLhBAR(i) * DhDZ(i) + (KLTBAR(i) + DTDBAR(i)) * DTDZ(i) + KLhBAR(i));
-            QL_h(i) = -(KLhBAR(i) * DhDZ(i) + KLhBAR(i)); % added by Mostafa
-            QL_T(i) = -((KLTBAR(i) + DTDBAR(i)) * DTDZ(i)); % added by Mostafa
-            QL_a(i) = 0; % added by Mostafa
+            QL_h(i) = -(KLhBAR(i) * DhDZ(i) + KLhBAR(i));
+            QL_T(i) = -((KLTBAR(i) + DTDBAR(i)) * DTDZ(i));
+            QL_a(i) = 0;
             Qa = 0;
         else
             Qa = -((DEhBAR + GasDispersivity.D_Vg(i)) * DRHODAz(i) - RHODA(i) * (GasDispersivity.V_A(i) + Constants.Hc * QL(i) / Constants.RHOL));
         end
-
+        
+        QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i);
+        QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
         if SoilVariables.DVa_Switch == 1
+            QVa(i) = RHOVBAR * GasDispersivity.V_A(i);
             QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i) + RHOVBAR * GasDispersivity.V_A(i);
-            QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i); % activated by Mostafa
-            QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i); % activated by Mostafa
-            QVa(i) = RHOVBAR * GasDispersivity.V_A(i); % added by Mostafa
         else
+            QVa(i) = 0;
             QV = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i) - (DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i);
-            QVH(i) = -(DEhBAR + GasDispersivity.D_Vg(i)) * DRHOVhDz(i) * DDhDZ(i); % activated by Mostafa
-            QVT(i) = -(DEhBAR * EtaBAR + GasDispersivity.D_Vg(i)) * DRHOVTDz(i) * DTDZ(i); % activated by Mostafa
-            QVa(i) = 0; % added by Mostafa
         end
-
+        
         % These are unused vars, but I comment them for future reference,
         % See issue 100, item 1
         % DVH(i) = (DEhBAR) * DRHOVhDz(i);
@@ -171,7 +170,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
         end
     end
 
-    % outputs to be used for groundwater recharge calculations in the calculateGroundwaterRecharge function, added by Mostafa
+    % Outputs to be used for groundwater recharge calculations in the calculateGroundwaterRecharge function
     Qtot = QL_h + QL_T + QL_a + QVH + QVT + QVa;
     EnergyVariables.Qtot = Qtot; % total flux (liquid + vapor)
     EnergyVariables.QL_h = QL_h; % liquid flux due to matric potential gradient

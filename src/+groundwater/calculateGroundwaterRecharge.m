@@ -15,15 +15,15 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         Equations of the water balance are implemented in this function (Equations 8-13 of HYDRUS-MODFLOW paper) as follows:
         recharge = recharge_init + (SY - sy) * DeltZ, where:
 
-        gwfluxes                structure that includes the outputs (groundwater recharge and its individual components)
+        gwfluxes                structure that includes the outputs (groundwater recharge and it's individual components)
         recharge                groundwater recharge, which is the upper boundary flux of the top layer of the phreatic aquifer (after the correction of the specific yield)
         recharge_init           upper boundary flux into the moving balancing domain (before the correction of the specific yield)
         SS                      specific storage of MODFLOW aquifers
         SY                      large-scale specific yield of the phreatic aquifer
         sy                      small-scale specific yield (dynamically changing water yield) caused by fluctuation of the water table
-        depToGWT_strt           soil layer thickness from the top of the soil up to the phreatic surface at the start of the current time step
+        depToGWT_strt           water table depth: depth from top of the soil up to the phreatic surface at the start of the current time step
         indxGWLay_strt          index of the soil layer that includes the phreatic surface at the start of the current time step
-        depToGWT_end            soil layer thickness from the top of the soil up to the phreatic surface at the end of the current time step
+        depToGWT_end            water table depth: depth from top of the soil up to the phreatic surface at the end of the current time step
         indxGWLay_end           index of the soil layer that includes the phreatic surface at the end of the current time step
         Theta_L                 soil moisture at the start of the current time step (bottom to top)
         Theta_LL                soil moisture at the end of the current time step (bottom to top)
@@ -37,9 +37,9 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     % Start Recharge calculations
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
         % (a) Define the upper and lower boundaries of the moving balancing domain
-        % the moving balancing domain is located between depToGWT_strt and depToGWT_end
+        % The moving balancing domain is located between depToGWT_strt and depToGWT_end
         [depToGWT_end, indxGWLay_end] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
-        % indxRchrg and indxRchrgMax are the indecies of the upper and lower levels of the moving boundary
+        % indxRchrg and indxRchrgMax are the indices of the upper and lower levels of the moving boundary
         % Following the HYDRUS-MODFLOW paper and also STEMMUS-MODFLOW, indxRchrg and indxRchrgMax are defined as in the next two lines
         indxRchrgMax = max(indxGWLay_strt, indxGWLay_end) + 2; % the positive 2 is a user-specified value to define lower boundary of the moving boundary
         % indxRchrg = min(indxGWLay_strt, indxGWLay_end) - 3; % the negative 2 or 3 is a user-specified value to define upper boundary of the moving boundary
@@ -57,8 +57,8 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         QVa_flip = flip(EnergyVariables.QVa(1, :)); % vapor water flux due to air pressure gradient
         Q_flip = flip(EnergyVariables.Qtot(1, :)); % total flux (liquid + vapor)
 
-        % (c) Get the recharge_init (before the correction of the specific yeild))
-        % to avoid a zero flux value at the layer which recharge will be exporated
+        % (c) Get the recharge_init (before the correction of the specific yield))
+        % to avoid a zero flux value at the layer which recharge will be exported
         if Q_flip(indxRchrg) == 0
             recharge_init = Q_flip(indxRchrg_above);
         else
@@ -94,7 +94,7 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         end
 
         % (f) Aggregate c, d, and e to get recharge
-        % after couple of testing, it appears that the effect of S and sy is very minor, so they are removed but kept in the code for further investigation
+        % after couple of tests, it appears that the effect of S and sy is very minor, so they are removed but kept in the code for further investigation
         % recharge = recharge_init + S - sy;
         gwfluxes.recharge = recharge_init; % Note: in STEMMUS +ve means up-flow direction and -ve means down (opposite of MODFLOW), so recharge sign needs to be converted in BMI
 

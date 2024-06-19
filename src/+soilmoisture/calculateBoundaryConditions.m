@@ -80,9 +80,9 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
 
         % Infiltration excess runoff (Hortonian runoff). Note: Dunnian runoff is calculated in the +io/loadForcingData file
         if Precip_msr(KT) > infCap_min
-            R_Hort(KT) = Precip_msr(KT) - infCap_min;
+            ForcingData.R_Hort(KT) = Precip_msr(KT) - infCap_min;
         else
-            R_Hort(KT) = 0;
+            ForcingData.R_Hort(KT) = 0;
         end
 
         Precip(KT) = min(Precip_msr(KT), infCap_min);

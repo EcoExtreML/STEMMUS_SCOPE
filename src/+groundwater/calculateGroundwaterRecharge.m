@@ -97,7 +97,7 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     % recharge = recharge_init + S - sy;
     gwfluxes.recharge = recharge_init; % Note: in STEMMUS +ve means up-flow direction and -ve means down (opposite of MODFLOW), so recharge sign needs to be converted in BMI
 
-    if isnan(recharge) || isinf(recharge)
+    if isnan(gwfluxes.recharge) || isinf(gwfluxes.recharge)
         gwfluxes.recharge = 0;
     end
 

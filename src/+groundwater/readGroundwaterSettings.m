@@ -14,8 +14,6 @@ function GroundwaterSettings = readGroundwaterSettings()
         indxBotmLayer_R     index of the bottom layer that contains the current headBotmLayer (top to bottom)
         indxBotmLayer       index of the bottom layer that contains the current headBotmLayer (bottom to top)
         tempBotm            groundwater temperature (C), received from MODFLOW through BMI
-        airPg               atmospheric pressure at the bottom (Pa)
-        BtmPg               groundwater pressure (Pa)
         numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
         numAqN              number of MODFLOW aquifer nodes (numAqL + 1)
         aqLayers            elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI

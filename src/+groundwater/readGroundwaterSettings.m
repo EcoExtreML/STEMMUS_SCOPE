@@ -50,6 +50,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     % Check that the position of the water table is within the soil column
     if gw_Dep <= 0
         warning('The soil is fully saturated up to the land surface level!');
+        gw_Dep = 1.0; % to avoid model crashing, assign minimum gw_Dep value of 1 cm        
     elseif gw_Dep > ModelSettings.Tot_Depth
         warning('Groundwater table is below the end of the soil column!');
     end

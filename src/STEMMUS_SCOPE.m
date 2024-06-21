@@ -643,9 +643,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX); % Depth of depression storage at end of current time step
                 % Next line is commented and Surface runoff is re-calculated using different approach (the following 3 lines)
                 % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit conversion from cm/30mins to cm/sec)
-                R_Dunn(KT) = ForcingData.R_Dunn(KT); % (cm/sec)
-                R_Hort(KT) = ForcingData.R_Hort(KT); % (cm/sec)
-                RS(KT) = R_Hort(KT) + R_Dunn(KT); % total surface runoff (cm/sec)
+                RS(KT) = ForcingData.R_Hort(KT) + ForcingData.R_Dunn(KT); % total surface runoff (cm/sec)
             end
 
             if ModelSettings.Soilairefc == 1

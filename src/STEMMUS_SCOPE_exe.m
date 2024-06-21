@@ -31,8 +31,7 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'EVAP' ... % evaporation
                        'RWUs' ... % soil water root uptake
                        'RWUg' ... % groundwater root uptake
-                       'R_Dunn' ... % Dunnian runoff
-                       'R_Hort' ... % Hortonian runoff
+                       'ForcingData' ... % forcing data that includes Dunnian runoff and Hortonian runoff
                        'RS' ... % total surface runoff
                       }; %#ok
 

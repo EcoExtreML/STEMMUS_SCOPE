@@ -746,6 +746,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             [depToGWT_end, indxGWLay_end, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
             depToGWT_strt = depToGWT_end; % for next time step
             indxGWLay_strt = indxGWLay_end; % for next time step
+            if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
+                gwfluxes.recharge = 0;
+            end
         else
             gwfluxes.recharge = 0;
         end

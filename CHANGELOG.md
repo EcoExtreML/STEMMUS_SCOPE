@@ -3,9 +3,22 @@
 **Changed:**
 
 - Added changes to support groundwater coupling via BMI in
-  [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221)
+  [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221) and
+  [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)
 - Save water stress factor and water potential into csv files.
   [#229](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/229)
+
+**Fixed:**
+
+- Calculations of surface runoff discussed in
+  [#232](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232) and fixed in
+  [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)
+- The bug in the QVT calculations discussed in
+  [#230](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230) and fixed in
+  [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)
+- The bug in  activating the dry air calculations discussed in
+  [#227](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230) and fixed in
+  [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/227)
 
 
 <a name="1.5.0"></a>

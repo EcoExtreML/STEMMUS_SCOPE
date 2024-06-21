@@ -63,6 +63,10 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SAVE = InitialValues.SAVE;
     P_gOLD = InitialValues.P_gOLD;
     gwfluxes = struct();
+    Evap = InitialValues.Evap;
+    EVAP = InitialValues.EVAP;
+    RWUs = [];
+    RWUg = [];
 
     %% 1. define Constants
     Constants = io.define_constants();

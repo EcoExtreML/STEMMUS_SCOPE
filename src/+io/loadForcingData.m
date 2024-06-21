@@ -1,4 +1,4 @@
-function [ForcingData] = loadForcingData(InputPath, TimeProperties, fmax, Tot_Depth)
+function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperties, Tot_Depth, GroundwaterSettings)
     %{
     %}
     DELT = TimeProperties.DELT;
@@ -17,13 +17,51 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, fmax, Tot_De
     ForcingData.VPD_msr = Mdata{:, 9};
     ForcingData.LAI_msr = Mdata{:, 10};
     ForcingData.G_msr = Mdata{:, 7} * 0.15;
-    ForcingData.Precip_msr = Mdata{:, 6} * 10 * DELT;
-    ForcingData.Precip_msr = ForcingData.Precip_msr .* (1 - fmax .* exp(-0.5 * 0.5 * Tot_Depth / 100));
+    Precip_msr = Mdata{:, 6}; % (cm/sec)
+
+    %%%%%%%%%% Adjust precipitation to get applied infiltration after removing: (1) saturation excess runoff   %%%%%%%%%%
+    %%%%%%%%%%                                                                  (2) infiltration excess runoff %%%%%%%%%%
+    % Note: Code changes are related to the issue: https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232
+    % Note: Adjusting the precipitation after the canopy interception is not implemented yet.
+
+    % (1) Saturation excess runoff (Dunnian runoff)
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated
+        % Concept is adopted from the CLM model (see issue 232 in GitHub for more explanation)
+        % Check also the CLM documents (https://doi.org/10.5065/D6N877R0, https://doi.org/10.1029/2005JD006111)
+        wat_Dep = Tot_Depth / 100; % (m)
+        fover = 0.5; % decay factor (fixed to 0.5 m-1)
+        fmax = SoilProperties.fmax; % potential maximum value of fsat
+        fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
+        ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
+        Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
+
+    else % Groundwater coupling is activated
+        % Different approach (not CLM). Dunnian runoff = Direct water input from precipitation + return flow
+        % (a) direct water input from precipitation when soil is fully saturated (depth to water table = 0)
+        wat_Dep = GroundwaterSettings.gw_Dep / 100; % (m);
+        if wat_Dep <= 0.01
+            ForcingData.R_Dunn = Precip_msr;
+            Precip_msr = Precip_msr .* 0;
+        else
+            ForcingData.R_Dunn = zeros(size(Precip_msr));
+        end
+        % (b) Return flow (from groundwater exfiltration) calculated in MODFLOW and added to Dunnian runoff (through BMI)
+    end
+
+    % (2) Infiltration excess runoff (Hortonian runoff)
+    ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in +soilmoisture/calculateBoundaryConditions
+
     % replace negative values
     for jj = 1:Dur_tot
         if ForcingData.Ta_msr(jj) < -100
             ForcingData.Ta_msr(jj) = NaN;
         end
     end
+
+    % Outputs to be used by other functions
     ForcingData.Tmin = min(ForcingData.Ta_msr);
+    ForcingData.Precip_msr = Precip_msr;
+    % Applied infiltration (= precipitation after removal of Dunnian runoff)
+    ForcingData.applied_inf = Precip_msr; % later will be updated in the ....
+    % +soilmoisture/calculateBoundaryConditions after removal of Hortonian runoff
 end

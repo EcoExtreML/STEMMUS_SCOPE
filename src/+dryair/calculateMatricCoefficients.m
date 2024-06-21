@@ -1,4 +1,4 @@
-function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
+function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues, GroundwaterSettings)
     %{
         Calculate all the parameters related to matric coefficients e.g.,
         c1-c7 as in Equation 4.32 STEMMUS Technical Notes, page 44, which is
@@ -15,7 +15,14 @@ function AirMatrices = calculateMatricCoefficients(AirVariabes, InitialValues)
     AirMatrices.C6 = InitialValues.C6;
     AirMatrices.C7 = zeros(ModelSettings.NN);
 
-    for i = 1:ModelSettings.NL
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
+        indxBotm = GroundwaterSettings.indxBotmLayer;
+    end
+
+    for i = indxBotm:ModelSettings.NL
         AirMatrices.C1(i, 1) = AirMatrices.C1(i, 1) + AirVariabes.Cah(i, 1) * ModelSettings.DeltZ(i) / 2;
         AirMatrices.C1(i + 1, 1) = AirMatrices.C1(i + 1, 1) + AirVariabes.Cah(i, 2) * ModelSettings.DeltZ(i) / 2;
 

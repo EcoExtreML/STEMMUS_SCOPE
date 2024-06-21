@@ -1,7 +1,7 @@
 function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                Rl, SoilVariables, VanGenuchten, InitialValues)
+                Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings)
 
     %{
         function ebal.m calculates the energy balance of a vegetated surface
@@ -174,7 +174,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     PSI = 0;
 
     [bbx] = Max_Rootdepth(InitialValues.bbx);
-    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings.DeltZ, SoilVariables.Ks, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, VanGenuchten.m, VanGenuchten.n, VanGenuchten.Alpha);
+    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings);
     [sfactor] = calc_sfactor(Rl, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, Ta, VanGenuchten.Theta_f);
     PSIss = PSIs(ModelSettings.NL, 1);
     %% 2. Energy balance iteration loop
@@ -539,9 +539,9 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     thermal.ustar = ustar;    % [m s-1]             friction velocity
     thermal.Tcu   = Tcu;
     thermal.Tch   = Tch;
-
     fluxes.Au     = Au;
     fluxes.Ah     = Ah;
+
     RWU = (PSIs - PSI) ./ (rsss + rrr + rxx) .* bbx;
     nn = numel(RWU);
     for i = 1:nn

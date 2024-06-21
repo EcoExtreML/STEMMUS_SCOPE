@@ -1,12 +1,22 @@
-function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, DeltZ, Ks, Theta_s, Theta_r, Theta_LL, bbx, m, n, Alpha)
+function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings)
     % load Constants
     Constants = io.define_constants();
 
-    DeltZ0 = DeltZ';
-    SMC = Theta_LL(1:54, 2);
-    Se  = (SMC - Theta_r') ./ (Theta_s' - Theta_r');
-    Ksoil = Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ m')).^(m')).^2;
-    PSIs = -((Se.^(-1 ./ m') - 1).^(1 ./ n')) ./ (Alpha * 100)' .* bbx;
-    rsss          = 1 ./ Ksoil ./ Rl ./ DeltZ0 / 2 / pi .* log((pi * Rl).^(-0.5) / (0.5 * 1e-3)) * 100 .* bbx; % KL_h is the hydraulic conductivity, m s-1;VR is the root length density, m m-3;Ks is saturation conductivty;
-    rxx           = 1 * 1e10 * DeltZ0 / 0.5 / 0.22 ./ Rl / 100 .* bbx; % Delta_z*j is the depth of the layer
-    rrr           = 4 * 1e11 * (Theta_s' ./ SMC) ./ Rl ./ (DeltZ0 / 100) .* bbx;
+    SMC = SoilVariables.Theta_LL(1:54, 2);
+    Se  = (SMC - VanGenuchten.Theta_r') ./ (VanGenuchten.Theta_s' - VanGenuchten.Theta_r');
+    Ksoil = SoilVariables.Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ VanGenuchten.m')).^(VanGenuchten.m')).^2;
+
+    if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater coupling
+        PSIs = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)' .* bbx;
+    else % Groundwater coupling is activated, added by Mostafa (see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/231)
+        % Change PSIs with SoilVariables.hh to correct hydraulic head (matric potential + gravity) of the saturated layers
+        for i = 1:ModelSettings.NL
+            hh_lay(i) = mean([SoilVariables.hh(i), SoilVariables.hh(i + 1)]);
+        end
+        hh_lay = transpose(hh_lay);
+        PSIs = hh_lay / 100 .* bbx; % unit conversion from cm to m (needed in the ebal calculations)
+    end
+
+    rsss = 1 ./ Ksoil ./ Rl ./ ModelSettings.DeltZ' / 2 / pi .* log((pi * Rl).^(-0.5) / (0.5 * 1e-3)) * 100 .* bbx;
+    rxx  = 1 * 1e10 * ModelSettings.DeltZ' / 0.5 / 0.22 ./ Rl / 100 .* bbx; % Delta_z*j is the depth of the layer
+    rrr  = 4 * 1e11 * (VanGenuchten.Theta_s' ./ SMC) ./ Rl ./ (ModelSettings.DeltZ' / 100) .* bbx;

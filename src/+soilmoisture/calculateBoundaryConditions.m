@@ -1,5 +1,5 @@
-function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                           TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
+function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}
@@ -15,7 +15,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
     Precipp = 0;
 
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
-    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated, added by Mostafa
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling
         if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
             RHS(1) = BoundaryCondition.BChB;
             C4(1, 1) = 1;
@@ -27,22 +27,23 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
         elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
             RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
         end
-    else % Groundwater Coupling is activated, added by Mostafa
-        headBotmLayer = GroundwaterSettings.headBotmLayer;  % head at bottom layer, received from MODFLOW through BMI
-        indexBotmLayer = GroundwaterSettings.indexBotmLayer; % index of bottom layer that contains current headBotmLayer, received from MODFLOW through BMI
-        soilLayerThickness = GroundwaterSettings.soilLayerThickness;
-        INBT = n - indexBotmLayer + 1;  % soil layer thickness from bottom to top (opposite of soilLayerThickness)
-        BOTm = soilLayerThickness(n);  % bottom level of all layers, still need to confirm with Lianyu
+    else % Groundwater coupling is activated, added by Mostafa
+        indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
+        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
+        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
+        topLevel = GroundwaterSettings.topLevel;
+        headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
+        RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
         if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(INBT) = (headBotmLayer - BOTm + soilLayerThickness(indexBotmLayer));
-            C4(INBT, 1) = 1;
-            RHS(INBT + 1) = RHS(INBT + 1) - C4(INBT, 2) * RHS(INBT);
-            C4(INBT, 2) = 0;
-            C4_a(INBT) = 0;
+            RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
+            C4(indxBotm, 1) = 1;
+            RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
+            C4(indxBotm, 2) = 0;
+            C4_a(indxBotm) = 0;
         elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(INBT) = RHS(INBT) + BoundaryCondition.BChB;
+            RHS(indxBotm) = RHS(indxBotm) + BoundaryCondition.BChB;
         elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(INBT) = RHS(INBT) - SoilVariables.KL_h(INBT, 1);
+            RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
         end
     end
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
@@ -61,22 +62,40 @@ function [AVAIL0, RHS, HeatMatrices, Precip] = calculateBoundaryConditions(Bound
             RHS(n - 1) = RHS(n - 1) - C4(n - 1, 2) * RHS(n);
             C4(n - 1, 2) = 0;
         else
-            RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness)was applied;
+            RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness) was applied;
         end
-    else
-        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.Ks0 / (3600 * 24) * TimeProperties.DELT * 10);
-        Precip_msr(KT) = min(Precip_msr(KT), SoilProperties.theta_s0 * 50 - ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1) * 10);
+    else % (BoundaryCondition.NBCh == 3, Specified atmospheric forcing)
+
+        % Calculate applied infiltration and infiltration excess runoff (Hortonian runoff), modified by Mostafa
+        Ks0 = SoilProperties.Ks0 / (3600 * 24); % saturated vertical hydraulic conductivity. unit conversion from cm/day to cm/sec
+        % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document: https://doi.org/10.5065/D6N877R)
+        % Check applied infiltration doesn't exceed infiltration capacity
+        topThick = 5; % first 5 cm of the soil
+        satCap = SoilProperties.theta_s0 * topThick; % saturation capacity represented by saturated water content of the top 5 cm of the soil
+        actTheta = ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1); % actual moisture of the top 5 cm of the soil
+        infCap = (satCap - actTheta) / TimeProperties.DELT; % (cm/sec)
+        infCap_min = min(Ks0, infCap);
+
+        % Infiltration excess runoff (Hortonian runoff). Note: Dunnian runoff is calculated in the +io/loadForcingData file
+        if Precip_msr(KT) > infCap_min
+            ForcingData.R_Hort(KT) = Precip_msr(KT) - infCap_min;
+        else
+            ForcingData.R_Hort(KT) = 0;
+        end
+
+        Precip(KT) = min(Precip_msr(KT), infCap_min);
+        ForcingData.applied_inf(KT) = Precip(KT); % applied infiltration after removing Hortonian runoff
 
         if SoilVariables.Tss(KT) > 0
-            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT;
+            Precip(KT) = Precip(KT);
         else
-            Precip(KT) = Precip_msr(KT) * 0.1 / TimeProperties.DELT;
+            Precip(KT) = Precip(KT);
             Precipp = Precipp + Precip(KT);
             Precip(KT) = 0;
         end
 
         if SoilVariables.Tss(KT) > 0
-            AVAIL0 = Precip(KT) + Precipp + BoundaryCondition.DSTOR0 / Delt_t;
+            AVAIL0 = Precip(KT) + Precipp + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
             Precipp = 0;
         else
             AVAIL0 = Precip(KT) + BoundaryCondition.DSTOR0 / Delt_t;

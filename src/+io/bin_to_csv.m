@@ -1,4 +1,4 @@
-function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
+function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
     %% flu
     flu_names = {'simulation_number', 'nu_iterations', 'year', 'DoY', ...
                  'Rntot', 'lEtot', 'Htot', ...
@@ -11,6 +11,21 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
                  'W m-2', ' W m-2', 'W m-2', 'W m-2', 'umol m-2 s-1', ...
                  'umol m-2 s-1', ' umol m-2 s-1', 'umol m-2 s-1', 'W m-2', 'umol m-2 s-1', 'W m-2', 'W m-2', 'mm s-1', 'mm s-1', 'mm s-1', 'Kg m-2 s-1', 'Kg m-2 s-1'};
     write_output(flu_names, flu_units, fnames.flu_file, n_col.flu, ns);
+
+    if GroundwaterSettings.GroundwaterCoupling % added by Mostafa
+        %% water balance fluxes
+        flu2_names = {'simulation_number', 'nu_iterations', 'year', 'DoY', 'Precip', 'Applied_inf', 'R_Hort', ...
+                      'R_Dunn', 'RS_tot', 'RWUs', 'RWUg', 'Trap', 'Evap', 'ET', 'Recharge'};
+
+        flu2_units = {'', '', '', '', 'cm s-1', 'cm s-1', 'cm s-1', ...
+                      'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1'};
+        write_output(flu2_names, flu2_units, fnames.flu2_file, n_col.flu2, ns);
+
+        %% groundwater fluxes
+        gwflu_names = {'simulation_number', 'year', 'DoY', 'QLh', 'QLT', 'QLa', 'QVH', 'QVT', 'QVa', 'Recharge'};
+        gwflu_units = {'', '', '', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1'};
+        write_output(gwflu_names, gwflu_units, fnames.gwflu_file, n_col.gwflu, ns);
+    end
 
     %% surftemp
     surftemp_names = {'simulation_number', 'year', 'DoY', ...
@@ -37,30 +52,61 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer)
     depth = arrayfun(@(x) num2str(x), SoilLayer.depth, "UniformOutput", false);
     thickness = arrayfun(@(x) num2str(x), SoilLayer.thickness, "UniformOutput", false);
 
-    %% Prepare soil moisture data
+    %% Soil moisture data
     Sim_Theta_names = [depth; thickness];
     Sim_Theta_units = repelem({'m-3 m-3'}, length(depth));
-    write_output(Sim_Theta_names, Sim_Theta_units, ...
-                 fnames.Sim_Theta_file, n_col.Sim_Theta, ns, true);
+    write_output(Sim_Theta_names, Sim_Theta_units, fnames.Sim_Theta_file, n_col.Sim_Theta, ns, true);
 
-    %% Prepare soil temperature data
+    %% Soil temperature data
     Sim_Temp_names = [depth; thickness];
     Sim_Temp_units = repelem({'oC'}, length(depth));
-    write_output(Sim_Temp_names, Sim_Temp_units, ...
-                 fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true);
+    write_output(Sim_Temp_names, Sim_Temp_units, fnames.Sim_Temp_file, n_col.Sim_Temp, ns, true);
 
-    %% water stress factor
+    %% Water stress factor
     waterStressFactor_names = {'simulation_number', 'year', 'DoY', 'soilWaterStressFactor'};
     waterStressFactor_units = {'', '', '', '-'};
     write_output(waterStressFactor_names, waterStressFactor_units, fnames.waterStressFactor_file, n_col.waterStressFactor, ns);
 
-    %% water potential
+    %% Leaf water potential
     waterPotential_names = {'simulation_number', 'year', 'DoY', 'leafWaterPotential'};
     waterPotential_units = {'', '', '', 'm'};
     write_output(waterPotential_names, waterPotential_units, fnames.waterPotential_file, n_col.waterPotential, ns);
 
-    %% spectrum (added on 19 September 2008)
+    %% Soil matric potential
+    Sim_hh_names = [depth; thickness];
+    Sim_hh_units = repelem({'cm'}, length(depth));
+    write_output(Sim_hh_names, Sim_hh_units, fnames.Sim_hh_file, n_col.Sim_hh, ns, true);
 
+    %% Soil fluxes (liquid and vapour)
+    Sim_qlh_names = [depth; thickness];
+    Sim_qlh_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qlh_names, Sim_qlh_units, fnames.Sim_qlh_file, n_col.Sim_qlh, ns, true);
+
+    Sim_qlt_names = [depth; thickness];
+    Sim_qlt_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qlt_names, Sim_qlt_units, fnames.Sim_qlt_file, n_col.Sim_qlt, ns, true);
+
+    Sim_qla_names = [depth; thickness];
+    Sim_qla_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qla_names, Sim_qla_units, fnames.Sim_qla_file, n_col.Sim_qla, ns, true);
+
+    Sim_qvh_names = [depth; thickness];
+    Sim_qvh_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qvh_names, Sim_qvh_units, fnames.Sim_qvh_file, n_col.Sim_qvh, ns, true);
+
+    Sim_qvt_names = [depth; thickness];
+    Sim_qvt_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qvt_names, Sim_qvt_units, fnames.Sim_qvt_file, n_col.Sim_qvt, ns, true);
+
+    Sim_qva_names = [depth; thickness];
+    Sim_qva_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qva_names, Sim_qva_units, fnames.Sim_qva_file, n_col.Sim_qva, ns, true);
+
+    Sim_qtot_names = [depth; thickness];
+    Sim_qtot_units = repelem({'cm s-1'}, length(depth));
+    write_output(Sim_qtot_names, Sim_qtot_units, fnames.Sim_qtot_file, n_col.Sim_qtot, ns, true);
+
+    %% Spectrum (added on 19 September 2008)
     spectrum_hemis_optical_names = {'hemispherically integrated radiation spectrum'};
     spectrum_hemis_optical_units = {'W m-2 um-1'};
     write_output(spectrum_hemis_optical_names, spectrum_hemis_optical_units, fnames.spectrum_hemis_optical_file, n_col.spectrum_hemis_optical, ns, true);

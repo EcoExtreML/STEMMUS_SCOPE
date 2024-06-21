@@ -1,4 +1,6 @@
-function [Output_dir, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, output_path, spectral, options)
+function [Output_dir, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, ...
+                                                           output_path, spectral, options, GroundwaterSettings, gwfluxes)
+
     %% Set Output dir
     Output_dir = output_path;
 
@@ -26,10 +28,23 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     fnames.Sim_Theta_file = fullfile(Output_dir, 'Sim_Theta.bin');  % soil moisture
     fnames.Sim_Temp_file = fullfile(Output_dir, 'Sim_Temp.bin');  % soil temperature
     fnames.waterStressFactor_file = fullfile(Output_dir, 'waterStressFactor.bin');
-    fnames.waterPotential_file = fullfile(Output_dir, 'waterPotential.bin');
+    fnames.waterPotential_file = fullfile(Output_dir, 'waterPotential.bin'); % leaf water potential
+    fnames.Sim_hh_file = fullfile(Output_dir, 'Sim_hh.bin'); % soil matric potential
+    fnames.Sim_qlh_file = fullfile(Output_dir, 'qlh.bin'); % liquid flux due to matric potential gradient
+    fnames.Sim_qlt_file = fullfile(Output_dir, 'qlt.bin'); % liquid flux due to temprature gradient
+    fnames.Sim_qla_file = fullfile(Output_dir, 'qla.bin'); % liquid flux due to dry air pressure gradient
+    fnames.Sim_qvh_file = fullfile(Output_dir, 'qvh.bin'); % vapour flux due to matric potential gradient
+    fnames.Sim_qvt_file = fullfile(Output_dir, 'qvt.bin'); % vapour flux due to temprature gradient
+    fnames.Sim_qva_file = fullfile(Output_dir, 'qva.bin'); % vapour flux due to dry air pressure gradient
+    fnames.Sim_qtot_file = fullfile(Output_dir, 'qtot.bin'); % total flux (liquid + vapour)
 
     if options.calc_ebal
         fnames.spectrum_obsdir_BlackBody_file = fullfile(Output_dir, 'spectrum_obsdir_BlackBody.bin');  % spectrum observation direction
+    end
+
+    if GroundwaterSettings.GroundwaterCoupling
+        fnames.flu2_file = fullfile(Output_dir, 'fluxes2.bin');
+        fnames.gwflu_file = fullfile(Output_dir, 'gwfluxes.bin');
     end
 
     % if ~(options.simulation==1)

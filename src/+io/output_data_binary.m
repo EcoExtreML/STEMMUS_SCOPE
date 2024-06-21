@@ -1,4 +1,8 @@
-function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential)
+function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, ...
+                                    spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential, ...
+                                    Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ...
+                                    ForcingData, RS, RWUs, RWUg, GroundwaterSettings, gwfluxes)
+
     %% OUTPUT DATA
     % author C. Van der Tol
     % date:      30 Nov 2019
@@ -25,25 +29,76 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     n_col.radiation = length(radiation_out);
     fwrite(f.radiation_file, radiation_out, 'double');
 
-    %% Soil temperature
+    %% Soil moisture
     Sim_Theta_out =  [Sim_Theta_U(k, :)];
     n_col.Sim_Theta = length(Sim_Theta_out);
     fwrite(f.Sim_Theta_file, Sim_Theta_out, 'double');
+
+    %% Soil temperature
     Sim_Temp_out =  [Sim_Temp(k, :)];
     n_col.Sim_Temp = length(Sim_Temp_out);
     fwrite(f.Sim_Temp_file, Sim_Temp_out, 'double');
 
-    %% water stress factor
+    %% Water stress factor
     waterStressFactor_out = [k xyt.year(k) xyt.t(k) WaterStress.soil];
     n_col.waterStressFactor = length(waterStressFactor_out);
     fwrite(f.waterStressFactor_file, waterStressFactor_out, 'double');
 
-    %% water potential
+    %% Leaf Water potential
     waterPotential_out = [k xyt.year(k) xyt.t(k) WaterPotential.leaf];
     n_col.waterPotential = length(waterPotential_out);
     fwrite(f.waterPotential_file, waterPotential_out, 'double');
 
-    %% spectrum (added on 19 September 2008)
+    %% Soil matric head, added by Mostafa
+    Sim_hh_out =  [Sim_hh(k, :)];
+    n_col.Sim_hh = length(Sim_hh_out);
+    fwrite(f.Sim_hh_file, Sim_hh_out, 'double');
+
+    %% Liquid and Vapor fluxes (QLh, QLT, QLa, QVh, QVT, QLa, Qtot)
+    Sim_qlh_out =  [Sim_qlh(k, :)];
+    n_col.Sim_qlh = length(Sim_qlh_out);
+    fwrite(f.Sim_qlh_file, Sim_qlh_out, 'double');
+
+    Sim_qlt_out =  [Sim_qlt(k, :)];
+    n_col.Sim_qlt = length(Sim_qlt_out);
+    fwrite(f.Sim_qlt_file, Sim_qlt_out, 'double');
+
+    Sim_qvh_out =  [Sim_qvh(k, :)];
+    n_col.Sim_qvh = length(Sim_qvh_out);
+    fwrite(f.Sim_qvh_file, Sim_qvh_out, 'double');
+
+    Sim_qvt_out =  [Sim_qvt(k, :)];
+    n_col.Sim_qvt = length(Sim_qvt_out);
+    fwrite(f.Sim_qvt_file, Sim_qvt_out, 'double');
+
+    Sim_qla_out =  [Sim_qla(k, :)];
+    n_col.Sim_qla = length(Sim_qla_out);
+    fwrite(f.Sim_qla_file, Sim_qla_out, 'double');
+
+    Sim_qva_out =  [Sim_qva(k, :)];
+    n_col.Sim_qva = length(Sim_qva_out);
+    fwrite(f.Sim_qva_file, Sim_qva_out, 'double');
+
+    Sim_qtot_out =  [Sim_qtot(k, :)];
+    n_col.Sim_qtot = length(Sim_qtot_out);
+    fwrite(f.Sim_qtot_file, Sim_qtot_out, 'double');
+
+    if GroundwaterSettings.GroundwaterCoupling
+        %% Water balance fluxes
+        flu2_out = [k iter.counter xyt.year(k) xyt.t(k) ForcingData.Precip_msr(k) ForcingData.applied_inf(k), ...
+                    ForcingData.R_Hort(k) ForcingData.R_Dunn(k) RS(k) RWUs RWUg, ...
+                    Trap(k) Evap(k) Trap(k) + Evap(k) gwfluxes.recharge];
+        n_col.flu2 = length(flu2_out);
+        fwrite(f.flu2_file, flu2_out, 'double');
+
+        %% Groundwater fluxes (Recharge fluxes components)
+        gwflu_out = [k xyt.year(k) xyt.t(k) gwfluxes.QLh gwfluxes.QLT gwfluxes.QLa gwfluxes.QVH, ...
+                     gwfluxes.QVT gwfluxes.QVa gwfluxes.recharge];
+        n_col.gwflu = length(gwflu_out);
+        fwrite(f.gwflu_file, gwflu_out, 'double');
+    end
+
+    %% Spectrum (added on 19 September 2008)
     spectrum_hemis_optical_out =  rad.Eout_;
     n_col.spectrum_hemis_optical = length(spectrum_hemis_optical_out);
     fwrite(f.spectrum_hemis_optical_file, spectrum_hemis_optical_out, 'double');

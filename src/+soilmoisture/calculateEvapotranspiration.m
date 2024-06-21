@@ -1,6 +1,13 @@
-function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt)
+function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, GroundwaterSettings)
 
     ModelSettings = io.getModelSettings();
+
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
+        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
+    else % Groundwater Coupling is activated
+        % index of bottom layer after neglecting saturated layers (from bottom to top)
+        indxBotm = GroundwaterSettings.indxBotmLayer;
+    end
 
     Rn = (ForcingData.Rn_msr(KT)) * 8.64 / 24 / 100 * 1;
     Rn_SOIL = Rn * 0.68;
@@ -34,4 +41,14 @@ function [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt] = calculateEvapotranspiratio
         end
     end
     Trap(KT) = Tp_t;   % root water uptake integration by ModelSettings.DeltZ;
+
+    % Calculate root water uptake from soil water (RWUs) and groundwater (RWUg)
+    RWU = RWU * 100; % unit conversion from m/sec to cm/sec
+    if GroundwaterSettings.GroundwaterCoupling == 1
+        RWUs = sum(RWU(indxBotm:ModelSettings.NL));
+        RWUg = sum(RWU(1:indxBotm - 1));
+    else
+        RWUs = sum(RWU(1:ModelSettings.NL));
+        RWUg = 0;
+    end
 end

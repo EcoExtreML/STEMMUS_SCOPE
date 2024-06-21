@@ -62,7 +62,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     TOLD = InitialValues.TOLD;
     SAVE = InitialValues.SAVE;
     P_gOLD = InitialValues.P_gOLD;
-
+    gwfluxes = struct();
+    
     %% 1. define Constants
     Constants = io.define_constants();
 

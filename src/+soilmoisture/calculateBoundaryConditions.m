@@ -72,7 +72,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
         % Check applied infiltration doesn't exceed infiltration capacity
         topThick = 5; % first 5 cm of the soil
         satCap = SoilProperties.theta_s0 * topThick; % saturation capacity represented by saturated water content of the top 5 cm of the soil
-        actTheta = ModelSettings.DeltZ(51:54) * SoilVariables.Theta_UU(51:54, 1); % actual moisture of the top 5 cm of the soil
+        actTheta = ModelSettings.DeltZ(end - 4:end - 1) * SoilVariables.Theta_UU(end - 4:end - 1, 1); % actual moisture of the top 5 cm of the soil
         infCap = (satCap - actTheta) / TimeProperties.DELT; % (cm/sec)
         infCap_min = min(Ks0, infCap);
 

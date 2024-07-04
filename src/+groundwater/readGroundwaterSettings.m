@@ -19,7 +19,6 @@ function GroundwaterSettings = readGroundwaterSettings()
         aqLayers            elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
         topLevel            elevation of the top surface aquifer layer
         aqBotms             elevation of the bottom layer of all MODFLOW aquifers
-        botmSoilLevel       elevation of the bottom layer of the last STEMMUS soil layer
         SS                  specific storage of MODFLOW aquifers, default value = 0.05 (unitless)
         SY                  specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)
         soilThick           cumulative soil layers thickness (from top to bottom)
@@ -53,13 +52,6 @@ function GroundwaterSettings = readGroundwaterSettings()
         gw_Dep = 1.0; % to avoid model crashing, assign minimum gw_Dep value of 1 cm
     elseif gw_Dep > ModelSettings.Tot_Depth
         warning('Groundwater table is below the end of the soil column!');
-    end
-
-    for i = GroundwaterSettings.aqBotms
-        if i <= GroundwaterSettings.headBotmLayer
-            GroundwaterSettings.botmSoilLevel = i; % bottom layer level of the last STEMMUS soil layer
-            break
-        end
     end
 
     % Define Specific yield (SY) and Specific storage (SS) with default values (otherwise received from MODFLOW through BMI)

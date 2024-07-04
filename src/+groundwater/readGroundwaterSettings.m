@@ -39,11 +39,11 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.tempBotm = 17.0; % groundwater temperature (C), received from MODFLOW through BMI
 
     % Call MODFLOW layers information (number of aquifer layers and their elevations, etc)
-    GroundwaterSettings.numAqL = 5; % number of MODFLOW aquifer layers, received from MODFLOW through BMI
-    numAqN = GroundwaterSettings.numAqL + 1; % number of MODFLOW aquifer nodes
+    % GroundwaterSettings.numAqL = 5; % number of MODFLOW aquifer layers, received from MODFLOW through BMI
+    % numAqN = GroundwaterSettings.numAqL + 1; % number of MODFLOW aquifer nodes
     GroundwaterSettings.aqLayers = [2000.0  1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     GroundwaterSettings.topLevel = GroundwaterSettings.aqLayers(1); % elevation of the top surface aquifer layer
-    GroundwaterSettings.aqBotms = GroundwaterSettings.aqLayers(2:end); % elevation of the bottom layer of all MODFLOW aquifers, received from MODFLOW through BMI
+    % GroundwaterSettings.aqBotms = GroundwaterSettings.aqLayers(2:end); % elevation of the bottom layer of all MODFLOW aquifers, received from MODFLOW through BMI
     gw_Dep = GroundwaterSettings.topLevel - GroundwaterSettings.headBotmLayer; % depth from top layer to groundwater level
 
     % Check that the position of the water table is within the soil column

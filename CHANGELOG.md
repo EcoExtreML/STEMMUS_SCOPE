@@ -16,9 +16,12 @@
 - The bug in the QVT calculations discussed in
   [#230](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230) and fixed in
   [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)
-- The bug in  activating the dry air calculations discussed in
+- The bug in activating the dry air calculations discussed in
   [#227](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/230) and fixed in
   [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/227)
+- Defining the indices of the first four layers discussed in
+  and [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and fixed in
+  [#238](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/238)
 
 
 <a name="1.5.0"></a>

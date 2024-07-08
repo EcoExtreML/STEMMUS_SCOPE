@@ -51,6 +51,9 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Load groundwater settings
     GroundwaterSettings = groundwater.readGroundwaterSettings();
 
+    % Calulate soil layer thickness
+    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
+
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
 

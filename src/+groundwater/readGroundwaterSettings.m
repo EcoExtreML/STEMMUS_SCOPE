@@ -21,15 +21,9 @@ function GroundwaterSettings = readGroundwaterSettings()
         aqBotms             elevation of the bottom layer of all MODFLOW aquifers
         % SS                  specific storage of MODFLOW aquifers, default value = 0.05 (unitless)
         % SY                  specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)
-        soilThick           cumulative soil layers thickness (from top to bottom)
         gw_Dep              water table depth: depth from top soil layer to groundwater level, calculated from MODFLOW inputs
         % indxAqLay           index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
     %}
-
-    % Load model settings
-    ModelSettings = io.getModelSettings();
-    NN = ModelSettings.NN; % Number of nodes
-    NL = ModelSettings.NL; % Number of layers
 
     % Activate/deactivate Groundwater coupling
     GroundwaterSettings.GroundwaterCoupling = 0; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, update value to = 1 -> through BMI
@@ -58,21 +52,13 @@ function GroundwaterSettings = readGroundwaterSettings()
     % GroundwaterSettings.SY = [0.05  0.05  0.05  0.05  0.05]; % default SY = 0.05 (unitless)
     % GroundwaterSettings.SS = [1e-7  1e-7  1e-7  1e-7  1e-7]; % default SS = 1e-5 1/m = 1e-7 1/cm
 
-    % Calculate soil layers thickness (cumulative layers thickness; e.g. 1, 2, 3, 5, 10, ......., 480, total soil depth)
-    soilThick = zeros(NN, 1); % cumulative soil layers thickness
-    soilThick(1) = 0;
-    DeltZ = ModelSettings.DeltZ;
-    DeltZ_R = ModelSettings.DeltZ_R;
-
-    for i = 2:NL
-        soilThick(i) = soilThick(i - 1) + DeltZ_R(i - 1);
-    end
-    soilThick(NN) = ModelSettings.Tot_Depth; % total soil depth
-
     % Calculate the index of the bottom layer level using MODFLOW data
     indxBotmLayer_R = [];
 
-    for i = 1:NL
+    % Load model settings
+    ModelSettings = io.getModelSettings();
+
+    for i = 1:NL = ModelSettings.NL
         midThick = (soilThick(i) + soilThick(i + 1)) / 2;
         if gw_Dep >= soilThick(i) && gw_Dep < soilThick(i + 1)
             if gw_Dep < midThick
@@ -88,7 +74,7 @@ function GroundwaterSettings = readGroundwaterSettings()
 
     % indxBotmLayer_R: index of bottom layer that contains current headBotmLayer
     % Note: indxBotmLayer_R starts from top to bottom, opposite of STEMMUS (bottom to top)
-    indxBotmLayer = NN - indxBotmLayer_R + 1; % index of bottom layer (from bottom to top)
+    indxBotmLayer = ModelSettings.NN - indxBotmLayer_R + 1; % index of bottom layer (from bottom to top)
 
     % Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
     % indxAqLay = zeros(NN, 1);
@@ -112,6 +98,5 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.indxBotmLayer_R = indxBotmLayer_R;
     GroundwaterSettings.indxBotmLayer = indxBotmLayer;
     GroundwaterSettings.gw_Dep = gw_Dep;
-    GroundwaterSettings.soilThick = soilThick;
     % GroundwaterSettings.indxAqLay = indxAqLay;
 end

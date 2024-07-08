@@ -54,6 +54,11 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Calulate soil layer thickness
     GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
+    % Calculate the index of the bottom layer level
+    [indxBotmLayer_R, indxBotmLayer] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
+    GroundwaterSettings.indxBotmLayer_R = indxBotmLayer_R;
+    GroundwaterSettings.indxBotmLayer = indxBotmLayer;
+
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
 

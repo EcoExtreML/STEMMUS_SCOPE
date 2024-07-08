@@ -11,18 +11,15 @@ function GroundwaterSettings = readGroundwaterSettings()
                                 %%%%%%%%%% Variables definitions %%%%%%%%%%
 
         headBotmLayer       groundwater head (cm) at the bottom layer, received from MODFLOW through BMI
-        indxBotmLayer_R     index of the bottom layer that contains the current headBotmLayer (top to bottom)
-        indxBotmLayer       index of the bottom layer that contains the current headBotmLayer (bottom to top)
         tempBotm            groundwater temperature (C), received from MODFLOW through BMI
-        numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
-        numAqN              number of MODFLOW aquifer nodes (numAqL + 1)
         aqLayers            elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
         topLevel            elevation of the top surface aquifer layer
-        aqBotms             elevation of the bottom layer of all MODFLOW aquifers
+        gw_Dep              water table depth: depth from top soil layer to groundwater level, calculated from MODFLOW inputs
         % SS                  specific storage of MODFLOW aquifers, default value = 0.05 (unitless)
         % SY                  specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)
-        gw_Dep              water table depth: depth from top soil layer to groundwater level, calculated from MODFLOW inputs
         % indxAqLay           index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
+        % numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
+        % numAqN              number of MODFLOW aquifer nodes (numAqL + 1)
     %}
 
     % Activate/deactivate Groundwater coupling
@@ -37,7 +34,6 @@ function GroundwaterSettings = readGroundwaterSettings()
     % numAqN = GroundwaterSettings.numAqL + 1; % number of MODFLOW aquifer nodes
     GroundwaterSettings.aqLayers = [2000.0  1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     GroundwaterSettings.topLevel = GroundwaterSettings.aqLayers(1); % elevation of the top surface aquifer layer
-    % GroundwaterSettings.aqBotms = GroundwaterSettings.aqLayers(2:end); % elevation of the bottom layer of all MODFLOW aquifers, received from MODFLOW through BMI
     gw_Dep = GroundwaterSettings.topLevel - GroundwaterSettings.headBotmLayer; % depth from top layer to groundwater level
 
     % Check that the position of the water table is within the soil column
@@ -51,30 +47,6 @@ function GroundwaterSettings = readGroundwaterSettings()
     % Define Specific yield (SY) and Specific storage (SS) with default values (otherwise received from MODFLOW through BMI)
     % GroundwaterSettings.SY = [0.05  0.05  0.05  0.05  0.05]; % default SY = 0.05 (unitless)
     % GroundwaterSettings.SS = [1e-7  1e-7  1e-7  1e-7  1e-7]; % default SS = 1e-5 1/m = 1e-7 1/cm
-
-    % Calculate the index of the bottom layer level using MODFLOW data
-    indxBotmLayer_R = [];
-
-    % Load model settings
-    ModelSettings = io.getModelSettings();
-
-    for i = 1:NL = ModelSettings.NL
-        midThick = (soilThick(i) + soilThick(i + 1)) / 2;
-        if gw_Dep >= soilThick(i) && gw_Dep < soilThick(i + 1)
-            if gw_Dep < midThick
-                indxBotmLayer_R = i;
-            elseif gw_Dep >= midThick
-                indxBotmLayer_R = i + 1;
-            end
-            break
-        elseif gw_Dep >= soilThick(i + 1)
-            continue
-        end
-    end
-
-    % indxBotmLayer_R: index of bottom layer that contains current headBotmLayer
-    % Note: indxBotmLayer_R starts from top to bottom, opposite of STEMMUS (bottom to top)
-    indxBotmLayer = ModelSettings.NN - indxBotmLayer_R + 1; % index of bottom layer (from bottom to top)
 
     % Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
     % indxAqLay = zeros(NN, 1);
@@ -94,9 +66,6 @@ function GroundwaterSettings = readGroundwaterSettings()
     %     end
     % end
 
-    % outputs (will be called by other functions)
-    GroundwaterSettings.indxBotmLayer_R = indxBotmLayer_R;
-    GroundwaterSettings.indxBotmLayer = indxBotmLayer;
     GroundwaterSettings.gw_Dep = gw_Dep;
     % GroundwaterSettings.indxAqLay = indxAqLay;
 end

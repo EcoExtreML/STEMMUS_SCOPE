@@ -12,7 +12,7 @@ function [indxBotmLayer, indxBotmLayer_R] = calculateIndexBottomLayer(soilThick,
     % Load model settings
     ModelSettings = io.getModelSettings();
 
-    for i = 1:NL = ModelSettings.NL
+    for i = 1:ModelSettings.NL
         midThick = (soilThick(i) + soilThick(i + 1)) / 2;
         if gw_Dep >= soilThick(i) && gw_Dep < soilThick(i + 1)
             if gw_Dep < midThick

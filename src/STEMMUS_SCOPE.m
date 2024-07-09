@@ -287,7 +287,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth)
+        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % update Dunnian runoff
         ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
@@ -348,7 +348,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth)
+        % updated GroundwaterSettings.headBotmLayer comes from MODFLOW through BMI
+        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % update Dunnian runoff
         ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);

@@ -51,14 +51,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Load groundwater settings
     GroundwaterSettings = groundwater.readGroundwaterSettings();
 
-    % Calulate soil layer thickness
-    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
-
-    % Calculate the index of the bottom layer level
-    [indxBotmLayer_R, indxBotmLayer] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
-    GroundwaterSettings.indxBotmLayer_R = indxBotmLayer_R;
-    GroundwaterSettings.indxBotmLayer = indxBotmLayer;
-
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
 
@@ -291,10 +283,18 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     TOLD_CRIT = [];
 
     % 15. Initialize Groundwater coupling (groundwater depth)
+    % Calulate soil layer thickness
+    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
+
     if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        [depToGWT_inital, indxGWLay_inital] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
-        depToGWT_strt = depToGWT_inital; % (for updating after the end of the loop)
-        indxGWLay_strt = indxGWLay_inital;
+        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth)
+
+        % update Dunnian runoff
+        ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+
+        % Calculate the index of the bottom layer level
+        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
+        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
     end
 
     % for soil moisture and temperature outputs
@@ -347,6 +347,15 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
+
+        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth)
+
+        % update Dunnian runoff
+        ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+
+        % Calculate the index of the bottom layer level
+        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
+
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

@@ -12,7 +12,7 @@ function GroundwaterSettings = readGroundwaterSettings()
 
         headBotmLayer       groundwater head (cm) at the bottom layer, received from MODFLOW through BMI
         tempBotm            groundwater temperature (C), received from MODFLOW through BMI
-        aqLayers            elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
+        topLevel            elevation of the top surface aquifer layer, received from MODFLOW through BMI
         % SS                  specific storage of MODFLOW aquifers, default value = 0.05 (unitless)
         % SY                  specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)
         % numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
@@ -29,10 +29,8 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.tempBotm = 17.0;
 
     % Call MODFLOW layers information (number of aquifer layers and their elevations, etc)
-    GroundwaterSettings.aqLayers = [2000.0  1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
-
     % elevation of the top surface aquifer layer
-    GroundwaterSettings.topLevel = GroundwaterSettings.aqLayers(1);
+    GroundwaterSettings.topLevel = 2000.0;
 
     % water table depth: depth from top soil layer to groundwater level
     GroundwaterSettings.gw_Dep = GroundwaterSettings.topLevel - GroundwaterSettings.headBotmLayer; % depth from top layer to groundwater level
@@ -49,5 +47,7 @@ function GroundwaterSettings = readGroundwaterSettings()
     % GroundwaterSettings.SY = [0.05  0.05  0.05  0.05  0.05]; % default SY = 0.05 (unitless)
     % GroundwaterSettings.SS = [1e-7  1e-7  1e-7  1e-7  1e-7]; % default SS = 1e-5 1/m = 1e-7 1/cm
     % GroundwaterSettings.numAqL = 5; % number of MODFLOW aquifer layers, received from MODFLOW through BMI
+    % GroundwaterSettings.aqLayers = [2000.0  1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
+
 
 end

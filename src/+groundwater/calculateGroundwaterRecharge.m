@@ -66,8 +66,10 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
 
     % (d) Calculations of SY
     % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
-    % indxAqLay = GroundwaterSettings.indxAqLay; % index of MODFLOW aquifer layers for each STEMMUS soil layer
     % aqLayers = GroundwaterSettings.aqLayers; % elevation of top surface level and all bottom levels of aquifer layers
+    % numAqL = GroundwaterSettings.numAqL; % number of MODFLOW aquifer layers
+    % indxAqLay = calculateIndexAquifer(aqLayers, numAqL); % index of MODFLOW aquifer layers for each STEMMUS soil layer
+
     % K = indxAqLay(indxGWLay_end);
     % Thk = aqLayers(1) - aqLayers(K) - depToGWT_end;
     % SY = GroundwaterSettings.SY;

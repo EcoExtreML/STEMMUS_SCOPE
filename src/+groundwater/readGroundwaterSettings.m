@@ -22,16 +22,21 @@ function GroundwaterSettings = readGroundwaterSettings()
     GroundwaterSettings.GroundwaterCoupling = 0; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, update value to = 1 -> through BMI
 
     % Initialize the variables (head, temperature, air pressure) at the bottom boundary (start of saturated zone)
-    GroundwaterSettings.headBotmLayer = 1950.0; % groundwater head (cm) at bottom layer, received from MODFLOW through BMI
-    GroundwaterSettings.tempBotm = 17.0; % groundwater temperature (C), received from MODFLOW through BMI
+    % groundwater head (cm) at bottom layer, received from MODFLOW through BMI
+    GroundwaterSettings.headBotmLayer = 1950.0;
+
+    % groundwater temperature (C), received from MODFLOW through BMI
+    GroundwaterSettings.tempBotm = 17.0;
 
     % Call MODFLOW layers information (number of aquifer layers and their elevations, etc)
     GroundwaterSettings.aqLayers = [2000.0  1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
 
     % elevation of the top surface aquifer layer
     GroundwaterSettings.topLevel = GroundwaterSettings.aqLayers(1);
+
     % water table depth: depth from top soil layer to groundwater level
     GroundwaterSettings.gw_Dep = GroundwaterSettings.topLevel - GroundwaterSettings.headBotmLayer; % depth from top layer to groundwater level
+
     % Check that the position of the water table is within the soil column
     if GroundwaterSettings.gw_Dep <= 0
         warning('The soil is fully saturated up to the land surface level!');

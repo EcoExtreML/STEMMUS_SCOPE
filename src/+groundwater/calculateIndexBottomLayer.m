@@ -1,4 +1,4 @@
-function [headBotmLayer, headBotmLayer_R] = calculateIndexBottomLayer(soilThick, gw_Dep)
+function [indxBotmLayer, indxBotmLayer_R] = calculateIndexBottomLayer(soilThick, gw_Dep)
     %{
         Calculate the index of the bottom layer level using MODFLOW data
 

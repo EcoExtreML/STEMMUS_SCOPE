@@ -286,17 +286,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Calulate soil layer thickness
     GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
-    if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
-
-        % update Dunnian runoff
-        ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
-
-        % Calculate the index of the bottom layer level
-        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
-        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
-    end
-
     % for soil moisture and temperature outputs
     monitorDepthTemperature = ModelSettings.NL:-1:1;
     monitorDepthSoilMoisture = ModelSettings.NL:-1:1;
@@ -356,7 +345,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
-
+        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
@@ -765,9 +754,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Recharge calculations, added by Mostafa
         if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-            [depToGWT_end, indxGWLay_end, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
-            depToGWT_strt = depToGWT_end; % for next time step
-            indxGWLay_strt = indxGWLay_end; % for next time step
+            % update depToGWT_strt, indxGWLay_strt for next time step
+            [depToGWT_strt, indxGWLay_strt, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
             if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
                 gwfluxes.recharge = 0;
             end

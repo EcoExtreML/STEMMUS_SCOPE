@@ -336,8 +336,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        % update GroundwaterSettings.headBotmLayer comes from MODFLOW through BMI
+        % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
+        GroundwaterSettings.tempBotm = GroundwaterSettings.tempBotm;
 
         % update Dunnian runoff
         [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData, GroundwaterSettings.gw_Dep);

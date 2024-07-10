@@ -282,8 +282,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     Delt_t0 = Delt_t; % Duration of last time step
     TOLD_CRIT = [];
 
-    % 15. Initialize Groundwater coupling (groundwater depth)
-    % Calulate soil layer thickness
+    % 15. Calculate soil layer thickness
     GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
     % for soil moisture and temperature outputs
@@ -337,15 +336,18 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        % updated GroundwaterSettings.headBotmLayer comes from MODFLOW through BMI
+        % update GroundwaterSettings.headBotmLayer comes from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % update Dunnian runoff
-        ForcingData.R_Dunn = groundwater.updateRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+        [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
+
+        % Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
+        % indxAqLay = groundwater.calculateIndexAquifer(GroundwaterSettings.aqlevels, GroundwaterSettings.numAqL, GroundwaterSettings.soilThick);
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

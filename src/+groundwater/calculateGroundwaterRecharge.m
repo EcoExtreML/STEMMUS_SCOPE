@@ -31,7 +31,7 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         STheta_LL               soil moisture at the end of the current time step (top to bottom)
         soilThick               cumulative soil layers thickness (from top to bottom)
         indxAqLay               index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
-        aqLayers                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
+        aqlevels                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     %}
 
     % Start Recharge calculations
@@ -66,18 +66,18 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
 
     % (d) Calculations of SY
     % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
-    % aqLayers = GroundwaterSettings.aqLayers; % elevation of top surface level and all bottom levels of aquifer layers
+    % aqlevels = GroundwaterSettings.aqlevels; % elevation of top surface level and all bottom levels of aquifer layers
     % numAqL = GroundwaterSettings.numAqL; % number of MODFLOW aquifer layers
-    % indxAqLay = calculateIndexAquifer(aqLayers, numAqL); % index of MODFLOW aquifer layers for each STEMMUS soil layer
+    % soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
+    % indxAqLay = groundwater.calculateIndexAquifer(aqlevels, numAqL, soilThick); % index of MODFLOW aquifer layers for each STEMMUS soil layer
 
     % K = indxAqLay(indxGWLay_end);
-    % Thk = aqLayers(1) - aqLayers(K) - depToGWT_end;
+    % Thk = aqlevels(1) - aqlevels(K) - depToGWT_end;
     % SY = GroundwaterSettings.SY;
     % SS = GroundwaterSettings.SS;
     % S = (SY(K) - SS(K) * Thk) * (depToGWT_strt - depToGWT_end);
 
     % (e) Calculations of sy
-    soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % Number of nodes
     NL = ModelSettings.NL; % Number of layers

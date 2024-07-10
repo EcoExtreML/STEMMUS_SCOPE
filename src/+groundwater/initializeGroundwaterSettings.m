@@ -1,4 +1,4 @@
-function GroundwaterSettings = readGroundwaterSettings()
+function GroundwaterSettings = initializeGroundwaterSettings()
     %{
         added by Mostafa,
         The concept followed to couple STEMMUS to MODFLOW can be found at https://doi.org/10.5194/hess-23-637-2019

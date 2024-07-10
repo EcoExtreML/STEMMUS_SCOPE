@@ -63,19 +63,20 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     else
         recharge_init = Q_flip(indxRchrg); % mean([Q_flip(indxRchrg), Q_flip(indxRchrg_above)])
     end
-
+    
+    %{
     % (d) Calculations of SY
     % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
-    % aqlevels = GroundwaterSettings.aqlevels; % elevation of top surface level and all bottom levels of aquifer layers
-    % numAqL = GroundwaterSettings.numAqL; % number of MODFLOW aquifer layers
-    % soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
-    % indxAqLay = groundwater.calculateIndexAquifer(aqlevels, numAqL, soilThick); % index of MODFLOW aquifer layers for each STEMMUS soil layer
+    aqlevels = GroundwaterSettings.aqlevels; % elevation of top surface level and all bottom levels of aquifer layers
+    numAqL = GroundwaterSettings.numAqL; % number of MODFLOW aquifer layers
+    soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
+    indxAqLay = groundwater.calculateIndexAquifer(aqlevels, numAqL, soilThick); % index of MODFLOW aquifer layers for each STEMMUS soil layer
 
-    % K = indxAqLay(indxGWLay_end);
-    % Thk = aqlevels(1) - aqlevels(K) - depToGWT_end;
-    % SY = GroundwaterSettings.SY;
-    % SS = GroundwaterSettings.SS;
-    % S = (SY(K) - SS(K) * Thk) * (depToGWT_strt - depToGWT_end);
+    K = indxAqLay(indxGWLay_end);
+    Thk = aqlevels(1) - aqlevels(K) - depToGWT_end;
+    SY = GroundwaterSettings.SY;
+    SS = GroundwaterSettings.SS;
+    S = (SY(K) - SS(K) * Thk) * (depToGWT_strt - depToGWT_end);
 
     % (e) Calculations of sy
     ModelSettings = io.getModelSettings();
@@ -89,14 +90,16 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     STheta_LL(1) = Theta_LL(NL, 2);
     STheta_LL(2:1:NN) = Theta_LL(NN - 1:-1:1, 1);
 
-    % sy = 0;
-    % for i = indxRchrg:indxRchrgMax - 1
-    %     sy = sy + 0.5 * (soilThick(i + 1) - soilThick(i)) * (STheta_LL(i) + STheta_LL(i + 1) - STheta_L(i) - STheta_L(i + 1));
-    % end
+    sy = 0;
+    for i = indxRchrg:indxRchrgMax - 1
+        sy = sy + 0.5 * (soilThick(i + 1) - soilThick(i)) * (STheta_LL(i) + STheta_LL(i + 1) - STheta_L(i) - STheta_L(i + 1));
+    end
 
     % (f) Aggregate c, d, and e to get recharge
-    % after couple of tests, it appears that the effect of S and sy is very minor, so they are removed but kept in the code for further investigation
     % recharge = recharge_init + S - sy;
+    %} 
+    
+    % after couple of tests, it appears that the effect of S and sy is very minor, so they are commented but kept in the code for further investigation
     gwfluxes.recharge = recharge_init; % Note: in STEMMUS +ve means up-flow direction and -ve means down (opposite of MODFLOW), so recharge sign needs to be converted in BMI
 
     if isnan(gwfluxes.recharge) || isinf(gwfluxes.recharge)

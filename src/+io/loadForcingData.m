@@ -25,14 +25,16 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     % Note: Adjusting the precipitation after the canopy interception is not implemented yet.
 
     % (1) Saturation excess runoff (Dunnian runoff)
-    % Concept is adopted from the CLM model (see issue 232 in GitHub for more explanation)
-    % Check also the CLM documents (https://doi.org/10.5065/D6N877R0, https://doi.org/10.1029/2005JD006111)
-    wat_Dep = Tot_Depth / 100; % (m)
-    fover = 0.5; % decay factor (fixed to 0.5 m-1)
-    fmax = SoilProperties.fmax; % potential maximum value of fsat
-    fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
-    ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
-    Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
+    if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated
+        % Concept is adopted from the CLM model (see issue 232 in GitHub for more explanation)
+        % Check also the CLM documents (https://doi.org/10.5065/D6N877R0, https://doi.org/10.1029/2005JD006111)
+        wat_Dep = Tot_Depth / 100; % (m)
+        fover = 0.5; % decay factor (fixed to 0.5 m-1)
+        fmax = SoilProperties.fmax; % potential maximum value of fsat
+        fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
+        ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
+        Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
+    end
 
     % (2) Infiltration excess runoff (Hortonian runoff)
     ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in +soilmoisture/calculateBoundaryConditions

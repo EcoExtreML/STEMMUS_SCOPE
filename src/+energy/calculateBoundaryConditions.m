@@ -17,7 +17,7 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
         % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;
         if isempty(GroundwaterSettings.tempBotm) % no available groundwater temperature data
-		    tempBotm = SoilVariables.TT(indxBotm);
+            tempBotm = SoilVariables.TT(indxBotm);
         else
             tempBotm = GroundwaterSettings.tempBotm; % groundwater temperature
         end           

@@ -338,7 +338,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
-        GroundwaterSettings.tempBotm = GroundwaterSettings.tempBotm;
 
         % update Dunnian runoff and ForcingData.Precip_msr
         [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
@@ -346,9 +345,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
-
-        % Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
-        % indxAqLay = groundwater.calculateIndexAquifer(GroundwaterSettings.aqlevels, GroundwaterSettings.numAqL, GroundwaterSettings.soilThick);
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

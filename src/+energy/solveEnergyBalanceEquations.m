@@ -40,7 +40,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
     if GroundwaterSettings.GroundwaterCoupling
         % Assign the groundwater temperature to the saturated layers
         for i = indxBotm - 1:-1:1
-            if isempty(GroundwaterSettings.tempBotm) % no available groundwater temperature data
+            if isnan(GroundwaterSettings.tempBotm) % no available groundwater temperature data
                 SoilVariables.TT(i) = SoilVariables.TT(indxBotm);
             else
                 SoilVariables.TT(i) = GroundwaterSettings.tempBotm; % groundwater temperature;

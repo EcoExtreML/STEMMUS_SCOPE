@@ -25,7 +25,7 @@ function GroundwaterSettings = initializeGroundwaterSettings()
 
     % Initialize the variables (head, temperature) at the bottom boundary (start of saturated zone)
     GroundwaterSettings.headBotmLayer = 1950.0; % groundwater head (cm) at bottom layer
-    GroundwaterSettings.tempBotm = 17.0; % groundwater temperature at bottom layer (C)
+    GroundwaterSettings.tempBotm = NaN; % groundwater temperature at bottom layer (C)
 
     % Call MODFLOW layers information (number of aquifer layers and their elevations, etc)
     % elevation of the top surface aquifer layer

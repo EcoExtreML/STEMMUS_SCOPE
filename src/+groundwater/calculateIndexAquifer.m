@@ -4,7 +4,7 @@ function indxAqLay = calculateIndexAquifer(aqlevels, numAqL, soilThick)
         aqlevels            elevation of top surface level and all bottom levels of aquifer layers
         numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
     %}
-    
+
     % Load model settings
     ModelSettings = io.getModelSettings();
 

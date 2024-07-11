@@ -17,7 +17,7 @@ function GroundwaterSettings = initializeGroundwaterSettings()
         % aqBotmlevels      elevation of all bottom levels of aquifer layers, received from MODFLOW through BMI
         % aqlevels          elevation of top surface level and all bottom levels of aquifer layers
         % SS                specific storage of MODFLOW aquifers, default value = 0.05 (unitless)
-        % SY                specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)      
+        % SY                specific yield of MODFLOW aquifers, default value = 1e-5 (1/m)
     %}
 
     % Activate/deactivate Groundwater coupling
@@ -33,8 +33,8 @@ function GroundwaterSettings = initializeGroundwaterSettings()
 
     % GroundwaterSettings.numAqL = 5; % number of MODFLOW aquifer layers
     % GroundwaterSettings.aqBotmlevels = [1900.0  1800.0  1700.0  1600.0  1500.0]; % elevation of all bottom levels of aquifer layers
-    % GroundwaterSettings.aqlevels = [GroundwaterSettings.topLevel, GroundwaterSettings.aqBotmlevels]; % elevation of top surface level and all bottom levels of aquifer layers    
-    
+    % GroundwaterSettings.aqlevels = [GroundwaterSettings.topLevel, GroundwaterSettings.aqBotmlevels]; % elevation of top surface level and all bottom levels of aquifer layers
+
     % Define Specific yield (SY) and Specific storage (SS) with default values (otherwise received from MODFLOW through BMI)
     % GroundwaterSettings.SY = [0.05  0.05  0.05  0.05  0.05]; % default SY = 0.05 (unitless)
     % GroundwaterSettings.SS = [1e-7  1e-7  1e-7  1e-7  1e-7]; % default SS = 1e-5 1/m = 1e-7 1/cm

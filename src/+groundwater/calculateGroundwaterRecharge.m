@@ -63,7 +63,7 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     else
         recharge_init = Q_flip(indxRchrg); % mean([Q_flip(indxRchrg), Q_flip(indxRchrg_above)])
     end
-    
+
     %{
     % (d) Calculations of SY
     % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
@@ -97,8 +97,8 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
 
     % (f) Aggregate c, d, and e to get recharge
     % recharge = recharge_init + S - sy;
-    %} 
-    
+    %}
+
     % after couple of tests, it appears that the effect of S and sy is very minor, so they are commented but kept in the code for further investigation
     gwfluxes.recharge = recharge_init; % Note: in STEMMUS +ve means up-flow direction and -ve means down (opposite of MODFLOW), so recharge sign needs to be converted in BMI
 

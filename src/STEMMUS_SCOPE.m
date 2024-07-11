@@ -340,8 +340,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
         GroundwaterSettings.tempBotm = GroundwaterSettings.tempBotm;
 
-        % update Dunnian runoff
-        [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData, GroundwaterSettings.gw_Dep);
+        % update Dunnian runoff and ForcingData.Precip_msr
+        [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);

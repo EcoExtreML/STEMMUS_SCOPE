@@ -49,7 +49,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     NN = ModelSettings.NN;
 
     % Load groundwater settings
-    GroundwaterSettings = groundwater.readGroundwaterSettings();
+    GroundwaterSettings = groundwater.initializeGroundwaterSettings();
 
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);

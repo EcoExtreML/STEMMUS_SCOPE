@@ -22,7 +22,6 @@
 - Defining the indices of the first four layers discussed in
   [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and fixed in
   [#238](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/238)
-- issue [#240](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/240)
 
 
 <a name="1.5.0"></a>

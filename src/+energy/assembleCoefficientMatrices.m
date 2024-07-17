@@ -59,11 +59,12 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
             - (C1(n - 1, 2) / Delt_t + C4_a(n - 1)) * SV.hh(n - 1) - (C1(n, 1) / Delt_t + C4(n, 1)) * SV.hh(n) ...
             + (C3(n - 1, 2) / Delt_t) * P_g(n - 1) + (C3(n, 1) / Delt_t) * P_g(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
+
     elseif ~ModelSettings.Soilairefc && ModelSettings.Thmrlefc
         RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t ...
             - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
             + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
-        for i = 2:ModelSettings.NL
+        for i = indxBotm:ModelSettings.NL
             ARG4 = C1(i - 1, 2) / Delt_t;
             ARG5 = C1(i, 1) / Delt_t;
             ARG6 = C1(i, 2) / Delt_t;
@@ -76,6 +77,7 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
         RHS(n) = -C7(n) + (C2(n - 1, 2) * SV.T(n - 1) + C2(n, 1) * SV.T(n)) / Delt_t ...
             - (C1(n - 1, 2) / Delt_t + C4(n - 1, 2)) * SV.hh(n - 1) - (C1(n, 1) / Delt_t + C4(n, 1)) * SV.hh(n) ...
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
+
     else
         RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(1, 2) * SV.T(indxBotm + 1)) / Delt_t;
         for i = indxBotm + 1:ModelSettings.NL

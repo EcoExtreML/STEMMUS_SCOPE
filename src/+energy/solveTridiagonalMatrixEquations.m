@@ -33,7 +33,6 @@ function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquat
     end
 
     for i = 1:ModelSettings.NN
-        % note: this for loop causes wrong values if i = indxBotm:ModelSettings.NN instead of i = 1:ModelSettings.NN
         CHK(i) = abs(RHS(i) - SoilVariables.TT(i));
         SoilVariables.TT(i) = RHS(i);
     end

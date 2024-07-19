@@ -64,7 +64,7 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
         RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t ...
             - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
             + (C1(indxBotm, 1) / Delt_t) * SV.h(indxBotm) + (C1(indxBotm, 2) / Delt_t) * SV.h(indxBotm + 1);
-        for i = indxBotm:ModelSettings.NL
+        for i = indxBotm + 1:ModelSettings.NL
             ARG4 = C1(i - 1, 2) / Delt_t;
             ARG5 = C1(i, 1) / Delt_t;
             ARG6 = C1(i, 2) / Delt_t;

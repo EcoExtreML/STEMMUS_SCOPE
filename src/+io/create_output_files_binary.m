@@ -1,5 +1,5 @@
 function [Output_dir, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, ...
-                                                           output_path, spectral, options, GroundwaterSettings, gwfluxes)
+                                                           output_path, spectral, options)
 
     %% Set Output dir
     Output_dir = output_path;

@@ -226,7 +226,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
     %% 13. create output files and
-    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options, GroundwaterSettings);
+    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
     %% Initialize Temperature, Matric potential and soil air pressure.
     % Define soil variables for StartInit
@@ -775,7 +775,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, GroundwaterSettings, gwfluxes);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg);
         fclose("all");
         disp(['Solving Time step: ' num2str(KT) ' out of ' num2str(endTime)]);
     end

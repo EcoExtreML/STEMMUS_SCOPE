@@ -777,7 +777,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
                                       Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg);
         fclose("all");
-        disp(['Solving Time step: ' num2str(KT) ' out of ' num2str(endTime)]);
     end
 end
 

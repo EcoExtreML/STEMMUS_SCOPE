@@ -51,7 +51,7 @@ function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(Initi
     elseif ~ModelSettings.Thmrlefc && ModelSettings.Soilairefc
         RHS(indxBotm) = -C9(indxBotm) - C7(indxBotm) + (C1(indxBotm, 1) * h(indxBotm) + C1(indxBotm, 2) * h(indxBotm + 1)) / Delt_t ...
             - C6(indxBotm, 1) * P_gg(indxBotm) - C6(indxBotm, 2) * P_gg(indxBotm + 1);
-        for i = indxBotm:ModelSettings.NL
+        for i = indxBotm + 1:ModelSettings.NL
             RHS(i) = -C9(i) - C7(i) + (C1(i - 1, 2) * h(i - 1) + C1(i, 1) * h(i) + C1(i, 2) * h(i + 1)) / Delt_t ...
                 - C6(i - 1, 2) * P_gg(i - 1) - C6(i, 1) * P_gg(i) - C6(i, 2) * P_gg(i + 1);
         end
@@ -63,7 +63,7 @@ function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(Initi
             - (C2(indxBotm, 1) / Delt_t + C5(indxBotm, 1)) * TT(indxBotm) - (C2(indxBotm, 2) / Delt_t + C5(indxBotm, 2)) * TT(indxBotm + 1) ...
             - C6(indxBotm, 1) * P_gg(indxBotm) - C6(indxBotm, 2) * P_gg(2) ...
             + (C2(indxBotm, 1) / Delt_t) * T(indxBotm) + (C2(indxBotm, 2) / Delt_t) * T(indxBotm + 1);
-        for i = indxBotm:ModelSettings.NL
+        for i = indxBotm + 1:ModelSettings.NL
             ARG1 = C2(i - 1, 2) / Delt_t;
             ARG2 = C2(i, 1) / Delt_t;
             ARG3 = C2(i, 2) / Delt_t;
@@ -80,7 +80,7 @@ function [RHS, HeatMatrices, boundaryFluxArray] = calculateTimeDerivatives(Initi
 
     else
         RHS(indxBotm) = -C9(indxBotm) - C7(indxBotm) + (C1(indxBotm, 1) * h(indxBotm) + C1(indxBotm, 2) * h(indxBotm + 1)) / Delt_t;
-        for i = indxBotm:ModelSettings.NL
+        for i = indxBotm + 1:ModelSettings.NL
             RHS(i) = -C9(i) - C7(i) + (C1(i - 1, 2) * h(i - 1) + C1(i, 1) * h(i) + C1(i, 2) * h(i + 1)) / Delt_t;
         end
         RHS(n) = -C9(n) - C7(n) + (C1(n - 1, 2) * h(n - 1) + C1(n, 1) * h(n)) / Delt_t;

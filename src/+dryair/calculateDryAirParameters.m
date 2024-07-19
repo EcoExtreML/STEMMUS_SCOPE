@@ -61,7 +61,7 @@ function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity,
         % added by Mostafa
         AirVariabes.QL_h(i) = QL_h(i); % liquid flux due to matric potential
         AirVariabes.QL_T(i) = QL_T(i); % liquid flux due to temperature gradient
-        AirVariabes.QL_a(i) = QL_a(I); % liquid flux due to air pressure gradient
+        AirVariabes.QL_a(i) = QL_a(i); % liquid flux due to air pressure gradient
 
         for j = 1:ModelSettings.nD
             MN = i + j - 1;

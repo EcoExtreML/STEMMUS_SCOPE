@@ -1,7 +1,7 @@
 function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, ...
                                     spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential, ...
                                     Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ...
-                                    ForcingData, RS, RWUs, RWUg, GroundwaterSettings, gwfluxes)
+                                    ForcingData, RS, RWUs, RWUg)
 
     %% OUTPUT DATA
     % author C. Van der Tol
@@ -82,21 +82,6 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     Sim_qtot_out =  [Sim_qtot(k, :)];
     n_col.Sim_qtot = length(Sim_qtot_out);
     fwrite(f.Sim_qtot_file, Sim_qtot_out, 'double');
-
-    if GroundwaterSettings.GroundwaterCoupling
-        %% Water balance fluxes
-        flu2_out = [k iter.counter xyt.year(k) xyt.t(k) ForcingData.Precip_msr(k) ForcingData.applied_inf(k), ...
-                    ForcingData.R_Hort(k) ForcingData.R_Dunn(k) RS(k) RWUs RWUg, ...
-                    Trap(k) Evap(k) Trap(k) + Evap(k) gwfluxes.recharge];
-        n_col.flu2 = length(flu2_out);
-        fwrite(f.flu2_file, flu2_out, 'double');
-
-        %% Groundwater fluxes (Recharge fluxes components)
-        gwflu_out = [k xyt.year(k) xyt.t(k) gwfluxes.QLh gwfluxes.QLT gwfluxes.QLa gwfluxes.QVH, ...
-                     gwfluxes.QVT gwfluxes.QVa gwfluxes.recharge];
-        n_col.gwflu = length(gwflu_out);
-        fwrite(f.gwflu_file, gwflu_out, 'double');
-    end
 
     %% Spectrum (added on 19 September 2008)
     spectrum_hemis_optical_out =  rad.Eout_;

@@ -12,21 +12,6 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
                  'umol m-2 s-1', ' umol m-2 s-1', 'umol m-2 s-1', 'W m-2', 'umol m-2 s-1', 'W m-2', 'W m-2', 'mm s-1', 'mm s-1', 'mm s-1', 'Kg m-2 s-1', 'Kg m-2 s-1'};
     write_output(flu_names, flu_units, fnames.flu_file, n_col.flu, ns);
 
-    if GroundwaterSettings.GroundwaterCoupling % added by Mostafa
-        %% water balance fluxes
-        flu2_names = {'simulation_number', 'nu_iterations', 'year', 'DoY', 'Precip', 'Applied_inf', 'R_Hort', ...
-                      'R_Dunn', 'RS_tot', 'RWUs', 'RWUg', 'Trap', 'Evap', 'ET', 'Recharge'};
-
-        flu2_units = {'', '', '', '', 'cm s-1', 'cm s-1', 'cm s-1', ...
-                      'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1'};
-        write_output(flu2_names, flu2_units, fnames.flu2_file, n_col.flu2, ns);
-
-        %% groundwater fluxes
-        gwflu_names = {'simulation_number', 'year', 'DoY', 'QLh', 'QLT', 'QLa', 'QVH', 'QVT', 'QVa', 'Recharge'};
-        gwflu_units = {'', '', '', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1', 'cm s-1'};
-        write_output(gwflu_names, gwflu_units, fnames.gwflu_file, n_col.gwflu, ns);
-    end
-
     %% surftemp
     surftemp_names = {'simulation_number', 'year', 'DoY', ...
                       'Ta', 'Ts(1)', 'Ts(2)', 'Tcave', 'Tsave'};

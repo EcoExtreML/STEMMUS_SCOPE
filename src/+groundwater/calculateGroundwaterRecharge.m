@@ -31,13 +31,13 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         STheta_LL               soil moisture at the end of the current time step (top to bottom)
         soilThick               cumulative soil layers thickness (from top to bottom)
         indxAqLay               index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer
-        aqLayers                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
+        aqlevels                elevation of top surface level and all bottom levels of aquifer layers, received from MODFLOW through BMI
     %}
 
     % Start Recharge calculations
     % (a) Define the upper and lower boundaries of the moving balancing domain
     % The moving balancing domain is located between depToGWT_strt and depToGWT_end
-    [depToGWT_end, indxGWLay_end] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
+    [depToGWT_end, indxGWLay_end] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
     % indxRchrg and indxRchrgMax are the indices of the upper and lower levels of the moving boundary
     % Following the HYDRUS-MODFLOW paper and also STEMMUS-MODFLOW, indxRchrg and indxRchrgMax are defined as in the next two lines
     indxRchrgMax = max(indxGWLay_strt, indxGWLay_end) + 2; % the positive 2 is a user-specified value to define lower boundary of the moving boundary
@@ -64,18 +64,21 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
         recharge_init = Q_flip(indxRchrg); % mean([Q_flip(indxRchrg), Q_flip(indxRchrg_above)])
     end
 
+    %{
     % (d) Calculations of SY
     % Note: In the HYDRUS-MODFLOW paper, Sy (from MODFLOW) was used. In Lianyu STEMMUS_MODFLOW code, a combination of Sy and Ss was used
-    indxAqLay = GroundwaterSettings.indxAqLay; % index of MODFLOW aquifer layers for each STEMMUS soil layer
-    aqLayers = GroundwaterSettings.aqLayers; % elevation of top surface level and all bottom levels of aquifer layers
+    aqlevels = GroundwaterSettings.aqlevels; % elevation of top surface level and all bottom levels of aquifer layers
+    numAqL = GroundwaterSettings.numAqL; % number of MODFLOW aquifer layers
+    soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
+    indxAqLay = groundwater.calculateIndexAquifer(aqlevels, numAqL, soilThick); % index of MODFLOW aquifer layers for each STEMMUS soil layer
+
     K = indxAqLay(indxGWLay_end);
-    Thk = aqLayers(1) - aqLayers(K) - depToGWT_end;
+    Thk = aqlevels(1) - aqlevels(K) - depToGWT_end;
     SY = GroundwaterSettings.SY;
     SS = GroundwaterSettings.SS;
     S = (SY(K) - SS(K) * Thk) * (depToGWT_strt - depToGWT_end);
 
     % (e) Calculations of sy
-    soilThick = GroundwaterSettings.soilThick; % cumulative soil layer thickness (from top to bottom)
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % Number of nodes
     NL = ModelSettings.NL; % Number of layers
@@ -93,8 +96,10 @@ function [depToGWT_end, indxGWLay_end, gwfluxes] = calculateGroundwaterRecharge(
     end
 
     % (f) Aggregate c, d, and e to get recharge
-    % after couple of tests, it appears that the effect of S and sy is very minor, so they are removed but kept in the code for further investigation
     % recharge = recharge_init + S - sy;
+    %}
+
+    % after couple of tests, it appears that the effect of S and sy is very minor, so they are commented but kept in the code for further investigation
     gwfluxes.recharge = recharge_init; % Note: in STEMMUS +ve means up-flow direction and -ve means down (opposite of MODFLOW), so recharge sign needs to be converted in BMI
 
     if isnan(gwfluxes.recharge) || isinf(gwfluxes.recharge)

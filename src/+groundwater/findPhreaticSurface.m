@@ -1,4 +1,4 @@
-function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, GroundwaterSettings)
+function [depToGWT, indxGWLay] = findPhreaticSurface(soilWaterPotential, KT, soilThick, indxBotmLayer_R)
     %{
         added by Mostafa, modified after Lianyu
         This function finds the soil layer that includes the phreatic surface (saturated zone) and is used in the groundwater recharge calculations
@@ -16,7 +16,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
                                 %%%%%%%%%% Variables definitions %%%%%%%%%%
         depToGWT            water table depth: depth from top soil layer to groundwater level, calculated from STEMMUS variables
         indxBotmLayer_R     index of the bottom layer that contains the current headBotmLayer (top to bottom)
-        indxBotmLayer       index of the bottom layer that contains the current headBotmLayer (bottom to top)
         indxGWLay           index of the soil layer that includes the phreatic surface, so the recharge is ....
                             extracted from that layer (index order is from top layer to bottom)
                             Note: indxGWLay must equal to indxBotmLayer_R
@@ -27,10 +26,9 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
     % Load model settings
     ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % number of nodes
-    soilThick = GroundwaterSettings.soilThick;
 
     % Call the matric potential
-    Shh(1:1:NN) = SoilVariables.hh(NN:-1:1);
+    Shh(1:1:NN) = soilWaterPotential(NN:-1:1);
     depToGWT = 0; % starting value for initialization, updated below
     indxGWLay = NN - 2; % starting value for initialization, updated below
 
@@ -63,7 +61,7 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(SoilVariables, KT, Groundwa
             warning('The phreatic surface level is lower than the end of the soil column!');
         end
         % check 3
-        diff = abs(indxGWLay - GroundwaterSettings.indxBotmLayer_R);
+        diff = abs(indxGWLay - indxBotmLayer_R);
         if diff > 1
             warning('Index of the bottom layer boundary that includes groundwater head ~= index of the layer that has zero matric potential!');
         end

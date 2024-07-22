@@ -34,18 +34,6 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
         ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
         Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
-
-    else % Groundwater coupling is activated
-        % Different approach (not CLM). Dunnian runoff = Direct water input from precipitation + return flow
-        % (a) direct water input from precipitation when soil is fully saturated (depth to water table = 0)
-        wat_Dep = GroundwaterSettings.gw_Dep / 100; % (m);
-        if wat_Dep <= 0.01
-            ForcingData.R_Dunn = Precip_msr;
-            Precip_msr = Precip_msr .* 0;
-        else
-            ForcingData.R_Dunn = zeros(size(Precip_msr));
-        end
-        % (b) Return flow (from groundwater exfiltration) calculated in MODFLOW and added to Dunnian runoff (through BMI)
     end
 
     % (2) Infiltration excess runoff (Hortonian runoff)

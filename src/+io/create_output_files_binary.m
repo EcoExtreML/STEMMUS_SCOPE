@@ -1,5 +1,5 @@
 function [Output_dir, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, ...
-                                                           output_path, spectral, options, GroundwaterSettings, gwfluxes)
+                                                           output_path, spectral, options)
 
     %% Set Output dir
     Output_dir = output_path;
@@ -40,11 +40,6 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
 
     if options.calc_ebal
         fnames.spectrum_obsdir_BlackBody_file = fullfile(Output_dir, 'spectrum_obsdir_BlackBody.bin');  % spectrum observation direction
-    end
-
-    if GroundwaterSettings.GroundwaterCoupling
-        fnames.flu2_file = fullfile(Output_dir, 'fluxes2.bin');
-        fnames.gwflu_file = fullfile(Output_dir, 'gwfluxes.bin');
     end
 
     % if ~(options.simulation==1)

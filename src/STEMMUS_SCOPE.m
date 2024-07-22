@@ -49,7 +49,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     NN = ModelSettings.NN;
 
     % Load groundwater settings
-    GroundwaterSettings = groundwater.readGroundwaterSettings();
+    GroundwaterSettings = groundwater.initializeGroundwaterSettings();
 
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
@@ -226,7 +226,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
     %% 13. create output files and
-    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options, GroundwaterSettings);
+    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
     %% Initialize Temperature, Matric potential and soil air pressure.
     % Define soil variables for StartInit
@@ -282,12 +282,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     Delt_t0 = Delt_t; % Duration of last time step
     TOLD_CRIT = [];
 
-    % 15. Initialize Groundwater coupling (groundwater depth)
-    if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-        [depToGWT_inital, indxGWLay_inital] = groundwater.findPhreaticSurface(SoilVariables, KT, GroundwaterSettings);
-        depToGWT_strt = depToGWT_inital; % (for updating after the end of the loop)
-        indxGWLay_strt = indxGWLay_inital;
-    end
+    % 15. Calculate soil layer thickness
+    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
     % for soil moisture and temperature outputs
     monitorDepthTemperature = ModelSettings.NL:-1:1;
@@ -339,6 +335,16 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
+
+        % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
+        GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
+
+        % update Dunnian runoff and ForcingData.Precip_msr
+        [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+
+        % Calculate the index of the bottom layer level
+        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
+        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
@@ -747,9 +753,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Recharge calculations, added by Mostafa
         if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-            [depToGWT_end, indxGWLay_end, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
-            depToGWT_strt = depToGWT_end; % for next time step
-            indxGWLay_strt = indxGWLay_end; % for next time step
+            % update depToGWT_strt, indxGWLay_strt for next time step
+            [depToGWT_strt, indxGWLay_strt, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
             if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
                 gwfluxes.recharge = 0;
             end
@@ -770,7 +775,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, GroundwaterSettings, gwfluxes);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg);
         fclose("all");
     end
 end

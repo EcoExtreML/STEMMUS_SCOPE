@@ -1,4 +1,4 @@
-function indxAqLay = calculateIndexAquifer(aqlevels, numAqL, soilThick, ModelSettings.NN)
+function indxAqLay = calculateIndexAquifer(aqlevels, numAqL, soilThick, ModelSettings)
     %{
         Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer.
         aqlevels            elevation of top surface level and all bottom levels of aquifer layers

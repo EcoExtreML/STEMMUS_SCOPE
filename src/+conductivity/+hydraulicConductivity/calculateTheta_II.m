@@ -1,7 +1,4 @@
-function theta_ii = calculateTheta_II(tt, xcap, hh, Theta_II)
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function theta_ii = calculateTheta_II(tt, xcap, hh, Theta_II, ModelSettings)
 
     Tf1 = 273.15 + 1;
     Tf2 = 273.15 - 3;

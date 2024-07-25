@@ -1,4 +1,4 @@
-function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
+function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, ModelSettings, DRHOVT, L, RHOV)
     %{
         This is used to calculate Heat Capacity and Thermal Conductivity.
     %}
@@ -37,9 +37,6 @@ function [ETCON, EHCAP, TETCON, EfTCON, ZETA] = calculateSoilThermalProperites(I
 
     % load Constants
     Constants = io.define_constants();
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     MN = 0;
     TCON(1) = 1.37e-3 * 4.182;

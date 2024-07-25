@@ -1,4 +1,4 @@
-function [depToGWT, indxGWLay] = findPhreaticSurface(soilWaterPotential, KT, soilThick, indxBotmLayer_R)
+function [depToGWT, indxGWLay] = findPhreaticSurface(soilWaterPotential, KT, soilThick, indxBotmLayer_R, ModelSettings)
     %{
         added by Mostafa, modified after Lianyu
         This function finds the soil layer that includes the phreatic surface (saturated zone) and is used in the groundwater recharge calculations
@@ -24,7 +24,6 @@ function [depToGWT, indxGWLay] = findPhreaticSurface(soilWaterPotential, KT, soi
     %}
 
     % Load model settings
-    ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % number of nodes
 
     % Call the matric potential

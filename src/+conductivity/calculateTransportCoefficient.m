@@ -1,4 +1,4 @@
-function TransportCoefficient = calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t)
+function TransportCoefficient = calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t, ModelSettings)
     %{
         This is to calculate the transport coefficient for absorbed liquid flow
         due to temperature gradient.
@@ -19,9 +19,6 @@ function TransportCoefficient = calculateTransportCoefficient(InitialValues, Soi
     TransportCoefficient.WW = InitialValues.WW;
     TransportCoefficient.MU_W = InitialValues.MU_W;
     TransportCoefficient.D_Ta = InitialValues.D_Ta;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % load Constants
     Constants = io.define_constants();

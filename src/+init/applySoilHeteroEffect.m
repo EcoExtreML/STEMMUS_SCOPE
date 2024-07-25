@@ -1,4 +1,4 @@
-function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, SoilVariables, VanGenuchten)
+function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, SoilVariables, VanGenuchten, ModelSettings)
 
     initX = SoilVariables.InitialValues.initX;
     initND = SoilVariables.InitialValues.initND;
@@ -8,7 +8,6 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
     ImpedF = repelem(3, 6);
 
     % get model settings
-    ModelSettings = io.getModelSettings();
     Eqlspace = ModelSettings.Eqlspace;
 
     % Get soil constants for StartInit
@@ -34,14 +33,14 @@ function [SoilVariables, VanGenuchten] = applySoilHeteroEffect(SoilProperties, S
             InitLnth(i) = ModelSettings.Tot_Depth - SoilConstants.Elmn_Lnth;
             for subRoutine = 5:-1:1
                 if abs(InitLnth(i) - initND(subRoutine)) < 1e-10
-                    [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, i);
+                    [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilProperties, SoilVariables, VanGenuchten, ModelSettings, ImpedF, Dmark, i);
                     SoilVariables.InitialValues.initH = initH;
                     Dmark = i + 2;
                 end
             end
             if abs(InitLnth(i)) < 1e-10
                 subRoutine = 0;
-                [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilProperties, SoilVariables, VanGenuchten, ImpedF, Dmark, i);
+                [SoilVariables, VanGenuchten, initH] = init.soilHeteroSubroutine(subRoutine, SoilProperties, SoilVariables, VanGenuchten, ModelSettings, ImpedF, Dmark, i);
                 SoilVariables.InitialValues.initH = initH;
             end
         end

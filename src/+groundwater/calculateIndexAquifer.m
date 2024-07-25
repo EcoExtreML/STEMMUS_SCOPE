@@ -1,12 +1,9 @@
-function indxAqLay = calculateIndexAquifer(aqlevels, numAqL, soilThick)
+function indxAqLay = calculateIndexAquifer(aqlevels, numAqL, soilThick, ModelSettings.NN)
     %{
         Assign the index of the MODFLOW aquifer that corresponds to each STEMMUS soil layer.
         aqlevels            elevation of top surface level and all bottom levels of aquifer layers
         numAqL              number of MODFLOW aquifer layers, received from MODFLOW through BMI
     %}
-
-    % Load model settings
-    ModelSettings = io.getModelSettings();
 
     numAqN = numAqL + 1; % number of MODFLOW aquifer nodes
     indxAqLay = zeros(ModelSettings.NN, 1);

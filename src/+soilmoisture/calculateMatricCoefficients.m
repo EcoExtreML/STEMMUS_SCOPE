@@ -1,11 +1,10 @@
 function [HeatVariables, SoilVariables] = calculateMatricCoefficients(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
-                                                                      RHOV, DRHOVh, DRHOVT, D_Ta, GroundwaterSettings)
+                                                                      RHOV, DRHOVh, DRHOVT, D_Ta, ModelSettings, GroundwaterSettings)
     %{
         Calculate all the parameters related to matric coefficients (e.g.,
         c1-c8) as in Equation 4.32 (STEMMUS Technical Notes, page 44).
     %}
 
-    ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
     % Add a new variables to SoilVariables

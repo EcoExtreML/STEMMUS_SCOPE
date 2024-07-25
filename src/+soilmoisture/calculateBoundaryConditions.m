@@ -1,9 +1,9 @@
 function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
+                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, ModelSettings, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}
-    ModelSettings = io.getModelSettings();
+
     % n is the index of n_th item
     n = ModelSettings.NN;
 
@@ -30,12 +30,11 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
     else % Groundwater coupling is activated, added by Mostafa
         indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
         indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
-        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
-        topLevel = GroundwaterSettings.topLevel;
-        headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
-        RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
+        % soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
+        % topLevel = GroundwaterSettings.topLevel;
+        % headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
         if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
+            RHS(indxBotm) = 0; % = headBotmLayer - topLevel + soilThick(indxBotmLayer_R), (need to check with Yijian)
             C4(indxBotm, 1) = 1;
             RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
             C4(indxBotm, 2) = 0;

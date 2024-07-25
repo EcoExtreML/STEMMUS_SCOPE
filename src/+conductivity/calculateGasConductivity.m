@@ -1,4 +1,4 @@
-function k_g = calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables)
+function k_g = calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables, ModelSettings)
     %{
         This is to calculate the intrinsic permeability of soil for gas flow.
         Scanlon, B. R. (2000), Soil gas movement in unsaturated systems, in
@@ -9,9 +9,6 @@ function k_g = calculateGasConductivity(InitialValues, TransportCoefficient, Van
         airflow in land surface models?, i. Geophys. Res. Atmos., 116(D20),
         20107, doi:10.1029/2011JD015835, 2011.
     %}
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % load Constants
     Constants = io.define_constants();

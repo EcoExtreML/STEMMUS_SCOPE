@@ -1,13 +1,11 @@
-function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                             SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, GroundwaterSettings)
+function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, SoilVariables, ...
+                                                             Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the energy equation, see
         STEMMUS Technical Notes.
     %}
 
-    ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
-
     Constants = io.define_constants();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa

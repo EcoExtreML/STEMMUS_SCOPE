@@ -1,6 +1,4 @@
-function initH = updateInitH(initX, VanGenuchten, SoilVariables, i)
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function initH = updateInitH(initX, VanGenuchten, SoilVariables, i, ModelSettings)
 
     if ModelSettings.SWCC == 1   % VG soil water retention model
         initH = init.calcInitH(VanGenuchten.Theta_s(i), VanGenuchten.Theta_r(i), initX, VanGenuchten.n(i), VanGenuchten.m(i), VanGenuchten.Alpha(i));

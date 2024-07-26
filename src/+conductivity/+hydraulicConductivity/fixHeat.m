@@ -1,7 +1,4 @@
-function [hh, hh_frez] = fixHeat(hh, hh_frez, Phi_s)
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function [hh, hh_frez] = fixHeat(hh, hh_frez, Phi_s, ModelSettings)
 
     if ModelSettings.SWCC == 1
         if ModelSettings.SFCC ~= 1

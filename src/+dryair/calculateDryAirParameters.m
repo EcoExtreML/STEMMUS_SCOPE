@@ -1,10 +1,9 @@
 function AirVariabes = calculateDryAirParameters(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
-                                                 P_gg, Xah, XaT, Xaa, RHODA, GroundwaterSettings)
+                                                 P_gg, Xah, XaT, Xaa, RHODA, ModelSettings, GroundwaterSettings)
     %{
         Calculate all the parameters related to dry air equation e.g., Equation
         3.59-3.64, STEMMUS Technical Notes, page 27-28.
     %}
-    ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
     AirVariabes.Cah = InitialValues.Cah;

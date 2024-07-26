@@ -1,4 +1,4 @@
-function ThermalConductivityCapacity = calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV)
+function ThermalConductivityCapacity = calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, ModelSettings, DRHOVT, L, RHOV)
     %{
         This is to calculate thermal conductivity and thermal capacity.
         Chung, S. O., and R. Horton (1987), Soil heat and water flow with a
@@ -9,9 +9,6 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
         20107, doi:10.1029/2011JD015835, 2011.
     %}
 
-    % get model settings
-    ModelSettings = io.getModelSettings();
-
     % load Constants
     Constants = io.define_constants();
 
@@ -21,7 +18,7 @@ function ThermalConductivityCapacity = calculateThermalConductivityCapacity(Init
     RHO_bulk = ThermalConductivity.RHO_bulk;
 
     if ModelSettings.ThmrlCondCap == 1
-        [ETCON, EHCAP, TETCON, EfTCON, ZETA] = conductivity.calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
+        [ETCON, EHCAP, TETCON, EfTCON, ZETA] = conductivity.calculateSoilThermalProperites(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, ModelSettings, DRHOVT, L, RHOV);
     end
 
     for i = 1:ModelSettings.NL

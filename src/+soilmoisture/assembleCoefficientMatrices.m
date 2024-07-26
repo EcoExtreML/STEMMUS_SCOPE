@@ -1,9 +1,8 @@
-function HeatMatrices = assembleCoefficientMatrices(HeatVariables, InitialValues, Srt, GroundwaterSettings)
+function HeatMatrices = assembleCoefficientMatrices(HeatVariables, InitialValues, Srt, ModelSettings, GroundwaterSettings)
     %{
         Assemble the coefficient matrices of Equation 4.32 (STEMMUS Technical
         Notes, page 44).
     %}
-    ModelSettings = io.getModelSettings();
 
     % Define HeatMatrices structure
     HeatMatrices.C1 = InitialValues.C1;

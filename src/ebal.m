@@ -1,7 +1,7 @@
 function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings)
+                Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings)
 
     %{
         function ebal.m calculates the energy balance of a vegetated surface
@@ -93,8 +93,6 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     %}
 
     %% 1. initialisations and other preparations for the iteration loop
-    ModelSettings = io.getModelSettings();
-
     counter         = 0;              %           Iteration counter of ebal
     maxit           = iter.maxit;
     maxEBer         = iter.maxEBer;
@@ -173,7 +171,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     LAI = canopy.LAI;
     PSI = 0;
 
-    [bbx] = Max_Rootdepth(InitialValues.bbx);
+    [bbx] = Max_Rootdepth(InitialValues.bbx, ModelSettings);
     [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings);
     [sfactor] = calc_sfactor(Rl, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, Ta, VanGenuchten.Theta_f);
     PSIss = PSIs(ModelSettings.NL, 1);

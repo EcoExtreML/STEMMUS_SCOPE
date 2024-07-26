@@ -1,4 +1,4 @@
-function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, SoilVariables, Delt_t, P_g, GroundwaterSettings)
+function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, SoilVariables, Delt_t, P_g, ModelSettings, GroundwaterSettings)
     %{
         Assemble the coefficient matrices of Equation 4.32 STEMMUS Technical
         Notes, page 44, for dry air equation.
@@ -14,7 +14,6 @@ function [RHS, AirMatrices, SAVE] = assembleCoefficientMatrices(AirMatrices, Soi
     C6 = AirMatrices.C6;
     C7 = AirMatrices.C7;
 
-    ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
 
     % Alias of SoilVariables

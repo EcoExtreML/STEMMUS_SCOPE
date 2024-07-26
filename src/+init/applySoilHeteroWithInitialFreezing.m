@@ -1,12 +1,9 @@
-function [SoilVariables] = applySoilHeteroWithInitialFreezing(LatentHeatOfFreezing, SoilVariables)
+function [SoilVariables] = applySoilHeteroWithInitialFreezing(LatentHeatOfFreezing, SoilVariables, ModelSettings)
 
     SoilVariables.ISFT = 0;
 
-    % get model settings
-    ModelSettings = io.getModelSettings();
-
     for i = 1:ModelSettings.NN
-        SoilVariables.h_frez = init.updateHfreez(i, LatentHeatOfFreezing, SoilVariables);
+        SoilVariables.h_frez = init.updateHfreez(i, LatentHeatOfFreezing, SoilVariables, ModelSettings);
         SoilVariables.hh_frez(i) = SoilVariables.h_frez(i);
         SoilVariables.h(i) = SoilVariables.h(i) - SoilVariables.h_frez(i);
         SoilVariables.hh(i) = SoilVariables.h(i);

@@ -1,4 +1,4 @@
-function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f)
+function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f, ModelSettings)
     %{
         This is to calculate the hydraulic conductivity of soil, based on
         hydraulic conductivity models (like VG and others).
@@ -10,9 +10,6 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
         airflow in land surface models?, J. Geophys. Res. Atmos., 116(D20),
         20107, doi:10.1029/2011JD015835, 2011.
     %}
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % load Constants
     Constants = io.define_constants();
@@ -73,26 +70,26 @@ function SoilVariables = calculateHydraulicConductivity(SoilVariables, VanGenuch
             SV = sliceVector(SV, lengthX, MN);
             SV = sliceMatrix(SV, lengthX, ModelSettings.nD, MN, j);
 
-            [hh, hh_frez] = conductivity.hydraulicConductivity.fixHeat(SV.hh, SV.hh_frez, SV.Phi_s);
+            [hh, hh_frez] = conductivity.hydraulicConductivity.fixHeat(SV.hh, SV.hh_frez, SV.Phi_s, ModelSettings);
             SV.hh = hh;
             SV.hh_frez = hh_frez;
 
             Gamma_hh = conductivity.hydraulicConductivity.calculateGamma_hh(SV.hh);
             Theta_m = conductivity.hydraulicConductivity.calculateTheta_m(Gamma_hh, VG, SV.POR);
-            Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gamma_hh, SV, VG);
+            Theta_UU = conductivity.hydraulicConductivity.calculateTheta_UU(Theta_m, Gamma_hh, SV, VG, ModelSettings);
 
             % circular calculation of Theta_II! See issue 181, item 3
             % Theta_II is soil ice content,
             % Theta_LL is liquid water content,
             % Theta_UU is the total water content before soil freezing. The
             % 'Theta_UU' is set as saturation.
-            Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II);
-            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gamma_hh, SV, VG);
+            Theta_II = conductivity.hydraulicConductivity.calculateTheta_II(SV.TT, SV.XCAP, SV.hh, SV.Theta_II, ModelSettings);
+            Theta_LL = conductivity.hydraulicConductivity.calculateTheta_LL(Theta_UU, Theta_II, Theta_m, Gamma_hh, SV, VG, ModelSettings);
             Theta_II = (Theta_UU - Theta_LL) * Constants.RHOL / Constants.RHOI;  % ice water contentTheta_II
 
-            DTheta_UUh = conductivity.hydraulicConductivity.calculateDTheta_UUh(Theta_UU, Theta_m, Theta_LL, Gamma_hh, SV, VG);
-            DTheta_LLh = conductivity.hydraulicConductivity.calcuulateDTheta_LLh(DTheta_UUh, Theta_m, Theta_UU, Theta_LL, Gamma_hh, SV, VG);
-            Se = conductivity.hydraulicConductivity.calculateSe(Theta_LL, Gamma_hh, SV);
+            DTheta_UUh = conductivity.hydraulicConductivity.calculateDTheta_UUh(Theta_UU, Theta_m, Theta_LL, Gamma_hh, SV, VG, ModelSettings);
+            DTheta_LLh = conductivity.hydraulicConductivity.calculateDTheta_LLh(DTheta_UUh, Theta_m, Theta_UU, Theta_LL, Gamma_hh, SV, VG, ModelSettings);
+            Se = conductivity.hydraulicConductivity.calculateSe(Theta_LL, Gamma_hh, SV, ModelSettings);
 
             % Ratio_ice used in Condg_k_g.m
             if Theta_UU ~= 0

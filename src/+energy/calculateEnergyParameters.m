@@ -1,12 +1,11 @@
 function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
-                                                     VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
-                                                     DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, GroundwaterSettings)
+                                                     VaporVariables, GasDispersivity, ThermalConductivityCapacity, DRHOVh, DRHOVT, ...
+                                                     KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, ModelSettings, GroundwaterSettings)
     %{
         Calculate all the parameters related to energy balance equation e.Constants.g.,
         Equation 3.65-3.73, STEMMUS Technical Notes, page 29-32.
     %}
 
-    ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa

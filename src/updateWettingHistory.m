@@ -1,4 +1,4 @@
-function XWRE = updateWettingHistory(SoilVariables, VanGenuchten)
+function XWRE = updateWettingHistory(SoilVariables, VanGenuchten, ModelSettings)
     %{
     This subroutine is caled after one time step to update the wetting
     history. If the change in average moisture content of the element during the
@@ -7,8 +7,6 @@ function XWRE = updateWettingHistory(SoilVariables, VanGenuchten)
     scanning curves are used, subject to the constraint that matric head and
     moisture content be continuous in time.
     %}
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     XOLD = SoilVariables.XOLD;
     Theta_L = SoilVariables.Theta_L;

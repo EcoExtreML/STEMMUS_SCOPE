@@ -1,4 +1,4 @@
-function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings)
+function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, ModelSettings, GroundwaterSettings)
     %{
         assembles the coefficient matrices of Equation 4.32, STEMMUS Technical
         Notes, page 44, the example was only shown for the soil moisture
@@ -14,7 +14,6 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
     C6 = EnergyMatrices.C6;
     C7 = EnergyMatrices.C7;
 
-    ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
 
     if ModelSettings.Soilairefc == 1 % see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/227

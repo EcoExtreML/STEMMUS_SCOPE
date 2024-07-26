@@ -1,10 +1,9 @@
-function [RHS, AirMatrices] = calculateBoundaryConditions(BoundaryCondition, AirMatrices, ForcingData, RHS, KT, P_gg, GroundwaterSettings)
+function [RHS, AirMatrices] = calculateBoundaryConditions(BoundaryCondition, AirMatrices, ForcingData, RHS, KT, P_gg, ModelSettings, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the dry air equation.
     %}
 
     TopPg = 100 .* (ForcingData.Pg_msr);
-    ModelSettings = io.getModelSettings();
     n = ModelSettings.NN;
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa

@@ -1,6 +1,4 @@
-function se = calculateSe(theta_ll, gamma_hh, SoilVariables)
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function se = calculateSe(theta_ll, gamma_hh, SoilVariables, ModelSettings)
 
     % get soil constants
     SoilConstants = io.getSoilConstants();

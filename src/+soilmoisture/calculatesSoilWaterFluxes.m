@@ -1,8 +1,7 @@
-function HBoundaryFlux = calculatesSoilWaterFluxes(SAVE, hh, GroundwaterSettings)
+function HBoundaryFlux = calculatesSoilWaterFluxes(SAVE, hh, ModelSettings, GroundwaterSettings)
     %{
         Calculate the soil water fluxes on the boundary node.
     %}
-    ModelSettings = io.getModelSettings();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top

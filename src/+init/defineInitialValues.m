@@ -1,9 +1,8 @@
-function InitialValues = defineInitialValues(Dur_tot)
+function InitialValues = defineInitialValues(Dur_tot, ModelSettings)
     %{
 
     %}
     % get model settings
-    ModelSettings = io.getModelSettings();
     NN = ModelSettings.NN; % Number of nodes;
     mN = ModelSettings.mN;
     mL = ModelSettings.mL; % Number of elements. Prevending the exceeds of size of arraies;

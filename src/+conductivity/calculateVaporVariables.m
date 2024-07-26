@@ -1,4 +1,4 @@
-function VaporVariables = calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, TT)
+function VaporVariables = calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ModelSettings, ThermalConductivityCapacity, TT)
     %{
         This is to calculate vapor diffusivity, vapor dispersivity, and vapor
         enhancement factor.
@@ -22,9 +22,6 @@ function VaporVariables = calculateVaporVariables(InitialValues, SoilVariables, 
     D_V = InitialValues.D_V;
     Eta = InitialValues.Eta;
     D_A = InitialValues.D_A;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     for i = 1:ModelSettings.NL
         for j = 1:ModelSettings.nD

@@ -1,4 +1,4 @@
-function [indxBotmLayer, indxBotmLayer_R] = calculateIndexBottomLayer(soilThick, gw_Dep)
+function [indxBotmLayer, indxBotmLayer_R] = calculateIndexBottomLayer(soilThick, gw_Dep, ModelSettings)
     %{
         Calculate the index of the bottom layer level using MODFLOW data
 
@@ -8,9 +8,6 @@ function [indxBotmLayer, indxBotmLayer_R] = calculateIndexBottomLayer(soilThick,
     %}
 
     indxBotmLayer_R = [];
-
-    % Load model settings
-    ModelSettings = io.getModelSettings();
 
     for i = 1:ModelSettings.NL
         midThick = (soilThick(i) + soilThick(i + 1)) / 2;

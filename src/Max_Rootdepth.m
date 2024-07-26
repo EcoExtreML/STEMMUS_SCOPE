@@ -1,12 +1,9 @@
-function [bbx] = Max_Rootdepth(bbx)
+function [bbx] = Max_Rootdepth(bbx, ModelSettings)
 
     %{
     The function identify if there is root in certain layer, bbx=0 indicates no
     roots while bbx=1 indicates roots existing
     %}
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % BR = 10:1:650; %% [gC /m^2 PFT]
     % rroot =  0.5*1e-3 ; % 3.3*1e-4 ;%% [0.5-6 *10^-3] [m] root radius

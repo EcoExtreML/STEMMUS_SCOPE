@@ -1,9 +1,9 @@
 function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings)
+                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, ModelSettings, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}
-    ModelSettings = io.getModelSettings();
+
     % n is the index of n_th item
     n = ModelSettings.NN;
 
@@ -33,7 +33,6 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
         soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
         topLevel = GroundwaterSettings.topLevel;
         headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
-        RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
         if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
             RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
             C4(indxBotm, 1) = 1;
@@ -46,6 +45,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
             RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
         end
     end
+
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable

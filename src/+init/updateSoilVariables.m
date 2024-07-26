@@ -1,4 +1,4 @@
-function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, i, j)
+function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, ModelSettings, i, j)
 
     % Get soil constants for StartInit
     SoilConstants = io.getSoilConstants();
@@ -11,9 +11,6 @@ function [SoilVariables, VanGenuchten] = updateSoilVariables(SoilVariables, VanG
     SoilVariables.VPER(i, 3) = SoilVariables.VPERC(j);
     SoilVariables.XSOC(i) = SoilVariables.VPERSOC(j);
     SoilVariables.XK(i) = SoilConstants.XK;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     if ModelSettings.SWCC == 1   % VG soil water retention model
         VanGenuchten.Theta_s(i) = SoilProperties.SaturatedMC(j);

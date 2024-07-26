@@ -1,10 +1,9 @@
-function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialValues, GroundwaterSettings)
+function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialValues, ModelSettings, GroundwaterSettings)
     %{
         Calculate all the parameters related to matric coefficients e.g., c1-c7
         as in Equation 4.32 STEMMUS Technical Notes, page 44, which is an
         example for soil moisture equation, but here it is for energy equation.
     %}
-    ModelSettings = io.getModelSettings();
 
     EnergyMatrices.C1 = InitialValues.C1;
     EnergyMatrices.C2 = InitialValues.C2;

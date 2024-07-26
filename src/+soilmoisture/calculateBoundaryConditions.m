@@ -30,11 +30,11 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
     else % Groundwater coupling is activated, added by Mostafa
         indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
         indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
-        % soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
-        % topLevel = GroundwaterSettings.topLevel;
-        % headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
+        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
+        topLevel = GroundwaterSettings.topLevel;
+        headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
         if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(indxBotm) = 0; % = headBotmLayer - topLevel + soilThick(indxBotmLayer_R), (need to check with Yijian)
+            RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
             C4(indxBotm, 1) = 1;
             RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
             C4(indxBotm, 2) = 0;
@@ -45,6 +45,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
             RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
         end
     end
+
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable

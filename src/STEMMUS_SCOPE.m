@@ -25,9 +25,9 @@ end
 
 % set CFG to a path if it is not defined
 if exist('CFG', 'var') == 0
-    CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/ZA-Kru_2023-11-08-0958_config.txt'; % CFG = '../config_file_crib.txt';
+    % CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/ZA-Kru_2023-11-08-0958_config.txt'; % CFG = '../config_file_crib.txt';
     % CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example2/input/NL-Hor_2024-01-29-1207/NL-Hor_2024-01-29-1207_config.txt';
-    % CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example2/input/NL-Hor_2024-01-29-1207/NL-Hor_2024-01-29-1207_config.txt';
+    CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2024-07-24-1251/ZA-Kru_2024-07-24-1251_config.txt';
 end
 
 % set runMode to "full" if it is not defined
@@ -362,7 +362,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep, ModelSettings);
-        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R, ModelSettings);
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
@@ -771,8 +770,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Recharge calculations, added by Mostafa
         if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-            % update depToGWT_strt, indxGWLay_strt for next time step
-            [depToGWT_strt, indxGWLay_strt, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, ModelSettings, GroundwaterSettings);
+            gwfluxes = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, ModelSettings, GroundwaterSettings);
             if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
                 gwfluxes.recharge = 0;
             end

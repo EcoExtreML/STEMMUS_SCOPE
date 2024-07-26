@@ -21,7 +21,7 @@ function GroundwaterSettings = initializeGroundwaterSettings()
     %}
 
     % Activate/deactivate Groundwater coupling
-    GroundwaterSettings.GroundwaterCoupling = 1; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, update value to = 1 -> through BMI
+    GroundwaterSettings.GroundwaterCoupling = 0; % (value = 0 -> deactivate coupling, or = 1 -> activate coupling); default = 0, update value to = 1 -> through BMI
 
     % Initialize the variables (head, temperature) at the bottom boundary (start of saturated zone)
     GroundwaterSettings.headBotmLayer = 1750.0; % groundwater head (cm) at bottom layer

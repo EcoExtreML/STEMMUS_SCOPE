@@ -25,9 +25,13 @@ end
 
 % set CFG to a path if it is not defined
 if exist('CFG', 'var') == 0
+<<<<<<< HEAD
     % CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2023-11-08-0958/ZA-Kru_2023-11-08-0958_config.txt'; % CFG = '../config_file_crib.txt';
     % CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example2/input/NL-Hor_2024-01-29-1207/NL-Hor_2024-01-29-1207_config.txt';
     CFG = '/home/daoudmgm/Work/STEMMUS_SCOPE/example/input/ZA-Kru_2024-07-24-1251/ZA-Kru_2024-07-24-1251_config.txt';
+=======
+    CFG = '../config_file_crib.txt';
+>>>>>>> a56e4627ebc83a48ab319fa9b5b3644050c46be7
 end
 
 % set runMode to "full" if it is not defined

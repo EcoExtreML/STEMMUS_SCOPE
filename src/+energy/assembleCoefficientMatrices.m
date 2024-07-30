@@ -30,7 +30,7 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(InitialValues
 
     % Alias of SoilVariables
     SV = SoilVariables;
-    RHS = InitialValues.RHS;    
+    RHS = InitialValues.RHS;
 
     if ModelSettings.Soilairefc && ModelSettings.Thmrlefc
         RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t ...

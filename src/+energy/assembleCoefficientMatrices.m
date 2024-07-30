@@ -1,4 +1,4 @@
-function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings)
+function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings)
     %{
         assembles the coefficient matrices of Equation 4.32, STEMMUS Technical
         Notes, page 44, the example was only shown for the soil moisture
@@ -30,9 +30,10 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
 
     % Alias of SoilVariables
     SV = SoilVariables;
+    RHS = InitialValues.RHS;
 
     if ModelSettings.Soilairefc && ModelSettings.Thmrlefc
-        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(2)) / Delt_t ...
+        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t ...
             - (C1(indxBotm, 1) / Delt_t + C4(indxBotm, 1)) * SV.hh(indxBotm) - (C1(indxBotm, 2) / Delt_t + C4(indxBotm, 2)) * SV.hh(indxBotm + 1) ...
             - (C3(indxBotm, 1) / Delt_t + C6(indxBotm, 1)) * P_gg(indxBotm) - (C3(indxBotm, 2) / Delt_t + C6(indxBotm, 2)) * P_gg(indxBotm + 1) ...
             + (C3(indxBotm, 1) / Delt_t) * P_g(indxBotm) + (C3(indxBotm, 2) / Delt_t) * P_g(indxBotm + 1) ...
@@ -79,7 +80,7 @@ function [RHS, EnergyMatrices, SAVE] = assembleCoefficientMatrices(EnergyMatrice
             + (C1(n - 1, 2) / Delt_t) * SV.h(n - 1) + (C1(n, 1) / Delt_t) * SV.h(n);
 
     else
-        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(1, 2) * SV.T(indxBotm + 1)) / Delt_t;
+        RHS(indxBotm) = -C7(indxBotm) + (C2(indxBotm, 1) * SV.T(indxBotm) + C2(indxBotm, 2) * SV.T(indxBotm + 1)) / Delt_t;
         for i = indxBotm + 1:ModelSettings.NL
             RHS(i) = -C7(i) + (C2(i - 1, 2) * SV.T(i - 1) + C2(i, 1) * SV.T(i) + C2(i, 2) * SV.T(i + 1)) / Delt_t;
         end

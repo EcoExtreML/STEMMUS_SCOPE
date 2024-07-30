@@ -345,6 +345,10 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
+
+        % update soil temperature
+        T = SoilVariables.T;
+        TT = SoilVariables.TT;
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

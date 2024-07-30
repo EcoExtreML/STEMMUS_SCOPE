@@ -28,8 +28,6 @@ function [SoilVariables, CHK, RHS, EnergyMatrices] = solveTridiagonalMatrixEquat
         for i = indxBotm:-1:2
             RHS(i - 1) = RHS(i); % assign the groundwater temperature to the saturated layers
         end
-        % correct soil temp above groundwater table (avoid wrong temp behaviour in case RHS(indxBotm) > RHS(indxBotm + 1))
-        RHS(indxBotm + 1) = (RHS(indxBotm) + RHS(indxBotm + 2)) / 2;
     end
 
     for i = 1:ModelSettings.NN

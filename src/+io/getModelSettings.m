@@ -2,7 +2,7 @@ function ModelSettings = getModelSettings()
     %{
     %}
 
-    ModelSettings.R_depth = 350;
+    ModelSettings.R_depth = 30;
 
     % Indicator denotes the index of soil type for choosing soil physical parameters
     ModelSettings.J = 1;
@@ -51,7 +51,7 @@ function ModelSettings = getModelSettings()
     ModelSettings.rroot = 1.5 * 1e-3;
     ModelSettings.SFCC = 1;
 
-    ModelSettings.Tot_Depth = 500; % Unit is cm. it should be usually bigger than 0.5m. Otherwise,
+    ModelSettings.Tot_Depth = 100; % Unit is cm. it should be usually bigger than 0.5m. Otherwise,
     ModelSettings.Eqlspace = 0; % Indicator for deciding is the space step equal or not; % the DeltZ would be reset in 50cm by hand;
 
     ModelSettings.NS = 1; % Number of soil types;
@@ -61,7 +61,7 @@ function ModelSettings = getModelSettings()
     ModelSettings.KT = 0; % Number of time steps;
 
     % Determination of NL, the number of elments
-    ModelSettings.NL = 100;
+    ModelSettings.NL = 29;
     if ~ModelSettings.Eqlspace
         [DeltZ, DeltZ_R, NL, ML] = Dtrmn_Z(ModelSettings.NL, ModelSettings.Tot_Depth);
     else

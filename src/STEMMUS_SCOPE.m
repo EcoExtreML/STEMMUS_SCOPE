@@ -326,12 +326,10 @@ if strcmp(bmiMode, 'update')
         endTime = KT + 1;
     end
 elseif strcmp(runMode, 'full')
-    %endTime = TimeProperties.Dur_tot;
-    endTime = 3;
+    endTime = TimeProperties.Dur_tot;
     disp('The calculations start now');
 end
-BoundaryCondition.NBChB
-break_here
+
 % Actually run the model
 if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 

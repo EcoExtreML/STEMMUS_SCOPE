@@ -15,8 +15,8 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
         indxBotm = 1;
     else % Groundwater Coupling is activated
         % index of bottom layer after neglecting saturated layers (from bottom to top)
-        tempBotm = GroundwaterSettings.tempBotm; % groundwater temperature
         indxBotm = GroundwaterSettings.indxBotmLayer;
+        tempBotm = SoilVariables.TT(indxBotm); % groundwater temperature
     end
 
     % Apply the bottom boundary condition called for by BoundaryCondition.NBCTB

@@ -326,10 +326,12 @@ if strcmp(bmiMode, 'update')
         endTime = KT + 1;
     end
 elseif strcmp(runMode, 'full')
-    endTime = TimeProperties.Dur_tot;
+    %endTime = TimeProperties.Dur_tot;
+    endTime = 3;
     disp('The calculations start now');
 end
-
+BoundaryCondition.NBChB
+break_here
 % Actually run the model
 if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
@@ -345,6 +347,15 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
+
+        % Assign the groundwater temperature to the saturated layers
+        if ~isnan(GroundwaterSettings.tempBotm)
+            SoilVariables.TT(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm; % groundwater temperature;
+            TT = SoilVariables.TT;
+
+            SoilVariables.T(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm; % groundwater temperature;
+            T = SoilVariables.T;
+        end
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
@@ -633,7 +644,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
                                                                         DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings);
-
+            temp_soil = SoilVariables.TT;
             if BoundaryCondition.NBCh == 1
                 DSTOR = 0;
                 RS = 0;
@@ -671,6 +682,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 AirVariabes.QL = InitialValues.QL;
             end
 
+            temp_dry = SoilVariables.TT;
             if ModelSettings.Thmrlefc == 1
                 % CHK will be updated
                 [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = energy.solveEnergyBalanceEquations(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, ...
@@ -680,12 +692,39 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                                                                                       TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, GroundwaterSettings);
             end
 
+            temp_energy = SoilVariables.TT;
+
             if max(CHK) < 0.1
                 break
             end
             hSAVE = SoilVariables.hh(NN);
             TSAVE = SoilVariables.TT(NN);
+
+            %if KT ==1 && KIT == 1
+            %    disp('after soil mosture');
+            %    temp_soil(45:54)
+            %    temp_soil(1:4)
+            %    disp('after energy');
+            %    temp_energy(45:54)
+            %    temp_energy(1:4)
+            %    disp("----------");
+            %    break_here
+            %end
         end
+        %if KT == 1
+        %    disp('after soil mosture');
+        %    KT
+        %    temp_soil(35:54)
+        %    temp_soil(1:10)
+        %    disp('after energy');
+        %    temp_energy(35:54)
+        %    temp_energy(1:10)
+        %    disp('here is RHS');
+        %    RHS(1:10)
+        %    RHS(35:54)
+        %    disp("----------");
+        %    break_here
+        %end
 
         TIMEOLD = KT;
         KIT;

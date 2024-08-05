@@ -18,14 +18,7 @@ function HeatMatrices = assembleCoefficientMatrices(HeatVariables, InitialValues
     HeatMatrices.C4_a = [];
     HeatMatrices.C5_a = [];
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
-    else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
-    end
-
-    for i = indxBotm:ModelSettings.NL
+    for i = 1:ModelSettings.NL
         HeatMatrices.C1(i, 1) = HeatMatrices.C1(i, 1) + HeatVariables.Chh(i, 1) * ModelSettings.DeltZ(i) / 2;
         HeatMatrices.C1(i + 1, 1) = HeatMatrices.C1(i + 1, 1) + HeatVariables.Chh(i, 2) * ModelSettings.DeltZ(i) / 2;
 

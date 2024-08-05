@@ -16,23 +16,16 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
 
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues, GroundwaterSettings);
 
-    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings);
+    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings);
 
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
                                                                SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, GroundwaterSettings);
 
     [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK, GroundwaterSettings);
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
-    else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
-    end
-
     ModelSettings = io.getModelSettings();
     if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:ModelSettings.NN) < ForcingData.Tmin)
-        for i = indxBotm:ModelSettings.NN
+        for i = 1:ModelSettings.NN
             SoilVariables.TT(i) = TOLD(i);
         end
     end

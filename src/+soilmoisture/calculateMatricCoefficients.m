@@ -26,14 +26,7 @@ function [HeatVariables, SoilVariables] = calculateMatricCoefficients(SoilVariab
     % Make SV as an alias of SoilVariables to make codes shorter
     SV = SoilVariables;
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
-    else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
-    end
-
-    for i = indxBotm:ModelSettings.NL
+    for i = 1:ModelSettings.NL
         for j = 1:ModelSettings.nD
             MN = i + j - 1;
             if ModelSettings.hThmrl

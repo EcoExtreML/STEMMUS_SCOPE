@@ -14,14 +14,8 @@ function EnergyMatrices = calculateMatricCoefficients(EnergyVariables, InitialVa
     EnergyMatrices.C6 = InitialValues.C6;
     EnergyMatrices.C7 = zeros(ModelSettings.NN);
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
-    else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
-    end
 
-    for i = indxBotm:ModelSettings.NL
+    for i = 1:ModelSettings.NL
         EnergyMatrices.C1(i, 1) = EnergyMatrices.C1(i, 1) + EnergyVariables.CTh(i, 1) * ModelSettings.DeltZ(i) / 2;
         EnergyMatrices.C1(i + 1, 1) = EnergyMatrices.C1(i + 1, 1) + EnergyVariables.CTh(i, 2) * ModelSettings.DeltZ(i) / 2;
 

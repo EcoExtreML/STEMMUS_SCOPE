@@ -11,16 +11,12 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
     Constants = io.define_constants();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
         tempBotm = BoundaryCondition.BCTB;
+        indxBotm = 1;
     else % Groundwater Coupling is activated
         % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
         tempBotm = GroundwaterSettings.tempBotm; % groundwater temperature
-
-        if isnan(GroundwaterSettings.tempBotm) % no available groundwater temperature data
-            tempBotm = SoilVariables.TT(indxBotm);
-        end
+        indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
     % Apply the bottom boundary condition called for by BoundaryCondition.NBCTB

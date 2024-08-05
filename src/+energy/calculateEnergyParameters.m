@@ -9,13 +9,6 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     ModelSettings = io.getModelSettings();
     Constants = io.define_constants();
 
-    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
-        indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
-    else % Groundwater Coupling is activated
-        % index of bottom layer after neglecting saturated layers (from bottom to top)
-        indxBotm = GroundwaterSettings.indxBotmLayer;
-    end
-
     % input
     Kcva = InitialValues.Kcva;
     Kcah = InitialValues.Kcah;
@@ -55,7 +48,7 @@ function EnergyVariables = calculateEnergyParameters(InitialValues, SoilVariable
     EnergyVariables.CTg = InitialValues.CTg;
     EnergyVariables.CTT = InitialValues.CTT;
 
-    for i = indxBotm:ModelSettings.NL
+    for i = 1:ModelSettings.NL
         if ~ModelSettings.Soilairefc
             KLhBAR(i) = (SoilVariables.KfL_h(i, 1) + SoilVariables.KfL_h(i, 2)) / 2;
             KLTBAR(i) = (KL_T(i, 1) + KL_T(i, 2)) / 2;

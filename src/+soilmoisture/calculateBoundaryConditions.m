@@ -16,36 +16,25 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
 
     %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling
-        if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(1) = BoundaryCondition.BChB;
-            C4(1, 1) = 1;
-            RHS(2) = RHS(2) - C4(1, 2) * RHS(1);
-            C4(1, 2) = 0;
-            C4_a(1) = 0;
-        elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(1) = RHS(1) + BoundaryCondition.BChB;
-        elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(1) = RHS(1) - SoilVariables.KL_h(1, 1);
-        end
-    else % Groundwater coupling is activated, added by Mostafa
-        indxBotmLayer_R = GroundwaterSettings.indxBotmLayer_R;
-        indxBotm = GroundwaterSettings.indxBotmLayer; % index of bottom boundary layer after neglecting the saturated layers (from bottom to top)
-        soilThick = GroundwaterSettings.soilThick; % cumulative soil layers thickness
-        topLevel = GroundwaterSettings.topLevel;
-        headBotmLayer = GroundwaterSettings.headBotmLayer; % groundwater head at bottom layer, received from MODFLOW through BMI
-        RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R); % (RHS = zero at the end, need to check with Yijian and Lianyu)
-        if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
-            RHS(indxBotm) = headBotmLayer - topLevel + soilThick(indxBotmLayer_R);
-            C4(indxBotm, 1) = 1;
-            RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
-            C4(indxBotm, 2) = 0;
-            C4_a(indxBotm) = 0;
-        elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
-            RHS(indxBotm) = RHS(indxBotm) + BoundaryCondition.BChB;
-        elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
-            RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
-        end
+        RHSBotm = BoundaryCondition.BChB;
+        indxBotm = 1;
+    else
+        indxBotm = GroundwaterSettings.indxBotmLayer;
+        RHSBotm = GroundwaterSettings.headBotmLayer - GroundwaterSettings.topLevel + GroundwaterSettings.soilThick(GroundwaterSettings.indxBotmLayer_R);
     end
+
+    if BoundaryCondition.NBChB == 1  %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
+        RHS(indxBotm) = RHSBotm;
+        C4(indxBotm, 1) = 1;
+        RHS(indxBotm + 1) = RHS(indxBotm + 1) - C4(indxBotm, 2) * RHS(indxBotm);
+        C4(indxBotm, 2) = 0;
+        C4_a(indxBotm) = 0;
+    elseif BoundaryCondition.NBChB == 2  %  Specify flux at bottom to be ---BoundaryCondition.BChB (Positive upwards);
+        RHS(indxBotm) = RHS(indxBotm) + RHSBotm;
+    elseif BoundaryCondition.NBChB == 3  %  BoundaryCondition.NBChB=3, Gravity drainage at bottom--specify flux= hydraulic conductivity;
+        RHS(indxBotm) = RHS(indxBotm) - SoilVariables.KL_h(indxBotm, 1);
+    end
+
     %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable

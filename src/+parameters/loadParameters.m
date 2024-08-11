@@ -27,7 +27,7 @@ function [ScopeParameters, Options] = loadParameters(Options, use_xlsx, ExcelDat
             cond = sum(~isnan(scopeInput(j, :))) < 1;
         end
         if isempty(j) || cond
-            if strcmp(name,'Cab')
+            if strcmp(name, 'Cab')
                 warning('warning: input "', name, '" not provided in input spreadsheet...', ...
                         'I will use 0.25*Cab instead');
                 Options.Cca_function_of_Cab = 1;

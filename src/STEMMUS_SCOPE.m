@@ -351,7 +351,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             warning('Groundwater table is below the end of the soil column. Please enlarge the total soil thickness!');
             return
         end
-    
+
         % Update soil temperature
         if ~isnan(GroundwaterSettings.tempBotm)
             SoilVariables.T(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm;

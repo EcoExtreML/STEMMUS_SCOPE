@@ -171,6 +171,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     end
 
     LAI = canopy.LAI;
+    eih = equations.satvap(Tch);
+    eiu = equations.satvap(Tcu);
     PSI = 0;
 
     [bbx] = Max_Rootdepth(InitialValues.bbx);
@@ -235,8 +237,14 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.p            = p;
         biochem_in.m            = leafbio.m;
         biochem_in.BallBerry0   = leafbio.BallBerry0;
+        biochem_in.g1Med        = leafbio.g1Med;
+        biochem_in.g0Med        = leafbio.g0Med;
+        biochem_in.gsMethod     = options.gsMethod;
         biochem_in.O            = meteo.Oa;
         biochem_in.Rdparam      = leafbio.Rdparam;
+        biochem_in.g1Med        = leafbio.g1Med;
+        biochem_in.g0Med        = leafbio.g0Med;
+        
 
         if options.Fluorescence_model == 2    % specific for the v.Caemmerer-Magnani model
             biochem_in.Tyear        = leafbio.Tyear;
@@ -257,6 +265,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.Vcmo     = fVh .* leafbio.Vcmo;
         biochem_in.Cs       = Cch;
         biochem_in.Q        = rad.Pnh_Cab * 1E6;
+        biochem_in.ei       = eih;
 
         if options.Fluorescence_model == 2
             biochem_out = biochemical_MD12(biochem_in);
@@ -279,6 +288,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.Vcmo     = fVu .* leafbio.Vcmo;
         biochem_in.Cs       = Ccu;
         biochem_in.Q        = rad.Pnu_Cab * 1E6;
+        biochem_in.ei       = eiu;
 
         if options.Fluorescence_model == 2
             biochem_out = biochemical_MD12(biochem_in);

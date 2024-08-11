@@ -1,4 +1,4 @@
-%% STEMMUS-SCOPE.m (script)
+    %% STEMMUS-SCOPE.m (script)
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
 %     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
@@ -110,6 +110,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Create a structure holding Scope parameters
     useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
     [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
+    options.gsMethod = 2; % 1 for BallBerry's method; 2 for Medlyn's method
 
     % Define the location information
     ScopeParameters.LAT = SiteProperties.latitude; % latitude
@@ -125,6 +126,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Input T parameters for different vegetation type
     [ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.landcoverClass);
+    ScopeParameters.g1Med = ScopeParameters.lcg1Med(1,1);   
+    ScopeParameters.g0Med = ScopeParameters.lcg0Med(1,1);
 
     %% 5. Declare paths
     path_input      = InputPath;          % path of all inputs

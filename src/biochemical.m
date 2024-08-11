@@ -136,6 +136,11 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
     eb            = biochem_in.eb;
     O             = biochem_in.O;
     p             = biochem_in.p;
+    ei            = biochem_in.ei;
+
+    gsMethod      = biochem_in.gsMethod;
+    g1Med         = biochem_in.g1Med;
+    g0Med         = biochem_in.g0Med;
 
     % physiological
     Type          = biochem_in.Type;
@@ -318,47 +323,85 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
 
     %% calculation of Ci (internal CO2 concentration)
     RH = min(1, eb ./ equations.satvap(T - 273.15)); % jak: don't allow "supersaturated" air! (esp. on T curves)
+    VPD_l2b = max(0.0001, ei-eb);
     warnings = [];
 
     fcount = 0; % the number of times we called computeA()
-    if  ~isempty(Ci_input)
-        Ci = Ci_input; % in units of bar.
-        if any(Ci_input > 1)
-            % assume Ci_input is in units of ppm. Convert to bar
-            Ci = Ci_input .* ppm2bar;
-        end
-        A =  computeA(Ci);
 
-    elseif all(BallBerry0 == 0)
-        % b = 0: no need to iterate:
-        Ci = BallBerry(Cs, RH, [], BallBerrySlope, BallBerry0, minCi);
-        A =  computeA(Ci);
+    switch gsMethod
+        case 1 % BallBerry's stomatal conductance
+            if  ~isempty(Ci_input)
+                Ci = Ci_input; % in units of bar.
+                if any(Ci_input > 1)
+                    % assume Ci_input is in units of ppm. Convert to bar
+                    Ci = Ci_input .* ppm2bar;
+                end
+                A =  computeA(Ci);
+            
+            elseif all(BallBerry0 == 0)
+                % b = 0: no need to iterate:
+                Ci = BallBerry(Cs, RH, [], BallBerrySlope, BallBerry0, minCi);
+                A =  computeA(Ci);
+            
+            else
+                % compute Ci using iteration (JAK)
+                % it would be nice to use a built-in root-seeking function but fzero requires scalar inputs and outputs,
+                % Here I use a fully vectorized method based on Brent's method (like fzero) with some optimizations.
+                tol = 1e-6;  % 0.1 ppm more-or-less
+                % Setting the "corner" argument to Gamma may be useful for low Ci cases, but not very useful for atmospheric CO2, so it's ignored.
+                %                     (fn,                           x0, corner, tolerance)
+                Ci = equations.fixedp_brent_ari(@(x) Ci_next(x, Cs, RH, minCi), Cs, [], tol); % [] in place of Gamma: it didn't make much difference
+                % NOTE: A is computed in Ci_next on the final returned Ci. fixedp_brent_ari() guarantees that it was done on the returned values.
+                % A =  computeA(Ci);
+            end
 
-    else
-        % compute Ci using iteration (JAK)
-        % it would be nice to use a built-in root-seeking function but fzero requires scalar inputs and outputs,
-        % Here I use a fully vectorized method based on Brent's method (like fzero) with some optimizations.
-        tol = 1e-6;  % 0.1 ppm more-or-less
-        % Setting the "corner" argument to Gamma may be useful for low Ci cases, but not very useful for atmospheric CO2, so it's ignored.
-        %                     (fn,                           x0, corner, tolerance)
-        Ci = equations.fixedp_brent_ari(@(x) Ci_next(x, Cs, RH, minCi), Cs, [], tol); % [] in place of Gamma: it didn't make much difference
-        % NOTE: A is computed in Ci_next on the final returned Ci. fixedp_brent_ari() guarantees that it was done on the returned values.
-        % A =  computeA(Ci);
+        case 2 % Medlyn's stomatal conductance
+            if  ~isempty(Ci_input) 
+                Ci = Ci_input; % in units of bar.
+                if any(Ci_input > 1)
+                    % assume Ci_input is in units of ppm. Convert to bar
+                    Ci = Ci_input .* ppm2bar;
+                end
+                A =  computeA(Ci);
+    
+            elseif all(g0Med == 0)
+                % b = 0: no need to iterate:
+                Ci = Medlyn(Cs, A, VPD_l2b, g1Med, g0Med, minCi);
+                A =  computeA(Ci);
+    
+            else
+                % compute Ci using iteration (JAK)
+                % it would be nice to use a built-in root-seeking function but fzero requires scalar inputs and outputs,
+                % Here I use a fully vectorized method based on Brent's method (like fzero) with some optimizations.
+                tol = 1e-7;  % 0.1 ppm more-or-less
+                % Setting the "corner" argument to Gamma may be useful for low Ci cases, but not very useful for atmospheric CO2, so it's ignored.
+                %                     (fn,                           x0, corner, tolerance)
+                Ci = equations.fixedp_brent_ari(@(x) Ci_next_ME(x, Cs, VPD_l2b, minCi), Cs, [], tol); % [] in place of Gamma: it didn't make much difference
+                %NOTE: A is computed in Ci_next on the final returned Ci. fixedp_brent_ari() guarantees that it was done on the returned values.
+                %A =  computeA(Ci);
+            end
     end
 
     %% Test-function for iteration
     %   (note that it assigns A in the function's context.)
     %   As with the next section, this code can be read as if the function body executed at this point.
     %    (if iteration was used). In other words, A is assigned at this point in the file (when iterating).
-    function [err, Ci_out] = Ci_next(Ci_in, Cs, RH, minCi)
+    function [err, Ci_out] = Ci_next_BB(Ci_in, Cs, RH, minCi)
         % compute the difference between "guessed" Ci (Ci_in) and Ci computed using BB after computing A
-        A = computeA(Ci_in);
-        A_bar = A .* ppm2bar;
-        Ci_out = BallBerry(Cs, RH, A_bar, BallBerrySlope, BallBerry0, minCi); % [Ci_out, gs]
-
+        A = computeA(Ci_in);  % A: ppm
+        A_bar = A .* ppm2bar; % A: bar
+        Ci_out = BallBerry(Cs, RH, A_bar, BallBerrySlope, BallBerry0, minCi); %[Ci_out, gs]  Ci: bar
+       
         err = Ci_out - Ci_in; % f(x) - x
     end
-
+    function [err, Ci_out] = Ci_next_ME(Ci_in, Cs, VPD_l2b, minCi)
+        % compute the difference between "guessed" Ci (Ci_in) and Ci computed using BB after computing A
+        A = computeA(Ci_in);  % A: ppm
+        A_bar = A .* ppm2bar; % A: bar
+        Ci_out = Medlyn(Cs, A_bar, VPD_l2b,g1Med, g0Med, minCi); %[Ci_out, gs]  Ci: bar
+       
+        err = Ci_out - Ci_in; % f(x) - x
+    end
     %% Compute Assimilation.
     %  Note: even though computeA() is written as a separate function,
     %    the code is, in fact, executed exactly this point in the file (i.e. between the previous if clause and the next section
@@ -547,7 +590,7 @@ function [Ci, gs] = BallBerry(Cs, RH, A, BallBerrySlope, BallBerry0, minCi, Ci_i
         Ci = Ci_input;
         gs = [];
         if ~isempty(A) && nargout > 1
-            gs = gsFun(Cs, RH, A, BallBerrySlope, BallBerry0);
+            gs = gsFun_BB(Cs, RH, A, BallBerrySlope, BallBerry0);
         end
     elseif all(BallBerry0 == 0) || isempty(A)
         % EXPLANATION:   *at equilibrium* CO2_in = CO2_out => A = gs(Cs - Ci) [1]
@@ -564,18 +607,62 @@ function [Ci, gs] = BallBerry(Cs, RH, A, BallBerrySlope, BallBerry0, minCi, Ci_i
         % note: the original B-B units are A: umol/m2/s, ci ppm (umol/mol), RH (unitless)
         %   Cs input was ppm but was multiplied by ppm2bar above, so multiply A by ppm2bar to put them on the same scale.
         %  don't let gs go below its minimum value (i.e. when A goes negative)
-        gs = gsFun(Cs, RH, A, BallBerrySlope, BallBerry0);
+        gs = gsFun_BB(Cs, RH, A, BallBerrySlope, BallBerry0);
         Ci = max(minCi .* Cs,  Cs - 1.6 * A ./ gs);
     end
 
 end % function
 
-function gs = gsFun(Cs, RH, A, BallBerrySlope, BallBerry0)
+function gs = gsFun_BB(Cs, RH, A, BallBerrySlope, BallBerry0)
     % add in a bit just to avoid div zero. 1 ppm = 1e-6 (note since A < 0 if Cs ==0, it gives a small gs rather than maximal gs
     gs = max(BallBerry0,  BallBerrySlope .* A .* RH ./ (Cs + 1e-9)  + BallBerry0);
     % clean it up:
     % gs( Cs == 0 ) = would need to be max gs here;  % eliminate infinities
     gs(isnan(Cs)) = NaN;  % max(NaN, X) = X  (MATLAB 2013b) so fix it here
+end
+
+%% Medlyn gs
+function [Ci, gs] = Medlyn(Cs, A, VPD_l2b, g1Med, g0Med, minCi, Ci_input)
+    %  Cs  : CO2 at leaf surface
+    %  A   : Net assimilation in 'same units of CO2 as Cs'/m2/s
+    %  VPD_l2b: vapour pressure deficit from leaf to leaf boundary  [mbar or hPa]
+    % BallBerrySlope, BallBerry0: Medlynslope, Medlyn0
+    % minCi : minimum Ci as a fraction of Cs (in case RH is very low?)
+    % Ci_input : will calculate gs if A is specified.
+    if nargin > 6 && ~isempty(Ci_input)
+        % Ci is given: try and compute gs
+        Ci = Ci_input;
+        gs = [];
+        if ~isempty(A) && nargout > 1
+            gs = gsFun_ME(Cs,  A, VPD_l2b, g1Med, g0Med);
+        end
+    elseif all(g0Med == 0) || isempty(A)
+        % EXPLANATION:   *at equilibrium* CO2_in = CO2_out => A = gs(Cs - Ci) [1]
+        %  so Ci = Cs - A/gs (at equilibrium)                                 [2]
+        %  Medlyn suggest: gs = g0+(1+g1/VPD^0.5)* A/Cs  ( see. Medlyn 2010 GCB)
+    %     %  if g0 = 0 we can rearrange B-B for the second term in [2]:
+
+    %     %  Ci = Cs - Cs/(VPD^0.5/(m+VPD^0.5)) = Cs ( 1- 1/(VPD^0.5/(m+VPD^0.5)  [ the 1.6 converts from CO2- to H2O-diffusion ]
+        Ci      = max(minCi .* Cs,  Cs.*(1-(1.6.*VPD_l2b.^0.5./(g1Med + VPD_l2b.^0.5))));
+        gs = [];
+    else
+    %     %  if b > 0  Ci = Cs( 1 - 1/(m RH + b Cs/A) )
+    %     % if we use Leuning 1990, Ci = Cs - (Cs - Gamma)/(m RH + b(Cs - Gamma)/A)  [see def of Gamma, above]
+    %     % note: the original B-B units are A: umol/m2/s, ci ppm (umol/mol), RH (unitless)
+    %     %   Cs input was ppm but was multiplied by ppm2bar above, so multiply A by ppm2bar to put them on the same scale.
+    %     %  don't let gs go below its minimum value (i.e. when A goes negative)
+        gs = gsFun_ME(Cs, A,  VPD_l2b, g1Med, g0Med);
+        Ci = max(minCi .* Cs,  Cs - 1.6 * A./gs) ;
+    end
+
+end % function
+
+function gs = gsFun_ME(Cs, A, VPD_l2b, g1Med, g0Med)
+    % add in a bit just to avoid div zero. 1 ppm = 1e-6 (note since A < 0 if Cs ==0, it gives a small gs rather than maximal gs
+    gs = max(g0Med,  1.6.*(1+(g1Med./ VPD_l2b .^ 0.5)) .* A ./ (Cs+1e-9)  + g0Med );
+
+    %gs( Cs == 0 ) = would need to be max gs here;  % eliminate infinities
+    gs( isnan(Cs) ) = NaN;  % max(NaN, X) = X  (MATLAB 2013b) so fix it here
 end
 
 %% Fluorescence model

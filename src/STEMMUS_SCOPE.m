@@ -347,8 +347,12 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
 
         % update soil temperature
-        T = SoilVariables.T;
-        TT = SoilVariables.TT;
+        if ~isnan(GroundwaterSettings.tempBotm)
+            SoilVariables.T(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm;
+            T = SoilVariables.T;
+            SoilVariables.TT(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm;
+            TT = SoilVariables.TT;
+        end
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

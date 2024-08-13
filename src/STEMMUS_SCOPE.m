@@ -40,6 +40,9 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
     disp (['Reading config from ', CFG]);
     [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
+    gsOption = 'Medlyn'; % 1 for BallBerry's method; 2 for Medlyn's method
+    phsOption = 2; % 1 for CLM5, 2 for ED2, 3 for PHS
+
 
     % Prepare forcing and soil data
     [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
@@ -67,6 +70,9 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     EVAP = InitialValues.EVAP;
     RWUs = [];
     RWUg = [];
+
+    %% Set senarios
+    [biochemical, gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
 
     %% 1. define Constants
     Constants = io.define_constants();
@@ -110,7 +116,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Create a structure holding Scope parameters
     useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
     [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
-    options.gsMethod = 2; % 1 for BallBerry's method; 2 for Medlyn's method
+    options.gsMethod = gsMethod; % 1 for BallBerry's method; 2 for Medlyn's method
 
     % Define the location information
     ScopeParameters.LAT = SiteProperties.latitude; % latitude
@@ -352,7 +358,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
-        KT = KT + 1;  % Counting Number of timesteps
+        KT = KT + 1  % Counting Number of timesteps
         if KT > 1 && Delt_t > (TEND - TIME)
             Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
         end

@@ -553,6 +553,7 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
     biochem_out.Fm_Fo    = fm ./ fo;  % parameters used for curve fitting
     biochem_out.Ft_Fo    = fs ./ fo;  % parameters used for curve fitting
     biochem_out.qQ      = qQ;
+    biochem_out.VPD_l2b  = mean(VPD_l2b,'all');
     return
 
 end  % end of function biochemical

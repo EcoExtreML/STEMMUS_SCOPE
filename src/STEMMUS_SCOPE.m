@@ -89,6 +89,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     [RootProperties,soilDepth] = calRootProperties(SiteProperties, ParaPlant, numSoilLayer, soilThickness, RTB);
     Rl = RootProperties.lengthDensity;
     Ztot = soilDepth;
+    soilDepthB2T = flipud(soilDepth);
 
 
     %% 2. simulation options
@@ -127,6 +128,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
     [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
     options.gsMethod = gsMethod; % 1 for BallBerry's method; 2 for Medlyn's method
+    options.plantHydraulics = phsOption;
 
     % Define the location information
     ScopeParameters.LAT = SiteProperties.latitude; % latitude
@@ -332,7 +334,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % (this is to not repeat the save-workspace code).
     disp('Finished model initialization');
 end
-
+TestPHS.psiLeafIni = 0-SiteProperties.canopy_height;
+TestPHS.endOfSeason = find(ScopeParameters.LAI == max(ScopeParameters.LAI));
 % If the runMode is update, retrieve the (possibly) updated state.
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(bmiMode, 'update')
@@ -490,10 +493,11 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
                 switch options.calc_ebal
                     case 1
-                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential] ...
+                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential, TestPHS] ...
                             = ebal(iter, options, spectral, rad, gap,  ...
                                    leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                                   Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings);
+                                   Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings,...
+                                   SiteProperties, ParaPlant, RootProperties, soilDepthB2T, TestPHS, KT);
                         if options.calc_fluor
                             if options.calc_vert_profiles
                                 [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);

@@ -16,7 +16,7 @@
 %
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+clear all; clc;
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
     disp('Loading Octave packages...');
@@ -76,10 +76,20 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     %% 1. define Constants
     Constants = io.define_constants();
+    ParaPlant = io.define_plant_constants(SiteProperties, phwsfMethod);
 
     RTB = 1000; % initial root total biomass (g m-2)
+    if strcmp(SiteProperties.sitename, 'CH-HTC')
+        RTB = 300;
+    end
     % Rl used in ebal
-    [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
+    % [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
+    numSoilLayer = ModelSettings.ML;
+    soilThickness = ModelSettings.DeltZ_R';
+    [RootProperties,soilDepth] = calRootProperties(SiteProperties, ParaPlant, numSoilLayer, soilThickness, RTB);
+    Rl = RootProperties.lengthDensity;
+    Ztot = soilDepth;
+
 
     %% 2. simulation options
     path_input = InputPath;  % path of all inputs

@@ -1,4 +1,4 @@
-function [biochemical, gsMethod, phwsfMethod] = setScenario(gsOption, phsOption)
+function [gsMethod, phwsfMethod] = setScenario(gsOption, phsOption)
 %{
     This function is used to set the stomatal conductance scheme and plant
     hydraulic pathway option.
@@ -20,7 +20,7 @@ function [biochemical, gsMethod, phwsfMethod] = setScenario(gsOption, phsOption)
 %}
 
     %% Set scenario
-    biochemical = @biochemical;
+    %biochemical = @biochemical;
     if strcmp(gsOption, 'BallBerry')
         gsMethod = 1;
     elseif strcmp(gsOption, 'Medlyn')

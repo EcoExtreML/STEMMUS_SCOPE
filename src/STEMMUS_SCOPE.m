@@ -72,7 +72,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     RWUg = [];
 
     %% Set senarios
-    [biochemical, gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
+    [gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
 
     %% 1. define Constants
     Constants = io.define_constants();

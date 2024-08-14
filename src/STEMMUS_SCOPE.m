@@ -336,7 +336,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
+        % Update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % Update Dunnian runoff and ForcingData.Precip_msr
@@ -352,7 +352,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             return
         end
 
-        % no available groundwater temperature data
+        % Check if no available groundwater temperature data
         if isnan(GroundwaterSettings.tempBotm)
             GroundwaterSettings.tempBotm = SoilVariables.TT(GroundwaterSettings.indxBotmLayer);
         end

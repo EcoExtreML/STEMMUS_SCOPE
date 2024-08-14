@@ -352,12 +352,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             return
         end
 
-        % Update soil temperature
-        if ~isnan(GroundwaterSettings.tempBotm)
-            SoilVariables.T(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm;
-            T = SoilVariables.T;
-            SoilVariables.TT(1:GroundwaterSettings.indxBotmLayer) = GroundwaterSettings.tempBotm;
-            TT = SoilVariables.TT;
+        % no available groundwater temperature data
+        if isnan(GroundwaterSettings.tempBotm)
+            GroundwaterSettings.tempBotm = SoilVariables.TT(GroundwaterSettings.indxBotmLayer);
         end
     end
 

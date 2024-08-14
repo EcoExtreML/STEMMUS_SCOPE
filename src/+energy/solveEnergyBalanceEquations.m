@@ -16,7 +16,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
 
     EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues, ModelSettings, GroundwaterSettings);
 
-    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, ModelSettings, GroundwaterSettings);
+    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, ModelSettings, GroundwaterSettings);
 
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, SoilVariables, ...
                                                                Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings);

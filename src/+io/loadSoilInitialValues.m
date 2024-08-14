@@ -35,12 +35,18 @@ function [InitialValues, BtmX, BtmT, Tss] = loadSoilInitialValues(InputPath, Tim
     BtmX = BtmX;
     Tss = Tss;
 
-    InitND1 = 5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
-    InitND2 = 15;
-    InitND3 = 60;
-    InitND4 = 100;
-    InitND5 = 200;
-    InitND6 = 300;
+    % This input of soil layer thickness and initial depth will be revised
+    % later via reading csv file. I read the initial soil depth variable
+    % from .mat file.
+    % ZSong (August 2024)
+    if ~exist("InitND1", "var")
+        InitND1 = 5;    % Unit of it is cm. These variables are used to indicated the depth corresponding to the measurement.
+        InitND2 = 15;
+        InitND3 = 60;
+        InitND4 = 100;
+        InitND5 = 200;
+        InitND6 = 300;
+    end
     if SWCC == 0
         InitT0 = -1.762;  % -1.75estimated soil surface temperature-1.762
         InitT1 = -0.662;

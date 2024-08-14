@@ -276,7 +276,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SoilConstants = io.getSoilConstants();
 
     %% The boundary condition information settings
-    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1));
+    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1), SiteProperties.sitename);
     DSTOR = BoundaryCondition.DSTOR;
     DSTOR0 = BoundaryCondition.DSTOR0;
     RS = BoundaryCondition.RS;

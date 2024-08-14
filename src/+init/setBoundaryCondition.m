@@ -1,4 +1,4 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, initialLandcoverClass)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, initialLandcoverClass, siteName)
     % Variables information for boundary condition settings
     % NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
     %        "1"--Specified matric head;
@@ -68,6 +68,9 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
         NBChB = 1;
     else
         NBChB = 3;
+    end
+    if strcmp(siteName,  "CH-HTC")
+        NBChB = 1;
     end
     BChB = -9e-10;
     if ModelSettings.Thmrlefc == 1

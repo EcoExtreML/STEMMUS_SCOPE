@@ -336,15 +336,26 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
+        % Update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
-        % update Dunnian runoff and ForcingData.Precip_msr
+        % Update Dunnian runoff and ForcingData.Precip_msr
         [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
         [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
+
+        % Check the position of the groundwater table
+        if any(GroundwaterSettings.gw_Dep > ModelSettings.Tot_Depth) || any(isempty(GroundwaterSettings.indxBotmLayer))
+            warning('Groundwater table is below the end of the soil column. Please enlarge the total soil thickness!');
+            return
+        end
+
+        % Check if no available groundwater temperature data
+        if isnan(GroundwaterSettings.tempBotm)
+            GroundwaterSettings.tempBotm = SoilVariables.TT(GroundwaterSettings.indxBotmLayer);
+        end
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

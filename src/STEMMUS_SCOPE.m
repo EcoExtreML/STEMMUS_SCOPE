@@ -51,17 +51,18 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     soilLayersFile = [InputPath, 'input_soilLayThick.csv'];
     if isfile(soilLayersFile)
         SoilLayerSettings = io.readSoilLayerSettings(soilLayersFile);
-        ModelSettings.R_depth = SoilLayerSettings.R_depth;
-        ModelSettings.Tot_Depth = SoilLayerSettings.Tot_Depth;
-        ModelSettings.NL = SoilLayerSettings.NL;
-        ModelSettings.ML = SoilLayerSettings.NL;
-        ModelSettings.DeltZ_R = SoilLayerSettings.DeltZ_R;
-        ModelSettings.DeltZ = flip(SoilLayerSettings.DeltZ_R);
-        ModelSettings.NN = ModelSettings.NL + 1;
-        ModelSettings.mN = ModelSettings.NN + 1;
-        ModelSettings.mL = ModelSettings.NL + 1;
-        ModelSettings.nD = 2;
+        % Override the default settings
+        fields = fieldnames(SoilLayerSettings);
+        for i = 1:numel(fields)
+            ModelSettings.(fields{i}) = SoilLayerSettings.(fields{i});
+        end
     end
+
+    % Calculate other settings
+    ModelSettings.NN = ModelSettings.NL + 1;
+    ModelSettings.mN = ModelSettings.NN + 1;
+    ModelSettings.mL = ModelSettings.NL + 1;
+    ModelSettings.nD = 2;
 
     % Load groundwater settings
     GroundwaterSettings = groundwater.initializeGroundwaterSettings();

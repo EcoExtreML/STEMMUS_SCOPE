@@ -5,6 +5,7 @@ function SoilLayerSettings = readSoilLayerSettings(soilLayersFile)
     SoilLayerSettings.ML = SoilLayerSettings.NL;
 
     SoilLayerSettings.DeltZ_R = transpose(soildata(:, 2));
+    SoilLayerSettings.DeltZ = flip(SoilLayerSettings.DeltZ_R);
 
     SoilLayerSettings.Tot_Depth = sum(SoilLayerSettings.DeltZ_R);
 

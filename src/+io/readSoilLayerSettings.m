@@ -1,4 +1,5 @@
-function SoilLayerSettings = readSoilLayerSettings(soildata)
+function SoilLayerSettings = readSoilLayerSettings(soilLayersFile)
+    soildata = dlmread(soilLayersFile, ',', 1, 0);  % skip column names
 
     SoilLayerSettings.NL = soildata(end, 1);
 

@@ -58,12 +58,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
         end
     end
 
-    % Calculate other settings
-    ModelSettings.NN = ModelSettings.NL + 1;
-    ModelSettings.mN = ModelSettings.NN + 1;
-    ModelSettings.mL = ModelSettings.NL + 1;
-    ModelSettings.nD = 2;
-
     % Load groundwater settings
     GroundwaterSettings = groundwater.initializeGroundwaterSettings();
 

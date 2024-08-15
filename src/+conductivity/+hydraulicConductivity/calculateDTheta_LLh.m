@@ -1,4 +1,4 @@
-function dtheta_llh = calcuulateDTheta_LLh(dtheta_uuh, theta_m, theta_uu, theta_ll, gamma_hh, SoilVariables, VanGenuchten, ModelSettings)
+function dtheta_llh = calculateDTheta_LLh(dtheta_uuh, theta_m, theta_uu, theta_ll, gamma_hh, SoilVariables, VanGenuchten, ModelSettings)
     theta_s = VanGenuchten.Theta_s;
     theta_r = VanGenuchten.Theta_r;
     alpha = VanGenuchten.Alpha;

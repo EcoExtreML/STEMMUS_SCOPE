@@ -264,11 +264,12 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.g1Med        = leafbio.g1Med;
         biochem_in.g0Med        = leafbio.g0Med;
         biochem_in.gsMethod     = options.gsMethod;
+
         biochem_in.O            = meteo.Oa;
         biochem_in.Rdparam      = leafbio.Rdparam;
-        biochem_in.g1Med        = leafbio.g1Med;
-        biochem_in.g0Med        = leafbio.g0Med;
-        
+        biochem_in.phwsf        = phwsf;
+        biochem_in.plantHydraulics = options.plantHydraulics;
+
 
         if options.Fluorescence_model == 2    % specific for the v.Caemmerer-Magnani model
             biochem_in.Tyear        = leafbio.Tyear;

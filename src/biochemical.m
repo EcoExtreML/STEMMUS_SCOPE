@@ -137,6 +137,8 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
     O             = biochem_in.O;
     p             = biochem_in.p;
     ei            = biochem_in.ei;
+    phwsf         = biochem_in.phwsf;
+    plantHydraulics = biochem_in.plantHydraulics;
 
     gsMethod      = biochem_in.gsMethod;
     g1Med         = biochem_in.g1Med;
@@ -283,9 +285,16 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
 
     % jak 2014-12-04: Add TL for C3 as well, works much better with our cotton temperature dataset (A-T)
     if strcmpi(Type, 'C3') && ~useTLforC3
-        Vcmax = Vcmax25 .* exp(log(QTVc) .* qt) ./ TH * sfactor;
+        Vcmax = Vcmax25 .* exp(log(QTVc) .* qt) ./ TH;% * sfactor;
     else
-        Vcmax = Vcmax25 .* exp(log(QTVc) .* qt) ./ (TL .* TH) * sfactor;
+        Vcmax = Vcmax25 .* exp(log(QTVc) .* qt) ./ (TL .* TH);% * sfactor;
+    end
+
+    % check it PHS open
+    if plantHydraulics          % PHS open, use phwsf
+        Vcmax = Vcmax .* phwsf;
+    else                           % PHS close, use sfactor
+        Vcmax = Vcmax .* sfactor;
     end
 
     % specificity (tau in Collatz e.a. 1991)

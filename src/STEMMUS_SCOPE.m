@@ -60,6 +60,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Load groundwater settings
     GroundwaterSettings = groundwater.initializeGroundwaterSettings();
+    GroundwaterSettings.soilThick = io.calculateSoilLayerThickness(ModelSettings);
 
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
@@ -291,9 +292,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached at the end of simulation period
     Delt_t0 = Delt_t; % Duration of last time step
     TOLD_CRIT = [];
-
-    % 15. Calculate soil layer thickness
-    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness(ModelSettings);
 
     % for soil moisture and temperature outputs
     monitorDepthTemperature = ModelSettings.NL:-1:1;

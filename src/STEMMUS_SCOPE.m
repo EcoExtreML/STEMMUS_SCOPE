@@ -50,8 +50,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Load soil layers settings
     soilLayersFile = [InputPath, 'input_soilLayThick.csv'];
     if isfile(soilLayersFile)
-        soildata = readmatrix(soilLayersFile);
-        SoilLayerSettings = io.readSoilLayerSettings(soildata);
+        SoilLayerSettings = io.readSoilLayerSettings(soilLayersFile);
         ModelSettings.R_depth = SoilLayerSettings.R_depth;
         ModelSettings.Tot_Depth = SoilLayerSettings.Tot_Depth;
         ModelSettings.NL = SoilLayerSettings.NL;

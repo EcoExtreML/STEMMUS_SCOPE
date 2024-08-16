@@ -36,10 +36,10 @@
       functional parameters, etc.
     - input_soilLayThick.csv (optional): A file to change the discretization of
       the soil layers of the STEMMUS model. An example of this file is in the root
-      directory/example_data folder. This file should be copied into the InputPath
-      folder. If this file exists, it will override the default settings of the soil
-      layers. The file has three columns: 1) layer number, 2) layer thickness, and
-      3) maximum root depth. The user is free to change the values of the three columns.
+      directory/example_data folder. This file (if needed) should be copied into the
+      InputPath folder. If this file is used, it will override the default settings of
+      the soil layers. The file has three columns: 1) layer number, 2) layer thickness,
+      and 3) maximum root depth. The user is free to change the values of the three columns.
       Also, the number of rows determines the number of the soil layers and the total
       thickness of the soil column (sum of soil layer thickness).
 

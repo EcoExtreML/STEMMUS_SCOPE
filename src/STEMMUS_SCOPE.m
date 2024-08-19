@@ -58,6 +58,12 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
         end
     end
 
+    % Calculate other ModelSettings
+    ModelSettings.NN = ModelSettings.NL + 1; % Number of nodes;
+    ModelSettings.mN = ModelSettings.NN + 1;
+    ModelSettings.mL = ModelSettings.NL + 1; % Number of elements. Preventing the exceeds of arrays size;
+    ModelSettings.nD = 2;
+
     % Load groundwater settings
     GroundwaterSettings = groundwater.initializeGroundwaterSettings();
     GroundwaterSettings.soilThick = io.calculateSoilLayerThickness(ModelSettings);

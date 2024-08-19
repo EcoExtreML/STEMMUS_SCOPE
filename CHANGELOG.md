@@ -9,10 +9,10 @@
   [#229](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/229)
 - Add an option to define soil layer settings through a csv file discussed in
   [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and
-  [#241](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/241) and fixed in
+  [#241](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/241) and added in
   [#243](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/243)
 - Remove unnecessary function discussed in
-  [#244](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/244) and fixed in
+  [#244](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/244) and removed in
   [#243](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/243)
 
 **Fixed:**

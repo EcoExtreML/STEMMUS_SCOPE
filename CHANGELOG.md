@@ -22,8 +22,14 @@
 - Defining the indices of the first four layers discussed in
   [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and fixed in
   [#238](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/238)
-
-
+- Add an option to define soil layer settings through a csv file discussed in
+  [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and
+  [#241](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/241) and fixed in
+  [#243](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/243)
+- Remove unnecessary function discussed in
+  [#244](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/244) and fixed in
+  [#243](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/243)
+  
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.5.0) - 3 Jan 2024
 

@@ -59,7 +59,7 @@ function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine,
         initH(indexOfInit) = init.updateInitH(initX(indexOfInit), VanGenuchten, SoilVariables, j, ModelSettings);
 
         if subRoutine == 5
-            Btmh = init.updateBtmh(VanGenuchten, SoilVariables, i);
+            Btmh = init.updateBtmh(VanGenuchten, SoilVariables, i, ModelSettings);
             SoilVariables.T(i) = SoilVariables.BtmT + (i - 1) * (initT(indexOfInit) - SoilVariables.BtmT) / ML;
             SoilVariables.h(i) = Btmh + (i - 1) * (initH(indexOfInit) - Btmh) / ML;
             SoilVariables.IH(i) = 1;   % Index of wetting history of soil which would be assumed as dry at the first with the value of 1

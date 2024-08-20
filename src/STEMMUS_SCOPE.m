@@ -650,7 +650,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
             VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ModelSettings, ThermalConductivityCapacity, SoilVariables.TT);
 
-            GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
+            GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g, ModelSettings);
 
             % Srt is both input and output
             [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...

@@ -1,9 +1,8 @@
-function [CHK, hh, C4] = solveTridiagonalMatrixEquations(C4, hh, C4_a, RHS, GroundwaterSettings)
+function [CHK, hh, C4] = solveTridiagonalMatrixEquations(C4, hh, C4_a, RHS, ModelSettings, GroundwaterSettings)
     %{
         Solve the tridiagonal matrix equations using Thomas algorithm, which is
         in the form of Equation 4.25 (STEMMUS Technical Notes, page 41).
     %}
-    ModelSettings = io.getModelSettings();
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top

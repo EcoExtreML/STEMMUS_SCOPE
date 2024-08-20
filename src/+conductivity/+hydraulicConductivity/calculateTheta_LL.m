@@ -1,6 +1,4 @@
-function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gamma_hh, SoilVariables, VanGenuchten)
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function theta_ll = calculateTheta_LL(theta_uu, theta_ii, theta_m, gamma_hh, SoilVariables, VanGenuchten, ModelSettings)
 
     % load Constants
     Constants = io.define_constants();

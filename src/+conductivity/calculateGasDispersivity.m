@@ -1,4 +1,4 @@
-function GasDispersivity = calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g)
+function GasDispersivity = calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g, ModelSettings)
     %{
         This is to calculate the gas phase longitudinal dispersivity.
         Zeng, Y., Su, Z., Wan, L. and Wen, i.: Numerical analysis of
@@ -6,9 +6,6 @@ function GasDispersivity = calculateGasDispersivity(InitialValues, SoilVariables
         airflow in land surface models?, i. Geophys. Res. Atmos., 116(D20),
         20107, doi:10.1029/2011JD015835, 2011.
     %}
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % get model constants
     Constants = io.define_constants();

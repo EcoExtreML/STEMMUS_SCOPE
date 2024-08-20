@@ -1,4 +1,4 @@
-function ThermalConductivity = calculateInitialThermal(SoilVariables, VanGenuchten)
+function ThermalConductivity = calculateInitialThermal(SoilVariables, VanGenuchten, ModelSettings)
     FEHCAP = []; % see issue 139
 
     HCAP(1) = 0.998 * 4.182;
@@ -24,9 +24,6 @@ function ThermalConductivity = calculateInitialThermal(SoilVariables, VanGenucht
     TCA = 6e-5 * 4.182;
     GA1 = 0.035;
     GA2 = 0.013;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % Sum over all phases of dry porous media to find the dry heat capacity
     for j = 1:ModelSettings.NL

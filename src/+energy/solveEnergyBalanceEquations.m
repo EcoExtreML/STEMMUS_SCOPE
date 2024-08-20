@@ -2,7 +2,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
                                                                                         AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                         HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                         Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                        TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, GroundwaterSettings)
+                                                                                        TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings)
     %{
         Solve the Energy balance equation with the Thomas algorithm to update
         the soil temperature 'SoilVariables.TT', the finite difference
@@ -11,17 +11,17 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
     %}
 
     EnergyVariables = energy.calculateEnergyParameters(InitialValues, SoilVariables, HeatVariables, TransportCoefficient, AirVariabes, ...
-                                                       VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
-                                                       DRHOVh, DRHOVT, KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, GroundwaterSettings);
+                                                       VaporVariables, GasDispersivity, ThermalConductivityCapacity, DRHOVh, DRHOVT, ...
+                                                       KL_T, Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, ModelSettings, GroundwaterSettings);
 
-    EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues, GroundwaterSettings);
+    EnergyMatrices = energy.calculateMatricCoefficients(EnergyVariables, InitialValues, ModelSettings, GroundwaterSettings);
 
-    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, GroundwaterSettings);
+    [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, ModelSettings, GroundwaterSettings);
 
-    [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, ...
-                                                               SoilVariables, Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, GroundwaterSettings);
+    [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, SoilVariables, ...
+                                                               Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings);
 
-    [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK, GroundwaterSettings);
+    [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK, ModelSettings, GroundwaterSettings);
 
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
@@ -30,7 +30,6 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
         indxBotm = GroundwaterSettings.indxBotmLayer;
     end
 
-    ModelSettings = io.getModelSettings();
     if any(isnan(SoilVariables.TT)) || any(SoilVariables.TT(1:ModelSettings.NN) < ForcingData.Tmin)
         for i = indxBotm:ModelSettings.NN
             SoilVariables.TT(i) = TOLD(i);

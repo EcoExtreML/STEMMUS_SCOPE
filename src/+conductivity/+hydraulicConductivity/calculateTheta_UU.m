@@ -1,4 +1,4 @@
-function theta_uu = calculateTheta_UU(theta_m, gamma_hh, SoilVariables, VanGenuchten)
+function theta_uu = calculateTheta_UU(theta_m, gamma_hh, SoilVariables, VanGenuchten, ModelSettings)
 
     hh = SoilVariables.hh;
     phi_s = SoilVariables.Phi_s;
@@ -9,9 +9,6 @@ function theta_uu = calculateTheta_UU(theta_m, gamma_hh, SoilVariables, VanGenuc
     alpha = VanGenuchten.Alpha;
     n = VanGenuchten.n;
     m = VanGenuchten.m;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % calculate theta_uu
     if ModelSettings.SWCC == 1

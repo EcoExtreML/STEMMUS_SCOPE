@@ -1,4 +1,4 @@
-function [InitialValues, BtmX, BtmT, Tss] = loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData)
+function [InitialValues, BtmX, BtmT, Tss] = loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData, ModelSettings)
     %{
         Producing initial soil moisture and soil temperature profile
     %}
@@ -9,7 +9,6 @@ function [InitialValues, BtmX, BtmT, Tss] = loadSoilInitialValues(InputPath, Tim
     Ta_msr = ForcingData.Ta_msr;
 
     % Get model settings
-    ModelSettings = io.getModelSettings();
     Tot_Depth = ModelSettings.Tot_Depth;
     SWCC = ModelSettings.SWCC;
 

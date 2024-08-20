@@ -1,5 +1,5 @@
 function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                                                        BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings)
+                                                                                                                                                                                        BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings)
     %{
         Solve the soil moisture balance equation with the Thomas algorithm to
         update the soil matric potential 'hh', the finite difference
@@ -7,16 +7,16 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
         'STEMMUS Technical Notes' section 4, Equation 4.32.
     %}
     [HeatVariables, SoilVariables] = soilmoisture.calculateMatricCoefficients(SoilVariables, VaporVariables, GasDispersivity, InitialValues, ...
-                                                                              RHOV, DRHOVh, DRHOVT, D_Ta, GroundwaterSettings);
+                                                                              RHOV, DRHOVh, DRHOVT, D_Ta, ModelSettings, GroundwaterSettings);
 
-    HeatMatrices = soilmoisture.assembleCoefficientMatrices(HeatVariables, InitialValues, Srt, GroundwaterSettings);
+    HeatMatrices = soilmoisture.assembleCoefficientMatrices(HeatVariables, InitialValues, Srt, ModelSettings, GroundwaterSettings);
 
-    [RHS, HeatMatrices, boundaryFluxArray] = soilmoisture.calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t, P_gg, GroundwaterSettings);
+    [RHS, HeatMatrices, boundaryFluxArray] = soilmoisture.calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t, P_gg, ModelSettings, GroundwaterSettings);
 
     % When BoundaryCondition.NBCh == 3, otherwise Rn_SOIL, Evap, EVAP, Trap,
     % r_a_SOIL, Srt will be empty arrays! see issue 98, item 2
     if BoundaryCondition.NBCh == 3
-        [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = soilmoisture.calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, GroundwaterSettings);
+        [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = soilmoisture.calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, ModelSettings, GroundwaterSettings);
     else
         Rn_SOIL = InitialValues.Rn_SOIL;
         Evap = InitialValues.Evap;
@@ -26,16 +26,15 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     end
 
     [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                                TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, GroundwaterSettings);
+                                                                                                TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, ModelSettings, GroundwaterSettings);
 
-    [CHK, hh, C4] = soilmoisture.solveTridiagonalMatrixEquations(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS, GroundwaterSettings);
+    [CHK, hh, C4] = soilmoisture.solveTridiagonalMatrixEquations(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS, ModelSettings, GroundwaterSettings);
+
     % update structures
     SoilVariables.hh = hh;
     HeatMatrices.C4 = C4;
 
     % fix hh values
-    ModelSettings = io.getModelSettings();
-
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling, added by Mostafa
         indxBotm = 1; % index of bottom layer is 1, STEMMUS calculates from bottom to top
     else % Groundwater Coupling is activated
@@ -53,6 +52,6 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
     end
 
     % calculate boundary flux
-    HBoundaryFlux = soilmoisture.calculatesSoilWaterFluxes(boundaryFluxArray, SoilVariables.hh, GroundwaterSettings);
+    HBoundaryFlux = soilmoisture.calculatesSoilWaterFluxes(boundaryFluxArray, SoilVariables.hh, ModelSettings, GroundwaterSettings);
 
 end

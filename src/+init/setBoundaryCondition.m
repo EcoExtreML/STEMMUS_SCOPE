@@ -1,4 +1,5 @@
-function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, initialLandcoverClass, siteName)
+function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, initialLandcoverClass, ModelSettings, siteName)
+
     % Variables information for boundary condition settings
     % NBCh   Indicator for type of surface boundary condition on mass euqation to be applied;
     %        "1"--Specified matric head;
@@ -49,9 +50,6 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
     IRPT2 = 0;
 
     Ta_msr = ForcingData.Ta_msr;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     % NBCh: Moisture Surface B.C.:
     % 1 --Specified matric head(BCh);

@@ -1,4 +1,4 @@
-function soilThick = calculateSoilLayerThickness()
+function soilThick = calculateSoilLayerThickness(ModelSettings)
     %{
         Calculate soil layers thickness (cumulative layers thickness; e.g. 1, 2,
         3, 5, 10, ......., 480, total soil depth)
@@ -6,9 +6,6 @@ function soilThick = calculateSoilLayerThickness()
         soilThick           cumulative soil layers thickness (from top to bottom)
 
     %}
-
-    % Load model settings
-    ModelSettings = io.getModelSettings();
 
     soilThick = zeros(ModelSettings.NN, 1); % cumulative soil layers thickness
     soilThick(1) = 0;

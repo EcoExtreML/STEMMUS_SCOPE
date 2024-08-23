@@ -49,16 +49,33 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Load model settings: replacing "run Constants"
     ModelSettings = io.getModelSettings();
-    NN = ModelSettings.NN;
+
+    % Load soil layers settings
+    soilLayersFile = [InputPath, 'input_soilLayThick.csv'];
+    if isfile(soilLayersFile)
+        SoilLayerSettings = io.readSoilLayerSettings(soilLayersFile);
+        % Override the default settings
+        fields = fieldnames(SoilLayerSettings);
+        for i = 1:numel(fields)
+            ModelSettings.(fields{i}) = SoilLayerSettings.(fields{i});
+        end
+    end
+
+    % Calculate other ModelSettings
+    ModelSettings.NN = ModelSettings.NL + 1; % Number of nodes;
+    ModelSettings.mN = ModelSettings.NN + 1;
+    ModelSettings.mL = ModelSettings.NL + 1; % Number of elements. Preventing the exceeds of arrays size;
+    ModelSettings.nD = 2;
 
     % Load groundwater settings
     GroundwaterSettings = groundwater.initializeGroundwaterSettings();
+    GroundwaterSettings.soilThick = io.calculateSoilLayerThickness(ModelSettings);
 
     % load forcing data
     ForcingData = io.loadForcingData(InputPath, TimeProperties, SoilProperties, ModelSettings.Tot_Depth, GroundwaterSettings);
 
     % Get initial values
-    InitialValues = init.defineInitialValues(TimeProperties.Dur_tot);
+    InitialValues = init.defineInitialValues(TimeProperties.Dur_tot, ModelSettings);
     T_CRIT = InitialValues.T_CRIT;
     TT_CRIT = InitialValues.TT_CRIT;
     hOLD = InitialValues.hOLD;
@@ -255,14 +272,14 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SoilVariables = init.defineSoilVariables(InitialValues, SoilProperties, VanGenuchten);
 
     % Add initial soil moisture and soil temperature
-    [SoilInitialValues, BtmX, BtmT, Tss] = io.loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData);
+    [SoilInitialValues, BtmX, BtmT, Tss] = io.loadSoilInitialValues(InputPath, TimeProperties, SoilProperties, ForcingData, ModelSettings);
     SoilVariables.InitialValues = SoilInitialValues;
     SoilVariables.BtmX = BtmX;
     SoilVariables.BtmT = BtmT;
     SoilVariables.Tss = Tss;
 
     % Run StartInit
-    [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten);
+    [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten, ModelSettings);
 
     % Set SoilVariables that are used in the loop
     T = SoilVariables.T;
@@ -276,7 +293,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SoilConstants = io.getSoilConstants();
 
     %% The boundary condition information settings
-    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1), SiteProperties.sitename);
+    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1), ModelSettings, SiteProperties.sitename);
     DSTOR = BoundaryCondition.DSTOR;
     DSTOR0 = BoundaryCondition.DSTOR0;
     RS = BoundaryCondition.RS;
@@ -287,10 +304,10 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     %% 14. Initialize matrices
     calculate = 1;
     TIMEOLD = 0;
-    SAVEhh_frez = zeros(NN + 1, 1);
-    FCHK = zeros(1, NN);
-    KCHK = zeros(1, NN);
-    hCHK = zeros(1, NN);
+    SAVEhh_frez = zeros(ModelSettings.NN + 1, 1);
+    FCHK = zeros(1, ModelSettings.NN);
+    KCHK = zeros(1, ModelSettings.NN);
+    hCHK = zeros(1, ModelSettings.NN);
     TIMELAST = 0;
 
     % the start of simulation period is from 0mins, while the input data start from 30mins.
@@ -302,9 +319,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     TEND = TIME + TimeProperties.DELT * TimeProperties.Dur_tot; % Time to be reached at the end of simulation period
     Delt_t0 = Delt_t; % Duration of last time step
     TOLD_CRIT = [];
-
-    % 15. Calculate soil layer thickness
-    GroundwaterSettings.soilThick = groundwater.calculateSoilLayerThickness();
 
     % for soil moisture and temperature outputs
     monitorDepthTemperature = ModelSettings.NL:-1:1;
@@ -358,15 +372,25 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     if GroundwaterSettings.GroundwaterCoupling == 1  % Groundwater coupling is enabled
         BoundaryCondition.NBChB = 1;
 
-        % update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
+        % Update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
-        % update Dunnian runoff and ForcingData.Precip_msr
+        % Update Dunnian runoff and ForcingData.Precip_msr
         [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
-        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep);
-        [depToGWT_strt, indxGWLay_strt] = groundwater.findPhreaticSurface(SoilVariables.hh, KT, GroundwaterSettings.soilThick, GroundwaterSettings.indxBotmLayer_R);
+        [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep, ModelSettings);
+
+        % Check the position of the groundwater table
+        if any(GroundwaterSettings.gw_Dep > ModelSettings.Tot_Depth) || any(isempty(GroundwaterSettings.indxBotmLayer))
+            warning('Groundwater table is below the end of the soil column. Please enlarge the total soil thickness!');
+            return
+        end
+
+        % Check if no available groundwater temperature data
+        if isnan(GroundwaterSettings.tempBotm)
+            GroundwaterSettings.tempBotm = SoilVariables.TT(GroundwaterSettings.indxBotmLayer);
+        end
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
@@ -387,10 +411,10 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         end
         %%%%% Updating the state variables. %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         L_f = 0;  % ignore Freeze/Thaw, see issue 139
-        TT_CRIT(NN) = ModelSettings.T0; % unit K
+        TT_CRIT(ModelSettings.NN) = ModelSettings.T0; % unit K
         hOLD_frez = [];
         if IRPT1 == 0 && IRPT2 == 0 && SoilVariables.ISFT == 0
-            for MN = 1:NN
+            for MN = 1:ModelSettings.NN
                 hOLD_frez(MN) = h_frez(MN);
                 h_frez(MN) = hh_frez(MN);
                 TOLD_CRIT(MN) = T_CRIT(MN);
@@ -496,8 +520,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                         [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential, TestPHS] ...
                             = ebal(iter, options, spectral, rad, gap,  ...
                                    leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                                   Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings,...
+                                   Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings, ...
                                    SiteProperties, ParaPlant, RootProperties, soilDepthB2T, TestPHS, KT);
+
                         if options.calc_fluor
                             if options.calc_vert_profiles
                                 [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);
@@ -570,7 +595,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             BoundaryCondition.DSTOR0 = DSTOR0;
 
             if KT > 1
-                SoilVariables.XWRE = updateWettingHistory(SoilVariables, VanGenuchten);
+                SoilVariables.XWRE = updateWettingHistory(SoilVariables, VanGenuchten, ModelSettings);
             end
 
             for i = 1:ModelSettings.NL
@@ -578,37 +603,37 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
         end
         if Delt_t ~= Delt_t0
-            for MN = 1:NN
+            for MN = 1:ModelSettings.NN
                 hh(MN) = h(MN) + (h(MN) - hOLD(MN)) * Delt_t / Delt_t0;
                 TT(MN) = T(MN) + (T(MN) - TOLD(MN)) * Delt_t / Delt_t0;
             end
         end
-        hSAVE = hh(NN);
-        TSAVE = TT(NN);
+        hSAVE = hh(ModelSettings.NN);
+        TSAVE = TT(ModelSettings.NN);
 
         % set "hN" empty when the "if statement" below does not happen, see issue 98,
         % item 5
         hN = [];
         if BoundaryCondition.NBCh == 1
             hN = BoundaryCondition.BCh;
-            hh(NN) = hN;
+            hh(ModelSettings.NN) = hN;
             hSAVE = hN;
         elseif BoundaryCondition.NBCh == 2
             if BoundaryCondition.NBChh ~= 2
                 if BoundaryCondition.BCh < 0
                     hN = DSTOR0;
-                    hh(NN) = hN;
+                    hh(ModelSettings.NN) = hN;
                     hSAVE = hN;
                 else
                     hN = -1e6;
-                    hh(NN) = hN;
+                    hh(ModelSettings.NN) = hN;
                     hSAVE = hN;
                 end
             end
         else
             if BoundaryCondition.NBChh ~= 2
                 hN = DSTOR0;
-                hh(NN) = hN;
+                hh(ModelSettings.NN) = hN;
                 hSAVE = hN;
             end
         end
@@ -622,40 +647,40 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         SoilVariables.Tss(KT) = Tss;
 
         for KIT = 1:ModelSettings.NIT
-            [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, NN, SoilConstants.hd, ForcingData.Tmin);
+            [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, ModelSettings.NN, SoilConstants.hd, ForcingData.Tmin);
             % update inputs for UpdateSoilWaterContent
             SoilVariables.TT_CRIT = TT_CRIT;
             SoilVariables.hh_frez = hh_frez;
 
-            SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
+            SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten, ModelSettings);
 
             % Reset KL_T here. CondL_T script is replaced by this line
             % see issue 181, item 4
             KL_T = InitialValues.KL_T;
 
-            [RHOV, DRHOVh, DRHOVT] = Density_V(SoilVariables.TT, SoilVariables.hh, Constants.g, Constants.Rv, NN);
+            [RHOV, DRHOVh, DRHOVT] = Density_V(SoilVariables.TT, SoilVariables.hh, Constants.g, Constants.Rv, ModelSettings.NN);
 
-            TransportCoefficient = conductivity.calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t);
+            TransportCoefficient = conductivity.calculateTransportCoefficient(InitialValues, SoilVariables, VanGenuchten, Delt_t, ModelSettings);
             W = TransportCoefficient.W;
             D_Ta = TransportCoefficient.D_Ta;
 
-            [L] = Latent(SoilVariables.TT, NN);
+            [L] = Latent(SoilVariables.TT, ModelSettings.NN);
             % DRHODAt unused!
-            [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(SoilVariables.T, Constants.RDA, P_g, Constants.Rv, ModelSettings.DeltZ, SoilVariables.h, SoilVariables.hh, SoilVariables.TT, P_gg, Delt_t, ModelSettings.NL, NN, DRHOVT, DRHOVh, RHOV);
+            [Xaa, XaT, Xah, DRHODAt, DRHODAz, RHODA] = Density_DA(SoilVariables.T, Constants.RDA, P_g, Constants.Rv, ModelSettings.DeltZ, SoilVariables.h, SoilVariables.hh, SoilVariables.TT, P_gg, Delt_t, ModelSettings.NL, ModelSettings.NN, DRHOVT, DRHOVh, RHOV);
 
-            ThermalConductivityCapacity = conductivity.calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, DRHOVT, L, RHOV);
+            ThermalConductivityCapacity = conductivity.calculateThermalConductivityCapacity(InitialValues, ThermalConductivity, SoilVariables, VanGenuchten, ModelSettings, DRHOVT, L, RHOV);
 
-            k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables);
+            k_g = conductivity.calculateGasConductivity(InitialValues, TransportCoefficient, VanGenuchten, SoilVariables, ModelSettings);
 
-            VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ThermalConductivityCapacity, SoilVariables.TT);
+            VaporVariables = conductivity.calculateVaporVariables(InitialValues, SoilVariables, VanGenuchten, ModelSettings, ThermalConductivityCapacity, SoilVariables.TT);
 
-            GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g);
+            GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g, ModelSettings);
 
             % Srt is both input and output
             [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
-                                                                        DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, GroundwaterSettings);
+                                                                        DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings);
 
             if BoundaryCondition.NBCh == 1
                 DSTOR = 0;
@@ -682,7 +707,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
             if ModelSettings.Soilairefc == 1
                 [AirVariabes, RHS, SAVE, P_gg] = dryair.solveDryAirEquations(SoilVariables, GasDispersivity, TransportCoefficient, InitialValues, VaporVariables, ...
-                                                                             BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t, GroundwaterSettings);
+                                                                             BoundaryCondition, ForcingData, P_gg, P_g, Xah, XaT, Xaa, RHODA, KT, Delt_t, ModelSettings, GroundwaterSettings);
             else
                 AirVariabes.KLhBAR = InitialValues.KLhBAR;
                 AirVariabes.KLTBAR = InitialValues.KLTBAR;
@@ -700,25 +725,25 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                                                                                       AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                                       HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                                       Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                                      TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, GroundwaterSettings);
+                                                                                                      TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
             end
 
             if max(CHK) < 0.1
                 break
             end
-            hSAVE = SoilVariables.hh(NN);
-            TSAVE = SoilVariables.TT(NN);
+            hSAVE = SoilVariables.hh(ModelSettings.NN);
+            TSAVE = SoilVariables.TT(ModelSettings.NN);
         end
 
         TIMEOLD = KT;
         KIT;
         KIT = 0;
 
-        [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, NN, SoilConstants.hd, ForcingData.Tmin);
+        [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, ModelSettings.NN, SoilConstants.hd, ForcingData.Tmin);
         % updates inputs for UpdateSoilWaterContent
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
-        SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten);
+        SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten, ModelSettings);
 
         if IRPT1 == 0 && IRPT2 == 0
             if KT        % In case last time step is not convergent and needs to be repeated.
@@ -754,7 +779,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 Sim_qtot(KT, 1:length(monitorDepthSoilMoisture)) = qtot(monitorDepthSoilMoisture, KT);
             end
             if (TEND - TIME) < 1E-3
-                for i = 1:NN
+                for i = 1:ModelSettings.NN
                     hOLD(i) = SoilVariables.h(i);
                     SoilVariables.h(i) = SoilVariables.hh(i);
                     if ModelSettings.Thmrlefc == 1
@@ -776,8 +801,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Recharge calculations, added by Mostafa
         if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-            % update depToGWT_strt, indxGWLay_strt for next time step
-            [depToGWT_strt, indxGWLay_strt, gwfluxes] = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, depToGWT_strt, indxGWLay_strt, KT, GroundwaterSettings);
+            gwfluxes = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, ModelSettings, GroundwaterSettings);
             if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
                 gwfluxes.recharge = 0;
             end

@@ -1,7 +1,7 @@
 function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential, TestPHS]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                Rl, SoilVariables, VanGenuchten, InitialValues, GroundwaterSettings, ...
+                Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings,...
                 SiteProperties, ParaPlant, RootProperties, soilDepthB2T, TestPHS, KT)
 
     %{
@@ -94,8 +94,6 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     %}
 
     %% 1. initialisations and other preparations for the iteration loop
-    ModelSettings = io.getModelSettings();
-
     counter         = 0;              %           Iteration counter of ebal
     maxit           = iter.maxit;
     maxEBer         = iter.maxEBer;
@@ -177,7 +175,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     eiu = equations.satvap(Tcu);
     PSI = 0;
 
-    [bbx] = Max_Rootdepth(InitialValues.bbx);
+    [bbx] = Max_Rootdepth(InitialValues.bbx, ModelSettings);
     [psiSoil, rsss, rrr, rxx, TestPHS.psiSoilAll(:, KT), Ksoil] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings);
     TestPHS.rsssTot(:, KT) = rsss;
     TestPHS.rrrTot(:, KT) = rrr;

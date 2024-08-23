@@ -1,4 +1,4 @@
-function [lE, H, ec, ei, Cc, lambda, s, delta_e, delta_t]  = heatfluxes(ra, rs, Tc, ea, Ta, e_to_q, PSI, Ca, Ci, es_fun, s_fun)
+function [lE, H, ec, Cc, lambda, s, delta_e, delta_t]  = heatfluxes(ra, rs, Tc, ea, Ta, e_to_q, PSI, Ca, Ci, es_fun, s_fun)
 
     % load Constants
     Constants = io.define_constants();

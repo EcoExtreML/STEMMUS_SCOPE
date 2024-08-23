@@ -50,12 +50,12 @@ function [SoilVariables, VanGenuchten, initH] = soilHeteroSubroutine(subRoutine,
             j = i - 1;
         end
 
-        SoilVariables.IS(i) = indexOfSoilType;
+        SoilVariables.IS(j) = indexOfSoilType;
         if subRoutine == 4
             SoilVariables.IS(5:8) = 5;
         end
 
-        J = SoilVariables.IS(i);
+        J = SoilVariables.IS(j);
         [SoilVariables, VanGenuchten] = init.updateSoilVariables(SoilVariables, VanGenuchten, SoilProperties, j, J);
         SoilVariables.Imped(i) = ImpedF(J);
 

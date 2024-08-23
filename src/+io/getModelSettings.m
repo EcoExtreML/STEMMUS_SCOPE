@@ -73,9 +73,4 @@ function ModelSettings = getModelSettings()
     ModelSettings.ML = ML;
     ModelSettings.DeltZ = DeltZ;
     ModelSettings.DeltZ_R = DeltZ_R;
-
-    ModelSettings.NN = ModelSettings.NL + 1; % Number of nodes;
-    ModelSettings.mN = ModelSettings.NN + 1;
-    ModelSettings.mL = ModelSettings.NL + 1; % Number of elements. Prevending the exceeds of size of arraies;
-    ModelSettings.nD = 2;
 end

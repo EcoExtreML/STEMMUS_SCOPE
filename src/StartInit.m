@@ -1,4 +1,4 @@
-function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten)
+function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVariables, SoilProperties, VanGenuchten, ModelSettings)
 
     Ksh = repelem(18 / (3600 * 24), 6);
     BtmKsh = Ksh(6);
@@ -10,22 +10,22 @@ function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVari
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilVariables, VanGenuchten);
+    [SoilVariables, VanGenuchten] = init.applySoilHeteroEffect(SoilProperties, SoilVariables, VanGenuchten, ModelSettings);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%% Considering soil hetero effect modify date: 20170103 %%%%%%%%%%%%
     %%%%%% Perform initial freezing temperature for each soil type.%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    SoilVariables = init.applySoilHeteroWithInitialFreezing(LatentHeatOfFreezing, SoilVariables);
+    SoilVariables = init.applySoilHeteroWithInitialFreezing(LatentHeatOfFreezing, SoilVariables, ModelSettings);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%% Perform initial thermal calculations for each soil type.%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    ThermalConductivity = init.calculateInitialThermal(SoilVariables, VanGenuchten);
+    ThermalConductivity = init.calculateInitialThermal(SoilVariables, VanGenuchten, ModelSettings);
 
     % SoilVariables will be updated in UpdateSoilWaterContent
-    SoilVariables = UpdateSoilWaterContent(KIT, LatentHeatOfFreezing, SoilVariables, VanGenuchten);
+    SoilVariables = UpdateSoilWaterContent(KIT, LatentHeatOfFreezing, SoilVariables, VanGenuchten, ModelSettings);
 
     Theta_L = SoilVariables.Theta_L;
     Theta_I = SoilVariables.Theta_I;
@@ -34,9 +34,6 @@ function [SoilVariables, VanGenuchten, ThermalConductivity] = StartInit(SoilVari
     Theta_LL = SoilVariables.Theta_LL;
     Theta_UU = SoilVariables.Theta_UU;
     Theta_II = SoilVariables.Theta_II;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     for i = 1:ModelSettings.NL
         Theta_L(i, 1) = Theta_LL(i, 1);

@@ -1,10 +1,7 @@
-function SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten)
+function SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten, ModelSettings)
     %{
         Update SoilWaterContent i.e. Theta_LL.
     %}
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     Theta_s = VanGenuchten.Theta_s;
 
@@ -31,7 +28,7 @@ function SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenu
         SoilVariables.hh(MN) = hhU(MN);
     end
 
-    SoilVariables = conductivity.calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f);
+    SoilVariables = conductivity.calculateHydraulicConductivity(SoilVariables, VanGenuchten, KIT, L_f, ModelSettings);
     Theta_LL = SoilVariables.Theta_LL;
     DTheta_LLh = SoilVariables.DTheta_LLh;
     Theta_UU = SoilVariables.Theta_UU;

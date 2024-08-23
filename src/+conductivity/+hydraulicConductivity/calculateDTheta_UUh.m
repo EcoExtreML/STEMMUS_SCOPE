@@ -1,4 +1,4 @@
-function dtheta_uuh = calculateDTheta_UUh(theta_uu, theta_m, theta_ll, gamma_hh, SoilVariables, VanGenuchten)
+function dtheta_uuh = calculateDTheta_UUh(theta_uu, theta_m, theta_ll, gamma_hh, SoilVariables, VanGenuchten, ModelSettings)
     theta_s = VanGenuchten.Theta_s;
     theta_r = VanGenuchten.Theta_r;
     alpha = VanGenuchten.Alpha;
@@ -13,9 +13,6 @@ function dtheta_uuh = calculateDTheta_UUh(theta_uu, theta_m, theta_ll, gamma_hh,
     hh_frez = SoilVariables.hh_frez;
     phi_s = SoilVariables.Phi_s;
     lamda = SoilVariables.Lamda;
-
-    % get model settings
-    ModelSettings = io.getModelSettings();
 
     heatTerm = hh + hh_frez;
     if ModelSettings.SWCC == 1

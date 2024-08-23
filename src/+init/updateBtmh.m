@@ -1,6 +1,4 @@
-function Btmh = updateBtmh(VanGenuchten, SoilVariables, i)
-    % get model settings
-    ModelSettings = io.getModelSettings();
+function Btmh = updateBtmh(VanGenuchten, SoilVariables, i, ModelSettings)
 
     if ModelSettings.SWCC == 1   % VG soil water retention model
         Btmh = init.calcInitH(VanGenuchten.Theta_s(i), VanGenuchten.Theta_r(i), SoilVariables.BtmX, VanGenuchten.n(i), VanGenuchten.m(i), VanGenuchten.Alpha(i));

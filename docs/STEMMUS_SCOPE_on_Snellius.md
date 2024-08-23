@@ -17,6 +17,7 @@ Dutch National supercomputer hosted at SURF.
       - radiationdata
       - soil_spectra
       - input_data.xlsx
+      - input_soilThick.csv (optional)
 
     For the explanation of the directories see
   [Dataflow of STEMMUS_SCOPE on CRIB](./STEMMUS_SCOPE_on_CRIB.md#dataflow-of-stemmus_scope-on-crib).

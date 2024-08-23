@@ -7,7 +7,7 @@ function [GAM] = Soil_Inertia1(SMC, theta_s0)
     Sr = SMC / theta_s;
 
     % fss = 0.58; %(sand fraction)
-    gamma_s = 0.27; % (soil texture dependent parameter)
+    gamma_s = 0.96; % (soil texture dependent parameter)
     dels = 1.33; % (shape parameter)
 
     ke = exp(gamma_s * (1 - power(Sr, gamma_s - dels)));
@@ -15,10 +15,12 @@ function [GAM] = Soil_Inertia1(SMC, theta_s0)
     phis  = theta_s0; % (phis == theta_s)
     lambda_d = -0.56 * phis + 0.51;
 
-    QC = 0.20; % (quartz content)
+    QC = 0.60; % (quartz content)
     lambda_qc = 7.7;  % (thermal conductivity of quartz, constant)
 
-    lambda_s = (lambda_qc^(QC)) * lambda_d^(1 - QC);
+    lambda_o = 2.0;
+
+    lambda_s = (lambda_qc^(QC)) * lambda_o^(1 - QC);
     lambda_wtr = 0.57;   % (thermal conductivity of water, W/m.K, constant)
 
     lambda_w = (lambda_s^(1 - phis)) * lambda_wtr^(phis);

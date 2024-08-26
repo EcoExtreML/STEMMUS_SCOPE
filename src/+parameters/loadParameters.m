@@ -27,24 +27,24 @@ function [ScopeParameters, Options] = loadParameters(Options, use_xlsx, ExcelDat
             cond = sum(~isnan(scopeInput(j, :))) < 1;
         end
         if isempty(j) || cond
-            if name == 'Cab'
+            if strcmp(name, 'Cab')
                 warning('warning: input "', name, '" not provided in input spreadsheet...', ...
                         'I will use 0.25*Cab instead');
                 Options.Cca_function_of_Cab = 1;
-            elseif ~(Options.simulation == 1) && (name == 'Rin' || name == 'Rli')
+            elseif ~(Options.simulation == 1) && (strcmp(name, 'Rin') || strcmp(name, 'Rli'))
                 warning('warning: input "', name, '" not provided in input spreadsheet...', ...
                         'I will use the MODTRAN spectrum as it is');
             elseif Options.simulation == 1 || (Options.simulation ~= 1 && (i < 46 || i > 50))
                 warning('warning: input "', name, '" not provided in input spreadsheet');
-                if Options.simulation == 1 && (name == 'Cab' || name == 'Vcmo' || name == 'LAI' || name == 'hc' || name == 'SMC' || (i > 29 && i < 37))
+                if Options.simulation == 1 && (strcmp(name, 'Cab') || strcmp(name, 'Vcmo') || strcmp(name, 'LAI') || strcmp(name, 'hc') || strcmp(name, 'SMC') || (i > 29 && i < 37))
                     fprintf(1, '%s %s %s\n', 'I will look for the values in Dataset Directory "', char(ForcingData(5).FileName), '"');
-                elseif name == 'zo' || name == 'd'
+                elseif strcmp(name, 'zo') || strcmp(name, 'd')
                     fprintf(1, '%s %s %s\n', 'will estimate it from LAI, CR, CD1, Psicor, and CSSOIL');
                     Options.calc_zo = 1;
                 elseif i > 38 && i < 44
                     fprintf(1, '%s %s %s\n', 'will use the provided zo and d');
                     oOptions.calc_zo = 0;
-                elseif ~(Options.simulation == 1 && (name == 'Rin' || name == 'Rli'))
+                elseif ~(Options.simulation == 1 && (strcmp(name, 'Rin') || strcmp(name, 'Rli')))
                     fprintf(1, '%s \n', 'this input is required: SCOPE ends');
                     return
                 else

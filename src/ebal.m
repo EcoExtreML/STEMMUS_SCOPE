@@ -275,11 +275,16 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
             biochem_in.qLs          = leafbio.qLs;
             biochem_in.NPQs        = leafbio.kNPQs;
             biochem_in.stressfactor = leafbio.stressfactor;
-        else
+        else options.Fluorescence_model == 1
             % specific for Berry-v.d.Tol model
             biochem_in.tempcor      = options.apply_T_corr;
             biochem_in.Tparams      = leafbio.Tparam;
             biochem_in.stressfactor = SMCsf;
+        else options.Fluorescence_model ==3 % ZS added, 2023-09-08, Gu 2019, 2023 MLROC - Mechnistic Light Response, Open-Closed biochemical model
+            b                   = @biochemical_MLROC; % specific for Gu et al., 2023 model
+            biochem_in.tempcor      = options.apply_T_corr;
+            biochem_in.Tparams      = leafbio.Tparam;
+            biochem_in.stressfactor = SMCsf;    
         end
 
         % for shaded leaves

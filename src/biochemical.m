@@ -491,7 +491,8 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
     rcw      =  (rhoa ./ (Mair * 1E-3)) ./ gs;
 
     %% fluorescence (Replace this part by Magnani or other model if needed)
-    ps          = po0 .* Ja ./ Je;               % this is the photochemical yield
+    %ps          = po0 .* Ja ./ Je;               % this is the photochemical yield
+    ps = po0;
     nanPs = isnan(ps);
     if any(nanPs)
         if numel(po0) == 1
@@ -501,8 +502,13 @@ function biochem_out = biochemical(biochem_in, sfactor, Ci_input)
         end
     end
     ps_rel   = max(0,  1 - ps ./ po0);       % degree of light saturation: 'x' (van der Tol e.a. 2014)
-
-    [eta, qE, qQ, fs, fo, fm, fo0, fm0, Kn]    = Fluorescencemodel(ps, ps_rel, Kp, Kf, Kd, Knparams);
+    
+    if FluorescenceModelOption == 1
+        [eta, qE, qQ, fs, fo, fm, fo0, fm0, Kn]    = Fluorescencemodel(ps, ps_rel, Kp, Kf, Kd, Knparams);
+    else 
+        [eta,qE,qQ,fs,fo,fm,fo0,fm0,Kn,J_PSII_o,q_PSII_o]    = Fluorescencemodel_MLROC(PAR,J_PSII,q_PSII,SIF_O,po0, Kp,Kf,Kd);
+    end
+    
     Kpa         = ps ./ fs * Kf;
 
     %% convert back to ppm
@@ -717,3 +723,299 @@ function [eta, qE, qQ, fs, fo, fm, fo0, fm0, Kn] = Fluorescencemodel(ps, x, Kp, 
     % eta         = eta*(1+5)/5 - 1/5;     % this corrects for 29% PSI contribution in PAM data, but it is quick and dirty correction that needs to be improved in the next
 
 end
+
+%% Function MLROC
+function [J_PSII, q_PSII] = MLROC(biochem_in)
+    % Parameters for MLROC
+    % Estimate q_PSII
+    % q_PSII:    [] the fraction of open PSII reaction center
+    % Select parameters for C3 or C4
+    Type = biochem_in.Type;
+    if strcmp(Type, 'C3')
+    % [a_PSII, b_PSII] = [0.80+-0.13,(0.95+-0.24)*e-3] for C3 plants
+      [a_PSII, b_PSII] = [0.80,0.95*e-3]; 
+    else
+    % [a_PSII, b_PSII] = [0.83+-0.12,(0.63+-0.09)*e-3] for C4 plants
+      [a_PSII, b_PSII] = [0.83,0.63*e-3];
+    end
+    %%%%% q_PSII = a_PSII * exp(-b_PSII*PAR) (eq.5, Han et al., 2022, nph) 
+    PAR = biochem_in.PAR;
+    q_PSII = a_PSII .* exp(-b_PSII .* PAR);
+    %%%%% Estimate J_PSII
+    %  J_PSII:   [μmol m−2 s−1] the linear electron transport rate from PSII to PSI
+    %  Parameters [Umop, R1, R2, q_r, a_q, b_s, c_s, E_T] for different PFTs
+    %%%%% J_PSII =  (2*Umop*f_T*f_s*f_q*(q_r - q_PSII)*q_PSII) / (R1 + 2*R2*f_s*f_q)*q_PSII + q_r)
+    %             % (eq.25, Gu et al., 2023, PCE)
+    
+    % Retrieve parameters from function MLROCparameters
+    % 9 Species are included, s1-s9
+    [p1,p2,p3,p4,p5,p6,p7,p8,p9]            =   MLROC_struct.PFT;
+    [c1,c2,c3,c4,c5,c6,c7,c8,c9]            =   MLROC_struct.C3C4;
+    [s1,s2,s3,s4,s5,s6,s7,s8,s9]            =   MLROC_struct.Species;
+    [oc1,oc2,oc3,oc4,oc5,oc6,oc7,oc8,oc9]   =   MLROC_struct.OCparams;
+    % each oc* contains 7 records of parameters [U R1 R2 qr aq bs cs] for each Species
+    
+    %%%%% needs to decide which PFT C3/C4 parameter set to use
+    %%%%% [Umop, R1, R2, q_r, a_q, b_s, c_s] = MLROCparameters(PFT, C3C4, Species)
+    oc1     = MLROC_struct.OCparams;
+    Umop    = oc1(1);
+    R1      = oc1(2);
+    R2      = oc1(3);
+    q_r     = oc1(4);
+    a_q     = oc1(5);
+    b_s     = oc1(6);
+    c_s     = oc1(7);
+    
+    % f_T:      [-] the standardized temperature response function of electron transport in proteins
+    %           according to the Marcus theory
+    %%%%%          f_T = sqrt(To/T)*exp(E_T*(1/To - 1/T)), (eq. 19, Gu et al., 2023, PCE)
+    %           E_T = (lambda + delGo)^2/(4*lambda*k_B)
+    
+    nelectrons = 2;     % two electrons are needed to reduce Q_B (the loosely bound plastoquinone)
+    lambda    = 112000;   %[J mol-1], reorganisation energy for the intramolecular electron transfer
+                        % between the reduced type 1 copper site and the peroxy intermediate of the trinuclear cluster in
+                        % the multicopper oxidase CueO calculated  at the combined quantum
+                        % mechanics and molecular mechanics (QM/MM) level, based on molecular dynamics
+                        % simulations with tailored potentials for the two copper sites.
+                        % (Hu et al., 2011 J Phys. Chem. B, reorganization energy of electron transport)
+    %%%%% added, ZS 2023-09-05
+    %%%%%    const.Faraday   = 96485.3321233100184; % [C mol-1]     Faraday constant
+    %%%%%    const.k_B       = 1.380649E-23;         % [J k-1]       Boltzmann constant
+    %%%%% Faraday      = const.Faraday    % [C mol-1]  Faraday constant (should be introduced in constants.m)
+    %%%%% k_B          = const.k_B        % [J K-1]    Boltzmann constant
+    %%%%% Avogardro    = const.A          % [mol-1]    Constant of Avogadro
+    
+    Faraday     = 96485.3321233100184; % [C mol-1] Faraday constant (should be introduced in constants.m)
+    k_B         = 1.380649E-23;        % [J k-1]   Boltzmann constant (should  be introduced in constants.m)
+    Avogardro   = 6.02214E23;          % [mol-1]   Constant of Avogadro
+    Ecell_o = -.32;      % [V = J C-1] standard redox potentials for NADP+/NADPH
+    delGo  = -nelectrons * Faraday * Ecell_o;    % Gibbs free energy of activation 
+    E_T    = (lambda + delGo)^2/(4 * lambda * k_B * Avogardro);
+    
+    To = Tref;         % [K] reference temperature (To =  273.15+25 K), same as Tref 
+    %%%%% leaf temperature, input passed from ebal.m
+    % below Tleaf = 290.15 for test value, same as T above
+    Tleaf = 290.15;      % [k] leaf temperature, input from ebal.m
+    
+    %%Tleaf             = biochem_in.T + 273.15*(biochem_in.T<200); % convert temperatures to K if not already
+    f_T = sqrt(To/Tleaf) .* exp(E_T .* (1/To - 1/Tleaf)); % (eq. 19, Gu et al., 2023, PCE)
+    %           To, Tl: [k] the reference and leaf temperature (input from ebal.m),
+    %                   To = 298.15 [K]
+    %          
+    
+    % f_s:       [-] the light‐induced thylakoid swelling and shrinking function
+    %%%%%          f_s = V_t/Vmax = 1/(1+c_s+exp(-b_s*aPAR)) 
+    %%%%% aPAR needs to be passed from ebal.m
+    aPAR = Q * fPAR; 
+    f_s = 1/(1+c_s+exp(-b_s*aPAR)); 
+    
+    % f_q:      [-] the redox poise balance function between cytochrome b6f complex and photosystem II
+    %%          f_q = (1+a_q)/(1+a_q*q_PSII)
+    f_q = (1+a_q)/(1+a_q*q_PSII);
+    
+    %%%%% J_PSII =  (2*Umop*f_T*f_s*f_q*(q_r - q_PSII)*q_PSII) / (R1 + 2*R2*f_s*f_q)*q_PSII + q_r) (eq. 25, Gu_2023_PCE)
+    J_PSII =  (2*Umop*f_T*f_s*f_q*(q_r - q_PSII)*q_PSII) / (R1 + 2*R2*f_s*f_q)*q_PSII + q_r);
+    
+    % Umop:     [μmol m−2 s−1] the maximum oxidation potential of free plastoquinone and plastoquinol 
+    %                          by the cytochrome b6f complex, 
+    %%%%%          Umop = u*[N_PQT]*[N_cytT]; 
+    %           u:    : [μmol m−2 s-1] is the the second‐order rate constant for the oxidation of plastoquinol 
+    %                   by the RieskeFeS protein of cytochrome b6f complex;
+    %           N_PQT : [μmol m−2] the foliar concentration of the free plastoquinone and plastoquinol pool per unit leaf area
+    %           N_cytT: [μmol m−2] the total foliar concentration of the cytochrome b6f complex, including both uninhibited
+    %                   and inhibited complexes for linear electron transport per unit leaf area
+    % 
+    % f_T:      [-] the standardized temperature response function of electron transport in proteins
+    %           according to the Marcus theory
+    %%%%%         f_T = sqrt(To/T)*exp(E_T*(1/To - 1/T)), (eq. 19, Gu et al., 2023, PCE)
+    %           To, T: [k] the reference and leaf temperature,
+    %                   To = 298.15 [K]
+    %%%%%         E_T = (lambda + delGo)^2/(4*lambda*k_B)
+    %           E_T  :  E_T is a composite temperature sensitivity parameter (K) related to the
+    %                   Gibbs free energy of activation. f_T = 1 for T = T0.
+    %           lambda: [J] outer shell reorganization energy 
+    %           delGo : [J] The Gibbs free energy of activation
+    %
+    % f_s       [-] the light‐induced thylakoid swelling and shrinking function
+    %%%%%         f_s = V_t/Vmax = 1/(1+c_s+exp(-b_s*aPAR)) 
+    %           V_t, Vmax: [m3] V_t is the volume of the thylakoid at a given set of environmental
+    %           conditions and Vmax is the maximum achievable volume of a fully
+    %           swollen thylakoid.
+    %           c_s, b_s: parameters for a sigmoid fitting function, 
+    %                     b_s controls how fast the thylakoid expands and 
+    %                     c_s sets the maximum impact of macromolecular crowding on h_cyt. 
+    %                     f_s equals 1/(1 + c_s) in the dark and
+    %                     approaches 1 (V_t → Vmax) as PAR increases.
+    %           aPAR:     [μmol m−2 s−1] absorbed photosynthetically active radiation (PAR)
+    %
+    % f_q:      [-] the redox poise balance function between cytochrome b6f complex and photosystem II
+    %%%%%        f_q = (1+a_q)/(1+a_q*q_PSII)
+    %           h_cyt: [-] fraction of cytochrome b6f complex available for linear electron transport
+    %           f_q derived from h_cyt = N_cytL/N_cytT = f_q*q_PSII = (1+a_q)*q_PSII/(1+a_q*q_PSII) (eq. 14, Gu et al., 2023 PCE)
+    %           a_q: a stoichiometry parameter determines how h_cyt varies with q_PSII.
+    %           N_cytL: [μmol m−2] the foliar concentration of the cytochrome b6f complex available (uninhibited) 
+    %                   for linear electron transport per unit leaf area
+    %
+    % q_r:      [-] the fraction of reversible photosystem II reaction centres
+    %%%%%         q_r = ([O]+[C])/N_PSII, 
+    %           qr denotes the fraction of the PSII reaction centres that are in the O (Open) or C (Closed) states, 
+    %           that is, the reversible reaction centres, N_PSII=[O]+[C]+[I],
+    %           [I] denotes the number of functionally inactive (irreversible) PSII reaction centres per unit leaf area.
+    %           N_PSII: [μmol m−2] The foliar concentrations of total photosystem II reaction centres per unit leaf area
+    %
+    % R1 :      [] the first resistance of electron transport = rr/rd
+    %           rd, rr: [m2 μmol−1 s−1]  the second‐order rate constant for the electron transfer 
+    %                   from the reduced acceptor to PQ to form PQH2 (rd) and 
+    %                   for the reverse reaction (rr), respectively
+    % R2 :      [] the second resistance of electron transport = u_RFes*N_cytT/(rd*N_PSII)
+    %           u_RFes: [m2 μmol−1 s−1] The second‐order rate constant for the oxidation of plastoquinol 
+    %                   by the RieskeFeS protein of cytochrome b6f complex
+    %
+    % Parameters [Umop, R1, R2, q_r, a_q, b_s, c_s, E_T] for different PFTs
+    % can be obtained from Table S4, Gu et al., 2023, PCE which are fitted to
+    % gas exahnge and fluorescence measurments.
+
+end
+
+%% MLROC Fluorescence model
+function [eta,qE,qQ,fs,fo,fm,fo0,fm0,Kn,J_PSII,q_PSII] = Fluorescencemodel_MLROC(PAR,J_PSII,q_PSII,SIF_O,po0, Kp,Kf,Kd)
+  % MLROC can be used as a simple observation operator, because J_PSII and q_PSII 
+  % can be updated based on observed SIF; 
+  %
+  % usage:   
+  % SIF = (J_PSII ./ q_PSII) .* (1/po0 - 1) / (1+Kdf);             % (eq.21, Gu et al., 2019, nph)
+  % delSIF = SIF_O - SIF; 
+  % if abc(delSIF) > 0;  
+  % SIF = SIF + delSIF; update SIF and then NPQ
+  % NPQ = (beta * alpha .* PAR - J_PSII) / ((1+Kdf) .* SIF) - 1;   % (eq.20, Gu et al., 2019, nph)
+  
+  
+  %%%% po0=Kp/(Kf+Kd+Kp)=0.8, for Kp=4, Kf=0.1, Kd=0.9, maximum photochemical yield 
+
+%    Kno = Knparams(1);
+%    alpha = Knparams(2);
+%    beta = Knparams(3);
+
+    % switch model_choice
+    %     case 0, % drought 
+    %         Kno = 5.01;
+    %         alpha = 1.93;
+    %         beta = 10;
+    %         %Kn          = (6.2473 * x - 0.5944).*x; % empirical fit to Flexas' data
+    %         %Kn          = (3.9867 * x - 1.0589).*x;  % empirical fit to Flexas, Daumard, Rascher, Berry data
+    %     case 1, healthy (cotton)
+    %         Kno = 2.48;
+    %         alpha = 2.83;
+    %         beta = 0.114;
+    %         %p = [4.5531;8.5595;1.8510];
+    %         %Kn   = p(1)./(p(3)+exp(-p(2)*(x-.5)));
+    % end
+
+    % using exp(-beta) expands the interesting region between 0-1
+    %beta = exp(-beta);
+    %x_alpha = exp(log(x).*alpha); % this is the most expensive operation in this fn; doing it twice almost doubles the time spent here (MATLAB 2013b doesn't optimize the duplicate code)
+    %Kn = Kno * (1+beta).* x_alpha./(beta + x_alpha);
+    
+    % values for test, actual input from biochemical_MLROC
+%    Kp=4; Kf=0.1; Kd=0.9; Kdf=Kd/Kf;
+%    po0=Kp/(Kf+Kd+Kp);
+%    PAR=800; J_PSII=199; q_PSII = 3/8;
+    if J_PSII > 199
+        J_PSII = 198; % We limit J_PSII to prevent negative NPQ
+        q_PSII = J_PSII/PAR; % update q_PSII 
+    end 
+                     % the maximum observed J_PSII is 130+-9 [umol e^-1 m-2 s-1]
+                     % in cyanobacteria (Masojidek et al., 2001, J Plankton Res.) 
+        
+    beta    = 0.5;  % fraction of aPAR (alpha*PAR) allocated to PSII
+    alpha   = 0.83; % absorptance of PAR by green leaves, input from ebal.m
+                    % alpha should be replaced by calcualted values
+    %%%% MLR model
+    SIF = (J_PSII ./ q_PSII) .* (1/po0 - 1) / (1+Kdf);             % (eq.21, Gu et al., 2019, nph)
+    NPQ = (beta * alpha .* PAR - J_PSII) / ((1+Kdf) .* SIF) - 1;   % (eq.20, Gu et al., 2019, nph)
+    Kn  = NPQ .* (Kd+Kf);                                           % eq.13, Gu etal., 2019, nph
+
+    %Kn          = Kn .* Kd/0.8738;          % temperature correction of Kn similar to that of Kd
+
+    fo0         = Kf./(Kf+Kp+Kd);        % dark-adapted fluorescence yield Fo,0
+    fo          = Kf./(Kf+Kp+Kd+Kn);     % light-adapted fluorescence yield in the dark Fo
+    fm          = Kf./(Kf   +Kd+Kn);     % light-adapted fluorescence yield Fm'
+    fm0         = Kf./(Kf   +Kd);        % dark-adapted fluorescence yield Fm
+   %ps          = po0.*Ja./Je;      % this is the photochemical yield
+   %fs          = fm.*(1-ps);            % steady-state (light-adapted) yield Ft (aka Fs)
+    fs          = fm.*(1-q_PSII);        % steady-state (light-adapted) yield Ft (aka Fs)
+    eta         = fs./fo0;
+    qQ          = 1-(fs-fo)./(fm-fo);    % photochemical quenching
+    qE          = 1-(fm-fo)./(fm0-fo0);  % non-photochemical quenching
+
+    %eta         = eta*(1+5)/5 - 1/5;     % this corrects for 29% PSI contribution in PAM data, but it is quick and dirty correction that needs to be improved in the next 
+
+end
+
+%% MLROC parameters for different plants
+% we make sutrcture from Tabel S4
+function [Umop, R1, R2, q_r, a_q, b_s, c_s] = MLROCparameters(PFT, C3C4, Species)
+
+    %'VariableNames',["PFT" "C3C4"     "Species"            "OCparams"]
+    %                 "PFT" "C3 or C4" "individual Species" 
+    %                               [U R1 R2 qr aq bs cs] = "OC parameters"
+    % 9 Species are included, *1-*9
+    % Use: [p1,p2,p3,p4,p5,p6,p7,p8,p9]=MLROC_struct.PFT
+    % Use: [c1,c2,c3,c4,c5,c6,c7,c8,c9]=MLROC_struct.C3C4
+    % Use: [s1,s2,s3,s4,s5,s6,s7,s8,s9]=MLROC_struct.Species
+    % Use: [oc1,oc2,oc3,oc4,oc5,oc6,oc7,oc8,oc9]=MLROC_struct.OCparams
+    % each oc* contains 7 records of parameters [U R1 R2 qr aq bs cs] for each Species
+    
+    MLROC_table = table(categorical( ...
+    ["CRO";"CRO";"CRO";"DBF";"DBF";"DBF";"DBF";"GRA";"CRO"]), ...
+    categorical( ...
+    [ "C3"; "C3"; "C3"; "C3"; "C3"; "C3"; "C3"; "C4"; "C4"]),...
+    categorical( ...
+    ["Solanum lycopersicum (tomato, C3)";...
+    "Oryza sativa (rice, C3)";...
+    "Gossypium hirsutum (cotton, C3)";...
+    "Betula alleghaniensis (birch, deciduous tree)";...
+    "Carya ovata (shagbark hickory, deciduous tree)";...
+    "Juglans nigra (black walnut, deciduous tree)";...
+    "Liquidambar styraciflua (sweet gum, deciduous tree)";...
+    "Andropogon gerardii (big bluestem grass, C4)";...
+    "Zea mays (Maize, C4)"]), ...
+    [1714.1947 0.3111 0.0000 0.8598 -0.8017 0.0042 15.5232;...
+      963.4558 0.5733 0.0000 0.7623 -0.5597 0.0024  7.2908;...
+     1486.867  0.3988 0.0011 0.9480 -0.6342 0.0016  5.5211;...
+     1189.025  0.4702 0.0000 0.8636 -0.6134	0.0014	6.8590;...
+      981.3335 0.5668 0.0000 0.7805 -0.5548	0.0015	4.8562;...
+     1312.615  0.4113 0.0000 0.8110 -0.7258	0.0021	5.5501;...
+      846.8143 0.5016 0.0000 0.8906 -0.5597	0.0020	4.6041;...
+     571.5778  0.4538 0.0000 0.9564 -0.5711 0.0021  4.5994;...
+     726.9816  0.3761 0.0000 0.9196 -0.6785 0.0021  5.5157],...
+    'VariableNames',["PFT" "C3C4" "Species" "OCparams"]);
+
+    MLROC_struct = table2struct(MLROC_table);
+    
+    % Extact values from MLROC_struct
+    % [U, R1, R2, qr, aq, bs, cs]=MLROC_struct.OCparams
+    
+    % Table S4 The values of parameters optimized for species shown in Fig. 7. 
+    % U is in the unit of µmol m-2 s-1, bs is in the unit of µmol-1 m2 s, 
+    % (ET is in the unit of K, calcualted with eq.20), and all other parameters are unitless. 
+    %
+    % Species                                             U	        R1	R2	    qr	    aq	    bs	    cs
+    %Solanum lycopersicum (tomato, C3, CRO)	           1714.1947 0.3111	0.0000	0.8598	-0.8017	0.0042	15.5232
+    %Oryza sativa (rice, C3, CRO)	                    963.4558 0.5733	0.0000	0.7623	-0.5597	0.0024	7.2908
+    %Gossypium hirsutum (cotton, C3, CRO)              1486.867	 0.3988	0.0011	0.9480	-0.6342	0.0016	5.5211
+    %
+    %Betula alleghaniensis (birch, DBF)	               1189.025	 0.4702	0.0000	0.8636	-0.6134	0.0014	6.8590
+    %Carya ovata (shagbark hickory, DBF)	            981.3335 0.5668	0.0000	0.7805	-0.5548	0.0015	4.8562
+    %Juglans nigra (black walnut, DBF)	               1312.615	 0.4113	0.0000	0.8110	-0.7258	0.0021	5.5501
+    %Liquidambar styraciflua (sweetgum, DBF)	        846.8143 0.5016	0.0000	0.8906	-0.5597	0.0020	4.6041
+    %
+    %Andropogon gerardii (big bluestem grass, C4, GRA)	571.5778 0.4538	0.0000	0.9564	-0.5711	0.0021	4.5994
+    %Zea mays (Maize, C4, CRO)	                        726.9816 0.3761	0.0000	0.9196	-0.6785	0.0021	5.5157
+    
+    % each species can be selected if known
+    % otherwise if PFT is knwon, average can be used for each PFT
+    % lastly average can be made for C3 or C4, if only C3/C4 is provided.
+
+end 
+

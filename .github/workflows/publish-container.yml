@@ -1,5 +1,5 @@
 #
-name: Create and publish a Docker image
+name: Create and publish the STEMMUS_SCOPE container image 📦
 
 on:
   release:

@@ -2,6 +2,18 @@
 
 **Changed:**
 
+
+**Fixed:**
+
+
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.6.0) - 3 Aug 2024
+
+The 1.6.0 release comes with changes to support groundwater coupling via the Basic Model Interface,
+as well as various bugfixes.
+
+**Changed:**
+
 - Added changes to support groundwater coupling via BMI in
   [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221) and
   [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)

@@ -429,6 +429,18 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             if options.simulation == 0
                 vi(vmax == telmax) = k;
             end
+
+            % using simulated LAI and PH to substitute prescribed LAI 
+            if options.calc_vegetation_dynamic == 1  &&  KT >= wofostpar.CSTART && KT <= wofostpar.CEND   
+                if KT == wofostpar.CSTART
+                    ScopeParameters.LAI(KT)  = wofostpar.LAIEM;                % initial LAI
+                    ScopeParameters.hc(KT)   = wofostpar.PHEM;                 % initial PH
+                elseif KT > wofostpar.CSTART 
+                    ScopeParameters.LAI(KT)  = crop_output(KT-1,3);            % substitute LAI
+                    ScopeParameters.hc(KT)   = crop_output(KT-1,4);            % substitute PH
+                end
+            end               
+
             [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, SoilVariables.Theta_LL, vi, canopy, options, xyt, soil);
             if options.simulation ~= 1
                 fprintf('simulation %i ', k);

@@ -1,0 +1,183 @@
+***********************************************************************************************
+* Filename: Maize.CRP
+* Contents: SWAP 3.2 - Data for detailed crop model
+***********************************************************************************************
+*c Grain maize (Zea mays L.)
+***********************************************************************************************
+
+*** PLANT GROWTH SECTION ***
+
+***********************************************************************************************
+* Part 1: Crop development
+
+  CSTART     =   1          ! Start time step of crop growth
+  CEND       =   9073       ! End time step of crop growth
+  TSTEP      =   0.5        ! Time step of the simulation, [0..1 hour]
+  TSUMEA     =   950.00    ! Temperature sum from emergence to anthesis, [0..10000 C, R]
+  TSUMAM     =   880.00     ! Temperature sum from anthesis to maturity  [0..10000 C, R]
+
+* List increase in temperature sum [0..60 C, R] as function of daily average temp. [0..100 C, R]
+*         TAV  DTSM    (maximum 15 records)
+  DTSMTB =
+           0.00    0.00
+           10.00   0.00
+           30.00  20.00
+           45.00  20.00
+* End of Table
+
+  DVSEND =      2.00 ! development stage at harvest [-]
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 2: Initial values
+
+  TDWI   =   20.000 ! Initial total crop dry weight [0..10000 kg/ha, R]
+  LAIEM  =   0.3 ! Leaf area index at emergence [0..10 m2/m2, R]
+  PHEM =    0.1 ! plant height at emergence [0..10 m, R]
+  RGRLAI =   0.05! Maximum relative increase in LAI [0..1 m2/m2/d, R]
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 3: Green surface area
+
+  SPA    =  0.0000 ! Specific pod area  [0..1 ha/kg, R]
+  SSA    =  0.0000 ! Specific stem area [0..1 ha/kg, R]
+  SPAN   =   35.00 ! Life span under leaves under optimum conditions, [0..366 d, R]
+  LAICR   =  6.00   ! The criteriation of LAI which affect the potential death rate due to self-shading, [0..10 m2/m2, R]
+  TBASE  =   10.00 ! Lower threshold temperature for ageing of leaves ,[-10..30 C, R]
+
+* List specific leaf area [0..1 ha/kg, R] as function of devel. stage [0..2, R]
+
+*         DVS  SLA    (maximum 15 records)
+  SLATB =
+           0.0000   0.0015
+           0.3000   0.0015
+           1.0000   0.0015
+           1.2500   0.0015
+           2.0000   0.0015
+* End of Table 
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 4: Plant height growth
+
+  STN    =  40000 ! Number of stems  [1..10000 /ha, I]
+  STD    =  25.0 ! Density of stems [0.1..10 kg/m3, R]
+  PHCoeff   =   1.22 ! Coeffcient of plant height, [1..2 , R]
+
+* List specific stems radius [0..1 m, R] as function of devel. stage [0..2, R]
+
+*         DVS  STR    (maximum 15 records)
+  STRTB =
+           0.0000   0.020
+           0.6000   0.021
+           1.3000   0.025
+           2.0000   0.025
+* End of Table 
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 5: Conversion of assimilates into biomass
+*
+  CVL    =  0.6900 ! Efficiency of conversion into leaves,         [0..1 kg/kg, R]
+  CVO    =  0.7500 ! Efficiency of conversion into storage organs, [0..1 kg/kg, R]
+  CVR    =  0.6900 ! Efficiency of conversion into roots,          [0..1 kg/kg, R]
+  CVS    =  0.7200 ! Efficiency of conversion into stems,          [0..1 kg/kg, R]
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 6: Partitioning
+
+* List fraction of total dry matter increase partitioned to the roots [kg/kg, R]
+* as function of development stage [0..2 -, R]
+*          DVS     FR    (maximum 15 records)
+  FRTB = 
+           0.00   0.90
+           0.30   0.50
+           1.00   0.00
+           2.00   0.00
+* End of table 
+
+* List fraction of total above ground dry matter incr. part. to the leaves [kg/kg, R]
+* as function of development stage [0..2 -, R]
+
+*          DVS     FL   (maximum 15 records)
+  FLTB = 
+           0.0000   0.6000
+           0.7000   0.5000
+           0.7500   0.1000
+           0.9000   0.1000
+           1.0000   0.1000
+           1.0500   0.0000
+           2.0000   0.0000
+* End of table 
+
+* List fraction of total above ground dry matter incr. part. to the stems [kg/kg, R]
+* as function of development stage [0..2 -, R]
+
+*          DVS    FS   (maximum 15 records)
+  FSTB = 
+           0.0000   0.4000
+           0.7000   0.5000
+           0.7500   0.9000
+	   0.9000   0.9000
+           1.0000   0.9000
+           1.0500   0.0000
+           2.0000   0.0000
+* End of table 
+
+* List fraction of total above ground dry matter incr. part. to the st. organs [kg/kg, R]
+* as function of development stage [0..2 -, R]
+
+*          DVS    FO    (maximum 15 records)
+  FOTB = 
+           0.0000   0.0000
+           0.9000   0.0000
+           1.0000   0.0000
+           1.0500   1.0000
+           2.0000   1.0000
+* End of table
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 7: Death rates
+
+  PERDL =   0.010 ! Maximum rel. death rate of leaves due to water stress [0..3 /d, R]
+
+* List relative death rates of roots [kg/kg/d] as function of dev. stage [0..2 -, R]
+*          DVS    RDRR    (maximum 15 records)
+  RDRRTB = 
+          0.0000 0.0000
+          1.5000 0.0000
+          1.5001 0.0200
+          2.0000 0.0200
+* End of table
+
+* List relative death rates of stems [kg/kg/d] as function of dev. stage [0..2 -, R]
+*          DVS     RDRS    (maximum 15 records)
+  RDRSTB = 
+          0.0000 0.0000
+          0.9000 0.0020
+          1.2500 0.0020
+          2.0000 0.0030
+* End of table
+***********************************************************************************************
+
+***********************************************************************************************
+* Part 8: Root density distribution and root growth               
+*
+* List relative root density [0..1 -, R], as function of rel. rooting depth [0..1 -, R]:
+*          RD     RDC   (maximum 11 records)
+  RDCTB = 
+           0.00   1.00
+           1.00   1.00
+* End of table
+*
+  RDI    =    10.00 ! Initial rooting depth, [0..1000 cm, R]
+  RRI    =    1.20 ! Maximum daily increase in rooting depth, [0..100 cm/d, R]
+  RDC    =   80.00 ! Maximum rooting depth crop/cultivar, [0..1000 cm, R]
+*
+************************************************************************************
+
+
+* End of .crp file !

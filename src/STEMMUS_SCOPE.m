@@ -374,6 +374,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps
+        fprintf(strcat('\n KT =  ',num2str(KT),' \r'));
+
         if KT > 1 && Delt_t > (TEND - TIME)
             Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
         end

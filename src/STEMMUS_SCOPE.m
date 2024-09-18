@@ -198,7 +198,13 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     [rho, tau, rs] = deal(zeros(nwlP + nwlT, 1));
 
-    %% 11. load time series data
+    %% 11. Define plant growth parameters   
+    if options.calc_vegetation_dynamic == 1
+        wofostpar = wofost.WofostRead(path_input);
+        crop_output = zeros(TimeProperties.Dur_tot,12);
+    end
+
+    %% 12. load time series data
     ScopeParametersNames = fieldnames(ScopeParameters);
     if options.simulation == 1
         vi = ones(length(ScopeParametersNames), 1);
@@ -208,7 +214,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
         soil = struct;
     end
 
-    %% 12. preparations
+    %% 13. preparations
     if options.simulation == 1
         diff_tmin           =   abs(xyt.t - xyt.startDOY);
         diff_tmax           =   abs(xyt.t - xyt.endDOY);
@@ -242,7 +248,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
-    %% 13. create output files and
+    %% 14. create output files and
     [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
     %% Initialize Temperature, Matric potential and soil air pressure.

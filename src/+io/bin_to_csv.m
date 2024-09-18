@@ -169,6 +169,15 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
     end
     write_output({'Bottom of canopy irradiance in the shaded fraction, and average BOC irradiance'}, {'First 2162 columns: shaded fraction. Last 2162 columns: average BOC irradiance. Unit: Wm-2 um-1'}, ...
                  fnames.BOC_irradiance_file, n_col.BOC_irradiance, ns, true);
+    
+    % output the vegetation dynamic results ydy
+    if options.calc_vegetation_dynamic   
+        cropgrowth_names = {'DOY','DVS','LAI',...
+            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
+        cropgrowth_units = {'day','-','m2/m2',  ...
+            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
+        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
+    end
 
     fclose('all');
 

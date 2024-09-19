@@ -22,6 +22,7 @@ function gwfluxes = calculateGroundwaterRecharge(EnergyVariables, SoilVariables,
         indxRchrg               index of the soil layer where the recharge is calculated
         recharge                groundwater recharge, which is the upper boundary flux of the top layer of the phreatic aquifer (after the correction of the specific yield)
         recharge_init           upper boundary flux into the moving balancing domain (before the correction of the specific yield)
+        rechargeTemp            temperature of the groundwater recharge
         SS                      specific storage of MODFLOW aquifers
         SY                      large-scale specific yield of the phreatic aquifer
         sy                      small-scale specific yield (dynamically changing water yield) caused by fluctuation of the water table
@@ -96,6 +97,10 @@ function gwfluxes = calculateGroundwaterRecharge(EnergyVariables, SoilVariables,
     if isnan(gwfluxes.recharge) || isinf(gwfluxes.recharge)
         gwfluxes.recharge = 0;
     end
+
+    % Get rechrage temperature
+    TT_flip(1:1:ModelSettings.NN) = SoilVariables.TT(ModelSettings.NN:-1:1);
+    gwfluxes.rechargeTemp = TT_flip(indxRchrg);
 
     % check 1
     diff = abs(GroundwaterSettings.indxBotmLayer_R - indxRchrg);

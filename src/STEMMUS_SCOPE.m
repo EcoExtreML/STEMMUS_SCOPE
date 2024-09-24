@@ -369,9 +369,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         if isnan(GroundwaterSettings.tempBotm)
             GroundwaterSettings.tempBotm = SoilVariables.TT(GroundwaterSettings.indxBotmLayer);
         end
-
-        % Initialize groundwater recharge temperature
-        gwfluxes.rechargeTemp = 0;
     end
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.

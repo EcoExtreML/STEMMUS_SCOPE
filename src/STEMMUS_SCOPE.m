@@ -783,6 +783,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
         else
             gwfluxes.recharge = 0;
+            gwfluxes.indxRchrg = NaN;
         end
 
         % set SoilVariables for the rest of the loop

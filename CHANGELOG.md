@@ -4,6 +4,8 @@
 
 
 **Fixed:**
+- The bug in calculation of IS discussed in
+  [#252](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/252)
 
 
 <a name="1.6.0"></a>

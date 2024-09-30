@@ -1,0 +1,1 @@
+{% include-markdown "../CONTRIBUTING.md" start="# Contributing guidelines" heading-offset=2%}

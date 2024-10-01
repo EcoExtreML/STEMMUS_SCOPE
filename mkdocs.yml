@@ -5,7 +5,7 @@ repo_name: STEMMUS_SCOPE
 nav:
   - Introduction: index.md
   - Getting started: getting_started.md
-  - Run the model: run_model.md
+  - Running the model: run_model.md
   - Contributing guide: contributing_guide.md
 
 theme:

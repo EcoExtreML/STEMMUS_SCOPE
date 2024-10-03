@@ -41,4 +41,6 @@ function [const] = define_constants()
     const.c_i = 2.0455; % [J/g-1/Cels-1] Specific heat capacity of ice
     const.lambdav = 2.45; % latent heat of evaporation [MJ.kg-1] FAO56 pag 31
     const.k = 0.41; % karman's cte   []  FAO 56 Eq4
+    const.kB = 1.380649E-23; % [J k-1] Boltzmann constant
+    const.F = 96485.3321233100184; % [C mol-1] Faraday constant
 end

@@ -1,4 +1,4 @@
-function OcParameters = readParameterFile(pathOcParameters)
+function OcParameters = readOcParameter(pathOcParameters)
 % This function is used to create a lookup table for parameters of MLROC 
 % model. Nine species are included.
 % Reference:

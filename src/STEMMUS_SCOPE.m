@@ -94,8 +94,13 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     %% 1. define Constants
     Constants = io.define_constants();
     ParaPlant = io.define_plant_constants(SiteProperties, phwsfMethod);
+    
     pathOcParameters = "..\example_data\MLROC_parameters.xlsx";
-    OcParameters = readParameterFile(pathOcParameters);
+    OcParameters = io.readOcParameter(pathOcParameters);
+    % select the first row as default values for OC model
+    % [todo] This setting need to be discussed
+    OcParameters = OcParameters(1,:);
+    
     RTB = 1000; % initial root total biomass (g m-2)
     if strcmp(SiteProperties.sitename, 'CH-HTC')
         RTB = 300;

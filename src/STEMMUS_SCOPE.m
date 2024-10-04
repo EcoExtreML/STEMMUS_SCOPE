@@ -40,9 +40,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
     disp (['Reading config from ', CFG]);
     [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
-    gsOption = 'Medlyn'; % 1 for BallBerry's method; 2 for Medlyn's method
-    phsOption = 2; % 1 for CLM5, 2 for ED2, 3 for PHS
-
 
     % Prepare forcing and soil data
     [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
@@ -88,12 +85,11 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     RWUs = [];
     RWUg = [];
 
-    %% Set senarios
-    [gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
+
 
     %% 1. define Constants
     Constants = io.define_constants();
-    ParaPlant = io.define_plant_constants(SiteProperties, phwsfMethod);
+    
 
     RTB = 1000; % initial root total biomass (g m-2)
     if strcmp(SiteProperties.sitename, 'CH-HTC')
@@ -103,10 +99,6 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
     numSoilLayer = ModelSettings.ML;
     soilThickness = ModelSettings.DeltZ_R';
-    [RootProperties,soilDepth] = calRootProperties(SiteProperties, ParaPlant, numSoilLayer, soilThickness, RTB);
-    Rl = RootProperties.lengthDensity;
-    Ztot = soilDepth;
-    soilDepthB2T = flipud(soilDepth);
 
 
     %% 2. simulation options
@@ -116,6 +108,20 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     parameter_file = {'input_data.xlsx'};
     options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
 
+    % Set senarios
+    gsOption = options.gsOption;
+    phsOption = options.plantHydraulics;
+    [gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
+
+    % define parameters for plant hydraulics module
+    ParaPlant = io.define_plant_constants(SiteProperties, phwsfMethod);
+    
+    % calculate root parameters
+    [RootProperties,soilDepth] = calRootProperties(SiteProperties, ParaPlant, numSoilLayer, soilThickness, RTB);
+    Rl = RootProperties.lengthDensity;
+    Ztot = soilDepth;
+    soilDepthB2T = flipud(soilDepth);
+    
     if options.simulation > 2 || options.simulation < 0
         fprintf('\n simulation option should be between 0 and 2 \r');
         return

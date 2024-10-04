@@ -2,6 +2,27 @@
 
 **Changed:**
 
+<a name="1.6.1"></a>
+# [1.6.1](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.6.1) - 26 Sep 2024
+
+The 1.6.1 release comes with minor changes as:
+
+**Fixed:**
+- The bug in the calculation of the soil type index discussed in
+  [#252](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/252)
+
+**Added:**
+- The recharge index is exposed to BMI in [#257](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/257)
+
+
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.6.0) - 3 Aug 2024
+
+The 1.6.0 release comes with changes to support groundwater coupling via the Basic Model Interface,
+as well as various bugfixes.
+
+**Changed:**
+
 - Added changes to support groundwater coupling via BMI in
   [#221](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/221) and
   [#234](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/234)

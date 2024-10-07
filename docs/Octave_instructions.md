@@ -10,17 +10,6 @@
     - [Mount extra directory](#mount-extra-directory)
   - [Linux from source](#linux-from-source)
 
-The downloads can be found here
-https://octave.org/download
-
-TODO: installation of octave on linux
-After installation, launch octave and install the following Octave package:
-`pkg install -forge statistics`
-
-For off-line installation, first, download the package [io](https://octave.sourceforge.io/io/index.html) and [statistics](https://octave.sourceforge.io/statistics/index.html). Then, launch octave and run:
-
-`pkg install io-2.6.4.tar.gz`
-`pkg install statistics-1.4.3.tar.gz`
 
 ## VS Code setup
 Add Octave to path, e.g. for (64-bit) Windows add the following folders:
@@ -35,23 +24,18 @@ The debugger configurations are included in `/.vscode/launch.json`
 `Octave Hacking` by Andrew Janke https://marketplace.visualstudio.com/items?itemName=apjanke.octave-hacking
 This adds syntax highlighting and formatting.
 
-## Running STEMMUS-SCOPE in Octave
-It is possible to run STEMMUS-SCOPE from the command line with the following setup:
-`octave.bat --no-gui --interactive --silent --eval "STEMMUS_SCOPE_exe('path_to_config_file')"`
-
-On a Unix system, use `octave` instead of `octave.bat`.
 ## Developing STEMMUS-SCOPE in Octave
-Open the `run_Octave.m` file, either in VS Code or the Octave GUI.
+Open the `debug_Octave.m` file, either in VS Code or the Octave GUI.
 
 ### Octave GUI
-Set the workspace to the `STEMMUS_SCOPE/src` folder, and open the `run_Octave.m` file.
+Set the workspace to the `STEMMUS_SCOPE/src` folder, and open the `debug_Octave.m` file.
 Here you can set the config file that should be used, and then run the file.
 
 ### VS Code
 While having the `STEMMUS_SCOPE` folder as the workspace, open the debugger and select `Octave: Debug STEMMUS-SCOPE`.
 Start the debugger to run (and debug) the model.
 
-In the `run_Octave.m` file you can set the config file that should be used.
+In the `debug_Octave.m` file you can set the config file that should be used.
 
 ## VS Code + Dev container
 
@@ -78,36 +62,3 @@ After editing file you can restart the editor to get the extra directory inside 
 See [dev container docs](https://code.visualstudio.com/remote/advancedcontainers/add-local-file-mount) for more info.
 
 To mount Windows directory inside the dev container you have to start the container in WSL2 (aka run Docker service inside WSL2) and use unix paths like `/mnt/c/...`.
-
-## Linux from source
-
-Octave on many Linux distributions is too old so we need to compile it ourselves.
-See [https://wiki.octave.org/Building](https://wiki.octave.org/Building).
-
-<details>
-<summary>Here are build instructions for Ubuntu 22.04</summary>
-
-```shell
-sudo apt update
-# install minimal deps, see https://wiki.octave.org/Octave_for_Debian_systems#The_right_way for all dependencies
-sudo apt install -yq wget build-essential gfortran liblapack-dev libblas-dev libpcre3-dev libreadline-dev libnetcdf-dev
-wget https://mirror.serverion.com/gnu/octave/octave-7.2.0.tar.gz  # or download from local mirror at https://ftpmirror.gnu.org/octave
-tar -zxf octave-7.2.0.tar.gz
-cd octave-7.2.0
-./configure --prefix=/opt/octave
-make -j 6
-sudo make install
-```
-
-Add `/opt/octave/bin` to PATH environment variable.
-
-```shell
-export PATH=$PATH:/opt/octave/bin
-```
-
-Install Octave dependencies with
-
-```shell
-octave --eval 'pkg install -forge statistics'
-```
-</details>

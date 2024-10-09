@@ -1,6 +1,6 @@
-# Requiremnets:
+# Requiremnets
 
-## Infrastructure (computig resources)
+## Computig resource
 
 To run the STEMMUS-SCOPE model, you can use one of the following computing resources:
 
@@ -22,40 +22,37 @@ To run the STEMMUS-SCOPE model, you need **one** of the following:
 
 ## Model source code
 
-Download the [latest version of the
+The source code of STEMMUS_SCOPE can be found in the GitHub repository
+[https://github.com/EcoExtreML/STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE)
+under the folder `src`. Download the [latest version of the
 model](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases) from the repository
-https://github.com/EcoExtreML/STEMMUS_SCOPE or get it using `git clone` in a
-terminal:
+or get it using `git clone` in a terminal:
 
-  ` git clone https://github.com/EcoExtreML/STEMMUS_SCOPE.git `
+` git clone https://github.com/EcoExtreML/STEMMUS_SCOPE.git `
 
-All the codes can be found in the folder `src`.
 
 ## Data
 
 To run the STEMMUS-SCOPE model, you need to have input data either from in-situ
 measurements or from remote sensing. Before running the model, you need to
 prepare input data and a configuration file for **one site/location**. This can be done using
-[setup()](https://pystemmusscope.readthedocs.io/en/v0.2.0/reference/#PyStemmusScope.stemmus_scope.StemmusScope.setup) function
-in the python package [PyStemmusScope](https://pystemmusscope.readthedocs.io).
+[setup()](https://pystemmusscope.readthedocs.io/en/latest/reference/#PyStemmusScope.stemmus_scope.StemmusScope.setup) function
+in the python package [PyStemmusScope](https://pystemmusscope.readthedocs.io/en/latest/). See example datasets below:
 
-### Example dataset on Zenodo
+=== "Example dataset on Zenodo"
+    A pre-processed example dataset for one site can be found on Zenodo
+    [here](https://zenodo.org/records/10566827).
 
-A pre-processed example dataset for one site can be found on Zenodo
-[here](https://zenodo.org/records/10566827).
+=== "Data on CRIB"
+    [CRIB](https://crib.utwente.nl/) is the ITC Geospatial Computing Platform.
 
-### Data on CRIB
+    {% include-markdown "./STEMMUS_SCOPE_on_CRIB.md" start="### Dataflow of STEMMUS_SCOPE on CRIB" end="### Configuration file" heading-offset=2%}
 
-[CRIB](https://crib.utwente.nl/) is the ITC Geospatial Computing Platform.
+=== "Data on Snellius"
+    [Snellius](https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius) is the
+    Dutch National supercomputer hosted at SURF.
 
-{% include-markdown "./STEMMUS_SCOPE_on_CRIB.md" start="### Dataflow of STEMMUS_SCOPE on CRIB:" end="### Configuration file:" heading-offset=2%}
-
-### Data on Snellius
-
-[Snellius](https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius) is the
-Dutch National supercomputer hosted at SURF.
-
-{% include-markdown "./STEMMUS_SCOPE_on_Snellius.md" start="### Dataflow of STEMMUS_SCOPE on Snellius:" end="### Configuration file:" heading-offset=2%}
+    {% include-markdown "./STEMMUS_SCOPE_on_Snellius.md" start="### Dataflow of STEMMUS_SCOPE on Snellius" end="### Configuration file" heading-offset=2%}
 
 ## Configuration file
 
@@ -80,21 +77,20 @@ InputPath=/path_to_model_input_folder/
 OutputPath=/path_to_model_output_folder/
 ```
 
-### Example configuration file
+See example configuration files below:
 
-An example configuration file can be found [here](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/config_file_template.txt).
+=== "Example configuration file"
+    An example configuration file can be found
+    [here](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/config_file_template.txt). If
+    [setup()](https://pystemmusscope.readthedocs.io/en/latest/reference/#PyStemmusScope.stemmus_scope.StemmusScope.setup)
+    function in the python package
+    [PyStemmusScope](https://pystemmusscope.readthedocs.io/en/latest/) is used
+    to prepare data, the model configuration file including `InputPath` and
+    `OutputPath` and the data of **one site/location** will be generated
+    automatically.
 
-> NOTE: If
-[setup()](https://pystemmusscope.readthedocs.io/en/v0.2.0/reference/#PyStemmusScope.stemmus_scope.StemmusScope.setup)
- function in the python package
-[PyStemmusScope](https://pystemmusscope.readthedocs.io) is used to prepare data,
-the model configuration file including `InputPath` and `OutputPath` and the data
-of **one site/location** will be generated automatically.
+=== "Example configuration file on CRIB"
+    {% include-markdown "./STEMMUS_SCOPE_on_CRIB.md" start="### Configuration file" heading-offset=2%}
 
-### Configuration file on CRIB
-
-{% include-markdown "./STEMMUS_SCOPE_on_CRIB.md" start="### Configuration file:" end="### Workflow of STEMMUS_SCOPE on CRIB:" heading-offset=2%}
-
-### Configuration file on Snellius
-
-{% include-markdown "./STEMMUS_SCOPE_on_Snellius.md" start="### Configuration file:" end="### Workflow of STEMMUS_SCOPE on Snellius:" heading-offset=2%}
+=== "Example configuration file on Snellius"
+    {% include-markdown "./STEMMUS_SCOPE_on_Snellius.md" start="### Configuration file" heading-offset=2%}

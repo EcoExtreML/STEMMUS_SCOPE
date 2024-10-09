@@ -7,7 +7,7 @@ read and follow our contributing guidelines.
 
 ## Contributing via GitHub
 
-If you want to work with the `STEMMUS_SCOPE` repository for the first time, or on a new computer, 
+If you want to work with the `STEMMUS_SCOPE` repository for the first time, or on a new computer,
 you need to configure a few things following steps 1 through 5 below.
 
 <details>
@@ -28,7 +28,7 @@ SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 
 #### 2.1. Checking for existing SSH keys
 
-Open a terminal and run the command below: 
+Open a terminal and run the command below:
 
 ```bash
 ls -la ~/.ssh
@@ -70,7 +70,7 @@ Then, run the command below:
 ssh-add ~/.ssh/id_ed25519
 ```
 
-This asks for your "passphrase" that was provided in the previous step. 
+This asks for your "passphrase" that was provided in the previous step.
 
 #### 2.4. Adding a new SSH key to your GitHub account
 
@@ -124,7 +124,7 @@ Git](https://swcarpentry.github.io/git-novice/02-setup/index.html).
 Open a terminal and run the command below:
 
 ```bash
-cd 
+cd
 ```
 Now you are in your `HOME` directory. Run the command below:
 
@@ -144,65 +144,191 @@ To know about the most common Git commands, follow the guides
 [here](https://hackmd.io/B4v6KwsBRzG-akLDF8e5pg).
 </details>
 
-## Development of the MATLAB source of STEMMUS_SCOPE model
+## Adding changes to the model source code
 
-To contribute to the STEMMUS_SCOPE model, you need access to the model source code that is stored in the repository [STEMMUS_SCOPE](https://github.com/EcoExtreML/STEMMUS_SCOPE). You also need a MATLAB license. MATLAB `2021a` is installed on
-[Snellius]((https://servicedesk.surfsara.nl/wiki/display/WIKI/Snellius)) and [CRIB](https://crib.utwente.nl/), see [this instruction](https://pystemmusscope.readthedocs.io/en/latest/contributing_link.html#development-of-stemmus-scope-model).
+To setup the required software and configurations, see the documentation on
+`Getting started`.
 
-## Create an executable file of STEMMUS_SCOPE
+It would be ideal to introduce changes incrementally over time. This way, you
+can track the changes and understand the impact of each change. Here are the
+steps to follow:
 
-See the [exe readme](./exe/README.md).
+- Submit [an issue](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues) to the
+  repository. This issue should describe the problem or the feature you want to
+  introduce.
+- Create a new branch from the `main` branch. This branch should have a
+  descriptive name that relates to the issue you are working on.
+- Make the changes in the new branch, for example, you can add new features, fix
+  bugs, or improve the documentation. Follow [MATLAB Guidelines 2.0, Richard
+  Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf)
+  when introducing new changes to the codes.
+- Commit the changes to the new branch. Write a descriptive commit message that
+  explains the changes you are introducing.
+- Push the changes to the repository.
+- Create a **draft** [pull
+  request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
+  to the `main` branch. This pull request should reference the issue you are
+  working on.
+- When you are done with the changes, run [the tests](#testing-new-changes) and
+  [MISS_HIT commands](#miss_hit-checks), make sure they pass.
+- Make the pull request ready for review. Ask for a review from the repository
+  maintainers.
+- The maintainers will review the changes and provide feedback. You may need to
+  make additional changes based on the feedback.
+- When the changes are approved, the maintainers will merge the pull request.
 
-## Follow MATLAB style guidelines
+## Reviewing a pull request
 
-When you are introducing new changes to the codes, please follow the style introduced in [MATLAB Guidelines 2.0, Richard Johnson](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
+When you are reviewing a pull request, you should follow the steps below:
 
-When you submit a pull request, the code is also [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker. 
-The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. 
-MISS_HIT is configured in [`miss_hit.cfg`](./miss_hit.cfg).
+- Check the changes introduced in the pull request. Make sure the changes are
+  consistent with the issue description. Also, check for example variable names,
+  function names, documentation, global variables, ..., to see if the changes
+  are consistent with the [MATLAB Style Guidelines
+  2.0](http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf).
+- Run [the tests](#testing-new-changes) and [MISS_HIT commands](#miss_hit-checks) to make sure they pass.
+- Provide feedback on the changes. You can ask questions, suggest improvements,
+  or point out issues.
+- When you are satisfied with the changes, approve the pull request. Ask a
+  maintainer to [re-generate the executable
+  file](#creating-an-executable-file-of-stemmus_scope) and merge the pull
+  request.
+- If the changes are related to BMI, you have to ask the maintainer to make a
+  new release of the model. This way a new docker image will be created and the
+  model will be available for the users.
+- If the changes are related to the documentation, make sure that documentation
+  page can be built successfully, see [Building the documentation
+  locally](#building-the-documentation-locally).
 
-### Installing MISS_HIT
-It is best practice to install packages in environments. See the dropdown menu for instructions.
-However, you can also continue below to install MISS_HIT without these steps.
+## Merging a pull request
 
-<details><summary>Python environment / conda instructions</summary>
+When you are merging a pull request, you should follow the steps below:
 
-You need to have a valid python installation on your system.
+- Make sure the pull request is approved by at least one reviewer.
+- Make sure all the items in the pull requests list are checked.
 
-Create an enviroment with `venv` or conda:
+## Creating an executable file of STEMMUS_SCOPE
 
-### **Venv**
-```bash
-python3 -m venv misshit # python on windows.
-```
-Activate this environment
-```bash
-source misshit/bin/activate
-```
+See the disumentation on [executable
+file](https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/run_model_on_snellius/exe).
 
-Or on Windows:
-```pwsh
-./misshit/Scripts/Activate.ps1
-```
+## MISS_HIT Checks
 
-### **conda**
-```bash
-conda env create --name misshit
-conda activate misshit
-```
+When you submit a pull request, the code is also [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker.
+The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. To work with `MISS_HIT`, follow the instructions below:
 
-</details>
+- Installing MISS_HIT: To install MISS_HIT, follow their [installation instructions](https://github.com/florianschanda/miss_hit#installation-via-pip).
 
-Install miss hit (optionally in the conda or venv environment) with:
-```bash
-pip install miss-hit
-```
+- Running MISS_HIT: To run the style checker or linter, navigate to the `src/` folder in STEMMUS_SCOPE, and run the following commands:
 
-To run the style checker or linter, navigate to the STEMMUS_SCOPE repository, and run the following commands:
+  ```bash
+  mh_style
+  mh_lint
+  mh_metric
+  ```
 
-```
-mh_style
-mh_lint
-```
+  Follow the errors and information in the output to fix any issues.
 
-For more information on installing and using MISS_HIT, look at [MISS_HIT's readme](https://github.com/florianschanda/miss_hit#installation-via-pip).
+- Configuring MISS_HIT: `MISS_HIT` is configured in [`miss_hit.cfg`](./miss_hit.cfg). This file contains
+the configuration for the linter and style checker. Please do not change this
+file unless you are familiar with the configuration options.
+
+## Testing new changes
+
+To test the new changes, we can only check if the new changes do not break the
+model. To do this, follow the steps below:
+
+- Run the notebook `compare_git_branch_results.ipynb` in the `test` folder. This
+  notebook will compare the results of the model between the `main` branch and
+  the new branch with the changes. If the results are similar, the changes do
+  not break the model.
+- [Create the executable file](#creating-an-executable-file-of-stemmus_scope) of
+  the model and run the model with the new changes. Check if the model runs
+  without any errors.
+- [Run the model with Octave](#octave-compatibility) to check if the new changes
+  are compatible with Octave.
+
+## Building the documentation locally
+
+Documentation is created using several markdown files and the [`mkdocs`
+tool](https://www.mkdocs.org/). The markdown files are located in the `docs`
+folder. The configuration file for `mkdocs` is `mkdocs.yml` located in the root
+directory. To build the documentation locally, follow the steps below:
+
+- Install the required dependencies as:
+
+  ```bash
+  cd STEMMUS_SCOPE
+  pip install -r docs/requirements.txt
+  ```
+
+- Build the documentation as:
+
+  ```bash
+  mkdocs build
+  ```
+
+- Preview the documentation as:
+
+  ```bash
+  mkdocs serve
+  ```
+
+Click on the link provided in the terminal to view the documentation in your
+browser.
+
+## Making a release
+
+When you are ready to make a release of the model, follow the steps below:
+
+- Make sure all new changes are added to changes log in the [`CHANGELOG.md`
+  file](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CHANGELOG.md).
+- Create a new release in the repository. The release should have a version number
+  following the [semantic versioning](https://semver.org/) guidelines.
+- Add a description of the changes in the release notes.
+
+## GitHub actions workflow
+
+GitHub actions workflows are located in the folder `.github/workflows`:
+
+- `lint.yml`: This workflow checks the code style and lints the code using
+  `MISS_HIT`.
+- `doc_deploy.yml`: This workflow builds the documentation and deploys it to
+  GitHub pages.
+- `publish-container`: This workflow builds the docker image and publishes it to
+  the repository once a new release is made. The docker image will avialable in
+  the
+  [packages](https://github.com/EcoExtreML/STEMMUS_SCOPE/pkgs/container/stemmus_scope)
+  in the repository.
+
+## Docker image
+
+The
+[Dockerfile](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/Dockerfile)
+is located in the root directory. This file is used to build the docker image of the model by Github action `publish-container`, see [GitHub actions workflow](#github-actions-workflow). To build and run the docker image locally, follow the steps below:
+
+- Install [Docker](https://www.docker.com/).
+- Build the docker image as:
+
+  ```bash
+  cd STEMMUS_SCOPE
+  docker build -t stemmus_scope .
+  ```
+
+- Run the docker image with the BMI interface as:
+
+  ```bash
+  docker run -u $(id -u):$(id -g) -v /path_to_input_folder:/path_to_input_folder -v /path_to_output_folder:/path_to_output_folder -it stemmus_scope
+  ```
+
+  With `-it` option, you can enter the docker interactive mode.
+  Now, BMI asks you to select one of the steps "initialize", "update" or "finalize".
+  To initialize the model using a config file, type:
+
+  ```bash
+  initialize "path/to/config_file_template.txt"
+  ```
+
+## Octave compatibility
+
+See the documentation on [Octave compatibility](./docs/Octave_instructions.md).

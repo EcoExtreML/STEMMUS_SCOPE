@@ -1,11 +1,12 @@
 #
 
-> NOTE: The instructions below is meant for users who want to run the model. If
-you want to develop the model, see the documentation on `Contributing guide`.
+> NOTE: The instructions below are meant for users who want to run the model. If
+you want to add changes to the model, see the documentation on `Contributing
+guide`.
 
 ## Workflow of STEMMUS_SCOPE
 
-1. The model reads the forcing file associated with the specified location,
+1. The model reads the forcing file associated with the specified site/location,
   e.g., `FI-Hyy_1996-2014_FLUXNET2015_Met.nc` from "ForcingPath" and extracts
   forcing variables in `.dat` format. The `.dat` files are stored in the
   `InputPath` directory. In addition, the model reads the site information i.e.
@@ -15,6 +16,7 @@ you want to develop the model, see the documentation on `Contributing guide`.
 3. The results are saved as binary files temporarily. Then, the binary files are
     converted to `.csv` files and stored in a `sitename_timestamped` output
     directory under `OutputPath`.
+
 
 ## Run the model with MATLAB
 
@@ -98,7 +100,7 @@ you want to develop the model, see the documentation on `Contributing guide`.
 
     Note that you don't need to set `LD_LIBRARY_PATH` on Snellius. To submit a job to a compute node, see instructions [here](https://servicedesk.surf.nl/wiki/display/WIKI/Example+job+scripts).
 
-=== BMI interface
+=== "BMI interface"
     You can run the model using the [BMI](https://bmi.readthedocs.io/en/stable/)
     interface. The BMI interface is available in the script
     `STEMMUS_SCOPE_exe.m`. For that, you need [MATLAB
@@ -136,57 +138,7 @@ you want to develop the model, see the documentation on `Contributing guide`.
 ## Run the model with Octave
 
 === "Local device"
-    If you want to run the model for a small time period or tests purpose, you
-    can use [Octave](https://octave.org/). Allmost all funcationalities of
-    STEMMUS_SCOPE are compatible with Octave, but the execution time is longer
-    than MATLAB. After Octave installation, launch octave and install the following Octave packages:
-
-    ```bash
-    pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz"
-    pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz"
-    ```
-
-    Then, pass config file path to the variable `CFG` in the main script
-    `STEMMUS_SCOPE.m`. Run the model in a terminal:
-
-    ```bash
-    cd src/
-    octave.bat --no-gui --interactive --silent --eval "STEMMUS_SCOPE"
-    ```
-
-    On a Unix system, use `octave` instead of `octave.bat`.
-
-    <details>
-    <summary>Octave from source</summary>
-
-    Note that Octave on many Linux distributions might be too old so we need to compile it ourselves.
-    See [https://wiki.octave.org/Building](https://wiki.octave.org/Building). Here are build instructions for Ubuntu 22.04:
-
-    ```shell
-    sudo apt update
-    # install minimal deps, see https://wiki.octave.org/Octave_for_Debian_systems#The_right_way for all dependencies
-    sudo apt install -yq wget build-essential gfortran liblapack-dev libblas-dev libpcre3-dev libreadline-dev libnetcdf-dev
-    wget https://mirror.serverion.com/gnu/octave/octave-7.2.0.tar.gz  # or download from local mirror at https://ftpmirror.gnu.org/octave
-    tar -zxf octave-7.2.0.tar.gz
-    cd octave-7.2.0
-    ./configure --prefix=/opt/octave
-    make -j 6
-    sudo make install
-    ```
-
-    Add `/opt/octave/bin` to PATH environment variable.
-
-    ```shell
-    export PATH=$PATH:/opt/octave/bin
-    ```
-
-    Launch Octave and install Octave dependencies with:
-
-    ```bash
-    pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz"
-    pkg install "https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz"
-    ```
-    </details>
+    {% include-markdown "./Octave_instructions.md" start="# Running STEMMUS-SCOPE in Octave" end="## VS Code setup" heading-offset=2%}
 
 === "CRIB"
     On CRIB, you can use [Octave](https://octave.org/). Allmost all
@@ -256,3 +208,12 @@ you want to develop the model, see the documentation on `Contributing guide`.
     [Apptainer](https://apptainer.org/docs/user/main/introduction.html), see
     instructions
     [here](https://servicedesk.surf.nl/wiki/pages/viewpage.action?pageId=30660251).
+
+## Example workflow of running the model
+
+1. Download the [latest version of the
+   model](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases).
+2. Download the example dataset from Zenodo
+   [here](https://zenodo.org/records/10566827) that includes the configuration
+   file.
+3. Choose one of the options above to run the model.

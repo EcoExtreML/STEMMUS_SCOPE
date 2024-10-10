@@ -1,4 +1,8 @@
-# Contributing guidelines
+#
+
+> NOTE: The instructions below are meant for users who want to add changes to
+the model source code. If you want to run the model, see the documentation on
+`Running the model`.
 
 This repository includes the MATLAB source code of the STEMMUS-SCOPE model. We welcome any
 kind of contributions to our software, from simple comments or questions to a full
@@ -214,12 +218,18 @@ file](https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/run_model_on_snelliu
 
 ## MISS_HIT Checks
 
-When you submit a pull request, the code is also [checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml) by the [MISS_HIT](misshit.org/) linter and style checker.
-The status of `MISS_HIT` checks is shown below the pull request. The checks should be successful (green) before merging the pull request. To work with `MISS_HIT`, follow the instructions below:
+When you submit a pull request, the code is also
+[checked](https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml)
+by the [MISS_HIT](https://misshit.org/) linter and style checker. The status of
+`MISS_HIT` checks is shown below the pull request. The checks should be
+successful (green) before merging the pull request. To work with `MISS_HIT`,
+follow the instructions below:
 
-- Installing MISS_HIT: To install MISS_HIT, follow their [installation instructions](https://github.com/florianschanda/miss_hit#installation-via-pip).
+- Installing MISS_HIT: To install MISS_HIT, follow their [installation
+  instructions](https://github.com/florianschanda/miss_hit#installation-via-pip).
 
-- Running MISS_HIT: To run the style checker or linter, navigate to the `src/` folder in STEMMUS_SCOPE, and run the following commands:
+- Running MISS_HIT: To run the style checker or linter, navigate to the `src/`
+  folder in STEMMUS_SCOPE, and run the following commands:
 
   ```bash
   mh_style
@@ -229,9 +239,10 @@ The status of `MISS_HIT` checks is shown below the pull request. The checks shou
 
   Follow the errors and information in the output to fix any issues.
 
-- Configuring MISS_HIT: `MISS_HIT` is configured in [`miss_hit.cfg`](./miss_hit.cfg). This file contains
-the configuration for the linter and style checker. Please do not change this
-file unless you are familiar with the configuration options.
+- Configuring MISS_HIT: `MISS_HIT` is configured in
+[`miss_hit.cfg`](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/miss_hit.cfg).
+This file contains the configuration for the linter and style checker. Please do
+not change this file unless you are familiar with the configuration options.
 
 ## Testing new changes
 
@@ -305,7 +316,10 @@ GitHub actions workflows are located in the folder `.github/workflows`:
 
 The
 [Dockerfile](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/Dockerfile)
-is located in the root directory. This file is used to build the docker image of the model by Github action `publish-container`, see [GitHub actions workflow](#github-actions-workflow). To build and run the docker image locally, follow the steps below:
+is located in the root directory. This file is used to build the docker image of
+the model by Github action `publish-container`, see [GitHub actions
+workflow](#github-actions-workflow). To build and run the docker image locally,
+follow the steps below:
 
 - Install [Docker](https://www.docker.com/).
 - Build the docker image as:
@@ -331,4 +345,4 @@ is located in the root directory. This file is used to build the docker image of
 
 ## Octave compatibility
 
-See the documentation on [Octave compatibility](./docs/Octave_instructions.md).
+See the documentation on [Octave compatibility](./Octave_instructions.md).

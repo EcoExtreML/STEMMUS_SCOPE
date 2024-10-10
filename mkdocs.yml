@@ -6,7 +6,7 @@ nav:
   - Introduction: index.md
   - Getting started: getting_started.md
   - Running the model: run_model.md
-  - Contributing guide: contributing_guide.md
+  - Contributing guide: CONTRIBUTING.md
 
 theme:
   name: material
@@ -39,6 +39,7 @@ theme:
 plugins:
 - include-markdown
 - search
+- autorefs
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -48,6 +49,7 @@ markdown_extensions:
   - admonition
   - pymdownx.tabbed:
       alternate_style: true
+  -  attr_list
 
 extra:
   generator: false

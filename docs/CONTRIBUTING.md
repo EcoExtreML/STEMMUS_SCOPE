@@ -2,7 +2,7 @@
 
 > NOTE: The instructions below are meant for users who want to add changes to
 the model source code. If you want to run the model, see the documentation on
-`Running the model`.
+["**Running the model**"](./run_model.md).
 
 This repository includes the MATLAB source code of the STEMMUS-SCOPE model. We welcome any
 kind of contributions to our software, from simple comments or questions to a full
@@ -151,7 +151,7 @@ To know about the most common Git commands, follow the guides
 ## Adding changes to the model source code
 
 To setup the required software and configurations, see the documentation on
-`Getting started`.
+["**Getting started**"](./getting_started.md).
 
 It would be ideal to introduce changes incrementally over time. This way, you
 can track the changes and understand the impact of each change. Here are the
@@ -209,7 +209,7 @@ When you are reviewing a pull request, you should follow the steps below:
 When you are merging a pull request, you should follow the steps below:
 
 - Make sure the pull request is approved by at least one reviewer.
-- Make sure all the items in the pull requests list are checked.
+- Make sure all the items in the pull request's list are checked.
 
 ## Creating an executable file of STEMMUS_SCOPE
 
@@ -292,20 +292,22 @@ browser.
 
 When you are ready to make a release of the model, follow the steps below:
 
-- Make sure all new changes are added to changes log in the [`CHANGELOG.md`
-  file](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CHANGELOG.md).
+- Make sure all new changes are added to changes log in the file
+  ["CHANGELOG.md"](https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CHANGELOG.md).
 - Create a new release in the repository. The release should have a version number
   following the [semantic versioning](https://semver.org/) guidelines.
 - Add a description of the changes in the release notes.
 
 ## GitHub actions workflow
 
-GitHub actions workflows are located in the folder `.github/workflows`:
+[GitHub
+actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions)
+workflows are located in the folder `.github/workflows`:
 
 - `lint.yml`: This workflow checks the code style and lints the code using
   `MISS_HIT`.
 - `doc_deploy.yml`: This workflow builds the documentation and deploys it to
-  GitHub pages.
+  GitHub pages. It will create a gh-pages branch in the repository.
 - `publish-container`: This workflow builds the docker image and publishes it to
   the repository once a new release is made. The docker image will avialable in
   the
@@ -322,7 +324,7 @@ workflow](#github-actions-workflow). To build and run the docker image locally,
 follow the steps below:
 
 - Install [Docker](https://www.docker.com/).
-- Build the docker image as:
+- Build the docker image **locally** as:
 
   ```bash
   cd STEMMUS_SCOPE
@@ -345,4 +347,4 @@ follow the steps below:
 
 ## Octave compatibility
 
-See the documentation on [Octave compatibility](./Octave_instructions.md).
+See the documentation on [Octave](./Octave_instructions.md).

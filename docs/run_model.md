@@ -1,8 +1,8 @@
 #
 
 > NOTE: The instructions below are meant for users who want to run the model. If
-you want to add changes to the model, see the documentation on `Contributing
-guide`.
+you want to add changes to the model, see the documentation on ["**Contributing
+guide**"](./CONTRIBUTING.md).
 
 ## Workflow of STEMMUS_SCOPE
 

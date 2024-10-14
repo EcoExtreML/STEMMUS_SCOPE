@@ -1,0 +1,871 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../getting_started/">
+      
+      
+        <link rel="next" href="../CONTRIBUTING/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Running the model - STEMMUS_SCOPE documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="light-green" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="STEMMUS_SCOPE documentation" class="md-header__button md-logo" aria-label="STEMMUS_SCOPE documentation" data-md-component="logo">
+      
+  <img src="../assets/ecoextreml_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            STEMMUS_SCOPE documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Running the model
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="light-green" data-md-color-accent="green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    STEMMUS_SCOPE
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Introduction
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting_started/" class="md-tabs__link">
+        
+  
+    
+  
+  Getting started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Running the model
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../CONTRIBUTING/" class="md-tabs__link">
+        
+  
+    
+  
+  Contributing guide
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="STEMMUS_SCOPE documentation" class="md-nav__button md-logo" aria-label="STEMMUS_SCOPE documentation" data-md-component="logo">
+      
+  <img src="../assets/ecoextreml_logo.png" alt="logo">
+
+    </a>
+    STEMMUS_SCOPE documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    STEMMUS_SCOPE
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Running the model
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Running the model
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-of-stemmus_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow of STEMMUS_SCOPE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-matlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with MATLAB
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-matlab-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with MATLAB Runtime
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-octave" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with Octave
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with Docker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-workflow-of-running-the-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example workflow of running the model
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing guide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#workflow-of-stemmus_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow of STEMMUS_SCOPE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-matlab" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with MATLAB
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-matlab-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with MATLAB Runtime
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-octave" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with Octave
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-the-model-with-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run the model with Docker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-workflow-of-running-the-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example workflow of running the model
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="_1"></h1>
+<blockquote>
+<p>NOTE: The instructions below are meant for users who want to run the model. If
+you want to add changes to the model, see the documentation on <a href="../CONTRIBUTING/">"<strong>Contributing
+guide</strong>"</a>.</p>
+</blockquote>
+<h2 id="workflow-of-stemmus_scope">Workflow of STEMMUS_SCOPE</h2>
+<ol>
+<li>The model reads the forcing file associated with the specified site/location,
+  e.g., <code>FI-Hyy_1996-2014_FLUXNET2015_Met.nc</code> from "ForcingPath" and extracts
+  forcing variables in <code>.dat</code> format. The <code>.dat</code> files are stored in the
+  <code>InputPath</code> directory. In addition, the model reads the site information i.e.
+  the location and vegetation parameters.</li>
+<li>The model runs step by step until the whole simulation period is completed
+    i.e till the last time step of the forcing data.</li>
+<li>The results are saved as binary files temporarily. Then, the binary files are
+    converted to <code>.csv</code> files and stored in a <code>sitename_timestamped</code> output
+    directory under <code>OutputPath</code>.</li>
+</ol>
+<h2 id="run-the-model-with-matlab">Run the model with MATLAB</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Local device</label><label for="__tabbed_1_2">CRIB</label><label for="__tabbed_1_3">Snellius</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>If you have <a href="https://nl.mathworks.com/products/matlab.html">MATLAB</a> installed on
+your device, you can run the model by passing config file path to the
+variable <code>CFG</code> in the main script <code>STEMMUS_SCOPE.m</code>.</p>
+<p>As an alternative, you can run the main script using MATLAB command line in a
+terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>src/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>matlab<span class="w"> </span>-nodisplay<span class="w"> </span>-nosplash<span class="w"> </span>-nodesktop<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;run(&#39;STEMMUS_SCOPE.m&#39;);exit;&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>To open MATLAB desktop on CRIB, click on the <code>Remote Desktop</code> in the
+Launcher. Click on the <code>Applications</code>. You will find the 'MATLAB' software
+under the <code>Research</code>. After clicking on 'MATLAB', it asks for your account
+information that is connected to a MATLAB license. Then, you can run the
+model by passing config file path to the variable <code>CFG</code> in the main script
+<code>STEMMUS_SCOPE.m</code></p>
+</div>
+<div class="tabbed-block">
+<p>In order to use MATLAB, you need to send a request to add you to the user pool
+on Snellius. Then, pass config file path to the variable <code>CFG</code> in the main script
+<code>STEMMUS_SCOPE.m</code>. To run the main script <code>STEMMUS_SCOPE.m</code> using MATLAB command line in a terminal on
+a <strong>compute node</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>module<span class="w"> </span>load<span class="w"> </span><span class="m">2023</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>module<span class="w"> </span>load<span class="w"> </span>MATLAB/2023a-upd4
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">cd</span><span class="w"> </span>src/
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>matlab<span class="w"> </span>-nodisplay<span class="w"> </span>-nosplash<span class="w"> </span>-nodesktop<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;run(&#39;STEMMUS_SCOPE.m&#39;);exit;&quot;</span>
+</code></pre></div>
+<p>To submit a job to a compute node, see instructions <a href="https://servicedesk.surf.nl/wiki/display/WIKI/Example+job+scripts">here</a>.</p>
+</div>
+</div>
+</div>
+<h2 id="run-the-model-with-matlab-runtime">Run the model with MATLAB Runtime</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Local device</label><label for="__tabbed_2_2">CRIB</label><label for="__tabbed_2_3">Snellius</label><label for="__tabbed_2_4">BMI interface</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>If you want to run the model as a standalone application, you need <a href="https://nl.mathworks.com/products/compiler/matlab-runtime.html">MATLAB
+Runtime</a>
+version <code>2023a</code>. You don't need a license for MATLAB Runtime. Note that the
+version of the MATLAB Runtime is tied to the version of MATLAB. The
+executable file works on the operating system on which the file is created.
+The file <code>STEMMUS_SCOPE</code> under <code>exe</code> directory is an executable file of
+STEMMUS_SCOPE that is created using MATLAB version <code>2023a</code> in a <strong>Linux
+system</strong>.</p>
+<p>Make sure <code>LD_LIBRARY_PATH</code> is set correctly, in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:/usr/local/MATLAB/MATLAB_Runtime/v2023a/runtime/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/bin/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/sys/os/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/sys/opengl/lib/glnxa64
+</code></pre></div>
+<p>Change <code>/usr/local/MATLAB/MATLAB_Runtime/v2023a</code> to the path where MATLAB Runtime is installed.</p>
+<p>Then, you can run the model in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>./STEMMUS_SCOPE/exe/STEMMUS_SCOPE<span class="w"> </span>config_file_template.txt
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>On CRIB, <a href="https://nl.mathworks.com/products/compiler/matlab-runtime.html">MATLAB
+Runtime</a> is
+not available. Contact the system administrator for more information.</p>
+</div>
+<div class="tabbed-block">
+<p><a href="https://nl.mathworks.com/products/compiler/matlab-runtime.html">MATLAB
+Runtime</a> is available on Snellius. You can run the
+model by passing the path of the config file in a terminal on a <strong>compute
+node</strong>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>module<span class="w"> </span>load<span class="w"> </span><span class="m">2023</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>module<span class="w"> </span>load<span class="w"> </span>MATLAB/2023a-upd4
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>./STEMMUS_SCOPE/exe/STEMMUS_SCOPE<span class="w"> </span>config_file_snellius.txt
+</code></pre></div>
+<p>Note that you don't need to set <code>LD_LIBRARY_PATH</code> on Snellius. To submit a job to a compute node, see instructions <a href="https://servicedesk.surf.nl/wiki/display/WIKI/Example+job+scripts">here</a>.</p>
+</div>
+<div class="tabbed-block">
+<p>You can run the model using the <a href="https://bmi.readthedocs.io/en/stable/">BMI</a>
+interface. The BMI interface is available in the script
+<code>STEMMUS_SCOPE_exe.m</code>. For that, you need <a href="https://nl.mathworks.com/products/compiler/matlab-runtime.html">MATLAB
+Runtime</a>
+version <code>2023a</code>. You don't need a license for MATLAB Runtime. Note that the
+version of the MATLAB Runtime is tied to the version of MATLAB. The
+executable file works on the operating system on which the file is created.
+The file <code>STEMMUS_SCOPE</code> under <code>exe</code> directory is an executable file of
+STEMMUS_SCOPE that is created using MATLAB version <code>2023a</code> in a <strong>Linux
+system</strong>.</p>
+<p>Make sure <code>LD_LIBRARY_PATH</code> is set correctly, in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:/usr/local/MATLAB/MATLAB_Runtime/v2023a/runtime/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/bin/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/sys/os/glnxa64:/usr/local/MATLAB/MATLAB_Runtime/v2023a/sys/opengl/lib/glnxa64
+</code></pre></div>
+<p>Change <code>/usr/local/MATLAB/MATLAB_Runtime/v2023a</code> to the path where MATLAB Runtime is installed.</p>
+<p>To enter the BMI mode:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>./STEMMUS_SCOPE/exe/STEMMUS_SCOPE<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span>bmi
+</code></pre></div>
+<p>Now, BMI asks you to select one of the steps "initialize", "update" or "finalize".
+To initialize the model using a config file, type:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>initialize<span class="w"> </span><span class="s2">&quot;path/to/config_file_template.txt&quot;</span>
+</code></pre></div>
+<p>Change <code>path/to/config_file_template.txt</code> to the actual path of the config file.</p>
+</div>
+</div>
+</div>
+<h2 id="run-the-model-with-octave">Run the model with Octave</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Local device</label><label for="__tabbed_3_2">CRIB</label><label for="__tabbed_3_3">Snellius</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<!-- BEGIN INCLUDE ./Octave_instructions.md '# Running STEMMUS-SCOPE in Octave' '## VS Code setup' -->
+<p>If you want to run the model for a small time period or tests purpose, you
+can use <a href="https://octave.org/">Octave</a>. Allmost all funcationalities of
+STEMMUS_SCOPE are compatible with Octave, but the execution time is longer
+than MATLAB. After Octave installation, launch octave and install the following Octave packages:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz&quot;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz&quot;</span>
+</code></pre></div>
+<p>Then, pass config file path to the variable <code>CFG</code> in the main script
+<code>STEMMUS_SCOPE.m</code>. Run the model in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>src/
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>octave.bat<span class="w"> </span>--no-gui<span class="w"> </span>--interactive<span class="w"> </span>--silent<span class="w"> </span>--eval<span class="w"> </span><span class="s2">&quot;STEMMUS_SCOPE&quot;</span>
+</code></pre></div>
+<p>On a Unix system, use <code>octave</code> instead of <code>octave.bat</code>.</p>
+<p><details>
+<summary>Octave from source</summary></p>
+<p>Note that Octave on many Linux distributions might be too old so we need to compile it ourselves.
+See <a href="https://wiki.octave.org/Building">https://wiki.octave.org/Building</a>. Here are build instructions for Ubuntu 22.04:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># install minimal deps, see https://wiki.octave.org/Octave_for_Debian_systems#The_right_way for all dependencies</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-yq<span class="w"> </span>wget<span class="w"> </span>build-essential<span class="w"> </span>gfortran<span class="w"> </span>liblapack-dev<span class="w"> </span>libblas-dev<span class="w"> </span>libpcre3-dev<span class="w"> </span>libreadline-dev<span class="w"> </span>libnetcdf-dev
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>wget<span class="w"> </span>https://mirror.serverion.com/gnu/octave/octave-7.2.0.tar.gz<span class="w">  </span><span class="c1"># or download from local mirror at https://ftpmirror.gnu.org/octave</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>tar<span class="w"> </span>-zxf<span class="w"> </span>octave-7.2.0.tar.gz
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="nb">cd</span><span class="w"> </span>octave-7.2.0
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>./configure<span class="w"> </span>--prefix<span class="o">=</span>/opt/octave
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>make<span class="w"> </span>-j<span class="w"> </span><span class="m">6</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>sudo<span class="w"> </span>make<span class="w"> </span>install
+</code></pre></div>
+<p>Add <code>/opt/octave/bin</code> to PATH environment variable.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/opt/octave/bin
+</code></pre></div>
+<p>Launch Octave and install Octave dependencies with:</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz&quot;</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz&quot;</span>
+</code></pre></div>
+</details></p>
+<!-- END INCLUDE -->
+</div>
+<div class="tabbed-block">
+<p>On CRIB, you can use <a href="https://octave.org/">Octave</a>. Allmost all
+funcationalities of STEMMUS_SCOPE are compatible with Octave, but the
+execution time is longer than MATLAB. After Octave installation, launch
+octave and install the following Octave packages:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/io-2.6.4.tar.gz&quot;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>pkg<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;https://downloads.sourceforge.net/project/octave/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics-1.4.3.tar.gz&quot;</span>
+</code></pre></div>
+<p>Then, pass config file path to the variable <code>CFG</code> in the main script
+<code>STEMMUS_SCOPE.m</code>. Run the model in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>octave.bat<span class="w"> </span>--no-gui<span class="w"> </span>--interactive<span class="w"> </span>--silent<span class="w"> </span>--eval<span class="w"> </span><span class="s2">&quot;STEMMUS_SCOPE&quot;</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Since Octave is very slow, it is not recommended to run the model on
+Snellius using Octave. Use MATLAB Runtime instead.</p>
+</div>
+</div>
+</div>
+<h2 id="run-the-model-with-docker">Run the model with Docker</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Local device</label><label for="__tabbed_4_2">CRIB</label><label for="__tabbed_4_3">Snellius</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>If you have <a href="https://www.docker.com/">Docker</a> installed on your device, you
+can run the model using the docker image <code>ecoextreml/stemmus_scope</code> and
+<a href="https://bmi.readthedocs.io/en/stable/">BMI</a> interface. The docker image is available
+on
+<a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/pkgs/container/stemmus_scope">EcoExtreML</a>.
+You can pull the <code>latest</code> image using the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/ecoextreml/stemmus_scope:latest
+</code></pre></div>
+<p>Then, mount the directories and run the model in a terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-u<span class="w"> </span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>:<span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span>-v<span class="w"> </span>/path_to_input_folder:/path_to_input_folder<span class="w"> </span>-v<span class="w"> </span>/path_to_output_folder:/path_to_output_folder<span class="w"> </span>-it<span class="w"> </span>ghcr.io/ecoextreml/stemmus_scope:latest
+</code></pre></div>
+<p>With <code>-it</code> option, you can enter the docker interactive mode.
+Now, BMI asks you to select one of the steps "initialize", "update" or "finalize".
+To initialize the model using a config file, type:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>initialize<span class="w"> </span><span class="s2">&quot;path/to/config_file_template.txt&quot;</span>
+</code></pre></div>
+<p>Make sure that the input and output directories are mounted correctly
+and <code>config_file_template.txt</code> is available in the input directory.
+Also, remove the container after running the model:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>container_id
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>If <a href="https://www.docker.com/">Docker</a> is installed on CRIB, follow the same
+instructions as for the <code>Local device</code>.</p>
+</div>
+<div class="tabbed-block">
+<p><a href="https://www.docker.com/">Docker</a> option is not available on Snellius. You
+need to use
+<a href="https://apptainer.org/docs/user/main/introduction.html">Apptainer</a>, see
+instructions
+<a href="https://servicedesk.surf.nl/wiki/pages/viewpage.action?pageId=30660251">here</a>.</p>
+</div>
+</div>
+</div>
+<h2 id="example-workflow-of-running-the-model">Example workflow of running the model</h2>
+<ol>
+<li>Download the <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/releases">latest version of the
+   model</a>.</li>
+<li>Download the example dataset from Zenodo
+   <a href="https://zenodo.org/records/10566827">here</a> that includes the configuration
+   file.</li>
+<li>Choose one of the options above to run the model.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>

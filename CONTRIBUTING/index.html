@@ -1,0 +1,1066 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../run_model/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Contributing guide - STEMMUS_SCOPE documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="light-green" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="STEMMUS_SCOPE documentation" class="md-header__button md-logo" aria-label="STEMMUS_SCOPE documentation" data-md-component="logo">
+      
+  <img src="../assets/ecoextreml_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            STEMMUS_SCOPE documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contributing guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="light-green" data-md-color-accent="green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    STEMMUS_SCOPE
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Introduction
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting_started/" class="md-tabs__link">
+        
+  
+    
+  
+  Getting started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../run_model/" class="md-tabs__link">
+        
+  
+    
+  
+  Running the model
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Contributing guide
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="STEMMUS_SCOPE documentation" class="md-nav__button md-logo" aria-label="STEMMUS_SCOPE documentation" data-md-component="logo">
+      
+  <img src="../assets/ecoextreml_logo.png" alt="logo">
+
+    </a>
+    STEMMUS_SCOPE documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    STEMMUS_SCOPE
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run_model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running the model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Contributing guide
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Contributing guide
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-via-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing via GitHub
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-changes-to-the-model-source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding changes to the model source code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reviewing-a-pull-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reviewing a pull request
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merging-a-pull-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging a pull request
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-executable-file-of-stemmus_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating an executable file of STEMMUS_SCOPE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#miss_hit-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      MISS_HIT Checks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-new-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing new changes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-documentation-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building the documentation locally
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-a-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making a release
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-actions-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      GitHub actions workflow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker image
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#octave-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Octave compatibility
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-via-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing via GitHub
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-changes-to-the-model-source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding changes to the model source code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reviewing-a-pull-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reviewing a pull request
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merging-a-pull-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging a pull request
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-an-executable-file-of-stemmus_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating an executable file of STEMMUS_SCOPE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#miss_hit-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      MISS_HIT Checks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-new-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing new changes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-documentation-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building the documentation locally
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-a-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making a release
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-actions-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      GitHub actions workflow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker image
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#octave-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Octave compatibility
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="_1"></h1>
+<blockquote>
+<p>NOTE: The instructions below are meant for users who want to add changes to
+the model source code. If you want to run the model, see the documentation on
+<a href="../run_model/">"<strong>Running the model</strong>"</a>.</p>
+</blockquote>
+<p>This repository includes the MATLAB source code of the STEMMUS-SCOPE model. We welcome any
+kind of contributions to our software, from simple comments or questions to a full
+<a href="https://help.github.com/articles/about-pull-requests/">pull request</a>. Please
+read and follow our contributing guidelines.</p>
+<h2 id="contributing-via-github">Contributing via GitHub</h2>
+<p>If you want to work with the <code>STEMMUS_SCOPE</code> repository for the first time, or on a new computer,
+you need to configure a few things following steps 1 through 5 below.</p>
+<details>
+  <summary>Steps 1 to 5 </summary>
+
+### 1. Enable two-factor authentication
+
+It is strongly recommended using two-factor authentication. Here is the link of
+[Configuring two-factor
+authentication](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication).
+
+### 2. Set ssh connection
+
+With SSH keys, you can connect to GitHub without supplying your username and
+personal access token at each visit. Please follow the instructions below. If
+you like to know more, see [Connecting to GitHub with
+SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+
+#### 2.1. Checking for existing SSH keys
+
+Open a terminal and run the command below:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ls<span class="w"> </span>-la<span class="w"> </span>~/.ssh
+</code></pre></div>
+
+This command lists the files with extension `.pub` like `id_rsa.pub` in the
+`.ssh` directory, if they exist. If you receive an error that `~/.ssh` doesn't
+exist, or you don't see any files with extension `.pub`, you do not have an
+existing SSH key pair. So, continue with step **2.2**. Otherwise, skip step 2.2 and
+continue with step **2.3**.
+
+#### 2.2. Generating a new SSH key
+
+Open a terminal and run the command below but replace `your_user_email` with
+your own GitHub email address:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh-keygen -t ed25519 -C &quot;your_user_email&quot;
+</code></pre></div>
+
+When you're prompted to "Enter a file in which to save the key," press `Enter`.
+This accepts the default file location.
+
+The next prompt asks "Enter passphrase (empty for no passphrase)", type a secure
+passphrase. For more information, see [Working with SSH key
+passphrases](https://docs.github.com/en/articles/working-with-ssh-key-passphrases).
+
+#### 2.3. Adding your SSH key to the ssh-agent
+
+Open a terminal and run the command below:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>ssh-agent<span class="w"> </span>-s<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+Then, run the command below:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ssh-add<span class="w"> </span>~/.ssh/id_ed25519
+</code></pre></div>
+
+This asks for your "passphrase" that was provided in the previous step.
+
+#### 2.4. Adding a new SSH key to your GitHub account
+
+Please follow steps 1 to 8 in this [GitHub
+instruction](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+
+### 3. Configure git
+
+#### 3.1. Set name and email
+
+Open a terminal, and run the commands below one by one but replace
+`your_user_name` and `your_user_email` with your own GitHub information:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;your_user_name&quot;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;your_user_email&quot;</span>
+</code></pre></div>
+
+#### 3.2. Set line endings
+
+Change the way Git encodes line endings on Linux as:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>core.autocrlf<span class="w"> </span>input
+</code></pre></div>
+
+#### 3.3. Set text editor
+
+We can set `nano` as our favorite text editor, following:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>core.editor<span class="w"> </span><span class="s2">&quot;nano -w&quot;</span>
+</code></pre></div>
+
+> We use `nano` here because it is one of the least complex text editors. Press
+> `ctrl + O` to save the file, and then `ctrl + X` to exit `nano`.
+
+#### 3.4. Check your settings
+
+You can check your settings at any time:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git<span class="w"> </span>config<span class="w"> </span>--list
+</code></pre></div>
+
+For more information, see lesson [Setting Up
+Git](https://swcarpentry.github.io/git-novice/02-setup/index.html).
+
+### 4. Clone the repository
+
+Open a terminal and run the command below:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">cd</span>
+</code></pre></div>
+Now you are in your `HOME` directory. Run the command below:
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:EcoExtreML/STEMMUS_SCOPE.git
+</code></pre></div>
+
+Now a new GitHub folder `STEMMUS_SCOPE` is created in your `HOME` directory.
+
+> In this command, we clone the repository using `ssh` option. As we set the ssh
+connection in [**Step 2**](#2-set-ssh-connection), this command here does not
+ask for our user name and password.
+
+### 5. Collaborate using GitHub
+
+To know about the most common Git commands, follow the guides
+[here](https://hackmd.io/B4v6KwsBRzG-akLDF8e5pg).
+</details>
+
+<h2 id="adding-changes-to-the-model-source-code">Adding changes to the model source code</h2>
+<p>To setup the required software and configurations, see the documentation on
+<a href="../getting_started/">"<strong>Getting started</strong>"</a>.</p>
+<p>It would be ideal to introduce changes incrementally over time. This way, you
+can track the changes and understand the impact of each change. Here are the
+steps to follow:</p>
+<ul>
+<li>Submit <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/issues">an issue</a> to the
+  repository. This issue should describe the problem or the feature you want to
+  introduce.</li>
+<li>Create a new branch from the <code>main</code> branch. This branch should have a
+  descriptive name that relates to the issue you are working on.</li>
+<li>Make the changes in the new branch, for example, you can add new features, fix
+  bugs, or improve the documentation. Follow <a href="http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf">MATLAB Guidelines 2.0, Richard
+  Johnson</a>
+  when introducing new changes to the codes.</li>
+<li>Commit the changes to the new branch. Write a descriptive commit message that
+  explains the changes you are introducing.</li>
+<li>Push the changes to the repository.</li>
+<li>Create a <strong>draft</strong> <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests">pull
+  request</a>
+  to the <code>main</code> branch. This pull request should reference the issue you are
+  working on.</li>
+<li>When you are done with the changes, run <a href="#testing-new-changes">the tests</a> and
+  <a href="#miss_hit-checks">MISS_HIT commands</a>, make sure they pass.</li>
+<li>Make the pull request ready for review. Ask for a review from the repository
+  maintainers.</li>
+<li>The maintainers will review the changes and provide feedback. You may need to
+  make additional changes based on the feedback.</li>
+<li>When the changes are approved, the maintainers will merge the pull request.</li>
+</ul>
+<h2 id="reviewing-a-pull-request">Reviewing a pull request</h2>
+<p>When you are reviewing a pull request, you should follow the steps below:</p>
+<ul>
+<li>Check the changes introduced in the pull request. Make sure the changes are
+  consistent with the issue description. Also, check for example variable names,
+  function names, documentation, global variables, ..., to see if the changes
+  are consistent with the <a href="http://cnl.sogang.ac.kr/cnlab/lectures/programming/matlab/Richard_Johnson-MatlabStyle2_book.pdf">MATLAB Style Guidelines
+  2.0</a>.</li>
+<li>Run <a href="#testing-new-changes">the tests</a> and <a href="#miss_hit-checks">MISS_HIT commands</a> to make sure they pass.</li>
+<li>Provide feedback on the changes. You can ask questions, suggest improvements,
+  or point out issues.</li>
+<li>When you are satisfied with the changes, approve the pull request. Ask a
+  maintainer to <a href="#creating-an-executable-file-of-stemmus_scope">re-generate the executable
+  file</a> and merge the pull
+  request.</li>
+<li>If the changes are related to BMI, you have to ask the maintainer to make a
+  new release of the model. This way a new docker image will be created and the
+  model will be available for the users.</li>
+<li>If the changes are related to the documentation, make sure that documentation
+  page can be built successfully, see <a href="#building-the-documentation-locally">Building the documentation
+  locally</a>.</li>
+</ul>
+<h2 id="merging-a-pull-request">Merging a pull request</h2>
+<p>When you are merging a pull request, you should follow the steps below:</p>
+<ul>
+<li>Make sure the pull request is approved by at least one reviewer.</li>
+<li>Make sure all the items in the pull request's list are checked.</li>
+</ul>
+<h2 id="creating-an-executable-file-of-stemmus_scope">Creating an executable file of STEMMUS_SCOPE</h2>
+<p>See the disumentation on <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/run_model_on_snellius/exe">executable
+file</a>.</p>
+<h2 id="miss_hit-checks">MISS_HIT Checks</h2>
+<p>When you submit a pull request, the code is also
+<a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/actions/workflows/lint.yml">checked</a>
+by the <a href="https://misshit.org/">MISS_HIT</a> linter and style checker. The status of
+<code>MISS_HIT</code> checks is shown below the pull request. The checks should be
+successful (green) before merging the pull request. To work with <code>MISS_HIT</code>,
+follow the instructions below:</p>
+<ul>
+<li>
+<p>Installing MISS_HIT: To install MISS_HIT, follow their <a href="https://github.com/florianschanda/miss_hit#installation-via-pip">installation
+  instructions</a>.</p>
+</li>
+<li>
+<p>Running MISS_HIT: To run the style checker or linter, navigate to the <code>src/</code>
+  folder in STEMMUS_SCOPE, and run the following commands:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>mh_style
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>mh_lint
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>mh_metric
+</code></pre></div>
+<p>Follow the errors and information in the output to fix any issues.</p>
+<ul>
+<li>Configuring MISS_HIT: <code>MISS_HIT</code> is configured in
+<a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/miss_hit.cfg"><code>miss_hit.cfg</code></a>.
+This file contains the configuration for the linter and style checker. Please do
+not change this file unless you are familiar with the configuration options.</li>
+</ul>
+<h2 id="testing-new-changes">Testing new changes</h2>
+<p>To test the new changes, we can only check if the new changes do not break the
+model. To do this, follow the steps below:</p>
+<ul>
+<li>Run the notebook <code>compare_git_branch_results.ipynb</code> in the <code>test</code> folder. This
+  notebook will compare the results of the model between the <code>main</code> branch and
+  the new branch with the changes. If the results are similar, the changes do
+  not break the model.</li>
+<li><a href="#creating-an-executable-file-of-stemmus_scope">Create the executable file</a> of
+  the model and run the model with the new changes. Check if the model runs
+  without any errors.</li>
+<li><a href="#octave-compatibility">Run the model with Octave</a> to check if the new changes
+  are compatible with Octave.</li>
+</ul>
+<h2 id="building-the-documentation-locally">Building the documentation locally</h2>
+<p>Documentation is created using several markdown files and the <a href="https://www.mkdocs.org/"><code>mkdocs</code>
+tool</a>. The markdown files are located in the <code>docs</code>
+folder. The configuration file for <code>mkdocs</code> is <code>mkdocs.yml</code> located in the root
+directory. To build the documentation locally, follow the steps below:</p>
+<ul>
+<li>Install the required dependencies as:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">cd</span><span class="w"> </span>STEMMUS_SCOPE
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+</code></pre></div>
+<ul>
+<li>Build the documentation as:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<ul>
+<li>Preview the documentation as:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<p>Click on the link provided in the terminal to view the documentation in your
+browser.</p>
+<h2 id="making-a-release">Making a release</h2>
+<p>When you are ready to make a release of the model, follow the steps below:</p>
+<ul>
+<li>Make sure all new changes are added to changes log in the file
+  <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/CHANGELOG.md">"CHANGELOG.md"</a>.</li>
+<li>Create a new release in the repository. The release should have a version number
+  following the <a href="https://semver.org/">semantic versioning</a> guidelines.</li>
+<li>Add a description of the changes in the release notes.</li>
+</ul>
+<h2 id="github-actions-workflow">GitHub actions workflow</h2>
+<p><a href="https://docs.github.com/en/actions/about-github-actions/understanding-github-actions">GitHub
+actions</a>
+workflows are located in the folder <code>.github/workflows</code>:</p>
+<ul>
+<li><code>lint.yml</code>: This workflow checks the code style and lints the code using
+  <code>MISS_HIT</code>.</li>
+<li><code>doc_deploy.yml</code>: This workflow builds the documentation and deploys it to
+  GitHub pages. It will create a gh-pages branch in the repository.</li>
+<li><code>publish-container</code>: This workflow builds the docker image and publishes it to
+  the repository once a new release is made. The docker image will avialable in
+  the
+  <a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/pkgs/container/stemmus_scope">packages</a>
+  in the repository.</li>
+</ul>
+<h2 id="docker-image">Docker image</h2>
+<p>The
+<a href="https://github.com/EcoExtreML/STEMMUS_SCOPE/blob/main/Dockerfile">Dockerfile</a>
+is located in the root directory. This file is used to build the docker image of
+the model by Github action <code>publish-container</code>, see <a href="#github-actions-workflow">GitHub actions
+workflow</a>. To build and run the docker image locally,
+follow the steps below:</p>
+<ul>
+<li>Install <a href="https://www.docker.com/">Docker</a>.</li>
+<li>Build the docker image <strong>locally</strong> as:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">cd</span><span class="w"> </span>STEMMUS_SCOPE
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>stemmus_scope<span class="w"> </span>.
+</code></pre></div>
+<ul>
+<li>Run the docker image with the BMI interface as:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-u<span class="w"> </span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>:<span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span>-v<span class="w"> </span>/path_to_input_folder:/path_to_input_folder<span class="w"> </span>-v<span class="w"> </span>/path_to_output_folder:/path_to_output_folder<span class="w"> </span>-it<span class="w"> </span>stemmus_scope
+</code></pre></div>
+<p>With <code>-it</code> option, you can enter the docker interactive mode.
+  Now, BMI asks you to select one of the steps "initialize", "update" or "finalize".
+  To initialize the model using a config file, type:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>initialize<span class="w"> </span><span class="s2">&quot;path/to/config_file_template.txt&quot;</span>
+</code></pre></div>
+<h2 id="octave-compatibility">Octave compatibility</h2>
+<p>See the documentation on <a href="../Octave_instructions/">Octave</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>

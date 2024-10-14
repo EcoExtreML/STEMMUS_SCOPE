@@ -1,5 +1,10 @@
 # Unreleased
 
+**Added:**
+
+- Documentation using mkdocs and a github action workflow to publish the
+  documentation in [#264](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/264)
+
 **Changed:**
 
 <a name="1.6.1"></a>
@@ -50,7 +55,7 @@ as well as various bugfixes.
 - Defining the indices of the first four layers discussed in
   [#237](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/237) and fixed in
   [#238](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/238)
-  
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.5.0) - 3 Jan 2024
 

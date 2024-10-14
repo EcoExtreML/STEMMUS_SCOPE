@@ -39,7 +39,6 @@ theme:
 plugins:
 - include-markdown
 - search
-- autorefs
 
 markdown_extensions:
   - pymdownx.highlight:

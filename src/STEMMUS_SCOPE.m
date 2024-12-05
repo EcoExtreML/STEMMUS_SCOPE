@@ -84,6 +84,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     EVAP = InitialValues.EVAP;
     RWUs = [];
     RWUg = [];
+    Trap = [];
 
     %% 1. define Constants
     Constants = io.define_constants();

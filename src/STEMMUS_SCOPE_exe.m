@@ -28,7 +28,7 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'SoilVariables', ... % Structure that includes different variables of soil moisture
                        'GroundwaterSettings', ... % groundwater settings including input data from MODFLOW
                        'gwfluxes', ... % structure that includes groundwater recharge and its individual components
-                       'EVAP', ... % evaporation
+                       'Evap', ... % evaporation
                        'Trap', ... % transpiration
                        'RWUs', ... % soil water root uptake
                        'RWUg', ... % groundwater root uptake

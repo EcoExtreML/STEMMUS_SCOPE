@@ -25,6 +25,7 @@ function [Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapotransp
     else
         Evap = 0; % transfer to second value unit: cm s-1
         Trap = 0; % transfer to second value
+        RWU = 0 * RWU;
         Srt1 = 0 ./ ModelSettings.DeltZ';
     end
 

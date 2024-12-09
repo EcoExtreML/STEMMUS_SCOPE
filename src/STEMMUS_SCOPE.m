@@ -25,7 +25,7 @@ end
 
 % set CFG to a path if it is not defined
 if exist('CFG', 'var') == 0
-    CFG = '../config_file_crib.txt';
+    % CFG = '../config_file_crib.txt';
 end
 
 % set runMode to "full" if it is not defined

@@ -20,11 +20,7 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     fnames.radiation_file = fullfile(Output_dir, 'radiation.bin');
     fnames.fluorescence_file = fullfile(Output_dir, 'fluorescence.bin');
     fnames.wl_file = fullfile(Output_dir, 'wl.bin');  % wavelength
-    fnames.irradiance_spectra_file = fullfile(Output_dir, 'irradiance_spectra.bin');  % Fluorescence
-    fnames.spectrum_hemis_optical_file = fullfile(Output_dir, 'spectrum_hemis.bin');
-    fnames.spectrum_obsdir_optical_file = fullfile(Output_dir, 'spectrum_obsdir.bin');
     fnames.reflectance_file = fullfile(Output_dir, 'reflectance.bin');  % reflectance spectrum
-    fnames.BOC_irradiance_file = fullfile(Output_dir, 'BOC_irradiance.bin');  % reflectance spectrum
     fnames.Sim_Theta_file = fullfile(Output_dir, 'Sim_Theta.bin');  % soil moisture
     fnames.Sim_Temp_file = fullfile(Output_dir, 'Sim_Temp.bin');  % soil temperature
     fnames.waterStressFactor_file = fullfile(Output_dir, 'waterStressFactor.bin');
@@ -38,9 +34,22 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     fnames.Sim_qva_file = fullfile(Output_dir, 'qva.bin'); % vapour flux due to dry air pressure gradient
     fnames.Sim_qtot_file = fullfile(Output_dir, 'qtot.bin'); % total flux (liquid + vapour)
 
+    % Comment unnecessary large size files
+    %{
+    fnames.BOC_irradiance_file = fullfile(Output_dir, 'BOC_irradiance.bin');  % reflectance spectrum
+    fnames.irradiance_spectra_file = fullfile(Output_dir, 'irradiance_spectra.bin');  % Fluorescence
+    fnames.spectrum_hemis_optical_file = fullfile(Output_dir, 'spectrum_hemis.bin');
+    fnames.spectrum_obsdir_optical_file = fullfile(Output_dir, 'spectrum_obsdir.bin');
+
     if options.calc_ebal
         fnames.spectrum_obsdir_BlackBody_file = fullfile(Output_dir, 'spectrum_obsdir_BlackBody.bin');  % spectrum observation direction
     end
+
+    if options.calc_planck && options.calc_ebal
+        fnames.spectrum_obsdir_thermal_file    = fullfile(Output_dir, 'spectrum_obsdir_thermal.bin');  % spectrum observation direction
+        fnames.spectrum_hemis_thermal_file     = fullfile(Output_dir, 'spectrum_hemis_thermal.bin');   % spectrum hemispherically integrated
+    end
+    %}
 
     % if ~(options.simulation==1)
     fnames.pars_and_input_file           = fullfile(Output_dir, 'pars_and_input.bin');      % wavelength
@@ -60,7 +69,7 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     %
     %% Optional Output
     if options.calc_vert_profiles
-        fnames.gap_file            = fullfile(Output_dir, 'gap.bin');              % gap
+        % fnames.gap_file            = fullfile(Output_dir, 'gap.bin');            % gap, comment unnecessary large size files
         fnames.leaftemp_file        = fullfile(Output_dir, 'leaftemp.bin');        % leaftemp
         fnames.layer_H_file         = fullfile(Output_dir, 'layer_H.bin');      % vertical profile
         fnames.layer_LE_file        = fullfile(Output_dir, 'layer_lE.bin');         % latent heat
@@ -89,23 +98,21 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
             fnames.fluorescencePSI_file       = fullfile(Output_dir, 'fluorescencePSI.bin');     % Fluorescence
             fnames.fluorescencePSII_file      = fullfile(Output_dir, 'fluorescencePSII.bin');     % Fluorescence
         end
+        % Comment unnecessary large size files
+        %{
         fnames.fluorescence_hemis_file        = fullfile(Output_dir, 'fluorescence_hemis.bin');     % Fluorescence
         fnames.fluorescence_emitted_by_all_leaves_file         = fullfile(Output_dir, 'fluorescence_emitted_by_all_leaves.bin');
         fnames.fluorescence_emitted_by_all_photosystems_file   = fullfile(Output_dir, 'fluorescence_emitted_by_all_photosystems.bin');
         fnames.fluorescence_sunlit_file       = fullfile(Output_dir, 'fluorescence_sunlit.bin');     % Fluorescence
         fnames.fluorescence_shaded_file       = fullfile(Output_dir, 'fluorescence_shaded.bin');     % Fluorescence
         fnames.fluorescence_scattered_file    = fullfile(Output_dir, 'fluorescence_scattered.bin');      % Fluorescence
+        %}
     else
         delete([Output_dir, 'fluorescence.bin']);
     end
 
     if options.calc_directional
         delete([Output_dir, 'BRDF/*.bin']);
-    end
-
-    if options.calc_planck && options.calc_ebal
-        fnames.spectrum_obsdir_thermal_file    = fullfile(Output_dir, 'spectrum_obsdir_thermal.bin');  % spectrum observation direction
-        fnames.spectrum_hemis_thermal_file     = fullfile(Output_dir, 'spectrum_hemis_thermal.bin');   % spectrum hemispherically integrated
     end
 
     % Create empty files for appending

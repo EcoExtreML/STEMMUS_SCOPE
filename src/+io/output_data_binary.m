@@ -83,6 +83,8 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     n_col.Sim_qtot = length(Sim_qtot_out);
     fwrite(f.Sim_qtot_file, Sim_qtot_out, 'double');
 
+    % Comment unnecessary large size files
+    %{
     %% Spectrum (added on 19 September 2008)
     spectrum_hemis_optical_out =  rad.Eout_;
     n_col.spectrum_hemis_optical = length(spectrum_hemis_optical_out);
@@ -115,6 +117,11 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     n_col.irradiance_spectra = length(irradiance_spectra_out);
     fwrite(f.irradiance_spectra_file, irradiance_spectra_out, 'double');
 
+    BOC_irradiance_out  =  [rad.Emin_(canopy.nlayers + 1, :), rad.Emin_(canopy.nlayers + 1, :) + (rad.Esun_ * gap.Ps(canopy.nlayers + 1)')'];
+    n_col.BOC_irradiance = length(BOC_irradiance_out);
+    fwrite(f.BOC_irradiance_file, BOC_irradiance_out, 'double');
+    %}
+
     reflectance = pi * rad.Lo_ ./ (rad.Esun_ + rad.Esky_);
     reflectance(spectral.wlS > 3000) = NaN;
     reflectance_out =  [reflectance'];
@@ -140,9 +147,9 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     if options.calc_vert_profiles
 
         % gap
-        gap_out   =  [gap.Ps gap.Po gap.Pso];
-        n_col.gap = numel(gap_out(:));
-        fwrite(f.gap_file, gap_out, 'double');
+        % gap_out   =  [gap.Ps gap.Po gap.Pso];
+        % n_col.gap = numel(gap_out(:));
+        % fwrite(f.gap_file, gap_out, 'double'); % comment unnecessary large size files
 
         layer_aPAR_out   =  [1E6 * profiles.Pn1d' 0];
         n_col.layer_aPAR = length(layer_aPAR_out);
@@ -202,7 +209,8 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
                 n_col.fluorescencePSII = length(fluorescencePSII_out);
                 fwrite(f.fluorescencePSII_file, fluorescencePSII_out, 'double');
             end
-
+            % Comment unnecessary large size files
+            %{
             fluorescence_hemis_out  =  [rad.Fhem_];
             n_col.fluorescence_hemis = length(fluorescence_hemis_out);
             fwrite(f.fluorescence_hemis_file, fluorescence_hemis_out, 'double');
@@ -226,12 +234,9 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
             fluorescence_scattered_out  =  [sum(rad.LoF_scattered, 2) + sum(rad.LoF_soil, 2)];
             n_col.fluorescence_scattered = length(fluorescence_scattered_out);
             fwrite(f.fluorescence_scattered_file, fluorescence_scattered_out, 'double');
-
+    %}
         end
     end
-    BOC_irradiance_out  =  [rad.Emin_(canopy.nlayers + 1, :), rad.Emin_(canopy.nlayers + 1, :) + (rad.Esun_ * gap.Ps(canopy.nlayers + 1)')'];
-    n_col.BOC_irradiance = length(BOC_irradiance_out);
-    fwrite(f.BOC_irradiance_file, BOC_irradiance_out, 'double');
 
     %%
     if options.calc_directional && options.calc_ebal

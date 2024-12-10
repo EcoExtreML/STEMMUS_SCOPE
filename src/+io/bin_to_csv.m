@@ -91,38 +91,9 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
     Sim_qtot_units = repelem({'cm s-1'}, length(depth));
     write_output(Sim_qtot_names, Sim_qtot_units, fnames.Sim_qtot_file, n_col.Sim_qtot, ns, true);
 
-    % Comment unnecessary large size files
-    %{
-    write_output({'Bottom of canopy irradiance in the shaded fraction, and average BOC irradiance'}, {'First 2162 columns: shaded fraction. Last 2162 columns: average BOC irradiance. Unit: Wm-2 um-1'}, ...
-            fnames.BOC_irradiance_file, n_col.BOC_irradiance, ns, true);
-    %% Spectrum (added on 19 September 2008)
-    spectrum_hemis_optical_names = {'hemispherically integrated radiation spectrum'};
-    spectrum_hemis_optical_units = {'W m-2 um-1'};
-    write_output(spectrum_hemis_optical_names, spectrum_hemis_optical_units, fnames.spectrum_hemis_optical_file, n_col.spectrum_hemis_optical, ns, true);
-
-    spectrum_obsdir_optical_names = {'radiance spectrum in observation direction'};
-    spectrum_obsdir_optical_units = {'W m-2 sr-1 um-1'};
-    write_output(spectrum_obsdir_optical_names, spectrum_obsdir_optical_units, fnames.spectrum_obsdir_optical_file, n_col.spectrum_obsdir_optical, ns, true);
-
-    if options.calc_ebal
-        write_output({'thermal BlackBody emission spectrum in observation direction'}, {'W m-2 sr-1 um-1'}, ...
-                     fnames.spectrum_obsdir_BlackBody_file, n_col.spectrum_obsdir_BlackBody, ns, true);
-        if options.calc_planck
-            write_output({'thermal emission spectrum in hemispherical direction'}, {'W m-2 sr-1 um-1'}, ...
-                         fnames.spectrum_hemis_thermal_file, n_col.spectrum_hemis_thermal, ns, true);
-            write_output({'thermal emission spectrum in observation direction'}, {'W m-2 sr-1 um-1'}, ...
-                         fnames.spectrum_obsdir_thermal_file, n_col.spectrum_obsdir_thermal, ns, true);
-        end
-    end
-    write_output({'irradiance'}, {'W m-2 um-1'}, ...
-                 fnames.irradiance_spectra_file, n_col.irradiance_spectra, ns, true);
-   %}
-
     write_output({'reflectance'}, {'fraction of radiation in observation direction *pi / irradiance'}, ...
                  fnames.reflectance_file, n_col.reflectance, ns, true);
-    %% input and parameter values (added June 2012)
-    % write_output(fnames.pars_and_input_file, true)
-    % write_output(fnames.pars_and_input_short_file, true)
+
     %% Optional Output
     if options.calc_vert_profiles
         % write_output({'Fraction leaves in the sun, fraction of observed, fraction of observed&visible per layer'}, {'rows: simulations or time steps, columns: layer numbers'}, ...
@@ -161,22 +132,6 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
             write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution, for PSII only'}, {'W m-2 um-1 sr-1'}, ...
                          fnames.fluorescencePSII_file, n_col.fluorescencePSII, ns, true);
         end
-
-        % Comment unnecessary large size files
-        %{
-        write_output({'hemispherically integrated fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
-                     fnames.fluorescence_hemis_file, n_col.fluorescence_hemis, ns, true);
-        write_output({'total emitted fluorescence by all leaves for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
-                     fnames.fluorescence_emitted_by_all_leaves_file, n_col.fluorescence_emitted_by_all_leaves, ns, true);
-        write_output({'total emitted fluorescence by all photosystems for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
-                     fnames.fluorescence_emitted_by_all_photosystems_file, n_col.fluorescence_emitted_by_all_photosystems, ns, true);
-        write_output({'TOC fluorescence contribution from sunlit leaves for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
-                     fnames.fluorescence_sunlit_file, n_col.fluorescence_sunlit, ns, true);
-        write_output({'TOC fluorescence contribution from shaded leaves for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
-                     fnames.fluorescence_shaded_file, n_col.fluorescence_shaded, ns, true);
-        write_output({'TOC fluorescence contribution from from leaves and soil after scattering for wavelenghts of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
-                     fnames.fluorescence_scattered_file, n_col.fluorescence_scattered, ns, true);
-        %}
     end
 
     fclose('all');

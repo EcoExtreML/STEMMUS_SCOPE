@@ -83,45 +83,6 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     n_col.Sim_qtot = length(Sim_qtot_out);
     fwrite(f.Sim_qtot_file, Sim_qtot_out, 'double');
 
-    % Comment unnecessary large size files
-    %{
-    %% Spectrum (added on 19 September 2008)
-    spectrum_hemis_optical_out =  rad.Eout_;
-    n_col.spectrum_hemis_optical = length(spectrum_hemis_optical_out);
-    fwrite(f.spectrum_hemis_optical_file, spectrum_hemis_optical_out, 'double');
-
-    spectrum_obsdir_optical_out =  [rad.Lo_'];
-    n_col.spectrum_obsdir_optical = length(spectrum_obsdir_optical_out);
-    fwrite(f.spectrum_obsdir_optical_file, spectrum_obsdir_optical_out, 'double');
-
-    if options.calc_ebal
-
-        spectrum_obsdir_BlackBody_out =  [rad.LotBB_'];
-        n_col.spectrum_obsdir_BlackBody = length(spectrum_obsdir_BlackBody_out);
-        fwrite(f.spectrum_obsdir_BlackBody_file, spectrum_obsdir_BlackBody_out, 'double');
-
-        if options.calc_planck
-
-            spectrum_hemis_thermal_out =  [rad.Eoutte_'];
-            n_col.spectrum_hemis_thermal = length(spectrum_hemis_thermal_out);
-            fwrite(f.spectrum_hemis_thermal_file, spectrum_hemis_thermal_out, 'double');
-
-            spectrum_obsdir_thermal_out =  [rad.Lot_'];
-            n_col.spectrum_obsdir_thermal = length(spectrum_obsdir_thermal_out);
-            fwrite(f.spectrum_obsdir_thermal_file, spectrum_obsdir_thermal_out, 'double');
-
-        end
-    end
-
-    irradiance_spectra_out =  [meteo.Rin * (rad.fEsuno + rad.fEskyo)'];
-    n_col.irradiance_spectra = length(irradiance_spectra_out);
-    fwrite(f.irradiance_spectra_file, irradiance_spectra_out, 'double');
-
-    BOC_irradiance_out  =  [rad.Emin_(canopy.nlayers + 1, :), rad.Emin_(canopy.nlayers + 1, :) + (rad.Esun_ * gap.Ps(canopy.nlayers + 1)')'];
-    n_col.BOC_irradiance = length(BOC_irradiance_out);
-    fwrite(f.BOC_irradiance_file, BOC_irradiance_out, 'double');
-    %}
-
     reflectance = pi * rad.Lo_ ./ (rad.Esun_ + rad.Esky_);
     reflectance(spectral.wlS > 3000) = NaN;
     reflectance_out =  [reflectance'];
@@ -143,14 +104,7 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     end
 
     %% Optional Output
-
     if options.calc_vert_profiles
-
-        % gap
-        % gap_out   =  [gap.Ps gap.Po gap.Pso];
-        % n_col.gap = numel(gap_out(:));
-        % fwrite(f.gap_file, gap_out, 'double'); % comment unnecessary large size files
-
         layer_aPAR_out   =  [1E6 * profiles.Pn1d' 0];
         n_col.layer_aPAR = length(layer_aPAR_out);
         fwrite(f.layer_aPAR_file, layer_aPAR_out, 'double');
@@ -160,7 +114,6 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
         fwrite(f.layer_aPAR_Cab_file, layer_aPAR_Cab_out, 'double');
 
         if options.calc_ebal
-
             % leaftemp
             leaftemp_out   =  [profiles.Tcu1d' profiles.Tch' profiles.Tc1d'];
             n_col.leaftemp = length(leaftemp_out);
@@ -185,7 +138,6 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
             layer_Rn_out  =  [profiles.Rn1d' fluxes.Rnstot];
             n_col.layer_Rn = length(layer_Rn_out);
             fwrite(f.layer_Rn_file, layer_Rn_out, 'double');
-
         end
         if options.calc_fluor
             layer_fluorescence_out  =  [profiles.fluorescence'];
@@ -209,32 +161,6 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
                 n_col.fluorescencePSII = length(fluorescencePSII_out);
                 fwrite(f.fluorescencePSII_file, fluorescencePSII_out, 'double');
             end
-            % Comment unnecessary large size files
-            %{
-            fluorescence_hemis_out  =  [rad.Fhem_];
-            n_col.fluorescence_hemis = length(fluorescence_hemis_out);
-            fwrite(f.fluorescence_hemis_file, fluorescence_hemis_out, 'double');
-
-            fluorescence_emitted_by_all_leaves_out  =  [rad.Fem_];
-            n_col.fluorescence_emitted_by_all_leaves = length(fluorescence_emitted_by_all_leaves_out);
-            fwrite(f.fluorescence_emitted_by_all_leaves_file, fluorescence_emitted_by_all_leaves_out, 'double');
-
-            fluorescence_emitted_by_all_photosystems_out  =  [rad.Femtot];
-            n_col.fluorescence_emitted_by_all_photosystems = length(fluorescence_emitted_by_all_photosystems_out);
-            fwrite(f.fluorescence_emitted_by_all_photosystems_file, fluorescence_emitted_by_all_photosystems_out, 'double');
-
-            fluorescence_sunlit_out  =  [sum(rad.LoF_sunlit, 2)];
-            n_col.fluorescence_sunlit = length(fluorescence_sunlit_out);
-            fwrite(f.fluorescence_sunlit_file, fluorescence_sunlit_out, 'double');
-
-            fluorescence_shaded_out  =  [sum(rad.LoF_shaded, 2)];
-            n_col.fluorescence_shaded = length(fluorescence_shaded_out);
-            fwrite(f.fluorescence_shaded_file, fluorescence_shaded_out, 'double');
-
-            fluorescence_scattered_out  =  [sum(rad.LoF_scattered, 2) + sum(rad.LoF_soil, 2)];
-            n_col.fluorescence_scattered = length(fluorescence_scattered_out);
-            fwrite(f.fluorescence_scattered_file, fluorescence_scattered_out, 'double');
-    %}
         end
     end
 

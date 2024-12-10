@@ -15,7 +15,7 @@ The 1.6.1 release comes with minor changes as:
 **Fixed:**
 - The bug in the calculation of the soil type index discussed in
   [#252](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/252)
-
+- The EVAP is removed discussed in [#274](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/274) and fixed in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
 - The shape of Evap variable is changed to match BMI requirements discussed in [#274](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/274) and fixed in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
 - The large output files are removed discussed in [#90](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/90) and fixed in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
 

@@ -16,8 +16,12 @@ The 1.6.1 release comes with minor changes as:
 - The bug in the calculation of the soil type index discussed in
   [#252](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/252)
 
+- The shape of Evap variable is changed to match BMI requirements discussed in [#274](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/274) and fixed in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
+- The large output files are removed discussed in [#90](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/90) and fixed in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
+
 **Added:**
 - The recharge index is exposed to BMI in [#257](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/257)
+- The Trap variable (after changing its shape) is exposed to BMI discussed in [#271](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/271) and added in [#273](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/273)
 
 
 <a name="1.6.0"></a>

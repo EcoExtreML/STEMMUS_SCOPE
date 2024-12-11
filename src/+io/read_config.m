@@ -1,4 +1,4 @@
-function [InputPath, OutputPath, InitialConditionPath] = read_config(config_file)
+function [InputPath, OutputPath, InitialConditionPath, FullCSVfiles] = read_config(config_file)
 
     file_id = fopen(config_file);
     config = textscan(file_id, '%s %s', 'HeaderLines', 0, 'Delimiter', '=');
@@ -17,3 +17,10 @@ function [InputPath, OutputPath, InitialConditionPath] = read_config(config_file
 
     indx = find(strcmp(config_vars, 'InitialConditionPath'));
     InitialConditionPath = config_paths{indx};
+
+    indx = find(strcmp(config_vars, 'FullCSVfiles'));
+    if isempty(indx)
+        FullCSVfiles = 1;
+    else
+        FullCSVfiles = str2num(config_paths{indx});
+    end

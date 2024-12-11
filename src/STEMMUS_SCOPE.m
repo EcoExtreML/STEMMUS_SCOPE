@@ -39,7 +39,7 @@ start_time = clock;
 if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
     disp (['Reading config from ', CFG]);
-    [InputPath, OutputPath, InitialConditionPath] = io.read_config(CFG);
+    [InputPath, OutputPath, InitialConditionPath, FullCSVfiles] = io.read_config(CFG);
 
     % Prepare forcing and soil data
     [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
@@ -822,7 +822,7 @@ if strcmp(bmiMode, 'finalize') || strcmp(runMode, 'full')
         io.output_verification(Output_dir);
     end
 
-    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings);
+    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings, FullCSVfiles);
     save([Output_dir, 'output.mat']);
 end
 

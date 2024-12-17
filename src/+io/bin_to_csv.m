@@ -159,6 +159,8 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings, 
                 fluorescence_units = {'W m-2'};
                 write_output(fluorescence_names, fluorescence_units, fnames.layer_fluorescence_file, n_col.layer_fluorescence, ns, true);
             end
+        end
+        if options.calc_fluor
             write_output({'hemispherically integrated fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
                          fnames.fluorescence_hemis_file, n_col.fluorescence_hemis, ns, true);
             write_output({'total emitted fluorescence by all leaves for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...

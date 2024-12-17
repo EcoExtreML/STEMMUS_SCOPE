@@ -76,6 +76,13 @@ EndTime=2001-01-02T00:00
 InputPath=/path_to_model_input_folder/
 OutputPath=/path_to_model_output_folder/
 ```
+The configuration file could also contain the optional key `FullCSVfiles`. If
+`FullCSVfiles=0`, the model will **not** store some **large** binary files in
+csv format. The default value is `FullCSVfiles=1`. To know which files are
+stored in csv format, see the function `bin_to_csv()` in `src/+io` folder.
+```text
+FullCSVfiles=0
+```
 
 See example configuration files below:
 

@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.48">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
     
     
       
@@ -688,7 +688,7 @@ includes:</p>
 <h2 id="configuration-file">Configuration file</h2>
 <p>The configuration file is a text file that sets the paths required by the model.
 The configuration file should contain the following information:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>WorkDir=/path_to_working_directory/
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>WorkDir=/path_to_working_directory/
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>SoilPropertyPath=/path_to_soil_property_data/
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ForcingPath=/path_to_forcing_data/
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Location=AU-DaS
@@ -704,6 +704,12 @@ The configuration file should contain the following information:</p>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>InputPath=/path_to_model_input_folder/
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>OutputPath=/path_to_model_output_folder/
 </code></pre></div>
+The configuration file could also contain the optional key <code>FullCSVfiles</code>. If
+<code>FullCSVfiles=0</code>, the model will <strong>not</strong> store some <strong>large</strong> binary files in
+csv format. The default value is <code>FullCSVfiles=1</code>. To know which files are
+stored in csv format, see the function <code>bin_to_csv()</code> in <code>src/+io</code> folder.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FullCSVfiles=0
+</code></pre></div></p>
 <p>See example configuration files below:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Example configuration file</label><label for="__tabbed_2_2">Example configuration file on CRIB</label><label for="__tabbed_2_3">Example configuration file on Snellius</label></div>
 <div class="tabbed-content">
@@ -849,7 +855,7 @@ Then, you should copy the required data i.e. <code>directional</code>,
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
       
     
   </body>

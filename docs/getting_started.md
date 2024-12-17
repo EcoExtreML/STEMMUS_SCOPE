@@ -78,8 +78,6 @@ OutputPath=/path_to_model_output_folder/
 ```
 The configuration file could also contain the following optional information:
 ```text
-soil_layers_thickness=/path_to_input_soilLayThick.csv_file/
-SleepDuration=30
 FullCSVfiles=1
 ```
 

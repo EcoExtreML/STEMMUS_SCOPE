@@ -78,7 +78,7 @@ OutputPath=/path_to_model_output_folder/
 ```
 The configuration file could also contain the following optional information:
 ```text
-FullCSVfiles=1
+FullCSVfiles=0
 ```
 
 See example configuration files below:

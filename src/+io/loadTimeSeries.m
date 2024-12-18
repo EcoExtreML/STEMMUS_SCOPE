@@ -122,7 +122,7 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.SMC = load(fullfile(path_input, SMC_file));
     end
 
-    %% 7. Set Leaf Vcmo, Tparam, m, Type, Rdparam, and leafwidth as time-dependent
+    %% 7. Set Leaf Vcmo, Tparam, m, Type, Rdparam,leafwidth, g1Med and g0Med as time-dependent
     %    parameters. The timeseries of landcover, along with the lookup table values
     %    (lc...) are used to generate the timeseries.
     landcovers = unique(landcoverClass, 'stable');
@@ -134,9 +134,11 @@ function [ScopeParameters, xyt, canopy] = loadTimeSeries(ScopeParameters, leafbi
         ScopeParameters.Type(timeIndex, 1) = ScopeParameters.lcType(landcoverIndex, 1);
         ScopeParameters.Rdparam(timeIndex, 1) = ScopeParameters.lcRdparam(landcoverIndex, 1);
         ScopeParameters.leafwidth(timeIndex, 1) = ScopeParameters.lcleafwidth(landcoverIndex, 1);
+        % ScopeParameters.g1Med(timeIndex, 1) = ScopeParameters.lcg1Med(landcoverIndex, 1);
+        % ScopeParameters.g0Med(timeIndex, 1) = ScopeParameters.lcg0Med(landcoverIndex, 1);
     end
     % Remove the intermediate variables that were required to generate the timeseries:
-    ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth'});
+    ScopeParameters = rmfield(ScopeParameters, {'lcVcmo', 'lcTparam', 'lcm', 'lcType', 'lcRdparam', 'lcleafwidth', 'lcg1Med', 'lcg0Med'});
 
     if ~isempty(Cab_file)
         Cabtable = load(fullfile(path_input, Cab_file));

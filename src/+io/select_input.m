@@ -30,6 +30,8 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     leafbio.Tparam  = ScopeParameters.Tparam(digitsVector(14), :); % this is correct (: instead of 14)
     fqe             = ScopeParameters.fqe(digitsVector(15));
     leafbio.Rdparam = ScopeParameters.Rdparam(digitsVector(13));
+    leafbio.g1Med   = ScopeParameters.g1Med(digitsVector(65));
+    leafbio.g0Med   = ScopeParameters.g0Med(digitsVector(66));
 
     leafbio.rho_thermal = ScopeParameters.rho_thermal(digitsVector(7));
     leafbio.tau_thermal = ScopeParameters.tau_thermal(digitsVector(8));
@@ -39,6 +41,8 @@ function [SoilProperties, leafbio, canopy, meteo, angles, SpaceTimeInfo] = selec
     leafbio.kNPQs         = ScopeParameters.kNPQs(digitsVector(57));
     leafbio.qLs           = ScopeParameters.qLs(digitsVector(58));
     leafbio.stressfactor  = ScopeParameters.stressfactor(digitsVector(59));
+    leafbio.g1Med         = ScopeParameters.g1Med;
+    leafbio.g0Med         = ScopeParameters.g0Med;
 
     canopy.LAI  = ScopeParameters.LAI(digitsVector(22));
     canopy.hc  = ScopeParameters.hc(digitsVector(23));

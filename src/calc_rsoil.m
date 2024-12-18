@@ -1,13 +1,19 @@
-function [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings)
+function [PSIs, rsss, rrr, rxx, psiSoilTemp, Ksoil] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings)
     % load Constants
     Constants = io.define_constants();
 
     SMC = SoilVariables.Theta_LL(1:end - 1, 2);
     Se  = (SMC - VanGenuchten.Theta_r') ./ (VanGenuchten.Theta_s' - VanGenuchten.Theta_r');
+    if any(Se<0)
+        Se(Se<0)=0;
+    end
+
     Ksoil = SoilVariables.Ks' .* Se.^Constants.l .* (1 - (1 - Se.^(1 ./ VanGenuchten.m')).^(VanGenuchten.m')).^2;
 
     if ~GroundwaterSettings.GroundwaterCoupling % no Groundwater coupling
-        PSIs = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)' .* bbx;
+        psiSoilTemp = -((Se.^(-1 ./ VanGenuchten.m') - 1).^(1 ./ VanGenuchten.n')) ./ (VanGenuchten.Alpha * 100)';
+        psiSoilTemp = max(psiSoilTemp, -5e3);
+        PSIs = psiSoilTemp.* bbx;
     else % Groundwater coupling is activated, added by Mostafa (see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/231)
         % Change PSIs with SoilVariables.hh to correct hydraulic head (matric potential + gravity) of the saturated layers
         for i = 1:ModelSettings.NL

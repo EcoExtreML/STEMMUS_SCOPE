@@ -6,7 +6,7 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
     % where landcoverClass is an array like {"forest", "forest", "forest", "shrubland", ...}
     landcovers = unique(landcoverClass, 'stable');
     for landcoverIndex = 1:length(landcovers)
-        [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landcovers(landcoverIndex), siteName);
+        [Vcmo, Tparam, m, g1Med, g0Med, Type, Rdparam, leafwidth] = landcover_variables(landcovers(landcoverIndex), siteName);
         % The lc... parameters are intermediate values. The timeseries are generated in
         %   io.loadTimeSeries.m.
         ScopeParameters.lcVcmo(landcoverIndex, 1) = Vcmo;
@@ -15,41 +15,53 @@ function [ScopeParameters] = setTempParameters(ScopeParameters, siteName, landco
         ScopeParameters.lcType(landcoverIndex, 1) = Type;
         ScopeParameters.lcRdparam(landcoverIndex, 1) = Rdparam;
         ScopeParameters.lcleafwidth(landcoverIndex, 1) = leafwidth;
+        ScopeParameters.lcg1Med(landcoverIndex, 1) = g1Med;
+        ScopeParameters.lcg0Med(landcoverIndex, 1) = g0Med;
     end
 end
 
 %% lookup table for Vcmo, Tparam, m, Type, Rdparam, and leafwidth
 
-function [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landCoverType, siteName)
+function [Vcmo, Tparam, m, g1Med, g0Med, Type, Rdparam, leafwidth] = landcover_variables(landCoverType, siteName)
     Rdparam = [0.015]; % NOTE: Rdparam IS MISSING FOR MOST DEFINTIONS:
     if startsWith(landCoverType, 'Permanent Wetlands')
         Tparam = [0.2 0.3 288 313 328]; % These are five parameters specifying the temperature response.
         Vcmo = [120]; % Vcmax, maximum carboxylation capacity (at optimum temperature)
         m = [9]; % Ball-Berry stomatal conductance parameter
+        g1Med = [14.43]; % Medlyn stomatal conductance parameter: g1
+        g0Med = [0.001]; % Medlyn stomatal conductance parameter: g0
         Type = [0]; % Photochemical pathway: 0=C3, 1=C4
         leafwidth = [0.05]; % leaf width
     elseif startsWith(landCoverType, 'Evergreen Broadleaf')
         Tparam = [0.2 0.3 283 311 328];
         Vcmo = [80];
         m = [9];
+        g1Med = [9];
+        g0Med = [0.001];
         Type = [0];
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Deciduous Broadleaf')
         Tparam = [0.2 0.3 283 311 328];
         Vcmo = [80];
         m = [9];
+        g1Med = [6.99];
+        g0Med = [-0.044];
         Type = [0];
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Mixed Forests')
         Tparam = [0.2 0.3 281 307 328];
         Vcmo = [80];
         m = [9];
+        g1Med = [5.36];
+        g0Med = [0.024];
         Type = [0];
         leafwidth = [0.04];
     elseif startsWith(landCoverType, 'Evergreen Needleleaf')
         Tparam = [0.2 0.3 278 303 328];
         Vcmo = [80];
         m = [9];
+        g1Med = [1.66];
+        g0Med = [0.033];
         Type = [0];
         leafwidth = [0.01];
     elseif startsWith(landCoverType, 'Croplands')
@@ -67,28 +79,38 @@ function [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landC
             Type = [0];
             leafwidth = [0.03];
         end
+        g1Med = [9];
+        g0Med = [0.001];
     elseif startsWith(landCoverType, 'Open Shrublands')
         Tparam = [0.2 0.3 288 313 328];
         Vcmo = [120];
         m = [9];
+        g1Med = [5.95];
+        g0Med = [0.028];
         Type = [0];
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Closed Shrublands')
         Tparam = [0.2 0.3 288 313 328];
         Vcmo = [80];
         m = [9];
+        g1Med = [5.95];
+        g0Med = [0.028];
         Type = [0];
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Savannas')
         Tparam = [0.2 0.3 278 313 328];
         Vcmo = [120];
         m = [9];
+        g1Med = [11.23];
+        g0Med = [-0.004];
         Type = [0];
         leafwidth = [0.05];
     elseif startsWith(landCoverType, 'Woody Savannas')
         Tparam = [0.2 0.3 278 313 328];
         Vcmo = [120];
         m = [9];
+        g1Med = [11.23];
+        g0Med = [-0.004];
         Type = [0];
         leafwidth = [0.03];
     elseif startsWith(landCoverType, 'Grassland')
@@ -104,12 +126,16 @@ function [Vcmo, Tparam, m, Type, Rdparam, leafwidth] = landcover_variables(landC
             Type = [0];
         end
         leafwidth = [0.02];
+        g1Med = [11.23];
+        g0Med = [-0.004];
     else
         Tparam = [0.2 0.3 288 313 328];
         Vcmo = [80];
         m = [9];
         Type = [0];
         leafwidth = [0.05];
+        g1Med = [9];
+        g0Med = [0.001];
         warning('landCover name unknown, "%s" is not recognized. ', landCoverType);
     end
 end

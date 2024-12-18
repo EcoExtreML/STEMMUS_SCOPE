@@ -1,4 +1,4 @@
-%% STEMMUS-SCOPE.m (script)
+    %% STEMMUS-SCOPE.m (script)
 %     STEMMUS-SCOPE is a model for Integrated modeling of canopy photosynthesis, fluorescence,
 %     and the transfer of energy, mass, and momentum in the soil-plant-atmosphere continuum
 %     Copyright (C) 2021  Yunfei Wang, Lianyu Yu, Yijian Zeng, Christiaan Van der Tol, Bob Su
@@ -16,7 +16,7 @@
 %
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+clear all; clc;
 % Load in required Octave packages if STEMMUS-SCOPE is being run in Octave:
 if exist('OCTAVE_VERSION', 'builtin') ~= 0
     disp('Loading Octave packages...');
@@ -85,12 +85,21 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     RWUs = [];
     RWUg = [];
 
+
+
     %% 1. define Constants
     Constants = io.define_constants();
+    
 
     RTB = 1000; % initial root total biomass (g m-2)
+    if strcmp(SiteProperties.sitename, 'CH-HTC')
+        RTB = 300;
+    end
     % Rl used in ebal
-    [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
+    % [Rl, Ztot] = Initial_root_biomass(RTB, ModelSettings.DeltZ_R, ModelSettings.rroot, ModelSettings.ML, SiteProperties.landcoverClass(1));
+    numSoilLayer = ModelSettings.ML;
+    soilThickness = ModelSettings.DeltZ_R';
+
 
     %% 2. simulation options
     path_input = InputPath;  % path of all inputs
@@ -99,6 +108,20 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     parameter_file = {'input_data.xlsx'};
     options = io.readStructFromExcel([path_input char(parameter_file)], 'options', 2, 1);
 
+    % Set senarios
+    gsOption = options.gsOption;
+    phsOption = options.plantHydraulics;
+    [gsMethod, phwsfMethod] = setScenario(gsOption, phsOption);
+
+    % define parameters for plant hydraulics module
+    ParaPlant = io.define_plant_constants(SiteProperties, phwsfMethod);
+    
+    % calculate root parameters
+    [RootProperties,soilDepth] = calRootProperties(SiteProperties, ParaPlant, numSoilLayer, soilThickness, RTB);
+    Rl = RootProperties.lengthDensity;
+    Ztot = soilDepth;
+    soilDepthB2T = flipud(soilDepth);
+    
     if options.simulation > 2 || options.simulation < 0
         fprintf('\n simulation option should be between 0 and 2 \r');
         return
@@ -127,6 +150,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Create a structure holding Scope parameters
     useXLSX = 1; % set it to 1 or 0, the current stemmus-scope does not support 0
     [ScopeParameters, options] = parameters.loadParameters(options, useXLSX, X, F, N);
+    options.gsMethod = gsMethod; % 1 for BallBerry's method; 2 for Medlyn's method
+    options.plantHydraulics = phsOption;
 
     % Define the location information
     ScopeParameters.LAT = SiteProperties.latitude; % latitude
@@ -142,6 +167,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     % Input T parameters for different vegetation type
     [ScopeParameters] = parameters.setTempParameters(ScopeParameters, SiteProperties.sitename, SiteProperties.landcoverClass);
+    ScopeParameters.g1Med = ScopeParameters.lcg1Med(1,1);   
+    ScopeParameters.g0Med = ScopeParameters.lcg0Med(1,1);
 
     %% 5. Declare paths
     path_input      = InputPath;          % path of all inputs
@@ -272,7 +299,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SoilConstants = io.getSoilConstants();
 
     %% The boundary condition information settings
-    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1), ModelSettings);
+    BoundaryCondition = init.setBoundaryCondition(SoilVariables, ForcingData, SiteProperties.landcoverClass(1), ModelSettings, SiteProperties.sitename);
     DSTOR = BoundaryCondition.DSTOR;
     DSTOR0 = BoundaryCondition.DSTOR0;
     RS = BoundaryCondition.RS;
@@ -327,7 +354,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % (this is to not repeat the save-workspace code).
     disp('Finished model initialization');
 end
-
+TestPHS.psiLeafIni = 0-SiteProperties.canopy_height;
+TestPHS.endOfSeason = find(ScopeParameters.LAI == max(ScopeParameters.LAI));
 % If the runMode is update, retrieve the (possibly) updated state.
 % The state can be modified by the STEMMUS_SCOPE BMI. See PyStemmusScope.
 if strcmp(bmiMode, 'update')
@@ -373,7 +401,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
-        KT = KT + 1;  % Counting Number of timesteps
+        KT = KT + 1  % Counting Number of timesteps
         if KT > 1 && Delt_t > (TEND - TIME)
             Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
         end
@@ -495,10 +523,12 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
                 switch options.calc_ebal
                     case 1
-                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential] ...
+                        [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential, TestPHS] ...
                             = ebal(iter, options, spectral, rad, gap,  ...
                                    leafopt, angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                                   Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings);
+                                   Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings, ...
+                                   SiteProperties, ParaPlant, RootProperties, soilDepthB2T, TestPHS, KT);
+
                         if options.calc_fluor
                             if options.calc_vert_profiles
                                 [rad, profiles] = RTMf(spectral, rad, soil, leafopt, canopy, gap, angles, profiles);

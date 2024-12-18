@@ -1,7 +1,8 @@
-function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential]             ...
+function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFactor, WaterPotential, TestPHS]             ...
          = ebal(iter, options, spectral, rad, gap, leafopt,  ...
                 angles, meteo, soil, canopy, leafbio, xyt, k, profiles, Delt_t, ...
-                Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings)
+                Rl, SoilVariables, VanGenuchten, InitialValues, ModelSettings, GroundwaterSettings,...
+                SiteProperties, ParaPlant, RootProperties, soilDepthB2T, TestPHS, KT)
 
     %{
         function ebal.m calculates the energy balance of a vegetated surface
@@ -107,6 +108,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     Ca              = meteo.Ca;
     Ts              = soil.Ts;
     p               = meteo.p;
+    % RH              = meteo.RH;
     if options.soil_heat_method < 2 && options.simulation == 1
         if k > 1
             Deltat          = Delt_t;           %           Duration of the time interval (s)
@@ -169,12 +171,36 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     end
 
     LAI = canopy.LAI;
+    eih = equations.satvap(Tch);
+    eiu = equations.satvap(Tcu);
     PSI = 0;
 
     [bbx] = Max_Rootdepth(InitialValues.bbx, ModelSettings);
-    [PSIs, rsss, rrr, rxx] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings);
+    [psiSoil, rsss, rrr, rxx, TestPHS.psiSoilAll(:, KT), Ksoil] = calc_rsoil(Rl, ModelSettings, SoilVariables, VanGenuchten, bbx, GroundwaterSettings);
+    TestPHS.rsssTot(:, KT) = rsss;
+    TestPHS.rrrTot(:, KT) = rrr;
+    TestPHS.rxxTot(:, KT) = rxx;
+
     [sfactor] = calc_sfactor(Rl, VanGenuchten.Theta_s, VanGenuchten.Theta_r, SoilVariables.Theta_LL, bbx, Ta, VanGenuchten.Theta_f);
-    PSIss = PSIs(ModelSettings.NL, 1);
+
+    PSIss = psiSoil(ModelSettings.NL, 1);
+
+    % initial leaf water potental = soil water potential - gravitational potential
+    canopyHeight = SiteProperties.canopy_height(KT);
+    
+    % psiLeaf = 0-canopyHeight;  
+    psiLeaf = TestPHS.psiLeafIni(KT);
+    PSI = 0;
+    % psiAir = air_water_potential(RH, Ta);
+    airPress_m = meteo.p .*1e2 ./9810;
+    airPress_hPa = meteo.p;
+   
+    % options.plantHydraulics = 1;  % Indicating whether to use PHS: 1 PHS open; 0 PHS close.
+    if options.plantHydraulics
+        phwsf = PlantHydraulicsStressFactor(psiLeaf, ParaPlant.p50Leaf, ParaPlant.shapeFactorLeaf, ParaPlant.phwsfMethod);
+    else
+        phwsf = 1;
+    end
     %% 2. Energy balance iteration loop
 
     % 'Energy balance loop (Energy balance and radiative transfer)
@@ -233,8 +259,15 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.p            = p;
         biochem_in.m            = leafbio.m;
         biochem_in.BallBerry0   = leafbio.BallBerry0;
+        biochem_in.g1Med        = leafbio.g1Med;
+        biochem_in.g0Med        = leafbio.g0Med;
+        biochem_in.gsMethod     = options.gsMethod;
+
         biochem_in.O            = meteo.Oa;
         biochem_in.Rdparam      = leafbio.Rdparam;
+        biochem_in.phwsf        = phwsf;
+        biochem_in.plantHydraulics = options.plantHydraulics;
+
 
         if options.Fluorescence_model == 2    % specific for the v.Caemmerer-Magnani model
             biochem_in.Tyear        = leafbio.Tyear;
@@ -255,6 +288,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.Vcmo     = fVh .* leafbio.Vcmo;
         biochem_in.Cs       = Cch;
         biochem_in.Q        = rad.Pnh_Cab * 1E6;
+        biochem_in.ei       = eih;
 
         if options.Fluorescence_model == 2
             biochem_out = biochemical_MD12(biochem_in);
@@ -270,6 +304,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         rcwh                = biochem_out.rcw;
         qEh                 = biochem_out.qE; % vCaemmerer- Magnani does not generate this parameter (dummy value)
         Knh                 = biochem_out.Kn;
+    	VPDh                = biochem_out.VPD_l2b;												   
+
 
         % for sunlit leaves
         biochem_in.T        = Tcu;
@@ -277,6 +313,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         biochem_in.Vcmo     = fVu .* leafbio.Vcmo;
         biochem_in.Cs       = Ccu;
         biochem_in.Q        = rad.Pnu_Cab * 1E6;
+        biochem_in.ei       = eiu;
 
         if options.Fluorescence_model == 2
             biochem_out = biochemical_MD12(biochem_in);
@@ -292,6 +329,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         rcwu                = biochem_out.rcw;
         qEu                 = biochem_out.qE;
         Knu                 = biochem_out.Kn;
+        VPDu                = biochem_out.VPD_l2b;
 
         Pinh                = rad.Pnh;
         Pinu                = rad.Pnu;
@@ -303,51 +341,146 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         % 2.4. Fluxes (latent heat flux (lE), sensible heat flux (H) and soil heat flux G
         % in analogy to Ohm's law, for canopy (c) and soil (s). All in units of [W m-2]
 
-        % soil.PSIs;
+        % soil.psiSoil;
         rss  = soil.rss;
         rac     = (LAI + 1) * (raa + rawc);
         ras     = (LAI + 1) * (raa + raws);
-        for i = 1:30
-            [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
-            [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
-            [lEs, Hs, ~, ~, lambdas, ss]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, es_fun, s_fun);
 
-            % if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
-            %  error('Heatfluxes produced complex values for CO2 concentration!')
-            % end
-
-            %  if any( Cch < 0 ) || any( Ccu(:) < 0 )
-            %     error('Heatfluxes produced negative values for CO2 concentration!')
-            % end
-
-            % integration over the layers and sunlit and shaded fractions
-            Hstot       = Fs * Hs;
-            Hctot       = LAI * (Fc * Hch + equations.meanleaf(canopy, Hcu, 'angles_and_layers', Ps));
-            Htot        = Hstot + Hctot;
-            %%%%%% Leaf water potential calculate
-            lambda1      = (2.501 - 0.002361 * Ta) * 1E6;
-            lEctot     = LAI * (Fc * lEch + equations.meanleaf(canopy, lEcu, 'angles_and_layers', Ps)); % latent heat leaves
-            if isreal(lEctot) && lEctot < 1000 && lEctot > -300
-            else
-                lEctot = 0;
+        if options.plantHydraulics
+            % ======================== PHS open ===========================
+            for i=1:30
+                [lEch,Hch,ech, Cch,lambdah,sh, delta_eh, delta_th]     = heatfluxes(rac,rcwh,Tch,ea,Ta,e_to_q,psiLeaf,Ca,Cih,es_fun,s_fun);
+                [lEcu,Hcu,ecu, Ccu,lambdau,su, delta_eu, delta_tu]     = heatfluxes(rac,rcwu,Tcu,ea,Ta,e_to_q,psiLeaf,Ca,Ciu,es_fun,s_fun);
+                [lEs,Hs,~,~,lambdas,ss, delta_es, delta_ts]              = heatfluxes(ras,rss,Ts ,ea,Ta,e_to_q,PSIss,Ca,Ca,es_fun,s_fun);
+                
+    
+                % integration over the layers and sunlit and shaded fractions
+                Hstot       = Fs*Hs;
+                Hctot       = LAI*(Fc*Hch + equations.meanleaf(canopy,Hcu,'angles_and_layers',Ps));
+                Htot        = Hstot + Hctot;
+    
+                %%%%%% Leaf water potential calculate
+                lambda1      = (2.501-0.002361*Ta)*1E6;  
+                lEctot     = LAI*(Fc*lEch + equations.meanleaf(canopy,lEcu,'angles_and_layers',Ps)); % latent heat leaves
+                if (isreal(lEctot) && lEctot<1000 && lEctot>-300)
+                else
+                    lEctot=0;
+                end
+                Trans = lEctot/lambda1/1000;    % total canopy transpiration: unit: m s-1
+                % Trans_t = lEct .* LAI./lambda1./1000;
+    
+                [psiLeaf_temp, psiStem, psiRoot, kSoil2Root, kRoot2Stem, kStem2Leaf, phwsf, TempVar] = calPlantWaterPotential(Trans,SoilVariables.Ks, ...
+                    Ksoil, ParaPlant, RootProperties, soilDepthB2T, LAI, sfactor, psiSoil, canopyHeight, bbx, TestPHS, KT);
+       
+                if isnan(psiLeaf_temp)|~isreal(psiLeaf_temp)
+                        psiLeaf_temp = -1; 
+                end
+    
+                if abs(psiLeaf - psiLeaf_temp)<0.01
+                    break
+                end
+                psiLeaf  = 0.5 * (psiLeaf + psiLeaf_temp);
             end
-            Trans = lEctot / lambda1 / 1000;  % unit: m s-1
-            AA1 = PSIs ./ (rsss + rrr + rxx);
-            AA2 = 1 ./ (rsss + rrr + rxx);
-            BB1 = AA1(~isnan(AA1));
-            BB2 = AA2(~isinf(AA2));
-            PSI1 = (sum(BB1) - Trans) / sum(BB2);
-            if isnan(PSI1)
-                PSI1 = -1;
+            
+            % if phwsf is a complex value, set it as sfactor
+            if ~isreal(phwsf)
+                phwsf = sfactor;
             end
-            if ~isreal(PSI1)
-                PSI1 = -1;
+            
+            % stomatal resistance
+            canopyStoResis = Fc*rcwh + equations.meanleaf(canopy,rcwu,'angles_and_layers',Ps);
+            
+            % canopy conductance = 1/(stomatal resistance + aerodynamic resistance)
+            canopyConduct  = 1./(canopyStoResis + rac);
+            
+            phsTrans = canopyConduct .* LAI .* VPDu./airPress_hPa;
+            %% ====================== root water uptake =====================
+            rootWaterUptake = kSoil2Root .* (psiSoil - psiRoot - soilDepthB2T./100).*bbx;
+            
+            
+            TestPHS.psiStemTot(KT) = psiStem;
+            TestPHS.psiRootTot(KT) = psiRoot;
+            TestPHS.psiSoilTot(:,KT) = psiSoil;  % psiSoil
+            TestPHS.psiSoilTotMean(KT) = sum(psiSoil.*bbx)/sum(bbx);
+            TestPHS.psiLeafTot(KT) = psiLeaf;
+            TestPHS.kSoil2RootTot(:,KT) = kSoil2Root;
+            TestPHS.kSoil2RootTotMean(KT) = sum(kSoil2Root .* bbx)/sum(bbx);
+            TestPHS.kRoot2StemTot(KT) = kRoot2Stem;
+            TestPHS.kStem2LeafTot(KT) = kStem2Leaf;
+            TestPHS.phwsfTot(KT) = phwsf;
+            TestPHS.transTot(KT) = Trans;
+            
+            % TestPHS.psiAirTot(KT) = psiAir;
+            % TestPHS.kLeaf2AirTot(KT) = Trans./(psiLeaf - psiAir);
+    
+            % TestPHS.trans_t(KT) = Trans_t;
+            TestPHS.phsTrans(KT) = phsTrans;
+            TestPHS.canopyStoResisTot(KT) = canopyStoResis;
+            TestPHS.racTot(KT) = rac;
+            TestPHS.LAI(KT) = LAI;
+            TestPHS.canopyConductTot(KT) = canopyConduct;
+            
+            TestPHS.froot2leaf = TempVar.froot2leaf;
+            TestPHS.froot2leafTot(KT) = TempVar.froot2leaf;
+            TestPHS.saiTot(KT) = TempVar.sai;
+            TestPHS.raiTot(:,KT) = TempVar.rai;
+            
+            TestPHS.soilConductanceTot(:,KT) = TempVar.soilConductance;
+            TestPHS.rootConductanceTot(:,KT) = TempVar.rootConductance;
+            TestPHS.phwsfRootTot(:,KT) = TempVar.phwsfRoot;
+            TestPHS.phwsfStem2LeafTot(KT) = TempVar.phwsfStem2Leaf;
+            
+            TestPHS.raiTotMean(KT) = sum(TempVar.rai .* bbx)/sum(bbx);
+            TestPHS.soilConductanceTotMean(KT) = sum(TempVar.soilConductance .* bbx)/sum(bbx);
+            TestPHS.rootConductanceTotMean(KT) = sum(TempVar.rootConductance .* bbx)/sum(bbx);
+        % ===================== PHS close ==============================
+        else
+            for i = 1:30
+                [lEch, Hch, ech, ~, Cch, lambdah, sh, ~, ~]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
+                [lEcu, Hcu, ecu, ~, Ccu, lambdau, su, ~, ~]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
+                [lEs, Hs, ~, ~, ~, lambdas, ss,~,~]           = heatfluxes(ras, rss, Ts, ea, Ta, e_to_q, PSIss, Ca, Ca, es_fun, s_fun);
+    
+                % if any( ~isreal( Cch )) || any( ~isreal( Ccu(:) ))
+                %  error('Heatfluxes produced complex values for CO2 concentration!')
+                % end
+    
+                %  if any( Cch < 0 ) || any( Ccu(:) < 0 )
+                %     error('Heatfluxes produced negative values for CO2 concentration!')
+                % end
+    
+                % integration over the layers and sunlit and shaded fractions
+                Hstot       = Fs * Hs;
+                Hctot       = LAI * (Fc * Hch + equations.meanleaf(canopy, Hcu, 'angles_and_layers', Ps));
+                Htot        = Hstot + Hctot;
+                %%%%%% Leaf water potential calculate
+                lambda1      = (2.501 - 0.002361 * Ta) * 1E6;
+                lEctot     = LAI * (Fc * lEch + equations.meanleaf(canopy, lEcu, 'angles_and_layers', Ps)); % latent heat leaves
+                if isreal(lEctot) && lEctot < 1000 && lEctot > -300
+                else
+                    lEctot = 0;
+                end
+                Trans = lEctot / lambda1 / 1000;  % unit: m s-1
+                AA1 = psiSoil ./ (rsss + rrr + rxx);
+                AA2 = 1 ./ (rsss + rrr + rxx);
+                BB1 = AA1(~isnan(AA1));
+                BB2 = AA2(~isinf(AA2));
+                psiLeaf_temp = (sum(BB1) - Trans) / sum(BB2);
+                if isnan(psiLeaf_temp) | ~isreal(psiLeaf_temp)
+                    psiLeaf_temp = -1;
+                end
+                % if ~isreal(PSI1)
+                %     PSI1 = -1;
+                % end
+                if abs(psiLeaf - psiLeaf_temp) < 0.01
+                    break
+                end
+                psiLeaf  = 0.5 .* (psiLeaf + psiLeaf_temp);
             end
-            if abs(PSI - PSI1) < 0.01
-                break
-            end
-            PSI  = (PSI + PSI1) / 2;
+            TestPHS.psiSoilTot(:, KT) = psiSoil;
+            TestPHS.psiSoilTotMean(KT) = sum(psiSoil.*bbx)/sum(bbx);
+            TestPHS.psiLeafTot(KT) = psiLeaf;
         end
+        PSItot(KT) = psiLeaf;
 
         %%%%%%%
         if SoilHeatMethod == 2
@@ -423,6 +556,19 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     Tbr         = (rad.Eoutte / Constants.sigmaSB)^0.25;
     Lot_        = equations.Planck(spectral.wlS', Tbr);
     rad.LotBB_  = Lot_;           % Note that this is the blackbody radiance!
+
+    %% =============== debug: output resistance 20221205 Z.So ==========
+    TestPHS.rssTot(KT) = rss;  % Surface resistance of soil for vapour transport
+    TestPHS.racTot(KT) = rac;  % aerodynamic resistance for heat in canopy
+    TestPHS.rasTot(KT) = ras;  % aerodynamic resistance for heat in soil
+    TestPHS.rcwhTot(:,KT) = rcwh;  % stomatal resistance of sunlit leaf
+    TestPHS.rcwuTot(:,KT) = reshape(rcwu,[],1);  % stomatal resistance of sunlit leaf
+    TestPHS.rcwTot(KT) = Fc*rcwh+equations.meanleaf(canopy,rcwu,'angles_and_layers',Ps);  % stomatal resistance of sunlit leaf
+    TestPHS.gamTot(KT) = GAM;
+    TestPHS.delta_ecTot(KT) = Fc*delta_eh+equations.meanleaf(canopy, delta_eu, 'angles_and_layers',Ps); 
+    TestPHS.delta_tcTot(KT) = Fc*delta_th+equations.meanleaf(canopy, delta_tu, 'angles_and_layers',Ps);
+    TestPHS.delta_esTot(KT) = Fs*delta_es;
+    TestPHS.delta_tsTot(KT) = Fs*delta_ts;
 
     %% 3. Print warnings whenever the energy balance could not be solved
     if counter >= maxit
@@ -540,7 +686,12 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     fluxes.Au     = Au;
     fluxes.Ah     = Ah;
 
-    RWU = (PSIs - PSI) ./ (rsss + rrr + rxx) .* bbx;
+    if options.plantHydraulics
+        RWU = rootWaterUptake;
+    else 
+        RWU =(psiSoil - psiLeaf)./(rsss+rrr+rxx).*bbx;
+    end
+
     nn = numel(RWU);
     for i = 1:nn
         if isnan(RWU(i))
@@ -553,7 +704,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         end
     end
     frac = RWU ./ abs(sum(sum(RWU)));
-    RWU = (PSIs - PSI) ./ (rsss + rrr + rxx) .* bbx;
+    % RWU = (PSIs - PSI) ./ (rsss + rrr + rxx) .* bbx;
     RWU = real(RWU);
     for i = 1:nn
         if isnan(RWU(i))
@@ -568,5 +719,6 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
     % return
 
     WaterStressFactor.soil = sfactor;
+    WaterStressFactor.plant = phwsf;
     WaterPotential.leaf = PSI;
 end

@@ -1,11 +1,11 @@
-function [crop_output] = cropgrowth(meteo,wofostpar,Anet,WaterStressFactor,xyt,KT)
+function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,wofostpar,Anet,WaterStressFactor,xyt,KT,Dur_tot)
 %CROPGROWTH MODULE
 %This module is added by Danyang Yu, which aims to simulate the growth of vegetation
 %The plant growth process could refer to "SWAP version 3.2. Theory description and user manual"
 
 %% 0. global variables
-global Dur_tot dvs wrt wlv wst wso dwrt dwlv dwst 
-global sla lvage lv lasum laiexp lai ph crop_output Anet_sum lai_delta
+% global sla lvage lv lasum laiexp lai ph crop_output Anet_sum lai_delta
+% global crop_output
 
 %% 1. initilization
 if KT == wofostpar.CSTART
@@ -55,7 +55,29 @@ if KT == wofostpar.CSTART
     lai      = lasum+ssa*wst+spa*wso;
     Anet_sum  = 0;
     lai_delta = 0;
-       
+
+else
+    % Unpack state variables
+    dvs = state_vars.dvs;
+    wrt = state_vars.wrt;
+    wlv = state_vars.wlv;
+    wst = state_vars.wst;
+    wso = state_vars.wso;
+
+    dwrt = state_vars.dwrt;
+    dwlv = state_vars.dwlv;
+    dwst = state_vars.dwst;
+
+    sla = state_vars.sla;
+    lvage = state_vars.lvage;
+    lv = state_vars.lv;
+    lasum = state_vars.lasum;
+    laiexp = state_vars.laiexp;
+    lai = state_vars.lai;
+
+    ph = state_vars.ph;
+    Anet_sum = state_vars.Anet_sum;
+    lai_delta = state_vars.lai_delta;
 end
 
 %% 1. phenological development
@@ -259,14 +281,6 @@ elseif Anet_sum>=0 && Anet>=0
 end
 
 
-% Anet_sum = Anet_sum + Anet;    % assume LAI not changed with the respiration 
-% if Anet_sum < 0 && KT>1
-%     lai_old = crop_output(KT-1,3);
-%     lai = max(lai,lai_old);
-% elseif Anet_sum>=0 && Anet>=0
-%     Anet_sum = 0;
-% end
-
 
 %% 8. integrals of the crop
 crop_output(KT,1) = xyt.t(KT,1);             % Day of the year
@@ -281,6 +295,25 @@ crop_output(KT,9) = wso;                     % Dry matter of organ
 crop_output(KT,10) = dwrt;                     % Dry matter of leaves
 crop_output(KT,11) = dwlv;                     % Dry matter of stem
 crop_output(KT,12) = dwst;                     % Dry matter of organ
+
+%% 9. Pack updated state variables
+state_vars.dvs = dvs;
+state_vars.wrt = wrt;
+state_vars.wlv = wlv;
+state_vars.wst = wst;
+state_vars.wso = wso;
+state_vars.dwrt = dwrt;
+state_vars.dwlv = dwlv;
+state_vars.dwst = dwst;
+state_vars.sla = sla;
+state_vars.lvage = lvage;
+state_vars.lv = lv;
+state_vars.lasum = lasum;
+state_vars.laiexp = laiexp;
+state_vars.lai = lai;
+state_vars.ph = ph;
+state_vars.Anet_sum = Anet_sum;
+state_vars.lai_delta = lai_delta;
 end
 
 

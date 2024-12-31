@@ -200,9 +200,10 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     %% 11. Define plant growth parameters   
     if options.calc_vegetation_dynamic == 1
-        global crop_output
+%         global crop_output
         wofostpar = wofost.WofostRead(path_input);
         crop_output = zeros(TimeProperties.Dur_tot,12);
+        state_vars  = struct();
     end
 
     %% 12. load time series data
@@ -571,7 +572,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                     Anet = 0;
                     fluxes.Actot = Anet;
                 end
-                [crop_output] = wofost.cropgrowth(meteo,wofostpar,Anet,WaterStressFactor,xyt,KT);
+                [crop_output,state_vars] = wofost.cropgrowth(crop_output,state_vars,meteo,wofostpar,Anet,WaterStressFactor,xyt,KT,TimeProperties.Dur_tot);
             end
 
             if options.simulation == 2 && telmax > 1

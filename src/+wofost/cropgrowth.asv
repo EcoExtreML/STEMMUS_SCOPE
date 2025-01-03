@@ -1,10 +1,10 @@
-function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,WofostPar,Anet,WaterStressFactor,xyt,KT,Dur_tot)
+function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,wofostpar,Anet,WaterStressFactor,xyt,KT,Dur_tot)
 %{
     function cropgrowth.m simulate the growth of vegetation
     
     authors: Danyang Yu (yudanyang123@gmail.com)
     date: 2025/01/01
-    reference: SWAP version 3.2. Theory description and user manual (Page 147-163)
+    reference: 
     
     Table of contents of the function
         1. Initilize crop growth paramters
@@ -23,7 +23,6 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
         spa         Specific pod area
         ssa         Specific stem area
         sla         specific leaf area
-        Anet_sum    the sum of net assimilation
         dmi         converted dry matter at step KT
         admi        above-ground dry matter
         grrt        growth rate of root, similar for the other organs
@@ -44,26 +43,26 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
 %}
 
 %% 1. initilization
-if KT == WofostPar.CSTART
+if KT == wofostpar.CSTART
     % initial value of crop parameters
     Tsum  =   0;
     dvs   =   0;
-    tdwi  =   WofostPar.TDWI;
-    laiem =   WofostPar.LAIEM;
+    tdwi  =   wofostpar.TDWI;
+    laiem =   wofostpar.LAIEM;
     ph    =   0;
     
-    frtb  =   WofostPar.FRTB;
-    fltb  =   WofostPar.FLTB;
-    fstb  =   WofostPar.FSTB;
-    fotb  =   WofostPar.FOTB;
+    frtb  =   wofostpar.FRTB;
+    fltb  =   wofostpar.FLTB;
+    fstb  =   wofostpar.FSTB;
+    fotb  =   wofostpar.FOTB;
     
     fr    =   wofost.afgen(frtb, dvs);
     fl    =   wofost.afgen(fltb, dvs);
     fs    =   wofost.afgen(fstb, dvs);
     fo    =   wofost.afgen(fotb, dvs);
     
-    ssa   =   WofostPar.SSA;
-    spa   =   WofostPar.SPA;
+    ssa   =   wofostpar.SSA;
+    spa   =   wofostpar.SPA;
     
     % initial state variables of the crop
     tadw  =   (1-fr)*tdwi;
@@ -79,7 +78,7 @@ if KT == WofostPar.CSTART
     sla        = zeros(Dur_tot+1,1);
     lvage      = zeros(Dur_tot+1,1);
     lv         = zeros(Dur_tot+1,1);
-    sla(1)   = wofost.afgen(WofostPar.SLATB, dvs);
+    sla(1)   = wofost.afgen(wofostpar.SLATB, dvs);
     lv(1)    = wlv;
     lvage(1) = 0.0;
     ilvold     = 1;
@@ -117,21 +116,21 @@ else
 end
 
 %% 1. phenological development
-delt   =  WofostPar.TSTEP/24;
+delt   =  wofostpar.TSTEP/24;
 tav    =  max(0, meteo.Ta);
-dtsum  =  wofost.afgen(WofostPar.DTSMTB,tav);
+dtsum  =  wofost.afgen(wofostpar.DTSMTB,tav);
 
 if dvs <= 1   % vegetative stage
-    dvs    =  dvs + dtsum*delt/WofostPar.TSUMEA;
+    dvs    =  dvs + dtsum*delt/wofostpar.TSUMEA;
 else
-    dvs    =  dvs + dtsum*delt/WofostPar.TSUMAM;
+    dvs    =  dvs + dtsum*delt/wofostpar.TSUMAM;
 end
 
 %% 2. dry matter increase
-frtb  =   WofostPar.FRTB;
-fltb  =   WofostPar.FLTB;
-fstb  =   WofostPar.FSTB;
-fotb  =   WofostPar.FOTB;
+frtb  =   wofostpar.FRTB;
+fltb  =   wofostpar.FLTB;
+fstb  =   wofostpar.FSTB;
+fotb  =   wofostpar.FOTB;
 
 fr    =   wofost.afgen(frtb, dvs);
 fl    =   wofost.afgen(fltb, dvs);
@@ -144,29 +143,29 @@ if abs(fcheck) > 0.0001
     return;
 end
 
-cvf   =  1.0/((fl/WofostPar.CVL+fs/WofostPar.CVS+fo/WofostPar.CVO)*(1.0-fr)+fr/WofostPar.CVR);
-asrc  =  Anet*30/1000000000*10000*3600*WofostPar.TSTEP;  % [umol m-2 s-1] to [kg CH2O ha-1];
+cvf   =  1.0/((fl/wofostpar.CVL+fs/wofostpar.CVS+fo/wofostpar.CVO)*(1.0-fr)+fr/wofostpar.CVR);
+asrc  =  Anet*30/1000000000*10000*3600*wofostpar.TSTEP;  % [umol m-2 s-1] to [kg CH2O ha-1];
 dmi   =  cvf * asrc;
 
 %% 3. Growth rate by root
 % root extension
-% rr    =  min(WofostPar.RDM - WofostPar.RD,WofostPar.RRI);
+% rr    =  min(wofostpar.RDM - wofostpar.RD,wofostpar.RRI);
 admi  =  (1.0-fr)*dmi;
 grrt  =  fr*dmi;
-drrt  =  wrt*wofost.afgen (WofostPar.RDRRTB,dvs)*delt;
+drrt  =  wrt*wofost.afgen (wofostpar.RDRRTB,dvs)*delt;
 gwrt  =  grrt-drrt;
 
 %% 4. Growth rate by stem
 % growth rate stems
 grst  =  fs*admi;
 % death rate stems
-drst  =  wofost.afgen (WofostPar.RDRSTB,dvs)*wst*delt;
+drst  =  wofost.afgen (wofostpar.RDRSTB,dvs)*wst*delt;
 % net growth rate stems
 gwst  =  grst-drst;
 
 % growth of plant height
-str   =  wofost.afgen(WofostPar.STRTB, dvs);
-phnew = wst/(WofostPar.STN*WofostPar.STD*pi*str*str)*WofostPar.PHCoeff+WofostPar.PHEM;
+str   =  wofost.afgen(wofostpar.STRTB, dvs);
+phnew = wst/(wofostpar.STN*wofostpar.STD*pi*str*str)*wofostpar.PHCoeff+wofostpar.PHEM;
 if phnew >= ph
     ph    = phnew;
 end
@@ -183,10 +182,10 @@ if abs(lai) < 0.1
     dslv1 = 0;
 else
     sfactor = WaterStressFactor.soil;
-    dslv1 = wlv*(1.0-sfactor)*WofostPar.PERDL*delt;
+    dslv1 = wlv*(1.0-sfactor)*wofostpar.PERDL*delt;
 end
 
-laicr  = WofostPar.LAICR;
+laicr  = wofostpar.LAICR;
 dslv2  = wlv*max(0,0.03*(lai-laicr)/laicr);
 dslv   = max(dslv1,dslv2);
 
@@ -205,13 +204,13 @@ end
 % then: check if some of the remaining leaves are older than span,
 %       sum their weights
 dalv  = 0.0;
-if (lvage(i1)>WofostPar.SPAN && rest>0 && i1>=1)
+if (lvage(i1)>wofostpar.SPAN && rest>0 && i1>=1)
     dalv  = lv(i1) - rest;
     rest  = 0;
     i1    = i1 -1;
 end
 
-while (i1>=1 && lvage(i1)>WofostPar.SPAN)
+while (i1>=1 && lvage(i1)>wofostpar.SPAN)
     dalv  = dalv + lv(i1);
     i1    = i1 - 1;
 end
@@ -220,10 +219,10 @@ end
 drlv = dslv+dalv;
 
 % calculation of specific leaf area in case of exponential growth:
-slat   =   wofost.afgen(WofostPar.SLATB, dvs);
+slat   =   wofost.afgen(wofostpar.SLATB, dvs);
 if laiexp < 6
-    dteff  = max(0,tav-WofostPar.TBASE);       % effective temperature
-    glaiex = laiexp*WofostPar.RGRLAI*dteff*delt;    % exponential growth
+    dteff  = max(0,tav-wofostpar.TBASE);       % effective temperature
+    glaiex = laiexp*wofostpar.RGRLAI*dteff*delt;    % exponential growth
     laiexp = laiexp + glaiex;
     
     glasol = grlv*slat;                        % source-limited growth
@@ -255,13 +254,13 @@ while (dslvt>0 && i1>=1)     % water stress and high lai
     end
 end
 
-while (lvage(i1)>=WofostPar.SPAN && i1>=1)  % leaves older than span die
+while (lvage(i1)>=wofostpar.SPAN && i1>=1)  % leaves older than span die
     lv(i1) = 0;
     i1 = i1-1;
 end
 
 ilvold = KT;   % oldest class with leaves
-fysdel = max (0.0d0,(tav-WofostPar.TBASE)/(35.0-WofostPar.TBASE));  % physiologic ageing of leaves per time step
+fysdel = max (0.0d0,(tav-wofostpar.TBASE)/(35.0-wofostpar.TBASE));  % physiologic ageing of leaves per time step
 
 for i1 = ilvold: -1: 1         % shifting of contents, updating of physiological age
     lv(i1+1)  = lv(i1);
@@ -305,7 +304,7 @@ twst = wst+dwst;
 cwdm = twlv+twst+wso;
 
 % leaf area index
-lai  = WofostPar.LAIEM+lasum+WofostPar.SSA*wst+WofostPar.SPA*wso;
+lai  = wofostpar.LAIEM+lasum+wofostpar.SSA*wst+wofostpar.SPA*wso;
 
 Anet_sum = Anet_sum + Anet;                % assume LAI not changed with the respiration
 if Anet_sum < 0 && KT>1                    % the consumed biomass are the assimilated one at daytime

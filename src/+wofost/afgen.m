@@ -1,6 +1,10 @@
 function [output] = afgen(table,x)
-%AFGEN 
-%   intercept the value in the table
+%{
+    function afgen.m intercept the value in the table
+    authors: Danyang Yu (yudanyang123@gmail.com)
+    date: 2025/01/01
+%}
+
 if x < table(1,1) | x > table(end,1)
     print('the value of developemnt stage is mistaken');
 else

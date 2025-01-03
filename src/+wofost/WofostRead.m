@@ -1,7 +1,11 @@
 function [wofost] = WofostRead(path_input)
-%INPUT WOFOST PARAMETERS
-%This module is added by Danyang Yu, which loads plant growth parameters
-%from file "CropD.crp" in the input folder.
+%{
+    function WofostRead.m loads plant growth parameters 
+    from file "CropD.crp" in the input folder.
+
+    authors: Danyang Yu (yudanyang123@gmail.com)
+    date: 2025/01/01
+%}
 
 % Read lines from the file
 PlantGrowthFile = [path_input,'plant_growth/CropD.crp'];

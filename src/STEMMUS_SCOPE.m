@@ -201,7 +201,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     %% 11. Define plant growth parameters   
     if options.calc_vegetation_dynamic == 1
 %         global crop_output
-        wofostpar = wofost.WofostRead(path_input);
+        WofostPar = wofost.WofostRead(path_input);
         crop_output = zeros(TimeProperties.Dur_tot,12);
         state_vars  = struct();
     end
@@ -432,11 +432,11 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
 
             % using simulated LAI and PH to substitute prescribed LAI 
-            if options.calc_vegetation_dynamic == 1  &&  KT >= wofostpar.CSTART && KT <= wofostpar.CEND   
-                if KT == wofostpar.CSTART
-                    ScopeParameters.LAI(KT)  = wofostpar.LAIEM;                % initial LAI
-                    ScopeParameters.hc(KT)   = wofostpar.PHEM;                 % initial PH
-                elseif KT > wofostpar.CSTART 
+            if options.calc_vegetation_dynamic == 1  &&  KT >= WofostPar.CSTART && KT <= WofostPar.CEND   
+                if KT == WofostPar.CSTART
+                    ScopeParameters.LAI(KT)  = WofostPar.LAIEM;                % initial LAI
+                    ScopeParameters.hc(KT)   = WofostPar.PHEM;                 % initial PH
+                elseif KT > WofostPar.CSTART 
                     ScopeParameters.LAI(KT)  = crop_output(KT-1,3);            % substitute LAI
                     ScopeParameters.hc(KT)   = crop_output(KT-1,4);            % substitute PH
                 end
@@ -566,13 +566,13 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
             
             % calculate the plant growth process
-            if options.calc_vegetation_dynamic == 1  && KT >= wofostpar.CSTART && KT <= wofostpar.CEND          % vegetation growth process 
+            if options.calc_vegetation_dynamic == 1  && KT >= WofostPar.CSTART && KT <= WofostPar.CEND          % vegetation growth process 
                 Anet = fluxes.Actot;
                 if isnan(Anet) || Anet < -2                       % limit value of Anet
                     Anet = 0;
                     fluxes.Actot = Anet;
                 end
-                [crop_output,state_vars] = wofost.cropgrowth(crop_output,state_vars,meteo,wofostpar,Anet,WaterStressFactor,xyt,KT,TimeProperties.Dur_tot);
+                [crop_output,state_vars] = wofost.cropgrowth(crop_output,state_vars,meteo,WofostPar,Anet,WaterStressFactor,xyt,KT,TimeProperties.Dur_tot);
             end
 
             if options.simulation == 2 && telmax > 1

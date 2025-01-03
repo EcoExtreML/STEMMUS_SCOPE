@@ -102,6 +102,15 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
         end
     end
 
+    % output the vegetation dynamic results ydy
+    if options.calc_vegetation_dynamic   
+        cropgrowth_names = {'DOY','DVS','LAI',...
+            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
+        cropgrowth_units = {'day','-','m2/m2',  ...
+            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
+        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
+    end
+
     % Optional for large output files
     if FullCSVfiles
         %% Spectrum (added on 19 September 2008)
@@ -161,14 +170,6 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
             end
         end
         if options.calc_fluor
-            write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
-                         fnames.fluorescence_file, n_col.fluorescence, ns, true);
-            if options.calc_PSI
-                write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution, for PSI only'}, {'W m-2 um-1 sr-1'}, ...
-                             fnames.fluorescencePSI_file, n_col.fluorescencePSI, ns, true);
-                write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution, for PSII only'}, {'W m-2 um-1 sr-1'}, ...
-                             fnames.fluorescencePSII_file, n_col.fluorescencePSII, ns, true);
-            end
             write_output({'hemispherically integrated fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
                          fnames.fluorescence_hemis_file, n_col.fluorescence_hemis, ns, true);
             write_output({'total emitted fluorescence by all leaves for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1'}, ...
@@ -184,15 +185,6 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
         end
         write_output({'Bottom of canopy irradiance in the shaded fraction, and average BOC irradiance'}, {'First 2162 columns: shaded fraction. Last 2162 columns: average BOC irradiance. Unit: Wm-2 um-1'}, ...
                      fnames.BOC_irradiance_file, n_col.BOC_irradiance, ns, true);
-    end
-    
-    % output the vegetation dynamic results ydy
-    if options.calc_vegetation_dynamic   
-        cropgrowth_names = {'DOY','DVS','LAI',...
-            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
-        cropgrowth_units = {'day','-','m2/m2',  ...
-            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
-        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
     end
 
     fclose('all');

@@ -1,4 +1,4 @@
-function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
+function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings, FullCSVfiles)
     %% flu
     flu_names = {'simulation_number', 'nu_iterations', 'year', 'DoY', ...
                  'Rntot', 'lEtot', 'Htot', ...
@@ -91,6 +91,15 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
     Sim_qtot_units = repelem({'cm s-1'}, length(depth));
     write_output(Sim_qtot_names, Sim_qtot_units, fnames.Sim_qtot_file, n_col.Sim_qtot, ns, true);
 
+    %% output the vegetation dynamic results Danyang Yu
+    if options.calc_vegetation_dynamic   
+        cropgrowth_names = {'DOY','DVS','LAI',...
+            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
+        cropgrowth_units = {'day','-','m2/m2',  ...
+            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
+        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
+    end
+
     if options.calc_fluor
         write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
                      fnames.fluorescence_file, n_col.fluorescence, ns, true);
@@ -102,26 +111,17 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
         end
     end
 
-    % output the vegetation dynamic results ydy
-    if options.calc_vegetation_dynamic   
-        cropgrowth_names = {'DOY','DVS','LAI',...
-            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
-        cropgrowth_units = {'day','-','m2/m2',  ...
-            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
-        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
-    end
-
     % Optional for large output files
     if FullCSVfiles
         %% Spectrum (added on 19 September 2008)
         spectrum_hemis_optical_names = {'hemispherically integrated radiation spectrum'};
         spectrum_hemis_optical_units = {'W m-2 um-1'};
         write_output(spectrum_hemis_optical_names, spectrum_hemis_optical_units, fnames.spectrum_hemis_optical_file, n_col.spectrum_hemis_optical, ns, true);
-    
+
         spectrum_obsdir_optical_names = {'radiance spectrum in observation direction'};
         spectrum_obsdir_optical_units = {'W m-2 sr-1 um-1'};
         write_output(spectrum_obsdir_optical_names, spectrum_obsdir_optical_units, fnames.spectrum_obsdir_optical_file, n_col.spectrum_obsdir_optical, ns, true);
-    
+
         if options.calc_ebal
             write_output({'thermal BlackBody emission spectrum in observation direction'}, {'W m-2 sr-1 um-1'}, ...
                          fnames.spectrum_obsdir_BlackBody_file, n_col.spectrum_obsdir_BlackBody, ns, true);
@@ -194,7 +194,6 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings)
     for k = 1:numel(fn)
         delete(fnames.(fn{k}));
     end
-
 end
 
 function write_output(header, units, bin_path, f_n_col, ns, not_header)

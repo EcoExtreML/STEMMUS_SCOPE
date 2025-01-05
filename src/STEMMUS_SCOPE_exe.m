@@ -26,12 +26,13 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'fluxes', ... % Atmospheric fluxes
                        'TT', ... % Soil temperature over depth
                        'SoilVariables', ... % Structure that includes different variables of soil moisture
-                       'GroundwaterSettings' ... % groundwater settings including input data from MODFLOW
-                       'gwfluxes' ... % structure that includes groundwater recharge and its individual components
-                       'EVAP' ... % evaporation
-                       'RWUs' ... % soil water root uptake
-                       'RWUg' ... % groundwater root uptake
-                       'ForcingData' ... % forcing data that includes Dunnian runoff and Hortonian runoff
+                       'GroundwaterSettings', ... % groundwater settings including input data from MODFLOW
+                       'gwfluxes', ... % structure that includes groundwater recharge and its individual components
+                       'Evap', ... % evaporation
+                       'Trap', ... % transpiration
+                       'RWUs', ... % soil water root uptake
+                       'RWUg', ... % groundwater root uptake
+                       'ForcingData', ... % forcing data that includes Dunnian runoff and Hortonian runoff
                        'RS' ... % total surface runoff
                       }; %#ok
 

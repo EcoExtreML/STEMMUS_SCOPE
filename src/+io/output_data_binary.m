@@ -10,7 +10,7 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
     %% Fluxes product
     flu_out = [k iter.counter xyt.year(k) xyt.t(k) fluxes.Rntot fluxes.lEtot fluxes.Htot fluxes.Rnctot fluxes.lEctot, ...
                fluxes.Hctot fluxes.Actot fluxes.Rnstot fluxes.lEstot fluxes.Hstot fluxes.Gtot fluxes.Resp 1E6 * fluxes.aPAR, ...
-               1E6 * fluxes.aPAR_Cab fluxes.aPAR / rad.PAR fluxes.aPAR_Wm2 1E6 * rad.PAR rad.Eoutf rad.Eoutf ./ fluxes.aPAR_Wm2 Trap(k) * 10 Evap(k) * 10 Trap(k) * 10 + Evap(k) * 10 fluxes.GPP fluxes.NEE];
+               1E6 * fluxes.aPAR_Cab fluxes.aPAR / rad.PAR fluxes.aPAR_Wm2 1E6 * rad.PAR rad.Eoutf rad.Eoutf ./ fluxes.aPAR_Wm2 Trap * 10 Evap * 10 Trap * 10 + Evap * 10 fluxes.GPP fluxes.NEE];
     n_col.flu = length(flu_out);
     fwrite(f.flu_file, flu_out, 'double');
 

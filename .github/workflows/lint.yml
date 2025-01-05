@@ -32,3 +32,5 @@ jobs:
         run: mh_lint src/ --brief
       - name: Check style against standards
         run: mh_style src/ --brief
+      - name: Check global and persistent variables
+        run: mh_metric src/ --brief --ci

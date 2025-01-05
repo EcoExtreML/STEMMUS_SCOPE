@@ -108,7 +108,7 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
             C4(n - 1, 2) = 0;
             C4_a(n - 1) = 0;
         else
-            RHS(n) = RHS(n) + AVAIL0 - Evap(KT);
+            RHS(n) = RHS(n) + AVAIL0 - Evap;
         end
     end
     HeatMatrices.C4 = C4;

@@ -103,13 +103,14 @@ function gwfluxes = calculateGroundwaterRecharge(EnergyVariables, SoilVariables,
         warning('Index of the bottom layer boundary that includes groundwater head ~= index of the recharge layer + 1!');
     end
 
-    % Outputs to be exported in csv
+    % Outputs to be exported in csv or exposed to BMI
     gwfluxes.QLh = QLh_flip(indxRchrg);
     gwfluxes.QLT = QLT_flip(indxRchrg);
     gwfluxes.QLa = QLa_flip(indxRchrg);
     gwfluxes.QVH = QVH_flip(indxRchrg);
     gwfluxes.QVT = QVT_flip(indxRchrg);
     gwfluxes.QVa = QVa_flip(indxRchrg);
+    gwfluxes.indxRchrg = indxRchrg;
     % gwfluxes.recharge_init = recharge_init;
     % gwfluxes.S = S;
     % gwfluxes.sy = sy;

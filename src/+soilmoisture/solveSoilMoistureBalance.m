@@ -1,5 +1,5 @@
-function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                                                        BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings)
+function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
+                                                                                                                                                                                  BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings)
     %{
         Solve the soil moisture balance equation with the Thomas algorithm to
         update the soil matric potential 'hh', the finite difference
@@ -13,14 +13,13 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
 
     [RHS, HeatMatrices, boundaryFluxArray] = soilmoisture.calculateTimeDerivatives(InitialValues, SoilVariables, HeatMatrices, Delt_t, P_gg, ModelSettings, GroundwaterSettings);
 
-    % When BoundaryCondition.NBCh == 3, otherwise Rn_SOIL, Evap, EVAP, Trap,
+    % When BoundaryCondition.NBCh == 3, otherwise Rn_SOIL, Evap, Trap,
     % r_a_SOIL, Srt will be empty arrays! see issue 98, item 2
     if BoundaryCondition.NBCh == 3
-        [Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, RWUs, RWUg] = soilmoisture.calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, ModelSettings, GroundwaterSettings);
+        [Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, RWUs, RWUg] = soilmoisture.calculateEvapotranspiration(InitialValues, ForcingData, SoilVariables, KT, RWU, fluxes, Srt, ModelSettings, GroundwaterSettings);
     else
         Rn_SOIL = InitialValues.Rn_SOIL;
-        Evap = InitialValues.Evap;
-        EVAP = InitialValues.EVAP;
+        Evap = [];
         Trap = [];
         r_a_SOIL = InitialValues.r_a_SOIL;
     end

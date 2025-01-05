@@ -80,8 +80,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     SAVE = InitialValues.SAVE;
     P_gOLD = InitialValues.P_gOLD;
     gwfluxes = struct();
-    Evap = InitialValues.Evap;
-    EVAP = InitialValues.EVAP;
+    Evap = [];
+    Trap = [];
     RWUs = [];
     RWUg = [];
 
@@ -686,7 +686,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g, ModelSettings);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, EVAP, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
                                                                         DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings);
@@ -703,7 +703,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX);
                 RS = (EXCESS - DSTOR) / Delt_t;
             else
-                AVAIL = AVAIL0 - Evap(KT);
+                AVAIL = AVAIL0 - Evap;
                 EXCESS = (AVAIL + HBoundaryFlux.QMT) * Delt_t; % (unit converstion from cm/sec to cm/30mins)
                 if abs(EXCESS / Delt_t) <= 1e-10
                     EXCESS = 0;
@@ -734,7 +734,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                                                                                       AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                                       HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                                       Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                                      TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
+                                                                                                      TOLD, Precip, Evap, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
             end
 
             if max(CHK) < 0.1
@@ -816,6 +816,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
         else
             gwfluxes.recharge = 0;
+            gwfluxes.indxRchrg = NaN;
         end
 
         % set SoilVariables for the rest of the loop

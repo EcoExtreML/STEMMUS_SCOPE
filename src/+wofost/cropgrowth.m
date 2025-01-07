@@ -222,7 +222,7 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     % calculation of specific leaf area in case of exponential growth:
     slat   =   wofost.afgen(WofostPar.SLATB, dvs);
     if laiexp < 6
-        dteff  = max(0, tav - WofostPar.TBASE);       % effective temperature
+        dteff  = max(0, tav - WofostPar.TBASE);               % effective temperature
         glaiex = laiexp * WofostPar.RGRLAI * dteff * delt;    % exponential growth
         laiexp = laiexp + glaiex;
         

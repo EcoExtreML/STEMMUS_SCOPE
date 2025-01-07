@@ -92,11 +92,11 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings, 
     write_output(Sim_qtot_names, Sim_qtot_units, fnames.Sim_qtot_file, n_col.Sim_qtot, ns, true);
 
     %% output the vegetation dynamic results Danyang Yu
-    if options.calc_vegetation_dynamic   
-        cropgrowth_names = {'DOY','DVS','LAI',...
-            'PH','Sfactor','RootDM','LeafDM','StemDM','OrganDM','RootDeath','LeafDeath','StemDeath',};
-        cropgrowth_units = {'day','-','m2/m2',  ...
-            'cm','-','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha','kg/ha'};
+    if options.calc_vegetation_dynamic
+        cropgrowth_names = {'DOY', 'DVS', 'LAI', ...
+            'PH', 'Sfactor', 'RootDM', 'LeafDM', 'StemDM', 'OrganDM', 'RootDeath', 'LeafDeath', 'StemDeath',};
+        cropgrowth_units = {'day', '-', 'm2/m2', ...
+            'cm', '-', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha'};
         write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
     end
 

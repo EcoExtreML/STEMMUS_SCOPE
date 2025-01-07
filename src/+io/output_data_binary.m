@@ -1,7 +1,7 @@
 function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, ...
                                     spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential, ...
                                     Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ...
-                                    ForcingData, RS, RWUs, RWUg,crop_output)
+                                    ForcingData, RS, RWUs, RWUg, crop_output)
 
     %% OUTPUT DATA
     % author C. Van der Tol
@@ -41,9 +41,9 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
 
     %% Crop growth
     if options.calc_vegetation_dynamic == 1
-        cropgrowth_out = crop_output(k,:);
+        cropgrowth_out = crop_output(k, :);
         n_col.cropgrowth = length(cropgrowth_out);
-        fwrite(f.cropgrowth_file,cropgrowth_out,'double');
+        fwrite(f.cropgrowth_file, cropgrowth_out, 'double');
     end
 
     %% Water stress factor

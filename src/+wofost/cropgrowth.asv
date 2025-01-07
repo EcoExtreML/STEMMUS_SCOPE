@@ -278,57 +278,57 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     lasum  = 0.0;
     wlv    = 0.0;
     for i1 = 1:ilvold
-        lasum = lasum + lv(i1) * sla(i1);
+        lasum = lasum + lv(i1)*sla(i1);
         wlv   = wlv + lv(i1);
     end
-    lasum = max(0, lasum);
-    wlv = max(0, wlv);
+    lasum = max(0,lasum);
+    wlv = max(0,wlv);
     
     %% 7. integrals of the crop
     % dry weight of living plant organs
-    wrt  =  wrt + gwrt;
-    wst  =  wst + gwst;
-    wso  =  wso + gwso;
+    wrt  =  wrt+gwrt;
+    wst  =  wst+gwst;
+    wso  =  wso+gwso;
     
     % total above ground biomass
-    tadw =  wlv + wst + wso;
+    tadw =  wlv+wst+wso;
     
     % dry weight of dead plant organs (roots,leaves & stems)
-    dwrt = dwrt + drrt;
-    dwlv = dwlv + drlv;
-    dwst = dwst + drst;
+    dwrt = dwrt+drrt;
+    dwlv = dwlv+drlv;
+    dwst = dwst+drst;
     
     % dry weight of dead and living plant organs
-    twrt = wrt + dwrt;
-    twlv = wlv + dwlv;
-    twst = wst + dwst;
-    cwdm = twlv + twst + wso;
+    twrt = wrt+dwrt;
+    twlv = wlv+dwlv;
+    twst = wst+dwst;
+    cwdm = twlv+twst+wso;
     
     % leaf area index
-    lai  = WofostPar.LAIEM + lasum + WofostPar.SSA * wst + WofostPar.SPA * wso;
+    lai  = WofostPar.LAIEM+lasum+WofostPar.SSA*wst+WofostPar.SPA*wso;
     
     Anet_sum = Anet_sum + Anet;                % assume LAI not changed with the respiration
-    if Anet_sum < 0 && KT > 1                    % the consumed biomass are the assimilated one at daytime
-        lai_delta = lai_delta + grlv * slat;
+    if Anet_sum < 0 && KT>1                    % the consumed biomass are the assimilated one at daytime
+        lai_delta = lai_delta + grlv*slat;
         lai = lai - lai_delta;
-    elseif Anet_sum >= 0 && Anet >= 0
+    elseif Anet_sum>=0 && Anet>=0
         Anet_sum  = 0;
         lai_delta = 0;
     end
     
     %% 8. integrals of the crop
-    crop_output(KT, 1) = xyt.t(KT, 1);            % Day of the year
-    crop_output(KT, 2) = dvs;                     % Development of stage
-    crop_output(KT, 3) = lai;                     % LAI
-    crop_output(KT, 4) = ph;                      % Plant height
-    crop_output(KT, 5) = sfactor;                 % Water stress
-    crop_output(KT, 6) = wrt;                     % Dry matter of root
-    crop_output(KT, 7) = wlv;                     % Dry matter of leaves
-    crop_output(KT, 8) = wst;                     % Dry matter of stem
-    crop_output(KT, 9) = wso;                     % Dry matter of organ
-    crop_output(KT, 10) = dwrt;                   % Dry matter of deadleaves
-    crop_output(KT, 11) = dwlv;                   % Dry matter of dead stem
-    crop_output(KT, 12) = dwst;                   % Dry matter of dead organ
+    crop_output(KT,1) = xyt.t(KT,1);             % Day of the year
+    crop_output(KT,2) = dvs;                     % Development of stage
+    crop_output(KT,3) = lai;                     % LAI
+    crop_output(KT,4) = ph;                       % Plant height
+    crop_output(KT,5) = sfactor;                 % Water stress
+    crop_output(KT,6) = wrt;                     % Dry matter of root
+    crop_output(KT,7) = wlv;                     % Dry matter of leaves
+    crop_output(KT,8) = wst;                     % Dry matter of stem
+    crop_output(KT,9) = wso;                     % Dry matter of organ
+    crop_output(KT,10) = dwrt;                     % Dry matter of deadleaves
+    crop_output(KT,11) = dwlv;                     % Dry matter of dead stem
+    crop_output(KT,12) = dwst;                     % Dry matter of dead organ
     
     %% 9. Pack updated state variables
     state_vars.dvs = dvs;

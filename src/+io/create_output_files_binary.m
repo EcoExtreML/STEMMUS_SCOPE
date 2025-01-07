@@ -107,10 +107,10 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
         fnames.spectrum_obsdir_thermal_file    = fullfile(Output_dir, 'spectrum_obsdir_thermal.bin');  % spectrum observation direction
         fnames.spectrum_hemis_thermal_file     = fullfile(Output_dir, 'spectrum_hemis_thermal.bin');   % spectrum hemispherically integrated
     end
-    
+
     % Create cropgrowth file
     if options.calc_vegetation_dynamic
-        fnames.cropgrowth_file                  = fullfile(Output_dir,'cropgrowth.bin');               % crop growth simulation ydy
+        fnames.cropgrowth_file                  = fullfile(Output_dir, 'cropgrowth.bin');               % crop growth simulation ydy
     end
 
     % Create empty files for appending

@@ -198,11 +198,11 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     [rho, tau, rs] = deal(zeros(nwlP + nwlT, 1));
 
-    %% 11. Define plant growth parameters   
+    %% 11. Define plant growth parameters
     if options.calc_vegetation_dynamic == 1
-%         global crop_output
+        %global crop_output
         WofostPar = wofost.WofostRead(path_input);
-        crop_output = zeros(TimeProperties.Dur_tot,12);
+        crop_output = zeros(TimeProperties.Dur_tot, 12);
         state_vars  = struct();
     end
 
@@ -382,7 +382,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps
-        fprintf(strcat('\n KT =  ',num2str(KT),' \r'));
+        fprintf(strcat('\n KT =  ', num2str(KT), ' \r'));
 
         if KT > 1 && Delt_t > (TEND - TIME)
             Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
@@ -431,16 +431,16 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 vi(vmax == telmax) = k;
             end
 
-            % using simulated LAI and PH to substitute prescribed LAI 
-            if options.calc_vegetation_dynamic == 1  &&  KT >= WofostPar.CSTART && KT <= WofostPar.CEND   
+            % using simulated LAI and PH to substitute prescribed LAI
+            if options.calc_vegetation_dynamic == 1  &&  KT >= WofostPar.CSTART && KT <= WofostPar.CEND
                 if KT == WofostPar.CSTART
                     ScopeParameters.LAI(KT)  = WofostPar.LAIEM;                % initial LAI
                     ScopeParameters.hc(KT)   = WofostPar.PHEM;                 % initial PH
-                elseif KT > WofostPar.CSTART 
-                    ScopeParameters.LAI(KT)  = crop_output(KT-1,3);            % substitute LAI
-                    ScopeParameters.hc(KT)   = crop_output(KT-1,4);            % substitute PH
+                elseif KT > WofostPar.CSTART
+                    ScopeParameters.LAI(KT)  = crop_output(KT - 1, 3);            % substitute LAI
+                    ScopeParameters.hc(KT)   = crop_output(KT - 1, 4);            % substitute PH
                 end
-            end               
+            end
 
             [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, SoilVariables.Theta_LL, vi, canopy, options, xyt, soil);
             if options.simulation ~= 1
@@ -564,15 +564,15 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                     end
                 end
             end
-            
+
             % calculate the plant growth process
-            if options.calc_vegetation_dynamic == 1  && KT >= WofostPar.CSTART && KT <= WofostPar.CEND          % vegetation growth process 
+            if options.calc_vegetation_dynamic == 1  && KT >= WofostPar.CSTART && KT <= WofostPar.CEND          % vegetation growth process
                 Anet = fluxes.Actot;
                 if isnan(Anet) || Anet < -2                       % limit value of Anet
                     Anet = 0;
                     fluxes.Actot = Anet;
                 end
-                [crop_output,state_vars] = wofost.cropgrowth(crop_output,state_vars,meteo,WofostPar,Anet,WaterStressFactor,xyt,KT,TimeProperties.Dur_tot);
+                [crop_output, state_vars] = wofost.cropgrowth(crop_output, state_vars, meteo, WofostPar, Anet, WaterStressFactor, xyt, KT, TimeProperties.Dur_tot);
             end
 
             if options.simulation == 2 && telmax > 1

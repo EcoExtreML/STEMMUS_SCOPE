@@ -13,7 +13,8 @@ When starting the executable, a run-mode can be specified. The following command
 ./STEMMUS_SCOPE "/home/path/to/config/file.txt" full
 ```
 
-(Where `./STEMMUS_SCOPE` is the path to the executable. For more info see [documentation](../run_model_on_snellius/exe/README.md))
+(Where `./STEMMUS_SCOPE` is the path to the executable. For more info see
+[documentation](https://github.com/EcoExtreML/STEMMUS_SCOPE/tree/main/run_model_on_snellius/exe))
 
 To start BMI mode, pass anything (e.g. an empty string "") as config file, and use `bmi` to start the model in BMI-mode:
 

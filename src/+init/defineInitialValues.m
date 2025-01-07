@@ -178,8 +178,7 @@ function InitialValues = defineInitialValues(Dur_tot, ModelSettings)
 
     %% Structure 5: variables with zeros(Nmsrmn / 10, 1)
     fields = {
-              'Tp_t', 'Evap', 'Tbtm', 'r_a_SOIL', 'Rn_SOIL', 'EVAP', ...
-              'PSItot', 'sfactortot', 'Tsur'
+              'Tbtm', 'r_a_SOIL', 'Rn_SOIL', 'PSItot', 'sfactortot', 'Tsur'
              };
     structures{5} = helpers.createStructure(zeros(Dur_tot, 1), fields);
 

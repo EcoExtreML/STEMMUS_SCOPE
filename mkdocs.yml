@@ -1,0 +1,54 @@
+site_name: STEMMUS_SCOPE documentation
+repo_url: https://github.com/EcoExtreML/STEMMUS_SCOPE
+repo_name: STEMMUS_SCOPE
+
+nav:
+  - Introduction: index.md
+  - Getting started: getting_started.md
+  - Running the model: run_model.md
+  - Contributing guide: CONTRIBUTING.md
+
+theme:
+  name: material
+  custom_dir: docs/assets
+  logo: assets/ecoextreml_logo.png
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+  icon:
+    repo: fontawesome/brands/github-alt
+
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+      primary: light green
+      accent: green
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+      primary: blue grey
+      accent: teal
+
+plugins:
+- include-markdown
+- search
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - admonition
+  - pymdownx.tabbed:
+      alternate_style: true
+  -  attr_list
+
+extra:
+  generator: false

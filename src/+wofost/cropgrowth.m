@@ -1,4 +1,4 @@
-function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,WofostPar,Anet,WaterStressFactor,xyt,KT,Dur_tot)
+function [crop_output, state_vars] = cropgrowth(crop_output, state_vars, meteo, WofostPar, Anet, WaterStressFactor, xyt, KT, Dur_tot)
     %{
         function cropgrowth.m simulate the growth of vegetation
 
@@ -33,7 +33,7 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
         Output:
             dvs         Developement of stage
             lai         leaf area index
-            ph          Plant height        
+            ph          Plant height
             wrt         dry matter weight of root
             wlv         dry matter weight of leaves
             wst         dry matter weight of stem
@@ -56,7 +56,7 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
         fltb  =   WofostPar.FLTB;
         fstb  =   WofostPar.FSTB;
         fotb  =   WofostPar.FOTB;
- 
+
         fr    =   wofost.afgen(frtb, dvs);
         fl    =   wofost.afgen(fltb, dvs);
         fs    =   wofost.afgen(fstb, dvs);
@@ -76,16 +76,16 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
         dwlv    = 0.0;
         dwst    = 0.0;
 
-        sla        = zeros(Dur_tot+1, 1);
-        lvage      = zeros(Dur_tot+1, 1);
-        lv         = zeros(Dur_tot+1, 1);
+        sla        = zeros(Dur_tot + 1, 1);
+        lvage      = zeros(Dur_tot + 1, 1);
+        lv         = zeros(Dur_tot + 1, 1);
         sla(1)   = wofost.afgen(WofostPar.SLATB, dvs);
         lv(1)    = wlv;
         lvage(1) = 0.0;
         ilvold     = 1;
 
-        lasum    = laiem;         
-        laiexp   = laiem;     
+        lasum    = laiem;
+        laiexp   = laiem;
         glaiex   = 0;
         laimax   = laiem;
         lai      = lasum + ssa * wst + spa * wso;
@@ -138,13 +138,13 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     fs    =   wofost.afgen(fstb, dvs);
     fo    =   wofost.afgen(fotb, dvs);
 
-    fcheck = fr + (fl + fs + fo) * (1.0 - fr) - 1.0; %check on partitions
+    fcheck = fr + (fl + fs + fo) * (1.0 - fr) - 1.0; % check on partitions
     if abs(fcheck) > 0.0001
         print('The sum of partitioning factors for leaves, stems and storage organs is not equal to one at development stage');
-        return;
+        return
     end
 
-    cvf   =  1.0 / ((fl / WofostPar.CVL + fs / WofostPar.CVS + fo / WofostPar.CVO) * (1.0 -fr ) + fr / WofostPar.CVR);
+    cvf   =  1.0 / ((fl / WofostPar.CVL + fs / WofostPar.CVS + fo / WofostPar.CVO) * (1.0 - fr) + fr / WofostPar.CVR);
     asrc  =  Anet * 30 / 1000000000 * 10000 * 3600 * WofostPar.TSTEP;  % [umol m-2 s-1] to [kg CH2O ha-1];
     dmi   =  cvf * asrc;
 
@@ -163,7 +163,7 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     drst  =  wofost.afgen(WofostPar.RDRSTB, dvs) * wst * delt;
     % net growth rate stems
     gwst  =  grst - drst;
- 
+
     % growth of plant height
     str   =  wofost.afgen(WofostPar.STRTB, dvs);
     phnew = wst / (WofostPar.STN * WofostPar.STD * pi * str * str) * WofostPar.PHCoeff + WofostPar.PHEM;
@@ -187,7 +187,7 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     end
 
     laicr  = WofostPar.LAICR;
-    dslv2  = wlv * max(0, 0.03*(lai - laicr) / laicr);
+    dslv2  = wlv * max(0, 0.03 * (lai - laicr) / laicr);
     dslv   = max(dslv1, dslv2);
 
     % death of leaves due to exceeding life span
@@ -195,9 +195,9 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     %        until no more leaves have to die or all leaves are gone
     rest  = dslv;
     i1    = KT;
-    iday  = ceil(KT*delt);
+    iday  = ceil(KT * delt);
 
-    while (rest > lv(i1) && i1 >= 1)
+    while rest > lv(i1) && i1 >= 1
         rest = rest - lv(i1);
         i1   = i1 - 1;
     end
@@ -205,13 +205,13 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     % then: check if some of the remaining leaves are older than span,
     %       sum their weights
     dalv  = 0.0;
-    if (lvage(i1) > WofostPar.SPAN && rest > 0 && i1 >= 1)
+    if lvage(i1) > WofostPar.SPAN && rest > 0 && i1 >= 1
         dalv  = lv(i1) - rest;
         rest  = 0;
         i1    = i1 - 1;
     end
 
-    while (i1 >= 1 && lvage(i1) > WofostPar.SPAN)
+    while i1 >= 1 && lvage(i1) > WofostPar.SPAN
         dalv  = dalv + lv(i1);
         i1    = i1 - 1;
     end
@@ -228,34 +228,34 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
 
         glasol = grlv * slat;                        % source-limited growth
         gla    = min(glaiex, glasol);
-    %     gla    = max(0,gla);
+        % gla    = max(0,gla);
 
         slat   = gla / grlv;
         if isnan(slat)
             slat = 0;
         end
-    %     if grlv>=0
-    %         slat = gla/grlv;                       % the actual sla value
-    %     else
-    %         slat = 0;
-    %     end
+        % if grlv>=0
+        %   slat = gla/grlv;                       % the actual sla value
+        % else
+        %   slat = 0;
+        % end
     end
 
     % update the information of leave
     dslvt  = dslv;
     i1     = KT;
-    while (dslvt>0 && i1>=1)     % water stress and high lai
+    while dslvt > 0 && i1 >= 1     % water stress and high lai
         if dslvt  >=  lv(i1)
-            dslvt  =  dslvt-lv(i1);
+            dslvt  =  dslvt - lv(i1);
             lv(i1) =  0.0;
-            i1     =  i1-1;
+            i1     =  i1 - 1;
         else
-            lv(i1) = lv(i1)-dslvt;
+            lv(i1) = lv(i1) - dslvt;
             dslvt = 0.0;
         end
     end
 
-    while (lvage(i1) >= WofostPar.SPAN && i1 >= 1)  % leaves older than span die
+    while lvage(i1) >= WofostPar.SPAN && i1 >= 1  % leaves older than span die
         lv(i1) = 0;
         i1 = i1 - 1;
     end
@@ -349,5 +349,3 @@ function [crop_output,state_vars] = cropgrowth(crop_output,state_vars,meteo,Wofo
     state_vars.Anet_sum = Anet_sum;
     state_vars.lai_delta = lai_delta;
 end
-
-

@@ -46,10 +46,9 @@ function [wofost] = WofostRead(path_input)
 
         % end of file
         if contains(tline, '* End of .crp file !')
-            break;
+            break
         end
         % disp(tline);
     end
 
 end
-

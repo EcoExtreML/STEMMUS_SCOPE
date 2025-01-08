@@ -200,7 +200,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     %% 11. Define plant growth parameters
     if options.calc_vegetation_dynamic == 1
-        %global crop_output
+        % global crop_output
         WofostPar = wofost.WofostRead(path_input);
         crop_output = zeros(TimeProperties.Dur_tot, 12);
         state_vars  = struct();

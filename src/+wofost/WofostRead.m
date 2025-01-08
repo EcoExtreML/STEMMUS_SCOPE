@@ -10,11 +10,11 @@ function [wofost] = WofostRead(path_input)
     % Read lines from the file
     PlantGrowthFile = [path_input, 'plant_growth/CropD.crp'];
     fid = fopen(PlantGrowthFile);
-    
+
     % process it line by line
     while true
         tline = fgetl(fid);
-        
+
         % remove empty and note line
         if ~isempty(tline) & tline(1) ~= '*'
             % judge whether the string contain the table value
@@ -33,24 +33,23 @@ function [wofost] = WofostRead(path_input)
                 table_value = [];
                 while ~isempty(tline) & tline(1) ~= '*'
                     s = strsplit(strtrim(tline));
-                    table_value(i,1) = str2num(strtrim(char(s(1))));
-                    table_value(i,2) = str2num(strtrim(char(s(2))));
+                    table_value(i, 1) = str2num(strtrim(char(s(1))));
+                    table_value(i, 2) = str2num(strtrim(char(s(2))));
                     i = i + 1;
                     tline = fgetl(fid);
                     % disp(tline);
                 end
-                
+
                 wofost.(vname) = table_value;
             end
         end
-       
-        %end of file
-        if contains(tline,'* End of .crp file !') 
-            break; 
-        end   
+
+        % end of file
+        if contains(tline, '* End of .crp file !')
+            break;
+        end
         % disp(tline);
     end
-
 
 end
 

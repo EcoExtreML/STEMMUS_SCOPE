@@ -354,7 +354,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % Update Dunnian runoff and ForcingData.Precip_msr
-        [ForcingData.R_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+        [ForcingData.Runoff_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep, ModelSettings);
@@ -653,10 +653,10 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             GasDispersivity = conductivity.calculateGasDispersivity(InitialValues, SoilVariables, P_gg, k_g, ModelSettings);
 
             % Srt is both input and output
-            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = ...
+            [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, RWUs, RWUg, ForcingData] = ...
                                   soilmoisture.solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, ...
                                                                         TimeProperties, SoilProperties, BoundaryCondition, Delt_t, RHOV, DRHOVh, ...
-                                                                        DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings);
+                                                                        DRHOVT, D_Ta, hN, RWU, fluxes, KT, KIT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings);
 
             if BoundaryCondition.NBCh == 1
                 DSTOR = 0;
@@ -678,7 +678,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX); % Depth of depression storage at end of current time step
                 % Next line is commented and Surface runoff is re-calculated using different approach (the following 3 lines)
                 % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit conversion from cm/30mins to cm/sec)
-                RS(KT) = ForcingData.R_Hort(KT) + ForcingData.R_Dunn(KT); % total surface runoff (cm/sec)
+                ForcingData.RS = ForcingData.R_Hort + ForcingData.R_Dunn; % total surface runoff (cm/sec)
             end
 
             if ModelSettings.Soilairefc == 1
@@ -701,7 +701,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                                                                                       AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                                       HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                                       Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                                      TOLD, Precip, Evap, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
+                                                                                                      TOLD, Evap, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
             end
 
             if max(CHK) < 0.1
@@ -829,5 +829,5 @@ end
 % Calculate the total simulatiom time, added by mostafa
 end_time = clock;
 simtime_min = etime(end_time, start_time) / 60;
-simtime_hr = simtime_min / 24;
+simtime_hr = simtime_min / 60;
 disp(['Simulation time is : ' num2str(simtime_hr) ' hrs (' num2str(simtime_min) ' minutes)']);

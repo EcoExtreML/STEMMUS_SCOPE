@@ -32,8 +32,7 @@ function STEMMUS_SCOPE_exe(config_file, runMode)
                        'Trap', ... % transpiration
                        'RWUs', ... % soil water root uptake
                        'RWUg', ... % groundwater root uptake
-                       'ForcingData', ... % forcing data that includes Dunnian runoff and Hortonian runoff
-                       'RS' ... % total surface runoff
+                       'ForcingData' ... % forcing data that includes applied infiltration and runoff
                       }; %#ok
 
         % Variables for tracking the state of the model initialization:

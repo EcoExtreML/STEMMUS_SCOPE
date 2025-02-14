@@ -1,20 +1,14 @@
-function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, ModelSettings, GroundwaterSettings)
+function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                                                                TimeProperties, SoilProperties, RHS, hN, KT, KIT, Delt_t, Evap, ModelSettings, GroundwaterSettings)
     %{
         Determine the boundary condition for solving the soil moisture equation.
     %}
 
-    % n is the index of n_th item
     n = ModelSettings.NN;
-
     C4 = HeatMatrices.C4;
     C4_a = HeatMatrices.C4_a;
 
-    Precip = InitialValues.Precip;
-    Precip_msr = ForcingData.Precip_msr;
-    Precipp = 0;
-
-    %  Apply the bottom boundary condition called for by BoundaryCondition.NBChB
+    %%%%%%  Apply the bottom boundary condition called for by BoundaryCondition.NBChB  %%%%%%
     if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling
         if BoundaryCondition.NBChB == 1            %  Specify matric head at bottom to be ---BoundaryCondition.BChB;
             RHS(1) = BoundaryCondition.BChB;
@@ -46,7 +40,39 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
         end
     end
 
-    %  Apply the surface boundary condition called for by BoundaryCondition.NBCh
+    %%%%%%  Apply the surface boundary condition called for by BoundaryCondition.NBCh  %%%%%%
+    Precip = ForcingData.Precip_msr(KT); % total precipitation (liquid + snow)
+    R_Dunn = ForcingData.Runoff_Dunn(KT); % Dunnian runoff (calculated in +io/loadForcingData file)
+
+    % Check if surface temperature is less than zero, then Precipitation is snow (modified by Mostafa)
+    if KT == 1
+        Precip_snowAccum = 0; % initalize accumulated snow for first time step
+    else
+        Precip_snowAccum = ForcingData.Precip_snowAccum;
+    end
+
+    if SoilVariables.Tss(KT) <= 0 % surface temperature is equal or less than zero
+        Precip_snow = Precip; % snow precipitation
+        Precip_liquid = 0; % liquid precipitation (rainfall)
+        R_Dunn = 0;
+        if KIT == 1 % accumulate snow at one iteration only within the time step
+            Precip_snowAccum = Precip + Precip_snowAccum;
+        else
+            Precip_snowAccum = Precip_snowAccum;
+        end
+    else % surface temperature is more than zero
+        if KIT == 1 % add accumulated snow of previous time steps to liquid precipitation at first time step when surface temperature > zero
+            Precip_liquid = Precip + Precip_snowAccum;
+        else
+            Precip_liquid = ForcingData.Precip_liquid;
+        end
+        Precip_snow = 0;
+        Precip_snowAccum = 0;
+    end
+
+    % Applied infiltration = Precipitation - total runoff (Dunnian runoff + Hortonian runoff)
+    applied_inf = Precip_liquid - R_Dunn; % removing Dunnian runoff (Hortonian runoff is removed below)
+
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable
         % is not calculated anywhere! see issue 98, item 6
@@ -65,41 +91,27 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
             RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness) was applied;
         end
     else % (BoundaryCondition.NBCh == 3, Specified atmospheric forcing)
-
-        % Calculate applied infiltration and infiltration excess runoff (Hortonian runoff), modified by Mostafa
+        % Calculate infiltration excess runoff (Hortonian runoff) and update applied infiltration, modified by Mostafa
         Ks0 = SoilProperties.Ks0 / (3600 * 24); % saturated vertical hydraulic conductivity. unit conversion from cm/day to cm/sec
         % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document: https://doi.org/10.5065/D6N877R)
-        % Check applied infiltration doesn't exceed infiltration capacity
+        % Calculate infiltration capacity
         topThick = 5; % first 5 cm of the soil
         satCap = SoilProperties.theta_s0 * topThick; % saturation capacity represented by saturated water content of the top 5 cm of the soil
         actTheta = ModelSettings.DeltZ(end - 3:end) * SoilVariables.Theta_UU(end - 4:end - 1, 1); % actual moisture of the top 5 cm of the soil
         infCap = (satCap - actTheta) / TimeProperties.DELT; % (cm/sec)
         infCap_min = min(Ks0, infCap);
 
-        % Infiltration excess runoff (Hortonian runoff). Note: Dunnian runoff is calculated in the +io/loadForcingData file
-        if Precip_msr(KT) > infCap_min
-            ForcingData.R_Hort(KT) = Precip_msr(KT) - infCap_min;
+        % Infiltration excess runoff (Hortonian runoff)
+        if applied_inf > infCap_min
+            R_Hort = applied_inf - infCap_min;
         else
-            ForcingData.R_Hort(KT) = 0;
+            R_Hort = 0;
         end
+        % Update applied infiltration after removing Hortonian runoff
+        applied_inf = min(applied_inf, infCap_min);
 
-        Precip(KT) = min(Precip_msr(KT), infCap_min);
-        ForcingData.applied_inf(KT) = Precip(KT); % applied infiltration after removing Hortonian runoff
-
-        if SoilVariables.Tss(KT) > 0
-            Precip(KT) = Precip(KT);
-        else
-            Precip(KT) = Precip(KT);
-            Precipp = Precipp + Precip(KT);
-            Precip(KT) = 0;
-        end
-
-        if SoilVariables.Tss(KT) > 0
-            AVAIL0 = Precip(KT) + Precipp + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
-            Precipp = 0;
-        else
-            AVAIL0 = Precip(KT) + BoundaryCondition.DSTOR0 / Delt_t;
-        end
+        % Add depression water to applied infiltration
+        AVAIL0 = applied_inf + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
 
         if BoundaryCondition.NBChh == 1
             RHS(n) = hN;
@@ -111,6 +123,15 @@ function [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = calculateBoundaryCon
             RHS(n) = RHS(n) + AVAIL0 - Evap;
         end
     end
+
+    % Outputs to be exported or used in other functions
     HeatMatrices.C4 = C4;
     HeatMatrices.C4_a = C4_a;
+    ForcingData.Precip = Precip;
+    ForcingData.Precip_liquid = Precip_liquid;
+    ForcingData.Precip_snow = Precip_snow;
+    ForcingData.Precip_snowAccum = Precip_snowAccum;
+    ForcingData.applied_inf = applied_inf;
+    ForcingData.R_Dunn = R_Dunn;
+    ForcingData.R_Hort = R_Hort;
 end

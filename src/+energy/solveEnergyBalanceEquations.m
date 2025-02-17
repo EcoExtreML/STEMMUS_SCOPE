@@ -2,7 +2,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
                                                                                         AirVariabes, VaporVariables, GasDispersivity, ThermalConductivityCapacity, ...
                                                                                         HBoundaryFlux, BoundaryCondition, ForcingData, DRHOVh, DRHOVT, KL_T, ...
                                                                                         Xah, XaT, Xaa, Srt, L_f, RHOV, RHODA, DRHODAz, L, Delt_t, P_g, P_gg, ...
-                                                                                        TOLD, Precip, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings)
+                                                                                        TOLD, EVAP, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings)
     %{
         Solve the Energy balance equation with the Thomas algorithm to update
         the soil temperature 'SoilVariables.TT', the finite difference
@@ -19,7 +19,7 @@ function [RHS, SAVE, CHK, SoilVariables, EnergyVariables] = solveEnergyBalanceEq
     [RHS, EnergyMatrices, SAVE] = energy.assembleCoefficientMatrices(InitialValues, EnergyMatrices, SoilVariables, Delt_t, P_g, P_gg, ModelSettings, GroundwaterSettings);
 
     [RHS, EnergyMatrices] = energy.calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, SoilVariables, ...
-                                                               Precip, EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings);
+                                                               EVAP, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings);
 
     [SoilVariables, CHK, RHS, EnergyMatrices] = energy.solveTridiagonalMatrixEquations(EnergyMatrices, SoilVariables, RHS, CHK, ModelSettings, GroundwaterSettings);
 

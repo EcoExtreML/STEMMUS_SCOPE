@@ -20,7 +20,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     Precip_msr = Mdata{:, 6}; % (cm/sec)
 
     %%%%%%%%%% Adjust precipitation to get applied infiltration after removing: (1) saturation excess runoff   %%%%%%%%%%
-    %%%%%%%%%%                                                                  (2) infiltration excess runoff %%%%%%%%%%
+    %%%%%%%%%%           (2) infiltration excess runoff (updated in +soilmoisture/calculateBoundaryConditions) %%%%%%%%%%
     % Note: Code changes are related to the issue: https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232
     % Note: Adjusting the precipitation after the canopy interception is not implemented yet.
 
@@ -32,12 +32,8 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         fover = 0.5; % decay factor (fixed to 0.5 m-1)
         fmax = SoilProperties.fmax; % potential maximum value of fsat
         fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
-        ForcingData.R_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in c/sec)
-        Precip_msr = Precip_msr .* (1 - fsat); % applied infiltration after removing Dunnian runoff
+        ForcingData.Runoff_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in cm/sec)
     end
-
-    % (2) Infiltration excess runoff (Hortonian runoff)
-    ForcingData.R_Hort = zeros(size(Precip_msr)); % will be updated in +soilmoisture/calculateBoundaryConditions
 
     % replace negative values
     for jj = 1:Dur_tot
@@ -49,7 +45,4 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     % Outputs to be used by other functions
     ForcingData.Tmin = min(ForcingData.Ta_msr);
     ForcingData.Precip_msr = Precip_msr;
-    % Applied infiltration (= precipitation after removal of Dunnian runoff)
-    ForcingData.applied_inf = Precip_msr; % later will be updated in the ....
-    % +soilmoisture/calculateBoundaryConditions after removal of Hortonian runoff
 end

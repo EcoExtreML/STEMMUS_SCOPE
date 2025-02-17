@@ -1,5 +1,5 @@
-function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, Precip, RWUs, RWUg, ForcingData] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
-                                                                                                                                                                                  BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings)
+function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, CHK, AVAIL0, RWUs, RWUg, ForcingData] = solveSoilMoistureBalance(SoilVariables, InitialValues, ForcingData, VaporVariables, GasDispersivity, TimeProperties, SoilProperties, ...
+                                                                                                                                                                          BoundaryCondition, Delt_t, RHOV, DRHOVh, DRHOVT, D_Ta, hN, RWU, fluxes, KT, KIT, hOLD, Srt, P_gg, ModelSettings, GroundwaterSettings)
     %{
         Solve the soil moisture balance equation with the Thomas algorithm to
         update the soil matric potential 'hh', the finite difference
@@ -24,8 +24,8 @@ function [SoilVariables, HeatMatrices, HeatVariables, HBoundaryFlux, Rn_SOIL, Ev
         r_a_SOIL = InitialValues.r_a_SOIL;
     end
 
-    [AVAIL0, RHS, HeatMatrices, Precip, ForcingData] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
-                                                                                                TimeProperties, SoilProperties, RHS, hN, KT, Delt_t, Evap, ModelSettings, GroundwaterSettings);
+    [AVAIL0, RHS, HeatMatrices, ForcingData] = soilmoisture.calculateBoundaryConditions(BoundaryCondition, HeatMatrices, ForcingData, SoilVariables, InitialValues, ...
+                                                                                        TimeProperties, SoilProperties, RHS, hN, KT, KIT, Delt_t, Evap, ModelSettings, GroundwaterSettings);
 
     [CHK, hh, C4] = soilmoisture.solveTridiagonalMatrixEquations(HeatMatrices.C4, SoilVariables.hh, HeatMatrices.C4_a, RHS, ModelSettings, GroundwaterSettings);
 

@@ -1,1 +1,7 @@
 .data/
+run_model_on_snellius/exe/includedSupportPackages.txt
+run_model_on_snellius/exe/mccExcludedFiles.log
+run_model_on_snellius/exe/readme.txt
+run_model_on_snellius/exe/requiredMCRProducts.txt
+run_model_on_snellius/exe/run_STEMMUS_SCOPE.sh
+run_model_on_snellius/exe/unresolvedSymbols.txt

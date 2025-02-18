@@ -46,6 +46,6 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
     else
         L_ts = L(n);
         SH = 0.1200 * Constants.c_a * (SoilVariables.T(n) - ForcingData.Ta_msr(KT)) / r_a_SOIL(KT);
-        RHS(n) = RHS(n) + 100 * Rn_SOIL(KT) / 1800 - Constants.RHOL * L_ts * Evap - SH + Constants.RHOL * Constants.c_L * (ForcingData.Ta_msr(KT) * ForcingData.applied_inf + BoundaryCondition.DSTOR0 * SoilVariables.T(n) / Delt_t);    % J cm-2 s-1
+        RHS(n) = RHS(n) + 100 * Rn_SOIL(KT) / 1800 - Constants.RHOL * L_ts * Evap - SH + Constants.RHOL * Constants.c_L * (ForcingData.Ta_msr(KT) * ForcingData.infiltration + BoundaryCondition.DSTOR0 * SoilVariables.T(n) / Delt_t);    % J cm-2 s-1
     end
 end

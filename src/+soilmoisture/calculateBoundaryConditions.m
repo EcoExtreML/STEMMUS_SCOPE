@@ -63,11 +63,11 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     else % surface temperature is more than zero
         if KIT == 1 % add accumulated snow of previous time steps to liquid precipitation at first time step when surface temperature > zero
             Precip_liquid = Precip + Precip_snowAccum;
+            Precip_snowAccum = 0;
         else
             Precip_liquid = ForcingData.Precip_liquid;
         end
         Precip_snow = 0;
-        Precip_snowAccum = 0;
     end
 
     % Infiltration = Precipitation - total runoff (Dunnian runoff + Hortonian runoff)

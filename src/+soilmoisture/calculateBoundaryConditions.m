@@ -42,7 +42,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
 
     %%%%%%  Apply the surface boundary condition called for by BoundaryCondition.NBCh  %%%%%%
     Precip = ForcingData.Precip_msr(KT); % total precipitation (liquid + snow)
-    R_Dunn = ForcingData.Runoff_Dunn(KT); % Dunnian runoff (calculated in +io/loadForcingData file)
+    runoffDunn = ForcingData.runoffDunnian(KT); % Dunnian runoff (calculated in +io/loadForcingData file)
 
     % Check if surface temperature is less than zero, then Precipitation is snow (modified by Mostafa)
     if KT == 1
@@ -54,7 +54,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     if SoilVariables.Tss(KT) <= 0 % surface temperature is equal or less than zero
         Precip_snow = Precip; % snow precipitation
         Precip_liquid = 0; % liquid precipitation (rainfall)
-        R_Dunn = 0;
+        runoffDunn = 0;
         if KIT == 1 % accumulate snow at one iteration only within the time step
             Precip_snowAccum = Precip + Precip_snowAccum;
         else
@@ -71,7 +71,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     end
 
     % Applied infiltration = Precipitation - total runoff (Dunnian runoff + Hortonian runoff)
-    applied_inf = Precip_liquid - R_Dunn; % removing Dunnian runoff (Hortonian runoff is removed below)
+    applied_inf = Precip_liquid - runoffDunn; % removing Dunnian runoff (Hortonian runoff is removed below)
 
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable
@@ -103,9 +103,9 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
 
         % Infiltration excess runoff (Hortonian runoff)
         if applied_inf > infCap_min
-            R_Hort = applied_inf - infCap_min;
+            runoffHort = applied_inf - infCap_min;
         else
-            R_Hort = 0;
+            runoffHort = 0;
         end
         % Update applied infiltration after removing Hortonian runoff
         applied_inf = min(applied_inf, infCap_min);
@@ -132,6 +132,6 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     ForcingData.Precip_snow = Precip_snow;
     ForcingData.Precip_snowAccum = Precip_snowAccum;
     ForcingData.applied_inf = applied_inf;
-    ForcingData.R_Dunn = R_Dunn;
-    ForcingData.R_Hort = R_Hort;
+    ForcingData.runoffDunn = runoffDunn;
+    ForcingData.runoffHort = runoffHort;
 end

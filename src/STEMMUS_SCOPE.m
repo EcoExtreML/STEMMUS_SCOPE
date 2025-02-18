@@ -354,7 +354,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
 
         % Update Dunnian runoff and ForcingData.Precip_msr
-        [ForcingData.Runoff_Dunn, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
+        [ForcingData.runoffDunnian, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep, ModelSettings);
@@ -678,7 +678,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                 DSTOR = min(EXCESS, DSTMAX); % Depth of depression storage at end of current time step
                 % Next line is commented and Surface runoff is re-calculated using different approach (the following 3 lines)
                 % RS(KT) = (EXCESS - DSTOR) / Delt_t; % surface runoff, (unit conversion from cm/30mins to cm/sec)
-                ForcingData.RS = ForcingData.R_Hort + ForcingData.R_Dunn; % total surface runoff (cm/sec)
+                ForcingData.runoff = ForcingData.runoffHort + ForcingData.runoffDunn; % total surface runoff (cm/sec)
             end
 
             if ModelSettings.Soilairefc == 1

@@ -32,7 +32,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
         fover = 0.5; % decay factor (fixed to 0.5 m-1)
         fmax = SoilProperties.fmax; % potential maximum value of fsat
         fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
-        ForcingData.Runoff_Dunn = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in cm/sec)
+        ForcingData.runoffDunnian = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in cm/sec)
     end
 
     % replace negative values

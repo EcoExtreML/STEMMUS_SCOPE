@@ -1,4 +1,4 @@
-function gwfluxes = calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, ModelSettings, GroundwaterSettings)
+function gwfluxes = calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, gwfluxes, ModelSettings, GroundwaterSettings)
     %{
         Added by Mostafa, modified after Lianyu
         The concept followed to calculate groundwater recharge can be found in:

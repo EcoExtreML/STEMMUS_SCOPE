@@ -1,9 +1,9 @@
 function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, EnergyMatrices, HBoundaryFlux, ForcingData, SoilVariables, ...
                                                              Evap, Delt_t, r_a_SOIL, Rn_SOIL, RHS, L, KT, ModelSettings, GroundwaterSettings)
-%{
+    %{
     Determine the boundary condition for solving the energy equation, see
     STEMMUS Technical Notes.
-    Inputs: 
+    Inputs:
         BoundaryCondition  : structure
         EnergyMatrices     : structure
         HBoundaryFlux      : structure
@@ -13,7 +13,7 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
         GroundwaterSettings: structure
 
         Evap    : [g cm^-2 s^-1] Evaporation
-        Delt_t  : [s]            Time step, here it is 1800s 
+        Delt_t  : [s]            Time step, here it is 1800 s
         r_a_SOIL: [s cm^-1]      Soil surface aerodynamic resistance
         Rn_SOIL : []             Net radiation reaching the soil surface
         L       : []             Latent heat of vaporization
@@ -22,7 +22,7 @@ function [RHS, EnergyMatrices] = calculateBoundaryConditions(BoundaryCondition, 
         RHS     : [degree C]     Soil temperature
 
         EnergyMatrices     : structure
-%}
+    %}
 
     n = ModelSettings.NN;
     Constants = io.define_constants();

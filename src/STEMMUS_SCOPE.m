@@ -198,7 +198,15 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
 
     [rho, tau, rs] = deal(zeros(nwlP + nwlT, 1));
 
-    %% 11. load time series data
+    %% 11. Define plant growth parameters
+    if options.calc_vegetation_dynamic == 1
+        % global crop_output
+        WofostPar = wofost.WofostRead(path_input);
+        crop_output = zeros(TimeProperties.Dur_tot, 12);
+        state_vars  = struct();
+    end
+
+    %% 12. load time series data
     ScopeParametersNames = fieldnames(ScopeParameters);
     if options.simulation == 1
         vi = ones(length(ScopeParametersNames), 1);
@@ -208,7 +216,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
         soil = struct;
     end
 
-    %% 12. preparations
+    %% 13. preparations
     if options.simulation == 1
         diff_tmin           =   abs(xyt.t - xyt.startDOY);
         diff_tmax           =   abs(xyt.t - xyt.endDOY);
@@ -242,7 +250,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
-    %% 13. create output files and
+    %% 14. create output files and
     [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
     %% Initialize Temperature, Matric potential and soil air pressure.
@@ -374,6 +382,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
     % Will do one timestep in "update mode", and run until the end if in "full run" mode.
     while KT < endTime
         KT = KT + 1;  % Counting Number of timesteps
+        fprintf(strcat('\n KT =  ', num2str(KT), ' \r'));
+
         if KT > 1 && Delt_t > (TEND - TIME)
             Delt_t = TEND - TIME;  % If Delt_t is changed due to excessive change of state variables, the judgement of the last time step is excuted.
         end
@@ -420,6 +430,18 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             if options.simulation == 0
                 vi(vmax == telmax) = k;
             end
+
+            % using simulated LAI and PH to substitute prescribed LAI
+            if options.calc_vegetation_dynamic == 1  &&  KT >= WofostPar.CSTART && KT <= WofostPar.CEND
+                if KT == WofostPar.CSTART
+                    ScopeParameters.LAI(KT)  = WofostPar.LAIEM;                % initial LAI
+                    ScopeParameters.hc(KT)   = WofostPar.PHEM;                 % initial PH
+                elseif KT > WofostPar.CSTART
+                    ScopeParameters.LAI(KT)  = crop_output(KT - 1, 3);            % substitute LAI
+                    ScopeParameters.hc(KT)   = crop_output(KT - 1, 4);            % substitute PH
+                end
+            end
+
             [soil, leafbio, canopy, meteo, angles, xyt] = io.select_input(ScopeParameters, SoilVariables.Theta_LL, vi, canopy, options, xyt, soil);
             if options.simulation ~= 1
                 fprintf('simulation %i ', k);
@@ -542,6 +564,17 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                     end
                 end
             end
+
+            % calculate the plant growth process
+            if options.calc_vegetation_dynamic == 1  && KT >= WofostPar.CSTART && KT <= WofostPar.CEND          % vegetation growth process
+                Anet = fluxes.Actot;
+                if isnan(Anet) || Anet < -2                       % limit value of Anet
+                    Anet = 0;
+                    fluxes.Actot = Anet;
+                end
+                [crop_output, state_vars] = wofost.cropgrowth(crop_output, state_vars, meteo, WofostPar, Anet, WaterStressFactor, xyt, KT, TimeProperties.Dur_tot);
+            end
+
             if options.simulation == 2 && telmax > 1
                 vi  = helpers.count(nvars, vi, vmax, 1);
             end
@@ -799,7 +832,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, crop_output);
         fclose("all");
     end
 end

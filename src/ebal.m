@@ -307,6 +307,8 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
         rss  = soil.rss;
         rac     = (LAI + 1) * (raa + rawc);
         ras     = (LAI + 1) * (raa + raws);
+
+        % iteration procedure to solve equation A27 of STEMMUS-SCOPE document (https://doi.org/10.5194/gmd-14-1379-2021) and get unknowns (PSI, LEch, LEcu)
         for i = 1:30
             [lEch, Hch, ech, Cch, lambdah, sh]     = heatfluxes(rac, rcwh, Tch, ea, Ta, e_to_q, PSI, Ca, Cih, es_fun, s_fun);
             [lEcu, Hcu, ecu, Ccu, lambdau, su]     = heatfluxes(rac, rcwu, Tcu, ea, Ta, e_to_q, PSI, Ca, Ciu, es_fun, s_fun);
@@ -343,7 +345,7 @@ function [iter, fluxes, rad, thermal, profiles, soil, RWU, frac, WaterStressFact
             if ~isreal(PSI1)
                 PSI1 = -1;
             end
-            if abs(PSI - PSI1) < 0.01
+            if abs(PSI - PSI1) < 0.01 % closure criteria to break the iteration loop
                 break
             end
             PSI  = (PSI + PSI1) / 2;

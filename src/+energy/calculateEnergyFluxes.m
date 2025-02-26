@@ -1,4 +1,4 @@
-function [QET, QEB] = calculateEnergyFluxes(SAVE, TT, ModelSettings)
+function [QET, QEB] = calculateEnergyFluxes(SAVE, TT, ModelSettings, GroundwaterSettings)
     %{
         Calculate the energy fluxes on the boundary nodes, see STEMMUS Technical
         Notes.

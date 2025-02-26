@@ -1,11 +1,19 @@
 # Unreleased
 
-**Added:**
+**Changed:**
+- Change array shape of precipitation and runoff fluxes from time-series array to 1D array (for BMI purposes) discussed in [#280](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/280) and added in [#282](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/282) 
 
+**Fixed:**
+- Correct snow precipitation calcuations discussed in [#279](https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/279) and fixed in [#282](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/282)
+
+<a name="1.6.2"></a>
+# [1.6.2](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.6.2) - 17 Dec 2024
+
+The 1.6.2 release comes with minor changes as:
+
+**Added:**
 - Documentation using mkdocs and a github action workflow to publish the
   documentation in [#264](https://github.com/EcoExtreML/STEMMUS_SCOPE/pull/264)
-
-**Changed:**
 
 <a name="1.6.1"></a>
 # [1.6.1](https://github.com/EcoExtreML/STEMMUS_SCOPE/releases/tag/1.6.1) - 26 Sep 2024

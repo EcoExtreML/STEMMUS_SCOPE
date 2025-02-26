@@ -171,7 +171,7 @@ function InitialValues = defineInitialValues(Dur_tot, ModelSettings)
 
     Nmsrmn = Dur_tot * 10; % Here, it is made as big as possible, in case a long simulation period containing many time step is defined.
     fields = {
-              'Precip', 'Ta', 'Ts', 'U', 'HR_a', 'Rns', 'Rnl', 'Rn', ...
+              'Ta', 'Ts', 'U', 'HR_a', 'Rns', 'Rnl', 'Rn', ...
               'h_SUR', 'SH', 'MO', 'Zeta_MO', 'TopPg'
              };
     structures{4} = helpers.createStructure(zeros(Nmsrmn, 1), fields);

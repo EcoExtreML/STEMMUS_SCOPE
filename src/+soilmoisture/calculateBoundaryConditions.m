@@ -45,7 +45,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     runoffDunn = ForcingData.runoffDunnian(KT); % Dunnian runoff (calculated in +io/loadForcingData file)
 
     % Check if surface temperature is less than zero, then Precipitation is snow (modified by Mostafa)
-    if KT == 1
+    if KT == 1 % see issue 279 (https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/279)
         Precip_snowAccum = 0; % initalize accumulated snow for first time step
     else
         Precip_snowAccum = ForcingData.Precip_snowAccum;

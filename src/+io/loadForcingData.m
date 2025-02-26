@@ -21,7 +21,7 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
 
     % Calculate saturation excess runoff (Dunnian runoff)
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated
-        % Concept is adopted from the CLM model (see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232)
+        % Concept is adopted from the CLM model (see issue 232, https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232)
         % Check also the CLM documents (https://doi.org/10.5065/D6N877R0, https://doi.org/10.1029/2005JD006111)
         wat_Dep = Tot_Depth / 100; % (m), this assumption water depth = total soil depth is not fully correct (to be improved)
         fover = 0.5; % decay factor (fixed to 0.5 m-1)

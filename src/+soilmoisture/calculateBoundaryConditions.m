@@ -54,7 +54,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     if SoilVariables.Tss(KT) <= 0 % surface temperature is equal or less than zero
         Precip_snow = Precip; % snow precipitation
         Precip_liquid = 0; % liquid precipitation (rainfall)
-        runoffDunn = 0;
+        runoffDunn = 0; % update Dunnian runoff in case precpitation is snow
         if KIT == 1 % accumulate snow at one iteration only within the time step
             Precip_snowAccum = Precip + Precip_snowAccum;
         else
@@ -70,8 +70,11 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
         Precip_snow = 0;
     end
 
-    % Infiltration = Precipitation - total runoff (Dunnian runoff + Hortonian runoff)
-    infiltration = Precip_liquid - runoffDunn; % removing Dunnian runoff (Hortonian runoff is removed below)
+    %%% Calculate effective precipitation after removing canopy interception and total runoff  %%%
+    % effective precipitation = precipitation - canopy interception - (Dunnian runoff + Hortonian runoff)
+    % Currently, canopy interception is not implemented in the code yet
+    % (1) Remove saturation excess runoff (Dunnian runoff)
+    effectivePrecip = Precip_liquid - runoffDunn; % Hortonian runoff is removed below
 
     if BoundaryCondition.NBCh == 1             %  Specified matric head at surface---equal to hN;
         % h_SUR: Observed matric potential at surface. This variable
@@ -91,27 +94,25 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
             RHS(n) = RHS(n) - BoundaryCondition.BCh;   % a specified matric head (saturation or dryness) was applied;
         end
     else % (BoundaryCondition.NBCh == 3, Specified atmospheric forcing)
-        % Calculate infiltration excess runoff (Hortonian runoff) and update applied infiltration, modified by Mostafa
+        % (2) Calculate infiltration excess runoff (Hortonian runoff) and update effective precpitation, modified by Mostafa
         Ks0 = SoilProperties.Ks0 / (3600 * 24); % saturated vertical hydraulic conductivity. unit conversion from cm/day to cm/sec
         % Note: Ks0 is not adjusted by the fsat as in the CLM model (Check CLM document: https://doi.org/10.5065/D6N877R)
-        % Calculate infiltration capacity
         topThick = 5; % first 5 cm of the soil
         satCap = SoilProperties.theta_s0 * topThick; % saturation capacity represented by saturated water content of the top 5 cm of the soil
         actTheta = ModelSettings.DeltZ(end - 3:end) * SoilVariables.Theta_UU(end - 4:end - 1, 1); % actual moisture of the top 5 cm of the soil
-        infCap = (satCap - actTheta) / TimeProperties.DELT; % (cm/sec)
-        infCap_min = min(Ks0, infCap);
+        infCap = (satCap - actTheta) / TimeProperties.DELT; % infiltration capcaity (cm/sec)
+        infCap_min = min(Ks0, infCap); % minimum infiltration capcaity
 
-        % Infiltration excess runoff (Hortonian runoff)
-        if infiltration > infCap_min
-            runoffHort = infiltration - infCap_min;
+        if effectivePrecip > infCap_min
+            runoffHort = effectivePrecip - infCap_min; % Hortonian runoff
         else
             runoffHort = 0;
         end
-        % Update applied infiltration after removing Hortonian runoff
-        infiltration = min(infiltration, infCap_min);
+        % Update effective precipitation after removing Hortonian runoff
+        effectivePrecip = min(effectivePrecip, infCap_min);
 
-        % Add depression water to applied infiltration
-        AVAIL0 = infiltration + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
+        % Add depression water to effective precipitation
+        AVAIL0 = effectivePrecip + BoundaryCondition.DSTOR0 / Delt_t; % (cm/sec)
 
         if BoundaryCondition.NBChh == 1
             RHS(n) = hN;
@@ -131,7 +132,7 @@ function [AVAIL0, RHS, HeatMatrices, ForcingData] = calculateBoundaryConditions(
     ForcingData.Precip_liquid = Precip_liquid;
     ForcingData.Precip_snow = Precip_snow;
     ForcingData.Precip_snowAccum = Precip_snowAccum;
-    ForcingData.infiltration = infiltration;
+    ForcingData.effectivePrecip = effectivePrecip;
     ForcingData.runoffDunn = runoffDunn;
     ForcingData.runoffHort = runoffHort;
 end

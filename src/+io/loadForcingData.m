@@ -19,21 +19,16 @@ function [ForcingData] = loadForcingData(InputPath, TimeProperties, SoilProperti
     ForcingData.G_msr = Mdata{:, 7} * 0.15;
     Precip_msr = Mdata{:, 6}; % (cm/sec)
 
-    %%%%%%%%%% Adjust precipitation to get applied infiltration after removing: (1) saturation excess runoff   %%%%%%%%%%
-    %%%%%%%%%%           (2) infiltration excess runoff (updated in +soilmoisture/calculateBoundaryConditions) %%%%%%%%%%
-    % Note: Code changes are related to the issue: https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232
-    % Note: Adjusting the precipitation after the canopy interception is not implemented yet.
-
-    % (1) Saturation excess runoff (Dunnian runoff)
+    % Calculate saturation excess runoff (Dunnian runoff)
     if ~GroundwaterSettings.GroundwaterCoupling  % Groundwater Coupling is not activated
-        % Concept is adopted from the CLM model (see issue 232 in GitHub for more explanation)
+        % Concept is adopted from the CLM model (see https://github.com/EcoExtreML/STEMMUS_SCOPE/issues/232)
         % Check also the CLM documents (https://doi.org/10.5065/D6N877R0, https://doi.org/10.1029/2005JD006111)
-        wat_Dep = Tot_Depth / 100; % (m)
+        wat_Dep = Tot_Depth / 100; % (m), this assumption water depth = total soil depth is not fully correct (to be improved)
         fover = 0.5; % decay factor (fixed to 0.5 m-1)
         fmax = SoilProperties.fmax; % potential maximum value of fsat
         fsat = (fmax .* exp(-0.5 * fover * wat_Dep)); % fraction of saturated area (unitless)
         ForcingData.runoffDunnian = Precip_msr .* fsat; % Dunnian runoff (saturation excess runoff, in cm/sec)
-    end
+    end % In case Groundwater Coupling is activated, Dunnian runoff is calculated in +groundwater/updateDunnianRunoff
 
     % replace negative values
     for jj = 1:Dur_tot

@@ -435,12 +435,12 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             if options.calc_vegetation_dynamic == 1  &&  KT >= WofostPar.CSTART && KT <= WofostPar.CEND
                 if KT == WofostPar.CSTART
                     ScopeParameters.LAI(KT)  = WofostPar.LAIEM;                % initial LAI
-                    if WofostPar.PHOpt == 1                                    % Options of PH simulations; 0 using the prescribed values, and 1 for simulation
+                    if WofostPar.PHOpt == 0                                    % 
                         ScopeParameters.hc(KT)   = WofostPar.PHEM;             % initial PH
                     end
                 elseif KT > WofostPar.CSTART
                     ScopeParameters.LAI(KT)  = crop_output(KT - 1, 3);            % substitute LAI
-                    if WofostPar.PHOpt == 1
+                    if WofostPar.PHOpt == 0
                         ScopeParameters.hc(KT)   = crop_output(KT - 1, 4);        % substitute PH
                     end
                 end

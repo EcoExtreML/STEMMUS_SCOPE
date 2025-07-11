@@ -108,6 +108,11 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
         fnames.spectrum_hemis_thermal_file     = fullfile(Output_dir, 'spectrum_hemis_thermal.bin');   % spectrum hemispherically integrated
     end
 
+    % Create cropgrowth file
+    if options.calc_vegetation_dynamic
+        fnames.cropgrowth_file                  = fullfile(Output_dir, 'cropgrowth.bin');               % crop growth simulation ydy
+    end
+
     % Create empty files for appending
     structfun(@(x) fopen(x, 'w'), fnames, 'UniformOutput', false);
     fclose("all");

@@ -1,7 +1,7 @@
 function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi, vmax, options, fluxes, meteo, iter, thermal, ...
                                     spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, Evap, WaterStress, WaterPotential, ...
                                     Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ...
-                                    ForcingData, RS, RWUs, RWUg)
+                                    ForcingData, RS, RWUs, RWUg, wbal, closeWaterBalance)
 
     %% OUTPUT DATA
     % author C. Van der Tol
@@ -13,6 +13,18 @@ function n_col = output_data_binary(f, k, xyt, rad,  canopy, ScopeParameters, vi
                1E6 * fluxes.aPAR_Cab fluxes.aPAR / rad.PAR fluxes.aPAR_Wm2 1E6 * rad.PAR rad.Eoutf rad.Eoutf ./ fluxes.aPAR_Wm2 Trap * 10 Evap * 10 Trap * 10 + Evap * 10 fluxes.GPP fluxes.NEE];
     n_col.flu = length(flu_out);
     fwrite(f.flu_file, flu_out, 'double');
+
+    %% Water balance fluxes (optional)
+    if closeWaterBalance
+        unitConv = 10 * 1800; % convert fluxes unit from cm/s to mm/30min
+        wbal_out = [k iter.counter xyt.year(k) xyt.t(k) ForcingData.Precip * unitConv ForcingData.effectivePrecip * unitConv ForcingData.runoffHort * unitConv ...
+                    ForcingData.runoffDunn * unitConv ForcingData.runoff * unitConv RWUs * unitConv RWUg * unitConv Trap * unitConv Evap * unitConv ...
+                    (Trap + Evap) * unitConv wbal.recharge * unitConv wbal.capillary * unitConv wbal.deltaStorage * unitConv wbal.deltaStorageIn * unitConv ...
+                    wbal.deltaStorageOut * unitConv wbal.correctedDeltaS * unitConv wbal.correctedDeltaSIn * unitConv wbal.correctedDeltaSOut * unitConv ...
+                    wbal.totalInflow * unitConv wbal.totalOutflow * unitConv wbal.residual * unitConv wbal.errorInit wbal.error];
+        n_col.wbal = length(wbal_out);
+        fwrite(f.wbal_file, wbal_out, 'double');
+    end
 
     %% surftemp
     surftemp_out =  [k xyt.year(k) xyt.t(k) thermal.Ta thermal.Ts(1) thermal.Ts(2) thermal.Tcave thermal.Tsave];

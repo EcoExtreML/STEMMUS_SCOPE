@@ -1,5 +1,5 @@
 function [Output_dir, fnames] = create_output_files_binary(parameter_file, sitename, path_of_code, input_path, ...
-                                                           output_path, spectral, options)
+                                                           output_path, spectral, options, closeWaterBalance)
 
     %% Set Output dir
     Output_dir = output_path;
@@ -37,6 +37,10 @@ function [Output_dir, fnames] = create_output_files_binary(parameter_file, siten
     fnames.Sim_qvt_file = fullfile(Output_dir, 'qvt.bin'); % vapour flux due to temprature gradient
     fnames.Sim_qva_file = fullfile(Output_dir, 'qva.bin'); % vapour flux due to dry air pressure gradient
     fnames.Sim_qtot_file = fullfile(Output_dir, 'qtot.bin'); % total flux (liquid + vapour)
+
+    if closeWaterBalance
+        fnames.wbal_file = fullfile(Output_dir, 'wbal.bin'); % water balance fluxes and error
+    end
 
     if options.calc_ebal
         fnames.spectrum_obsdir_BlackBody_file = fullfile(Output_dir, 'spectrum_obsdir_BlackBody.bin');  % spectrum observation direction

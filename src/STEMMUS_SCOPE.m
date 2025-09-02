@@ -39,7 +39,7 @@ start_time = clock;
 if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     % Read the configPath file. Due to using MATLAB compiler, we cannot use run(CFG)
     disp (['Reading config from ', CFG]);
-    [InputPath, OutputPath, InitialConditionPath, FullCSVfiles] = io.read_config(CFG);
+    [InputPath, OutputPath, InitialConditionPath, FullCSVfiles, closeWaterBalance] = io.read_config(CFG);
 
     % Prepare forcing and soil data
     [SiteProperties, SoilProperties, TimeProperties] = io.prepareInputData(InputPath);
@@ -242,8 +242,8 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmfile     = [path_input 'radiationdata/' char(F(4).FileName(1))];
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
-    %% 13. create output files and
-    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
+    %% 13. create output files
+    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options, closeWaterBalance);
 
     %% Initialize Temperature, Matric potential and soil air pressure.
     % Define soil variables for StartInit
@@ -621,6 +621,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         SoilVariables.T = T;
         SoilVariables.h_frez = h_frez;
         SoilVariables.Tss(KT) = Tss;
+        Theta_UU_previous = SoilVariables.Theta_UU;
 
         for KIT = 1:ModelSettings.NIT
             [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, ModelSettings.NN, SoilConstants.hd, ForcingData.Tmin);
@@ -704,7 +705,24 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
                                                                                                                 TOLD, Evap, r_a_SOIL, Rn_SOIL, KT, CHK, ModelSettings, GroundwaterSettings);
             end
 
-            if max(CHK) < 0.1
+            % Recharge calculations, added by Mostafa
+            if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
+                gwfluxes = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, gwfluxes, ModelSettings, GroundwaterSettings);
+                if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
+                    gwfluxes.recharge = 0;
+                end
+            else
+                gwfluxes.recharge = 0;
+                gwfluxes.indxRchrg = NaN;
+            end
+
+            % Water balance calculations, added by Mostafa
+            if closeWaterBalance
+                [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings);
+                SoilVariables.Theta_UU = Theta_UU_corrected;
+            end
+
+            if max(CHK) < 0.1 && abs(wbal.error) < 1
                 break
             end
             hSAVE = SoilVariables.hh(ModelSettings.NN);
@@ -716,10 +734,20 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         KIT = 0;
 
         [TT_CRIT, hh_frez] = HT_frez(SoilVariables.hh, ModelSettings.T0, Constants.g, L_f, SoilVariables.TT, ModelSettings.NN, SoilConstants.hd, ForcingData.Tmin);
-        % updates inputs for UpdateSoilWaterContent
+
+        % Update inputs for UpdateSoilWaterContent
         SoilVariables.TT_CRIT = TT_CRIT;
         SoilVariables.hh_frez = hh_frez;
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten, ModelSettings);
+
+        % Update water balance (after UpdateSoilWaterContent)
+        if closeWaterBalance
+            [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings);
+            SoilVariables.Theta_UU = Theta_UU_corrected;
+            Theta_UU_previous = SoilVariables.Theta_UU; % for next time step
+        else
+            wbal = 0;
+        end
 
         if IRPT1 == 0 && IRPT2 == 0
             if KT        % In case last time step is not convergent and needs to be repeated.
@@ -775,17 +803,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
         end
 
-        % Recharge calculations, added by Mostafa
-        if GroundwaterSettings.GroundwaterCoupling == 1 % Groundwater coupling is enabled
-            gwfluxes = groundwater.calculateGroundwaterRecharge(EnergyVariables, SoilVariables, KT, gwfluxes, ModelSettings, GroundwaterSettings);
-            if GroundwaterSettings.gw_Dep <= 1 % soil is fully saturated
-                gwfluxes.recharge = 0;
-            end
-        else
-            gwfluxes.recharge = 0;
-            gwfluxes.indxRchrg = NaN;
-        end
-
         % set SoilVariables for the rest of the loop
         h = SoilVariables.h;
         hh = SoilVariables.hh;
@@ -799,7 +816,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, wbal, closeWaterBalance);
         fclose("all");
     end
 end
@@ -822,7 +839,7 @@ if strcmp(bmiMode, 'finalize') || strcmp(runMode, 'full')
         io.output_verification(Output_dir);
     end
 
-    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings, FullCSVfiles);
+    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings, FullCSVfiles, closeWaterBalance);
     save([Output_dir, 'output.mat']);
 end
 

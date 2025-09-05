@@ -1,11 +1,11 @@
 function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings)
     %{
         Added by Mostafa
-        This function do two tasks: 1) check the orginal water balance of the unsaturated zone
+        This function does two tasks: 1) checks the original water balance of the unsaturated zone
                                     2) if water balance error is large -> correct water balance
         Outputs
         wbal                     a structure that includes water balance fluxes
-        Theta_UU_corrected       a 2D array of the corrected soil moisutre profile
+        Theta_UU_corrected       a 2D array of the corrected soil moisture profile
 
         Task 1: Check water balance
         Water balance concept: Total inflow = Total outflow + residual
@@ -20,7 +20,7 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         To close water balance, one of the water fluxes (ET, recharge, runoff, or delta storage) needs to be adjusted.
         Since all fluxes depend on soil moisture, delta storage is chosen for correction. Why?
         Because the adjustment is distributed across the entire soil moisture profile, meaning that the soil
-        mositure of each soil layer undergoes only a minor modification, minimizing potential disturbances.
+        moisture of each soil layer undergoes only a minor modification, minimizing potential disturbances.
         This approach prevents dramatic changes in other fluxes that could occur if they were corrected directly.
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,8 +31,8 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         Theta_UU_previous        2D array        Soil moisture (liquid + ice) of the previous time step
         Theta_UU_current         2D array        Soil moisture (liquid + ice) of the current time step
         Theta_UU_corrected       2D array        Corrected soil moisture (liquid + ice) at the end of the current time step
-        deltaStorageIn           One value       Change of storage that enter unsaturated zone (sum value over all soil layers)
-        deltaStorageOut          One value       Change in storage that exit unsaturated zone (sum value over all soil layers)
+        deltaStorageIn           One value       Change of storage that enters unsaturated zone (sum value over all soil layers)
+        deltaStorageOut          One value       Change in storage that exits unsaturated zone (sum value over all soil layers)
         deltaStorage             One value       Change in storage of the unsaturated zone (sum value over all soil layers)
         deltaStorageLay          1D array        Change in storage of the unsaturated zone per soil layer
         totalInflowInit          One value       Total inflow to unsaturated zone (before water balance correction)
@@ -41,8 +41,8 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         errorInit                One value       Error of water balance (before water balance correction)
         thetaCorrection          One value       Corrected soil moisture value
         thetaCorrectionLay       1D array        Corrected soil moisture array
-        correctedDeltaSIn        One value       Corrected change of storage that enter unsaturated zone (sum value over all soil layers)
-        correctedDeltaSOut       One value       Corrected change of storage that exit unsaturated zone (sum value over all soil layers)
+        correctedDeltaSIn        One value       Corrected change of storage that enters unsaturated zone (sum value over all soil layers)
+        correctedDeltaSOut       One value       Corrected change of storage that exits unsaturated zone (sum value over all soil layers)
         correctedDeltaS          One value       Corrected change of storage of the unsaturated zone
         totalInflow              One value       Corrected total inflow to unsaturated zone (after water balance correction)
         totalOutflow             One value       Corrected total outflow from unsaturated zone (after water balance correction)
@@ -68,18 +68,24 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     Theta_UU_current = SoilVariables.Theta_UU;
     Theta_UU_corrected = SoilVariables.Theta_UU; % will be corrected below
     deltaStorageLay = (Theta_UU_current(1:end - 1, 1) - Theta_UU_previous(1:end - 1, 1))' .* ModelSettings.DeltZ;
-
-    deltaStorageIn = sum(deltaStorageLay(deltaStorageLay > 0)) / TimeProperties.DELT;
-    deltaStorageOut = -sum(deltaStorageLay(deltaStorageLay < 0)) / TimeProperties.DELT;
-    deltaStorage = deltaStorageOut - deltaStorageIn;
+    deltaStorage = sum(deltaStorageLay) / TimeProperties.DELT;
+    if deltaStorage > 0
+        deltaStorageIn = deltaStorage;
+        deltaStorageOut = 0;
+    else
+        deltaStorageIn = 0;
+        deltaStorageOut = -deltaStorage;
+    end
 
     % 1.3. Calculate initial total inflow, total outflow, residual, and error
     totalInflowInit = ForcingData.Precip + capillary + deltaStorageIn;
     totalOutflowInit = runoff + ET + recharge + deltaStorageOut;
     residualInit = totalInflowInit - totalOutflowInit;
-    errorInit = residualInit / max(totalInflowInit, eps) * 100; % avoid division by zero
+    errorDenominator = abs(totalInflowInit) + abs(totalOutflowInit); % avoid division by zero if total inflow = 0
+    errorInit = residualInit / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
+    errorInit = max(min(errorInit, 100), -100); % constrain extreme error values
 
-    %%%%%%%%%%%%%%%%%% Task 2: Close water balance by correcting soil moisutre profile %%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%% Task 2: Close water balance by correcting soil moisture profile %%%%%%%%%%%%%%%%%%
     errorThreshold = 1; % unit is %
     maxIterations  = 30;
     iteration = 0;
@@ -99,9 +105,9 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
                 soil_depth = sum(ModelSettings.DeltZ);
             end
 
-            % 2.2. Calcualte correction value of soil moisture
+            % 2.2. Calculate correction value of soil moisture
             thetaCorrection = residual / soil_depth * TimeProperties.DELT;
-            % Add the correction value to the soil mositure profile
+            % Add the correction value to the soil moisture profile
             for i = indxBotm + 1:ModelSettings.NL
                 Theta_UU_corrected(i:end - 1, 1) = Theta_UU_current(i:end - 1, 1) + thetaCorrection;
                 Theta_UU_corrected(i:end - 1, 2) = Theta_UU_current(i:end - 1, 2) + thetaCorrection;
@@ -110,10 +116,10 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
             % 2.3. Ensure corrected soil moisture values within ranges of residual and saturated water content
             [Theta_UU_corrected] = io.constrainSoilVariables(Theta_UU_corrected, VanGenuchten);
 
-            % Recalcualte correction value of soil moisture after residual and saturated boundaries check
+            % Recalculate correction value of soil moisture after residual and saturated boundaries check
             thetaCorrectionLay = Theta_UU_corrected(1:end - 1, 1) - Theta_UU_previous(1:end - 1, 1);
 
-            % 2.4. Recalcualte corrected delta storage (based on recalcualted corrected soil moisture)
+            % 2.4. Recalculate corrected delta storage (based on recalculated corrected soil moisture)
             correctedDeltaS = sum(thetaCorrectionLay .* ModelSettings.DeltZ') / TimeProperties.DELT;
             if correctedDeltaS > 0
                 correctedDeltaSIn = 0;
@@ -123,16 +129,13 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
                 correctedDeltaSOut = 0;
             end
 
-            % 2.5. Calcualte corrected total inflow, total outflow, residual and error
+            % 2.5. Calculate corrected total inflow, total outflow, residual and error
             totalInflow = ForcingData.Precip + capillary + deltaStorageIn + correctedDeltaSIn;
             totalOutflow = runoff + ET + recharge + deltaStorageOut + correctedDeltaSOut;
             residual = totalInflow - totalOutflow;
-            error = residual / max(totalInflow, eps) * 100; % avoid division by zero
+            errorDenominator = abs(totalInflow) + abs(totalOutflow); % avoid division by zero if total inflow = 0
+            error = residual / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
             error = max(min(error, 100), -100); % constrain extreme error values
-
-            % Update for exporting to csv file
-            totalInflow = ForcingData.Precip + capillary;
-            totalOutflow = runoff + ET + recharge + deltaStorage + correctedDeltaS;
         end
 
     else % abs(errorInit) < errorThreshold -> No correction needed

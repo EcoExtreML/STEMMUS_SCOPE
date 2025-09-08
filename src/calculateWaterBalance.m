@@ -149,7 +149,11 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         totalOutflow = totalOutflowInit;
     end
 
-    % 2.3. Outputs to be exported in csv or exposed to BMI
+        % Update for flux values in csv file
+        totalInflow = ForcingData.Precip;
+        totalOutflow = runoff + ET - gwfluxes.recharge - deltaStorage + correctedDeltaS;
+
+    % Outputs to be exported in csv or exposed to BMI
     wbal.totalInflowInit = totalInflowInit;
     wbal.totalOutflowInit = totalOutflowInit;
     wbal.totalInflow = totalInflow;

@@ -718,7 +718,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
             % Water balance calculations, added by Mostafa
             if closeWaterBalance
-                [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings);
+                [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings);
                 SoilVariables.Theta_UU = Theta_UU_corrected;
             end
 
@@ -742,7 +742,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Update water balance (after UpdateSoilWaterContent)
         if closeWaterBalance
-            [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings);
+            [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings);
             SoilVariables.Theta_UU = Theta_UU_corrected;
             Theta_UU_previous = SoilVariables.Theta_UU; % for next time step
         else

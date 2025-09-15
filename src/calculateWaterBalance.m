@@ -1,4 +1,5 @@
-function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, Evap, Trap, gwfluxes, VanGenuchten, ModelSettings, GroundwaterSettings)
+function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, ...  
+                                                            Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings)
     %{
         Added by Mostafa
         This function does two tasks: 1) checks the original water balance of the unsaturated zone
@@ -9,15 +10,15 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
 
         Task 1: Check water balance
         Water balance concept: Total inflow = Total outflow + residual
-        Total inflow = Precipitation + Capillary rise flux
-        Total outflow = Evapotranspiration + Runoff + Recharge + delta storage
+        Total inflow = Precipitation
+        Total outflow = Evapotranspiration + Runoff ± Bottom flux ± delta storage
         delta storage = (storage at time t+1 - storage at time t) / time step length
                       = (soil moisture at time t+1 - soil moisture at time t) * soil thickness / time step length
         Residual = total inflow - total outflow - delta storage
         error = (Residual/total inflow)*100%
 
         Task 2: Correct water balance
-        To close water balance, one of the water fluxes (ET, recharge, runoff, or delta storage) needs to be adjusted.
+        To close water balance, one of the water fluxes (ET, runoff, Bottom flux or delta storage) needs to be adjusted.
         Since all fluxes depend on soil moisture, delta storage is chosen for correction. Why?
         Because the adjustment is distributed across the entire soil moisture profile, meaning that the soil
         moisture of each soil layer undergoes only a minor modification, minimizing potential disturbances.
@@ -26,8 +27,9 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         ET                       One value       Evapotranspiration [sum of Evaporation (Evap) + Transpiration (Trap)]
         runoff                   One value       Runoff [sum of Hortonian runoff + Dunnian runoff]
-        recharge                 One value       Groundwater recharge
-        capillary                One value       Capillary rise flux
+        botmFluxIn               One value       Flux at bottom boundary of soil (input to soil zone) 
+        botmFluxOut              One value       Flux at bottom boundary of soil (output from soil zone)
+        botmFlux                 One value       Flux at bottom boundary of soil (difference between botmFluxIn and botmFluxOut)
         Theta_UU_previous        2D array        Soil moisture (liquid + ice) of the previous time step
         Theta_UU_current         2D array        Soil moisture (liquid + ice) of the current time step
         Theta_UU_corrected       2D array        Corrected soil moisture (liquid + ice) at the end of the current time step
@@ -50,16 +52,9 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     %}
 
     %%%%%%%%%%%%%%%%%% Task 1: Check water balance error %%%%%%%%%%%%%%%%%%
-    % 1.1. Get water balance components (ET, runoff, recharge, capillary rise flux, and delta storage)
+    % 1.1. Get water balance components (ET and runoff)
     ET = Evap + Trap;
     runoff = ForcingData.runoffHort + ForcingData.runoffDunn;
-    if gwfluxes.recharge > 0 % capillary rise (input to soil zone)
-        recharge = 0;
-        capillary = gwfluxes.recharge;
-    else % recharge (output from soil zone)
-        recharge = -gwfluxes.recharge;
-        capillary = 0;
-    end
 
     % 1.2. Calculate delta storage
     if KT == 1 % For first time step only (for the rest, Theta_UU_previous is an input to the function)
@@ -77,16 +72,34 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         deltaStorageOut = -deltaStorage;
     end
 
+   % 1.3. Get flux at bottom boundary
+    if ~GroundwaterSettings.GroundwaterCoupling  % no Groundwater coupling
+        botmFlux = HBoundaryFlux.QMB;
+    else
+        botmFlux = gwfluxes.recharge;
+    end
+    if botmFlux > 0 % input to soil zone
+        botmFluxIn = botmFlux; % in case of groundwater coupling -> botmFlux = capillary rise
+        botmFluxOut = 0;
+    else % output from soil zone
+        botmFluxIn = 0;
+        botmFluxOut = -botmFlux; % in case of groundwater coupling -> botmFlux = recharge
+    end
+
     % 1.3. Calculate initial total inflow, total outflow, residual, and error
-    totalInflowInit = ForcingData.Precip + capillary + deltaStorageIn;
-    totalOutflowInit = runoff + ET + recharge + deltaStorageOut;
+    totalInflowInit = ForcingData.Precip + botmFluxIn + deltaStorageIn;
+    totalOutflowInit = runoff + ET + botmFluxOut + deltaStorageOut;
     residualInit = totalInflowInit - totalOutflowInit;
     errorDenominator = abs(totalInflowInit) + abs(totalOutflowInit); % avoid division by zero if total inflow = 0
     errorInit = residualInit / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
     errorInit = max(min(errorInit, 100), -100); % constrain extreme error values
 
-    %%%%%%%%%%%%%%%%%% Task 2: Close water balance by correcting soil moisture profile %%%%%%%%%%%%%%%%%%
-    errorThreshold = 1; % unit is %
+    % Update for values in csv file (use only net values of delta storage and bottom flux)
+    totalInflowInit = ForcingData.Precip;
+    totalOutflowInit = runoff + ET - botmFlux - deltaStorage;
+
+    %%%%%%%%%%%%%%%%%% Task 2: Enforce closing water balance by correcting soil moisture profile %%%%%%%%%%%%%%%%%%
+    errorThreshold = 1; % unit is percentage
     maxIterations  = 30;
     iteration = 0;
     error = errorInit;
@@ -130,13 +143,17 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
             end
 
             % 2.5. Calculate corrected total inflow, total outflow, residual and error
-            totalInflow = ForcingData.Precip + capillary + deltaStorageIn + correctedDeltaSIn;
-            totalOutflow = runoff + ET + recharge + deltaStorageOut + correctedDeltaSOut;
+            totalInflow = ForcingData.Precip + botmFluxIn + deltaStorageIn + correctedDeltaSIn;
+            totalOutflow = runoff + ET + botmFluxOut + deltaStorageOut + correctedDeltaSOut;
             residual = totalInflow - totalOutflow;
             errorDenominator = abs(totalInflow) + abs(totalOutflow); % avoid division by zero if total inflow = 0
             error = residual / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
             error = max(min(error, 100), -100); % constrain extreme error values
         end
+
+        % Update for values in csv file (use only net values of delta storage and bottom flux)
+        totalInflow = ForcingData.Precip;
+        totalOutflow = runoff + ET - botmFlux - deltaStorage + correctedDeltaS;
 
     else % abs(errorInit) < errorThreshold -> No correction needed
         Theta_UU_corrected = SoilVariables.Theta_UU;
@@ -148,10 +165,6 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
         totalInflow = totalInflowInit;
         totalOutflow = totalOutflowInit;
     end
-
-        % Update for flux values in csv file
-        totalInflow = ForcingData.Precip;
-        totalOutflow = runoff + ET - gwfluxes.recharge - deltaStorage + correctedDeltaS;
 
     % Outputs to be exported in csv or exposed to BMI
     wbal.totalInflowInit = totalInflowInit;
@@ -167,5 +180,6 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     wbal.correctedDeltaS = correctedDeltaS;
     wbal.correctedDeltaSIn = correctedDeltaSIn;
     wbal.correctedDeltaSOut = correctedDeltaSOut;
-    wbal.capillary = capillary;
-    wbal.recharge = recharge;
+    wbal.botmFlux = botmFlux;
+    wbal.botmFluxIn = botmFluxIn;
+    wbal.botmFluxOut = botmFluxOut;

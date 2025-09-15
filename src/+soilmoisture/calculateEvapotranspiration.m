@@ -39,7 +39,7 @@ function [Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapotransp
     RWU = RWU * 100; % unit conversion from m/sec to cm/sec
     if GroundwaterSettings.GroundwaterCoupling == 1
         RWUs = sum(RWU(indxBotm:ModelSettings.NL));
-        RWUg = sum(RWU(1:indxBotm - 1));
+        RWUg = sum(RWU(1:indxBotm + 2)); % add +2 (2 layers to account for capillary frinage zone)
     else
         RWUs = sum(RWU(1:ModelSettings.NL));
         RWUg = 0;

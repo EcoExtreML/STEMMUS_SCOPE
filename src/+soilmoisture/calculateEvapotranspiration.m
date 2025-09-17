@@ -5,6 +5,9 @@ function [Rn_SOIL, Evap, Trap, r_a_SOIL, Srt, RWUs, RWUg] = calculateEvapotransp
     else % Groundwater Coupling is activated
         % index of bottom layer after neglecting saturated layers (from bottom to top)
         indxBotm = GroundwaterSettings.indxBotmLayer;
+        if indxBotm >= ModelSettings.NL - 2 % avoid model crash in case of fully saturated soil
+            indxBotm = ModelSettings.NL - 2;
+        end
     end
 
     Rn = (ForcingData.Rn_msr(KT)) * 8.64 / 24 / 100 * 1;

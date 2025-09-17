@@ -243,7 +243,7 @@ if strcmp(bmiMode, "initialize") || strcmp(runMode, "full")
     atmo.M      = helpers.aggreg(atmfile, spectral.SCOPEspec);
 
     %% 13. create output files
-    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options, closeWaterBalance);
+    [Output_dir, fnames] = io.create_output_files_binary(parameter_file, SiteProperties.sitename, path_of_code, path_input, path_output, spectral, options);
 
     %% Initialize Temperature, Matric potential and soil air pressure.
     % Define soil variables for StartInit
@@ -352,9 +352,6 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
 
         % Update GroundwaterSettings.headBotmLayer and GroundwaterSettings.tempBotm, from MODFLOW through BMI
         GroundwaterSettings.gw_Dep = groundwater.calculateGroundWaterDepth(GroundwaterSettings.topLevel, GroundwaterSettings.headBotmLayer, ModelSettings.Tot_Depth);
-
-        % Update Dunnian runoff and ForcingData.Precip_msr
-        [ForcingData.runoffDunnian, ForcingData.Precip_msr] = groundwater.updateDunnianRunoff(ForcingData.Precip_msr, GroundwaterSettings.gw_Dep);
 
         % Calculate the index of the bottom layer level
         [GroundwaterSettings.indxBotmLayer, GroundwaterSettings.indxBotmLayer_R] = groundwater.calculateIndexBottomLayer(GroundwaterSettings.soilThick, GroundwaterSettings.gw_Dep, ModelSettings);
@@ -717,10 +714,8 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
             end
 
             % Water balance calculations, added by Mostafa
-            if closeWaterBalance
-                [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings);
-                SoilVariables.Theta_UU = Theta_UU_corrected;
-            end
+            [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings, closeWaterBalance);
+            SoilVariables.Theta_UU = Theta_UU_corrected;
 
             if max(CHK) < 0.1 && abs(wbal.error) < 1
                 break
@@ -741,13 +736,9 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         SoilVariables = UpdateSoilWaterContent(KIT, L_f, SoilVariables, VanGenuchten, ModelSettings);
 
         % Update water balance (after UpdateSoilWaterContent)
-        if closeWaterBalance
-            [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings);
-            SoilVariables.Theta_UU = Theta_UU_corrected;
-            Theta_UU_previous = SoilVariables.Theta_UU; % for next time step
-        else
-            wbal = 0;
-        end
+        [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVariables, TimeProperties, KT, Theta_UU_previous, VanGenuchten, Evap, Trap, gwfluxes, HBoundaryFlux, ModelSettings, GroundwaterSettings, closeWaterBalance);
+        SoilVariables.Theta_UU = Theta_UU_corrected;
+        Theta_UU_previous = SoilVariables.Theta_UU; % for next time step
 
         if IRPT1 == 0 && IRPT2 == 0
             if KT        % In case last time step is not convergent and needs to be repeated.
@@ -816,7 +807,7 @@ if strcmp(bmiMode, 'update') || strcmp(runMode, 'full')
         n_col = io.output_data_binary(file_ids, k, xyt, rad, canopy, ScopeParameters, vi, vmax, options, fluxes, ...
                                       meteo, iter, thermal, spectral, gap, profiles, Sim_Theta_U, Sim_Temp, Trap, ...
                                       Evap, WaterStressFactor, WaterPotential, Sim_hh, Sim_qlh, Sim_qlt, Sim_qvh, ...
-                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, wbal, closeWaterBalance);
+                                      Sim_qvt, Sim_qla, Sim_qva, Sim_qtot, ForcingData, RS, RWUs, RWUg, wbal);
         fclose("all");
     end
 end
@@ -839,7 +830,7 @@ if strcmp(bmiMode, 'finalize') || strcmp(runMode, 'full')
         io.output_verification(Output_dir);
     end
 
-    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings, FullCSVfiles, closeWaterBalance);
+    io.bin_to_csv(fnames, n_col, k, options, SoilLayer, GroundwaterSettings, FullCSVfiles);
     save([Output_dir, 'output.mat']);
 end
 

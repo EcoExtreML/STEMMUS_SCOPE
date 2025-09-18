@@ -64,13 +64,8 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     Theta_UU_corrected = SoilVariables.Theta_UU; % will be corrected below
     deltaStorageLay = (Theta_UU_current(1:end - 1, 1) - Theta_UU_previous(1:end - 1, 1))' .* ModelSettings.DeltZ;
     deltaStorage = sum(deltaStorageLay) / TimeProperties.DELT;
-    if deltaStorage > 0
-        deltaStorageIn = deltaStorage;
-        deltaStorageOut = 0;
-    else
-        deltaStorageIn = 0;
-        deltaStorageOut = -deltaStorage;
-    end
+    deltaStorageIn  = max(deltaStorage, 0);
+    deltaStorageOut = max(-deltaStorage, 0);
 
     % 1.3. Get flux at bottom boundary
     if ~GroundwaterSettings.GroundwaterCoupling  % no groundwater coupling
@@ -78,15 +73,10 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     else
         botmFlux = gwfluxes.recharge;
     end
-    if botmFlux > 0 % input to soil zone
-        botmFluxIn = botmFlux; % in case of groundwater coupling -> botmFlux = capillary rise
-        botmFluxOut = 0;
-    else % output from soil zone
-        botmFluxIn = 0;
-        botmFluxOut = -botmFlux; % in case of groundwater coupling -> botmFlux = recharge
-    end
+    botmFluxIn  = max(botmFlux, 0); % input to soil zone (capillary rise flux in case of groundwater coupling)
+    botmFluxOut = max(-botmFlux, 0); % output from soil zone (recharge in case of groundwater coupling)
 
-    % 1.3. Calculate initial total inflow, total outflow, residual, and error
+    % 1.4. Calculate initial total inflow, total outflow, residual, and error
     totalInflowInit = ForcingData.Precip + botmFluxIn + deltaStorageIn;
     totalOutflowInit = runoff + ET + botmFluxOut + deltaStorageOut;
     residualInit = totalInflowInit - totalOutflowInit;
@@ -98,8 +88,7 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     totalInflowInit = ForcingData.Precip;
     totalOutflowInit = runoff + ET - botmFlux - deltaStorage;
 
-    %%%%%%%%%%%%%%%%%% Task 2: Enforce closing water balance by correcting soil moisture profile %%%%%%%%%%%%%%%%%%
-    % --- defaults (used if correction is skipped OR error below threshold) ---
+    % define outputs (used if correction below is skipped or error < error threshold)
     correctedDeltaS   = 0;
     correctedDeltaSIn = 0;
     correctedDeltaSOut = 0;
@@ -109,63 +98,62 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     totalOutflow = totalOutflowInit;
     Theta_UU_corrected = SoilVariables.Theta_UU;
 
-    if correctWaterBalance
-        errorThreshold = 1; % unit is percentage
-        maxIterations  = 30;
+    %%%%%%%%%%%%%%%%%% Task 2: Enforce closing water balance by correcting soil moisture profile %%%%%%%%%%%%%%%%%%
+    errorThreshold = 1; % unit is percentage
+    maxIterations  = 30;
+    if correctWaterBalance && abs(errorInit) > errorThreshold
         iteration = 0;
-        error = errorInit;
         residual = 0; % starting value at each iteration
-        if abs(errorInit) > errorThreshold % correction is needed
-            % Loop to correct soil moisture until the water balance error is below the threshold
-            while abs(error) > errorThreshold && iteration < maxIterations
-                iteration = iteration + 1;
 
-                % 2.1. Determine the total soil thickness
-                if GroundwaterSettings.GroundwaterCoupling
-                    indxBotm = GroundwaterSettings.indxBotmLayer;
-                    soil_depth = sum(ModelSettings.DeltZ(indxBotm + 1:ModelSettings.NL));
-                else
-                    indxBotm = 1;
-                    soil_depth = sum(ModelSettings.DeltZ);
-                end
+        % Loop to correct soil moisture until the water balance error is below the threshold
+        while abs(error) > errorThreshold && iteration < maxIterations
+            iteration = iteration + 1;
 
-                % 2.2. Calculate correction value of soil moisture
-                thetaCorrection = residual / soil_depth * TimeProperties.DELT;
-                % Add the correction value to the soil moisture profile
-                for i = indxBotm + 1:ModelSettings.NL
-                    Theta_UU_corrected(i:end - 1, 1) = Theta_UU_current(i:end - 1, 1) + thetaCorrection;
-                    Theta_UU_corrected(i:end - 1, 2) = Theta_UU_current(i:end - 1, 2) + thetaCorrection;
-                end
-
-                % 2.3. Ensure corrected soil moisture values remain within residual and saturated water content limits
-                [Theta_UU_corrected] = io.constrainSoilVariables(Theta_UU_corrected, VanGenuchten);
-
-                % Recalculate the correction value of soil moisture after checking residual and saturation bounds
-                thetaCorrectionLay = Theta_UU_corrected(1:end - 1, 1) - Theta_UU_previous(1:end - 1, 1);
-
-                % 2.4. Recalculate corrected delta storage (based on the corrected soil moisture profile)
-                correctedDeltaS = sum(thetaCorrectionLay .* ModelSettings.DeltZ') / TimeProperties.DELT;
-                if correctedDeltaS > 0
-                    correctedDeltaSIn = 0;
-                    correctedDeltaSOut = correctedDeltaS;
-                else
-                    correctedDeltaSIn = -correctedDeltaS;
-                    correctedDeltaSOut = 0;
-                end
-
-                % 2.5. Calculate corrected total inflow, total outflow, residual and error
-                totalInflow = ForcingData.Precip + botmFluxIn + deltaStorageIn + correctedDeltaSIn;
-                totalOutflow = runoff + ET + botmFluxOut + deltaStorageOut + correctedDeltaSOut;
-                residual = totalInflow - totalOutflow;
-                errorDenominator = abs(totalInflow) + abs(totalOutflow); % avoid division by zero if total inflow = 0
-                error = residual / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
-                error = max(min(error, 100), -100); % constrain extreme error values
+            % 2.1. Determine the total soil thickness
+            if GroundwaterSettings.GroundwaterCoupling
+                indxBotm = GroundwaterSettings.indxBotmLayer;
+                soil_depth = sum(ModelSettings.DeltZ(indxBotm + 1:ModelSettings.NL));
+            else
+                indxBotm = 1;
+                soil_depth = sum(ModelSettings.DeltZ);
             end
 
-            % Update values in csv file (use only net values of delta storage and bottom flux)
-            totalInflow = ForcingData.Precip;
-            totalOutflow = runoff + ET - botmFlux - deltaStorage + correctedDeltaS;
+            % 2.2. Calculate correction value of soil moisture
+            thetaCorrection = residual / soil_depth * TimeProperties.DELT;
+
+            % Apply max change in soil moisutre (to avoid drammatic changes)
+            maxThetaChange = 0.02;
+            thetaCorrection = sign(thetaCorrection) * min(abs(thetaCorrection), maxThetaChange);
+
+            % Add the correction value to the soil moisture profile
+            for i = indxBotm + 1:ModelSettings.NL
+                Theta_UU_corrected(i, 1) = Theta_UU_current(i, 1) + thetaCorrection;
+                Theta_UU_corrected(i, 2) = Theta_UU_current(i, 2) + thetaCorrection;
+            end
+
+            % 2.3. Ensure corrected soil moisture values remain within residual and saturated water content limits
+            [Theta_UU_corrected] = io.constrainSoilVariables(Theta_UU_corrected, VanGenuchten);
+
+            % Recalculate the correction value of soil moisture after checking residual and saturation bounds
+            thetaCorrectionLay = Theta_UU_corrected(1:end - 1, 1) - Theta_UU_previous(1:end - 1, 1);
+
+            % 2.4. Recalculate corrected delta storage (based on the corrected soil moisture profile)
+            correctedDeltaS = sum(thetaCorrectionLay .* ModelSettings.DeltZ') / TimeProperties.DELT;
+            correctedDeltaSIn  = max(-correctedDeltaS, 0);
+            correctedDeltaSOut = max(correctedDeltaS, 0);
+
+            % 2.5. Calculate corrected total inflow, total outflow, residual and error
+            totalInflow = ForcingData.Precip + botmFluxIn + deltaStorageIn + correctedDeltaSIn;
+            totalOutflow = runoff + ET + botmFluxOut + deltaStorageOut + correctedDeltaSOut;
+            residual = totalInflow - totalOutflow;
+            errorDenominator = abs(totalInflow) + abs(totalOutflow); % avoid division by zero if total inflow = 0
+            error = residual / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
+            error = max(min(error, 100), -100); % constrain extreme error values
         end
+
+        % Update values in csv file (use only net values of delta storage and bottom flux)
+        totalInflow = ForcingData.Precip;
+        totalOutflow = runoff + ET - botmFlux - deltaStorage + correctedDeltaS;
     end
 
     % Outputs to be exported in csv or exposed to BMI

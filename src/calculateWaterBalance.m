@@ -146,7 +146,7 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
             totalInflow = ForcingData.Precip + botmFluxIn + deltaStorageIn + correctedDeltaSIn;
             totalOutflow = runoff + ET + botmFluxOut + deltaStorageOut + correctedDeltaSOut;
             residual = totalInflow - totalOutflow;
-            errorDenominator = abs(totalInflow) + abs(totalOutflow); % avoid division by zero if total inflow = 0
+            errorDenominator = mean([totalInflow + totalOutflow]); % avoid division by zero if total inflow = 0
             error = residual / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
             error = max(min(error, 100), -100); % constrain extreme error values
         end

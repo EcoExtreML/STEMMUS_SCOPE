@@ -80,7 +80,7 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
     totalInflowInit = ForcingData.Precip + botmFluxIn + deltaStorageIn;
     totalOutflowInit = runoff + ET + botmFluxOut + deltaStorageOut;
     residualInit = totalInflowInit - totalOutflowInit;
-    errorDenominator = abs(totalInflowInit) + abs(totalOutflowInit); % avoid division by zero if total inflow = 0
+    errorDenominator = mean([totalInflowInit + totalOutflowInit]); % avoid division by zero if total inflow = 0
     errorInit = residualInit / max(errorDenominator, eps) * 100; % use small value (eps) to avoid division by zero
     errorInit = max(min(errorInit, 100), -100); % constrain extreme error values
 
@@ -121,7 +121,7 @@ function [wbal, Theta_UU_corrected] = calculateWaterBalance(ForcingData, SoilVar
             % 2.2. Calculate correction value of soil moisture
             thetaCorrection = residual / soil_depth * TimeProperties.DELT;
 
-            % Apply max change in soil moisutre (to avoid drammatic changes)
+            % Apply max change in soil moisture (to avoid dramatic changes)
             maxThetaChange = 0.02;
             thetaCorrection = sign(thetaCorrection) * min(abs(thetaCorrection), maxThetaChange);
 

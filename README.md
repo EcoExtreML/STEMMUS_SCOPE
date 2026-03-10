@@ -1,6 +1,6 @@
 # STEMMUS_SCOPE
 
-STEMMUS-SCOPE is a coupled, process-based ecohydrological model that acts as a digital twin for simulating the complex interactions within the soil–plant–atmosphere continuum (SPAC) . It integrates soil hydrothermal dynamics (STEMMUS) with plant photosynthesis, fluorescence, and energy fluxes (SCOPE) to advance the understanding of water-energy-carbon interactions, particularly under water-limited conditions.
+STEMMUS-SCOPE is a coupled, process-based ecohydrological model that acts as a digital twin for simulating the complex interactions within the soil–plant–atmosphere continuum (SPAC). It integrates soil hydrothermal dynamics (STEMMUS) with plant photosynthesis, fluorescence, and energy fluxes (SCOPE) to advance the understanding of water-energy-carbon interactions, particularly under water-limited conditions.
 
 Key Components and Functionality
 STEMMUS (Simultaneous Transfer of Energy, Mass and Momentum in Unsaturated Soil): A two-phase (liquid and gas) heat and mass transfer model that simulates vertical transport in soil.

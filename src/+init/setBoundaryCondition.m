@@ -82,10 +82,10 @@ function BoundaryCondition = setBoundaryCondition(SoilVariables, ForcingData, in
         % 3 --Zero temperature gradient;
         NBCTB = 1;
 
-        if nanmean(Ta_msr) < 0
+        if mean(Ta_msr, 'omitnan') < 0
             BCTB = 0;  % 9 8.1
         else
-            BCTB = nanmean(Ta_msr);
+            BCTB = mean(Ta_msr, 'omitnan');
         end
     end
     if ModelSettings.Soilairefc == 1

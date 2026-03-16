@@ -91,6 +91,15 @@ function bin_to_csv(fnames, n_col, ns, options, SoilLayer, GroundwaterSettings, 
     Sim_qtot_units = repelem({'cm s-1'}, length(depth));
     write_output(Sim_qtot_names, Sim_qtot_units, fnames.Sim_qtot_file, n_col.Sim_qtot, ns, true);
 
+    %% output the vegetation dynamic results Danyang Yu
+    if options.calc_vegetation_dynamic
+        cropgrowth_names = {'DOY', 'DVS', 'LAI', ...
+                            'PH', 'Sfactor', 'RootDM', 'LeafDM', 'StemDM', 'OrganDM', 'RootDeath', 'LeafDeath', 'StemDeath'};
+        cropgrowth_units = {'day', '-', 'm2/m2', ...
+                            'cm', '-', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha', 'kg/ha'};
+        write_output(cropgrowth_names, cropgrowth_units, fnames.cropgrowth_file, n_col.cropgrowth, ns);
+    end
+
     if options.calc_fluor
         write_output({'fluorescence per simulation for wavelengths of 640 to 850 nm, with 1 nm resolution'}, {'W m-2 um-1 sr-1'}, ...
                      fnames.fluorescence_file, n_col.fluorescence, ns, true);

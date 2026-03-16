@@ -1,4 +1,4 @@
-function [InputPath, OutputPath, InitialConditionPath, FullCSVfiles] = read_config(config_file)
+function [InputPath, OutputPath, InitialConditionPath, FullCSVfiles, closeWaterBalance] = read_config(config_file)
 
     file_id = fopen(config_file);
     config = textscan(file_id, '%s %s', 'HeaderLines', 0, 'Delimiter', '=');
@@ -23,4 +23,11 @@ function [InputPath, OutputPath, InitialConditionPath, FullCSVfiles] = read_conf
         FullCSVfiles = 1;
     else
         FullCSVfiles = str2num(config_paths{indx});
+    end
+
+    indx = find(strcmp(config_vars, 'closeWaterBalance'));
+    if isempty(indx)
+        closeWaterBalance = 0;
+    else
+        closeWaterBalance = str2num(config_paths{indx});
     end
